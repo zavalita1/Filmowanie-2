@@ -32,7 +32,7 @@ param location string = resourceGroup().location
 
 // output storageEndpoint object = stg.properties.primaryEndpoints
 
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   name: 'filmowanie-2'
   location: location
   sku: {
@@ -43,4 +43,14 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-pr
   }
 }
 
+resource webApplication 'Microsoft.Web/sites@2023-12-01' = {
+  name: 'filmowanie-2'
+  location: location
+  tags: {
+    'hidden-related:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/appServicePlan': 'Resource'
+  }
+  properties: {
+    serverFarmId: 'webServerFarms.id'
+  }
+}
 
