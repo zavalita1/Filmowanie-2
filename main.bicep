@@ -1,6 +1,6 @@
 param webAppName string = 'filmowanie-2'
 param location string = resourceGroup().location
-param sku string = 'F1'
+param sku string = 'D1'
 param linuxFxVersion string = 'DOTNET|8.0' 
 
 var appServicePlanName = toLower('AppServicePlan-${webAppName}')
@@ -26,7 +26,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   sku: {
     name: sku
   }
-  kind: 'linux'
+  kind: 'app'
 }
 
 resource appService 'Microsoft.Web/sites@2023-12-01' = {
@@ -34,6 +34,7 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
   location: location
   properties: {
     serverFarmId: appServicePlan.id
+    httpsOnly: true
     siteConfig: {
       linuxFxVersion: linuxFxVersion
     }
