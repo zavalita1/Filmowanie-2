@@ -7,7 +7,7 @@ var appServicePlanName = toLower('AppServicePlan-${webAppName}')
 var webSiteName = toLower('wapp-${webAppName}')
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
-  name: 'filmowanie-2'
+  name: 'filmowanie2'
   location: location
   sku: {
     name: 'Basic'
