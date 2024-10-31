@@ -1,6 +1,6 @@
 param webAppName string = 'filmowanie-2'
 param location string = resourceGroup().location
-param sku string = 'D1'
+param sku string = 'F1'
 param linuxFxVersion string = 'DOTNET|8.0' 
 param repositoryUrl string = 'https://github.com/zavalita1/Filmowanie-2'
 param branch string = 'main'
