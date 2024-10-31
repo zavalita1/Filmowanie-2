@@ -2,8 +2,6 @@ param webAppName string = 'filmowanie-2'
 param location string = resourceGroup().location
 param sku string = 'F1'
 param linuxFxVersion string = 'DOTNET|8.0' 
-param repositoryUrl string = 'https://github.com/zavalita1/Filmowanie-2'
-param branch string = 'main'
 
 var appServicePlanName = toLower('AppServicePlan-${webAppName}')
 var webSiteName = toLower('wapp-${webAppName}')
@@ -39,15 +37,5 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
     siteConfig: {
       linuxFxVersion: linuxFxVersion
     }
-  }
-}
-
-resource srcControls 'Microsoft.Web/sites/sourcecontrols@2023-12-01' = {
-  parent: appService
-  name: 'web'
-  properties: {
-    repoUrl: repositoryUrl
-    branch: branch
-    isManualIntegration: true
   }
 }
