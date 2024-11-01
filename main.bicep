@@ -25,8 +25,7 @@ resource appInsightsComponents 'Microsoft.Insights/components@2020-02-02' = {
     Flow_Type: 'Redfield'
     Request_Source: 'IbizaWebAppExtensionCreate'
     SamplingPercentage: 100
-    RetentionInDays: 10
-    IngestionMode: 'LogAnalytics'
+    RetentionInDays: 8
     publicNetworkAccessForIngestion: 'Enabled'
     publicNetworkAccessForQuery: 'Enabled'
   }
@@ -98,6 +97,16 @@ resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
       ftpsState: 'FtpsOnly'
+      appSettings: [
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsComponents.properties.InstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsComponents.properties.ConnectionString
+        }
+      ]
     }
     clientCertMode: 'Required'
     containerSize: 0
