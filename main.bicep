@@ -3,6 +3,7 @@ param location string = resourceGroup().location
 
 var appServicePlanName = toLower('AppServicePlan-${webAppName}')
 var appInsightsName = toLower('appins-${webAppName}')
+var principalId = 'gh'
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   name: 'filmowanie2'
@@ -126,5 +127,15 @@ resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
     publicNetworkAccess: 'Enabled'
     storageAccountRequired: false
     keyVaultReferenceIdentity: 'SystemAssigned'
+  }
+}
+
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: filmowanie
+  name: guid(filmowanie.id, principalId, 'sp')
+  properties: {
+    roleDefinitionId: 'b24988ac-6180-42a0-ab88-20f7382dd24c' // contributor role
+    principalId: principalId
+    principalType: 'ServicePrincipal'
   }
 }
