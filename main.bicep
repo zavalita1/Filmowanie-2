@@ -35,7 +35,7 @@ resource appInsightsComponents 'Microsoft.Insights/components@2020-02-02' = {
     Flow_Type: 'Redfield'
     Request_Source: 'IbizaWebAppExtensionCreate'
     SamplingPercentage: 100
-    RetentionInDays: 8
+    RetentionInDays: 30
     publicNetworkAccessForIngestion: 'Enabled'
     publicNetworkAccessForQuery: 'Enabled'
     WorkspaceResourceId: appInsightsWorkspace.id
