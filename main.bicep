@@ -134,7 +134,7 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: filmowanie
   name: guid(filmowanie.id, principalId, 'sp')
   properties: {
-    roleDefinitionId: 'b24988ac-6180-42a0-ab88-20f7382dd24c' // contributor role
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // contributor role
     principalId: principalId
     principalType: 'ServicePrincipal'
   }
