@@ -3,7 +3,7 @@ param location string = resourceGroup().location
 
 var appServicePlanName = toLower('AppServicePlan-${webAppName}')
 var appInsightsName = toLower('appins-${webAppName}')
-var principalId = 'gh'
+var principalId = guid('gh')
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   name: 'filmowanie2'

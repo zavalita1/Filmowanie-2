@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  check-ioc-commit:
+  Commission resources:
     runs-on: ubuntu-latest
     if: |
       contains(github.event.head_commit.message, 'IaC') || 
@@ -25,4 +25,4 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./main.bicep
-        failOnStdErr: false
+        failOnStdErr: true
