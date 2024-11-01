@@ -90,6 +90,9 @@ resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
   kind: 'app'
   location: location
   tags: {}
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     enabled: true
     serverFarmId: ASPFilmowaniegroup.id
@@ -114,6 +117,9 @@ resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
       numberOfWorkers: 1
       linuxFxVersion: ''
       minimumElasticInstanceCount: 0
+      minTlsVersion: '1.2'
+      scmMinTlsVersion: '1.2'
+      ftpsState: 'FtpsOnly'
     }
     clientCertMode: 'Required'
     containerSize: 0
@@ -122,15 +128,5 @@ resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
     publicNetworkAccess: 'Enabled'
     storageAccountRequired: false
     keyVaultReferenceIdentity: 'SystemAssigned'
-  }
-}
-
-resource srcControls 'Microsoft.Web/sites/sourcecontrols@2021-01-01' = {
-  parent: filmowanie
-  name: 'web'
-  properties: {
-    repoUrl: 'https://github.com/zavalita1/Filmowanie-2'
-    branch: 'main'
-    isManualIntegration: true
   }
 }
