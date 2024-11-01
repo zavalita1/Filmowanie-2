@@ -15,6 +15,16 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-pr
   }
 }
 
+resource appInsightsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
+  location: location
+  name: 'appsworkspace${webAppName}'
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+  }
+}
+
 resource appInsightsComponents 'Microsoft.Insights/components@2020-02-02' = {
   kind: 'web'
   name: appInsightsName
@@ -28,6 +38,7 @@ resource appInsightsComponents 'Microsoft.Insights/components@2020-02-02' = {
     RetentionInDays: 8
     publicNetworkAccessForIngestion: 'Enabled'
     publicNetworkAccessForQuery: 'Enabled'
+    WorkspaceResourceId: appInsightsWorkspace.id
   }
 }
 
