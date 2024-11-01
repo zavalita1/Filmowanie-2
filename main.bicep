@@ -15,18 +15,39 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-pr
   }
 }
 
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
+  name: 'defaultLogAnalyticsWorkspace'
+  location: location
+  properties: {
+    sku: {
+      name: 'Free'
+    }
+    features:{
+      enableDataExport: false
+    }
+    retentionInDays: 10
+    publicNetworkAccessForIngestion: 'Disabled'
+    publicNetworkAccessForQuery: 'Disabled'
+    workspaceCapping: {
+      dailyQuotaGb: 1
+    }
+  }
+}
+
+
+
 resource appInsightsComponents 'Microsoft.Insights/components@2020-02-02' = {
   kind: 'web'
-  etag: '"0700e5dd-0000-5600-0000-67249a9c0000"'
   name: appInsightsName
   location: location
   tags: {}
   properties: {
     Application_Type: 'web'
+    WorkspaceResourceId: logAnalyticsWorkspace.id
     Flow_Type: 'Redfield'
     Request_Source: 'IbizaWebAppExtensionCreate'
     SamplingPercentage: 100
-    RetentionInDays: 90
+    RetentionInDays: 10
     IngestionMode: 'LogAnalytics'
     publicNetworkAccessForIngestion: 'Enabled'
     publicNetworkAccessForQuery: 'Enabled'
