@@ -139,3 +139,6 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
     principalType: 'ServicePrincipal'
   }
 }
+
+output roleAssigmentName string = roleAssignment.name
+output roleAssignmentId string = roleAssignment.id
