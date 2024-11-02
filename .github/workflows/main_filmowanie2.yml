@@ -25,7 +25,7 @@ jobs:
         run: dotnet build --configuration Release 
 
       - name: dotnet publish
-        run: dotnet publish -c Release --property:PublishDir='${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
+        run: dotnet publish -c Release -o ${{env.GITHUB_WORKSPACE}}\myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -51,14 +51,13 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D7B96842D8B846948A0A4F8C61F08AD2 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_09F4B1C7106148549666F988D3332BC1 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9A3873BD2A424DD981901D840151106E }}
+          creds: ${{ secrets.AZURE_APP_CREDENTIALS }}
 
-      - name: 'Run Azure webapp deploy action using publish profile credentials'
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
-        with: 
-          app-name: filmowanie2 
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
-          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
+        with:
+          app-name: 'filmowanie2'
+          slot-name: 'Production'
+          package: .
           
