@@ -129,25 +129,25 @@ resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
   }
 }
 
-resource application 'Microsoft.Graph/applications@1.0' = {
-  displayName: 'Microsoft Graph App for filmowanie'
-  uniqueName: 'sp-filmowanie'
-}
+// resource application 'Microsoft.Graph/applications@1.0' = {
+//   displayName: 'Microsoft Graph App for filmowanie'
+//   uniqueName: 'sp-filmowanie'
+// }
 
-resource resourceSp 'Microsoft.Graph/servicePrincipals@v1.0' = {
-  appId: application.appId
-  displayName: 'Service Principal for filmowanie'
-}
+// resource resourceSp 'Microsoft.Graph/servicePrincipals@v1.0' = {
+//   appId: application.appId
+//   displayName: 'Service Principal for filmowanie'
+// }
 
-resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  scope: filmowanie
-  name: guid(filmowanie.id, 'sprole')
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // contributor role
-    principalId: resourceSp.id
-    principalType: 'ServicePrincipal'
-  }
-}
+// resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+//   scope: filmowanie
+//   name: guid(filmowanie.id, 'sprole')
+//   properties: {
+//     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // contributor role
+//     principalId: resourceSp.id
+//     principalType: 'ServicePrincipal'
+//   }
+// }
 
-output roleAssigmentName string = roleAssignment.name
-output roleAssignmentId string = roleAssignment.id
+// output roleAssigmentName string = roleAssignment.name
+// output roleAssignmentId string = roleAssignment.id
