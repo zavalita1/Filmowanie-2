@@ -250,7 +250,7 @@ resource cosmosDbInfrastructureContainer 'Microsoft.DocumentDB/databaseAccounts/
       }
       partitionKey: {
         kind: 'Hash'
-        paths: ['/id', '/type']
+        paths: ['/type']
       }
     }
   }
