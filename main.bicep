@@ -186,7 +186,7 @@ resource cosmosDbMoviesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatab
         automatic: true // maybe change later?
       }
       partitionKey: {
-        kind: 'Range'
+        kind: 'Hash'
         paths: ['/id']
       }
     }
@@ -207,7 +207,7 @@ resource cosmosDbVotesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDataba
         automatic: true // maybe change later?
       }
       partitionKey: {
-        kind: 'Range'
+        kind: 'Hash'
         paths: ['/id']
       }
     }
@@ -228,7 +228,7 @@ resource cosmosDbNominationsContainer 'Microsoft.DocumentDB/databaseAccounts/sql
         automatic: true // maybe change later?
       }
       partitionKey: {
-        kind: 'Range'
+        kind: 'Hash'
         paths: ['/id']
       }
     }
@@ -249,8 +249,8 @@ resource cosmosDbInfrastructureContainer 'Microsoft.DocumentDB/databaseAccounts/
         automatic: true // maybe change later?
       }
       partitionKey: {
-        kind: 'Range'
-        paths: ['/id']
+        kind: 'Hash'
+        paths: ['/id', '/type']
       }
     }
   }
