@@ -3,6 +3,9 @@ param location string = resourceGroup().location
 
 var appServicePlanName = toLower('AppServicePlan-${webAppName}')
 var appInsightsName = toLower('appins-${webAppName}')
+var serviceBusName = toLower('sb-${webAppName}')
+var dbAccountName = toLower('dba-${webAppName}')
+var dbName = toLower('db-${webAppName}')
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   name: 'filmowanie2'
@@ -126,6 +129,130 @@ resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
     publicNetworkAccess: 'Enabled'
     storageAccountRequired: false
     keyVaultReferenceIdentity: 'SystemAssigned'
+  }
+}
+
+resource serviceBus 'Microsoft.ServiceBus/namespaces@2023-01-01-preview' = {
+  location: location
+  name: serviceBusName
+  sku: {
+    name: 'Basic'
+    tier: 'Basic'
+  }
+  properties: {
+    minimumTlsVersion: '1.2'
+  }
+}
+
+resource cosmosDbAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
+  name: dbAccountName
+  kind: 'GlobalDocumentDB'
+  location: location
+  properties: {
+    consistencyPolicy: {
+      defaultConsistencyLevel: 'ConsistentPrefix'
+    }
+    locations: [{
+      failoverPriority: 0
+      isZoneRedundant: false
+      locationName: location
+    }]
+    databaseAccountOfferType: 'Standard'
+    enableAutomaticFailover: false
+  }
+}
+
+resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-05-15' = {
+  parent: cosmosDbAccount
+  name: dbName
+  properties: {
+    resource: {
+      id: dbName
+    }
+  }
+}
+
+resource cosmosDbMoviesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: cosmosDb
+  name: 'Movies'
+  location: location
+  properties: {
+    resource: {
+      id: 'Movies'
+      conflictResolutionPolicy: {
+        mode: 'LastWriterWins'
+      }
+      indexingPolicy: {
+        automatic: true // maybe change later?
+      }
+      partitionKey: {
+        kind: 'Range'
+        paths: ['/id']
+      }
+    }
+  }
+}
+
+resource cosmosDbVotesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: cosmosDb
+  name: 'Votes'
+  location: location
+  properties: {
+    resource: {
+      id: 'Votes'
+      conflictResolutionPolicy: {
+        mode: 'LastWriterWins'
+      }
+      indexingPolicy: {
+        automatic: true // maybe change later?
+      }
+      partitionKey: {
+        kind: 'Range'
+        paths: ['/id']
+      }
+    }
+  }
+}
+
+resource cosmosDbNominationsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: cosmosDb
+  name: 'Nominations'
+  location: location
+  properties: {
+    resource: {
+      id: 'Nominations'
+      conflictResolutionPolicy: {
+        mode: 'LastWriterWins'
+      }
+      indexingPolicy: {
+        automatic: true // maybe change later?
+      }
+      partitionKey: {
+        kind: 'Range'
+        paths: ['/id']
+      }
+    }
+  }
+}
+
+resource cosmosDbInfrastructureContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: cosmosDb
+  name: 'Infrastructure'
+  location: location
+  properties: {
+    resource: {
+      id: 'Infrastructure'
+      conflictResolutionPolicy: {
+        mode: 'LastWriterWins'
+      }
+      indexingPolicy: {
+        automatic: true // maybe change later?
+      }
+      partitionKey: {
+        kind: 'Range'
+        paths: ['/id']
+      }
+    }
   }
 }
 
