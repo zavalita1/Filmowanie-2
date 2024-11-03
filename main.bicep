@@ -6,6 +6,10 @@ var appInsightsName = toLower('appins-${webAppName}')
 var serviceBusName = toLower('sb-${webAppName}')
 var dbAccountName = toLower('dba-${webAppName}')
 var dbName = toLower('db-${webAppName}')
+var keyVaultName = toLower('kv-${webAppName}')
+var keyVaultAccessPolicyName = toLower('kvap-${webAppName}')
+
+param tenantId string = subscription().tenantId
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   name: 'filmowanie2'
@@ -149,6 +153,7 @@ resource cosmosDbAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
   kind: 'GlobalDocumentDB'
   location: location
   properties: {
+    enableFreeTier: true
     consistencyPolicy: {
       defaultConsistencyLevel: 'ConsistentPrefix'
     }
@@ -253,6 +258,36 @@ resource cosmosDbInfrastructureContainer 'Microsoft.DocumentDB/databaseAccounts/
         paths: ['/type']
       }
     }
+  }
+}
+
+resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
+  location: location
+  name: keyVaultName
+  properties: {
+    sku: {
+      family: 'A'
+      name: 'standard'
+    }
+    tenantId: tenantId
+    enabledForTemplateDeployment: true
+    accessPolicies: []
+  }
+}
+
+resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2024-04-01-preview' = {
+  name: keyVaultAccessPolicyName
+  properties: {
+    accessPolicies: [
+      {
+        tenantId: tenantId
+        objectId: filmowanie.identity.principalId
+        permissions: {
+          keys: ['get']
+          secrets: ['get', 'list']
+        }
+      }
+    ]
   }
 }
 
