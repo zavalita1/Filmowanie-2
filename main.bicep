@@ -7,7 +7,6 @@ var serviceBusName = toLower('sb-${webAppName}')
 var dbAccountName = toLower('dba-${webAppName}')
 var dbName = toLower('db-${webAppName}')
 var keyVaultName = toLower('kv-${webAppName}')
-var keyVaultAccessPolicyName = toLower('kvap-${webAppName}')
 
 param tenantId string = subscription().tenantId
 
@@ -276,7 +275,8 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
 }
 
 resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2024-04-01-preview' = {
-  name: keyVaultAccessPolicyName
+  parent: keyVault
+  name: 'add'
   properties: {
     accessPolicies: [
       {
