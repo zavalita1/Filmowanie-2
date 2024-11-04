@@ -1,5 +1,6 @@
-param webAppName string = 'filmowanie2'
-param location string = resourceGroup().location
+// input by pipeline
+param env string = 'Undefined'
+
 
 var appServicePlanName = toLower('AppServicePlan-${webAppName}')
 var appInsightsName = toLower('appins-${webAppName}')
@@ -8,7 +9,16 @@ var dbAccountName = toLower('dba-${webAppName}')
 var dbName = toLower('db-${webAppName}')
 var keyVaultName = toLower('kv-${webAppName}')
 
+var environments = {
+  Development: {
+    webAppName: 'filmowanie2'
+  }
+}
+
+var webAppName = environments[env].webAppName
+
 param tenantId string = subscription().tenantId
+param location string = resourceGroup().location
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   name: 'filmowanie2'
