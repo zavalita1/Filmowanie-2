@@ -1,0 +1,65 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
+div#root {
+    height: 120%;
+}
+
+div#root > div {
+    height: 5000px;
+}
+
+#theme-container {
+    overflow: auto;
+    height: 100vh;
+    background: linear-gradient(180deg, rgb(255 255 255) 0%, rgb(240 234 255) 100%)
+}
+
+#theme-container.dark {
+    background: linear-gradient(180deg, rgba(2,0,36, 1) 0%, rgb(67 31 69) 31%, rgb(72 70 70) 100%)
+}
+
+#Topbar_Name.dark, p.Topbar_MenuItem.dark {
+    color: white;
+}
+
+.MuiBottomNavigation-root {
+    background: inherit;
+    background-color: inherit !important;
+}
+
+.dark.navbar-toggler>span{
+    background-image: url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2730%27 height=%2730%27 viewBox=%270 0 30 30%27%3e%3cpath stroke=%27rgba%28255, 255, 255, 0.5%29%27 stroke-linecap=%27round%27 stroke-miterlimit=%2710%27 stroke-width=%272%27 d=%27M4 7h22M4 15h22M4 23h22%27/%3e%3c/svg%3e");
+}
+
+div.tabs {
+    padding-bottom: 1em;
+}
+
+div {
+    user-select: none;
+}
+
+div.sign-up-container {
+    margin-top: 5em;
+}
+
+div.break {
+    height: 1em;
+}
+
+div.break-big {
+    height: 5em;
+}
+
+a.button-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
