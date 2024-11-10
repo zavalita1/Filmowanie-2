@@ -92,7 +92,9 @@ app.UseSpa(spa =>
     }
 });
 
+
 // TODO configure signalr hubs
+app.MapGet("getUser", () => "user");
 
 UsersCache.HydrateCache();
 

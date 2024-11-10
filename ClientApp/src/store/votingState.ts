@@ -1,7 +1,37 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { AppState, SetErrorAction, SetLoadingAction } from './types';
+import { Action, Reducer } from "redux";
 
-const theme = window.localStorage?.getItem('theme') === 'dark' ? 'dark' : 'light';
+export interface StateState {
+    state: VotingState;
+    isMobile: boolean;
+}
+
+export enum VotingState {
+    Voting,
+    Results,
+    Loading,
+    VotingStarting,
+    VotingEnding
+}
+
+export const reducer: Reducer<StateState> = (state: StateState | undefined, incomingAction: Action): StateState => {
+    if (state === undefined) {
+        return { state: VotingState.Loading, isMobile: mobileCheck() };
+    }
+
+    const action = incomingAction;
+    switch (action.type) {
+        case 'VOTING_ENDED':
+            return {...state, state: VotingState.Results };
+        case 'VOTING_STARTED':
+            return {...state, state: VotingState.Voting };
+        case 'VOTING_ENDING':
+                return {...state, state: VotingState.VotingEnding };
+        case 'VOTING_STARTING':
+                return {...state, state: VotingState.VotingStarting };
+        default:
+            return state;
+    }
+}
 
 function mobileCheck() {
     let check = false;
@@ -9,40 +39,7 @@ function mobileCheck() {
     return check;
   };
 
-const initialState: AppState = { isLoading: true, isError: false, theme: theme, isMobile: mobileCheck() };
-
-const slice = createSlice({
-    name: 'App',
-    initialState,
-    reducers: {
-        setLoading(state, action: SetLoadingAction) {
-            const { isLoading } = action.payload;
-            state.isLoading = isLoading;
-        },
-        aknowledgeError(state) {
-            state.isError = false;
-            state.errorMessage = undefined;
-        },
-        aknowledgeInfo(state) {
-            state.isError = false; // TODO is this needed? why?
-            state.errorMessage = undefined;
-        },
-        setError(state, action: SetErrorAction) {
-            const { errorMessage } = action.payload;
-            state.isError = true;
-            state.errorMessage = errorMessage;
-            state.isLoading = false;
-        },
-        setTheme(state, action) {
-            const { theme } = action.payload;
-            window.localStorage?.setItem("theme", theme);
-            state.theme = theme;
-        }
-    },
-    extraReducers: builder => {
-        builder.addCase
-    }
-});
-
-export const actions = slice.actions;
-export const reducer = slice.reducer;
+export interface VotingConcludedAction { type: 'VOTING_ENDED' }
+export interface VotingConcludingAction { type: 'VOTING_ENDING' }
+export interface VotingStartedAction { type: 'VOTING_STARTED' }
+export interface VotingStartingAction { type: 'VOTING_STARTING' }

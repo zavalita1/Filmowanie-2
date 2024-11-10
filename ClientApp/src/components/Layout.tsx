@@ -3,17 +3,12 @@ import { connect } from 'react-redux';
 import { Container } from 'reactstrap';
 import NavMenu from './NavMenu';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Outlet } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import CssBaseline   from '@mui/material/CssBaseline';
 import { ApplicationState } from '../store';
 
-interface ILayoutProps {
-    theme: string;
-}
-
-function Layout(props: ILayoutProps): React.JSX.Element {
+function Layout(props: any) {
     const darkTheme = createTheme({
         typography: { fontFamily: "Lora" },
         palette: { mode: "dark" }
@@ -28,22 +23,23 @@ function Layout(props: ILayoutProps): React.JSX.Element {
     : [lightTheme, ''];
 
         return (
-            <>
+            <React.Fragment>
                 <ThemeProvider theme={theme}>
                     <Box>
                         <CssBaseline />
                         <div id="theme-container" className={themeContainerClassName}>
                             <NavMenu />
                             <Container>
-                                <Outlet />
+                                {props.children}
                             </Container>
                         </div>
                     </Box>
                 </ThemeProvider>
-            </>
+            </React.Fragment>
         );
 }
 
 export default connect(
     (state: ApplicationState) => ({ theme: state.app?.theme }),
-)(Layout);
+    // CounterStore.actionCreators
+)(Layout as any);

@@ -3,15 +3,15 @@ import './components/css/MovieCard.css';
 import './components/css/Nominate.css';
 import './components/css/General.css';
 
-// import registerServiceWorker from './initialization/registerServiceWorker';
-import * as Init from "./initialization/initialize";
-// import * as SetupSignalRConnection from './initialization/SetupSignalRConnection';
+import registerServiceWorker from './registerServiceWorker';
+import * as Init from "./initialize";
+import * as SetupSignalRConnection from './SetupSignalRConnection';
 
-const { store } = Init.InitStore();
-Init.RenderReactDOM(store);
+const {history, store} = Init.InitStore();
+Init.RenderReactDOM(store, history);
 
 Init.InitActions(store).then(() => {
-    // SetupSignalRConnection.SetupSignalRConnection(store);
+    SetupSignalRConnection.SetupSignalRConnection(store);
 });
 
 

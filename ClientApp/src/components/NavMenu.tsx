@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import './css/NavMenu.css';
 import { connect } from 'react-redux';
 import { ApplicationState } from '../store';
-import { VotingState } from '../store/VotingSession';
+import { VotingState } from '../store/votingState';
 import { IUser } from '../store/User';
 import { Typography } from '@mui/material';
 import * as App from '../store/App';
@@ -13,8 +13,8 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 
 type NavMenuProps = User.UserState &
-typeof App.actions &
-typeof User.actions &
+typeof App.actionCreators &
+typeof User.actionCreators &
 { state: VotingState, isMobile?: boolean } &
 { theme?: App.SupportedTheme}
 
@@ -43,7 +43,7 @@ function NavMenu(props: NavMenuProps) {
                                 <NavItemWrapper to="/nominate" desc='Nominuj' user={props.user} isEnabled={isNominateEnabled(props)}></NavItemWrapper>
                                 <NavItemWrapper to="/admin" desc='Admin Panel' user={props.user}></NavItemWrapper>
                                 <NavItemWrapper to="/history" desc='Historia' user={props.user} isEnabled={isHistoryEnabled(props)}></NavItemWrapper>
-                                <NavItemWrapper to="/" desc='Wyloguj' user={props.user} isEnabled={isLogoutEnabled(props)} onClick={() => props.useLogOutMutation()}></NavItemWrapper>
+                                <NavItemWrapper to="/" desc='Wyloguj' user={props.user} isEnabled={isLogoutEnabled(props)} onClick={() => props.logOut()}></NavItemWrapper>
                                 </NavBarTheme.Provider>
                             </ul>
                         </Collapse>
@@ -156,6 +156,6 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 
 export default connect(
-    (state: ApplicationState) => ({...state.user, state: state.votingSession?.state, theme: state.app?.theme, isMobile: state.app?.isMobile}),
-    { ...App.actions, ...User.actions }
-)(NavMenu);
+    (state: ApplicationState) => ({...state.user, state: state.state?.state, theme: state.app?.theme, isMobile: state.state?.isMobile}),
+    { ...App.actionCreators, ...User.actionCreators }
+)(NavMenu as any);
