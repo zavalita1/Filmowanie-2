@@ -191,6 +191,11 @@ resource cosmosDbMoviesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatab
   name: 'Movies'
   location: location
   properties: {
+    options: {
+        autoscaleSettings: {
+            maxThroughput: 100
+      }
+    }
     resource: {
       id: 'Movies'
       conflictResolutionPolicy: {
@@ -212,6 +217,11 @@ resource cosmosDbVotesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDataba
   name: 'Votes'
   location: location
   properties: {
+      options: {
+        autoscaleSettings: {
+            maxThroughput: 100
+      }
+    }
     resource: {
       id: 'Votes'
       conflictResolutionPolicy: {
@@ -233,6 +243,11 @@ resource cosmosDbNominationsContainer 'Microsoft.DocumentDB/databaseAccounts/sql
   name: 'Nominations'
   location: location
   properties: {
+      options: {
+        autoscaleSettings: {
+            maxThroughput: 100
+      }
+    }
     resource: {
       id: 'Nominations'
       conflictResolutionPolicy: {
@@ -254,6 +269,11 @@ resource cosmosDbInfrastructureContainer 'Microsoft.DocumentDB/databaseAccounts/
   name: 'Infrastructure'
   location: location
   properties: {
+      options: {
+        autoscaleSettings: {
+            maxThroughput: 100
+      }
+    }
     resource: {
       id: 'Infrastructure'
       conflictResolutionPolicy: {
