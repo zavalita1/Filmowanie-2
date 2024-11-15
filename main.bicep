@@ -189,7 +189,7 @@ resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-05-15
   }
 }
 
-resource cosmosDbMoviesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+resource cosmosDbEntitiesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
   parent: cosmosDb
   name: 'Entities'
   location: location
@@ -210,7 +210,7 @@ resource cosmosDbMoviesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatab
   }
 }
 
-resource cosmosDbMoviesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+resource cosmosDbEventsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
   parent: cosmosDb
   name: 'Events'
   location: location
