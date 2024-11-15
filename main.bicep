@@ -183,21 +183,19 @@ resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-05-15
     resource: {
       id: dbName
     }
+    options: {
+      throughput: 800
+    }
   }
 }
 
 resource cosmosDbMoviesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
   parent: cosmosDb
-  name: 'Movies'
+  name: 'Entities'
   location: location
   properties: {
-    options: {
-        autoscaleSettings: {
-            maxThroughput: 100
-      }
-    }
     resource: {
-      id: 'Movies'
+      id: 'Entities'
       conflictResolutionPolicy: {
         mode: 'LastWriterWins'
       }
@@ -212,18 +210,13 @@ resource cosmosDbMoviesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatab
   }
 }
 
-resource cosmosDbVotesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+resource cosmosDbMoviesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
   parent: cosmosDb
-  name: 'Votes'
+  name: 'Events'
   location: location
   properties: {
-      options: {
-        autoscaleSettings: {
-            maxThroughput: 100
-      }
-    }
     resource: {
-      id: 'Votes'
+      id: 'Events'
       conflictResolutionPolicy: {
         mode: 'LastWriterWins'
       }
@@ -233,58 +226,6 @@ resource cosmosDbVotesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDataba
       partitionKey: {
         kind: 'Hash'
         paths: ['/id']
-      }
-    }
-  }
-}
-
-resource cosmosDbNominationsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
-  parent: cosmosDb
-  name: 'Nominations'
-  location: location
-  properties: {
-      options: {
-        autoscaleSettings: {
-            maxThroughput: 100
-      }
-    }
-    resource: {
-      id: 'Nominations'
-      conflictResolutionPolicy: {
-        mode: 'LastWriterWins'
-      }
-      indexingPolicy: {
-        automatic: true // maybe change later?
-      }
-      partitionKey: {
-        kind: 'Hash'
-        paths: ['/id']
-      }
-    }
-  }
-}
-
-resource cosmosDbInfrastructureContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
-  parent: cosmosDb
-  name: 'Infrastructure'
-  location: location
-  properties: {
-      options: {
-        autoscaleSettings: {
-            maxThroughput: 100
-      }
-    }
-    resource: {
-      id: 'Infrastructure'
-      conflictResolutionPolicy: {
-        mode: 'LastWriterWins'
-      }
-      indexingPolicy: {
-        automatic: true // maybe change later?
-      }
-      partitionKey: {
-        kind: 'Hash'
-        paths: ['/type']
       }
     }
   }
