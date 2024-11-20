@@ -1,4 +1,4 @@
-﻿namespace Filmowanie.Constants;
+﻿namespace Filmowanie.Account.Constants;
 
 public class SchemesNamesConsts
 {

@@ -5,6 +5,10 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Filmowanie", "Filmowanie.csproj", "{5E82A902-1A4F-477D-9C42-CC6BC0D76EF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Database", "Filmowanie.Database\Filmowanie.Database.csproj", "{A2AA58CB-24EC-4B4A-B592-E32D297BCCE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Abstractions", "Filmowanie.Abstractions\Filmowanie.Abstractions.csproj", "{23A60AA0-6F2A-4EC7-BD97-2A1B067165B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{5E82A902-1A4F-477D-9C42-CC6BC0D76EF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E82A902-1A4F-477D-9C42-CC6BC0D76EF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E82A902-1A4F-477D-9C42-CC6BC0D76EF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2AA58CB-24EC-4B4A-B592-E32D297BCCE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2AA58CB-24EC-4B4A-B592-E32D297BCCE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2AA58CB-24EC-4B4A-B592-E32D297BCCE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2AA58CB-24EC-4B4A-B592-E32D297BCCE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23A60AA0-6F2A-4EC7-BD97-2A1B067165B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23A60AA0-6F2A-4EC7-BD97-2A1B067165B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23A60AA0-6F2A-4EC7-BD97-2A1B067165B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23A60AA0-6F2A-4EC7-BD97-2A1B067165B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
