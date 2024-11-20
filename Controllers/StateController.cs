@@ -12,7 +12,7 @@ namespace Filmowanie.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(AuthenticationSchemes = SchemesNamesConsts.Cookie)]
+[Authorize(AuthenticationSchemes = Schemes.Cookie)]
 public sealed class StateController : ControllerBase
 {
     private readonly IServiceProvider _serviceProvider;
@@ -25,28 +25,28 @@ public sealed class StateController : ControllerBase
     }
 
     [HttpPost("invalidateUserCache")]
-    [Authorize(SchemesNamesConsts.Admin)]
+    [Authorize(Schemes.Admin)]
     public async Task<IActionResult> InvalidateUserCache()
     {
         return Ok();
     }
 
     [HttpPost("endVote")]
-    [Authorize(SchemesNamesConsts.Admin)]
+    [Authorize(Schemes.Admin)]
     public async Task<IActionResult> End(CancellationToken cancel)
     {
         return Ok();
     }
 
     [HttpPost("startVote")]
-    [Authorize(SchemesNamesConsts.Admin)]
+    [Authorize(Schemes.Admin)]
     public async Task<IActionResult> Start(CancellationToken cancel)
     {
         return Ok();
     }
 
     [HttpPost("newVote")]
-    [Authorize(SchemesNamesConsts.Admin)]
+    [Authorize(Schemes.Admin)]
     public async Task<IActionResult> NewVote(CancellationToken cancel)
     {
         return Ok();

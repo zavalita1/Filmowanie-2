@@ -1,7 +1,8 @@
-﻿using Filmowanie.Account.Mappers;
+﻿using Filmowanie.Account.Helpers;
+using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Repositories;
-using Filmowanie.Account.Services;
 using Filmowanie.Account.Validators;
+using Filmowanie.Account.Visitors;
 using Filmowanie.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,13 +16,17 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFluentValidatorAdapter, BasicAuthValidator>();
         services.AddScoped<IFluentValidatorAdapter, BasicAuthSignupValidator>();
 
-        services.AddScoped<IAccountService, AccountService>();
-        services.AddScoped<IUserIdentityService, UserIdentityService>();
+        services.AddScoped<ICodeLoginVisitor, AccountVisitor>();
+        services.AddScoped<ISignUpVisitor, AccountVisitor>();
+        services.AddScoped<IBasicAuthLoginVisitor, AccountVisitor>();
+        services.AddScoped<IUserIdentityVisitor, UserIdentityVisitor>();
 
         services.AddScoped<IUsersQueryRepository, UsersQueryRepository>();
         services.AddScoped<IUsersCommandRepository, UsersCommandRepository>();
 
-        services.AddSingleton<IUserMapper, UserMapper>();
+        services.AddSingleton<IUserMapperVisitor, UserMapperVisitor>();
+
+        services.AddSingleton<IHashHelper, HashHelper>();
 
         return services;
     }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Filmowanie.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = SchemesNamesConsts.Cookie)]
+[Authorize(AuthenticationSchemes = Schemes.Cookie)]
 [Route("[controller]")]
 public class MoviesController : ControllerBase
 {
@@ -25,7 +25,7 @@ public class MoviesController : ControllerBase
     }
 
     [HttpDelete("{movieName}")]
-    [Authorize(SchemesNamesConsts.Admin)]
+    [Authorize(Schemes.Admin)]
     public async Task<IActionResult> Delete([FromRoute] string movieName, CancellationToken cancellation)
     {
         return Ok(); // TODO

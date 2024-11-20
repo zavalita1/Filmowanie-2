@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Interfaces;
 using FluentValidation;
 

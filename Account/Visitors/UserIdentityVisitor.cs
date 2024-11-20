@@ -1,26 +1,26 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Linq;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Account.Constants;
+using Filmowanie.Account.Interfaces;
 using Filmowanie.Interfaces;
 using Microsoft.AspNetCore.Http;
 
-namespace Filmowanie.Account.Services;
+namespace Filmowanie.Account.Visitors;
 
-public sealed class UserIdentityService : IUserIdentityService
+public sealed class UserIdentityVisitor : IUserIdentityVisitor
 {
     private readonly IHttpContextAccessor _contextAccessor;
 
-    public UserIdentityService(IHttpContextAccessor contextAccessor)
+    public UserIdentityVisitor(IHttpContextAccessor contextAccessor)
     {
         _contextAccessor = contextAccessor;
     }
 
-    public OperationResult<DomainUser> GetCurrentUser<T>(OperationResult<T> operationResult)
+    public OperationResult<DomainUser> Visit<T>(OperationResult<T> operationResult)
     {
-        if (operationResult.Error != null)
-            return new(default, operationResult.Error);
-
         var user = _contextAccessor.HttpContext?.User;
 
         if (user == null)
@@ -34,8 +34,10 @@ public sealed class UserIdentityService : IUserIdentityService
         var hasBasicAuthSetup = bool.Parse(hasBasicAuthSetupLiteral);
         var tenantIdLiteral = user.Claims.Single(x => x.Type == ClaimsTypes.Tenant).Value;
         var tenantId = int.Parse(tenantIdLiteral, CultureInfo.InvariantCulture);
+        var createdLiteral = user.Claims.Single(x => x.Type == ClaimsTypes.Created).Value;
+        var created = DateTime.Parse(createdLiteral, null, DateTimeStyles.RoundtripKind);
 
-        var result = new DomainUser(id, username, isAdmin, hasBasicAuthSetup, tenantId);
+        var result = new DomainUser(id, username, isAdmin, hasBasicAuthSetup, tenantId, created);
         return new OperationResult<DomainUser>(result, null);
     }
 }

@@ -14,7 +14,7 @@ namespace Filmowanie.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(AuthenticationSchemes = SchemesNamesConsts.Cookie)]
+[Authorize(AuthenticationSchemes = Schemes.Cookie)]
 public sealed class UsersController : ControllerBase
 {
     private readonly ILogger<UsersController> _log;
@@ -27,14 +27,14 @@ public sealed class UsersController : ControllerBase
     }
 
     [HttpGet("")]
-    [Authorize(SchemesNamesConsts.Admin)]
+    [Authorize(Schemes.Admin)]
     public async Task<IActionResult> GetUsers(CancellationToken cancel)
     {
         return Ok(); // TODO
     }
 
     [HttpGet("{name}")]
-    [Authorize(SchemesNamesConsts.Admin)]
+    [Authorize(Schemes.Admin)]
     public async Task<IActionResult> GetUser([FromRoute] string name, CancellationToken cancel)
     {
         return Ok(); // TODO
@@ -42,7 +42,7 @@ public sealed class UsersController : ControllerBase
 
     // TODO add mappers layer
     [HttpPost("{userName}")]
-    [Authorize(SchemesNamesConsts.Admin)]
+    [Authorize(Schemes.Admin)]
     public async Task<IActionResult> AddUser([FromRoute]string userName, CancellationToken cancel)
     {
         return Ok(); // TODO

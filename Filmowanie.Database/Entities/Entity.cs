@@ -10,4 +10,6 @@ public abstract class Entity
     }
 
     public string id { get; set; }
+
+    public DateTime Created { get; set; }
 }

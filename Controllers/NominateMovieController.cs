@@ -12,7 +12,7 @@ using Filmowanie.DTOs.Outgoing;
 namespace Filmowanie.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = SchemesNamesConsts.Cookie)]
+[Authorize(AuthenticationSchemes = Schemes.Cookie)]
 [Route("[controller]")]
 public sealed class NominateMovieController : ControllerBase
 {

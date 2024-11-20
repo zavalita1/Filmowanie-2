@@ -3,7 +3,10 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Account.Constants;
+using Filmowanie.Account.Interfaces;
 using Filmowanie.DTOs.Incoming;
 using Filmowanie.Interfaces;
 using Microsoft.AspNetCore.Authentication;
@@ -15,22 +18,26 @@ namespace Filmowanie.Account.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(AuthenticationSchemes = SchemesNamesConsts.Cookie)]
+[Authorize(AuthenticationSchemes = Schemes.Cookie)]
 public sealed class AccountController : ControllerBase
 {
     private readonly ILogger<AccountController> _log;
     private readonly IFluentValidatorAdapterFactory _validatorAdapterFactory;
-    private readonly IAccountService _accountService;
-    private readonly IUserIdentityService _userIdentityService;
-    private readonly IUserMapper _userMapper;
+    private readonly ICodeLoginVisitor _accountVisitor;
+    private readonly IBasicAuthLoginVisitor _basicAuthLoginVisitor;
+    private readonly ISignUpVisitor _signUpVisitor;
+    private readonly IUserIdentityVisitor _userIdentityVisitor;
+    private readonly IUserMapperVisitor _userMapperVisitor;
 
-    public AccountController(ILogger<AccountController> log, IFluentValidatorAdapterFactory validatorAdapterFactory, IAccountService accountService, IUserIdentityService userIdentityService, IUserMapper userMapper)
+    public AccountController(ILogger<AccountController> log, IFluentValidatorAdapterFactory validatorAdapterFactory, ICodeLoginVisitor accountVisitor, IBasicAuthLoginVisitor basicAuthLoginVisitor, ISignUpVisitor signUpVisitor, IUserIdentityVisitor userIdentityVisitor, IUserMapperVisitor userMapperVisitor)
     {
         _log = log;
         _validatorAdapterFactory = validatorAdapterFactory;
-        _accountService = accountService;
-        _userIdentityService = userIdentityService;
-        _userMapper = userMapper;
+        _accountVisitor = accountVisitor;
+        _basicAuthLoginVisitor = basicAuthLoginVisitor;
+        _signUpVisitor = signUpVisitor;
+        _userIdentityVisitor = userIdentityVisitor;
+        _userMapperVisitor = userMapperVisitor;
     }
 
     [HttpPost("login/code")]
@@ -39,20 +46,21 @@ public sealed class AccountController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginDto dto, CancellationToken cancel)
     {
         var validator = _validatorAdapterFactory.GetAdapter<LoginDto>();
-        var validationResult = validator.Validate(dto);
 
-        var codeResult = validationResult.Pluck(x => x.Code);
-        var result = await _accountService.LoginAsync(codeResult, cancel);
+        var result =  await validator.Validate(dto)
+            .Pluck(x => x.Code)
+            .AcceptAsync(_accountVisitor, cancel);
 
-        await result.InvokeAsync(async (r, _) =>
+        await result.AcceptAsync(async (r, _) =>
         {
             _log.LogInformation("Logging in...");
-            await HttpContext.SignInAsync(SchemesNamesConsts.Cookie, new ClaimsPrincipal(r.Identity), result.Result.AuthenticationProperties);
+            await HttpContext.SignInAsync(Schemes.Cookie, new ClaimsPrincipal(r.Identity), result.Result.AuthenticationProperties);
             _log.LogInformation("Logged in!");
         }, cancel);
 
-        var loggedInUser = _userIdentityService.GetCurrentUser(result);
-        var resultDto = _userMapper.Map(loggedInUser);
+        var resultDto = result
+            .Accept(_userIdentityVisitor)
+            .Accept(_userMapperVisitor);
 
         return UnwrapOperationResult(resultDto);
     }
@@ -63,20 +71,21 @@ public sealed class AccountController : ControllerBase
     public async Task<IActionResult> LoginBasic([FromBody] BasicAuthLoginDto dto, CancellationToken cancel)
     {
         var validator = _validatorAdapterFactory.GetAdapter<BasicAuthLoginDto>(KeyedServices.LoginViaBasicAuthKey);
-        var validationResult = validator.Validate(dto);
-        var basicAuthResult = validationResult.Pluck(x => new BasicAuth(x.Email, x.Password));
+        var result = await validator
+            .Validate(dto)
+            .Pluck(x => new BasicAuth(x.Email, x.Password))
+            .AcceptAsync(_basicAuthLoginVisitor, cancel);
 
-        var result = await _accountService.LoginAsync(basicAuthResult, cancel);
-
-        await result.InvokeAsync(async (r, _) =>
+        await result.AcceptAsync(async (r, _) =>
         {
             _log.LogInformation("Logging in...");
-            await HttpContext.SignInAsync(SchemesNamesConsts.Cookie, new ClaimsPrincipal(r.Identity), result.Result.AuthenticationProperties);
+            await HttpContext.SignInAsync(Schemes.Cookie, new ClaimsPrincipal(r.Identity), result.Result.AuthenticationProperties);
             _log.LogInformation("Logged in!");
         }, cancel);
 
-        var loggedInUser = _userIdentityService.GetCurrentUser(result);
-        var resultDto = _userMapper.Map(loggedInUser);
+        var resultDto = result
+            .Accept(_userIdentityVisitor)
+            .Accept(_userMapperVisitor);
 
         return UnwrapOperationResult(resultDto);
     }
@@ -87,15 +96,13 @@ public sealed class AccountController : ControllerBase
     public async Task<IActionResult> SignUp([FromBody] BasicAuthLoginDto dto, CancellationToken cancel)
     {
         var validator = _validatorAdapterFactory.GetAdapter<BasicAuthLoginDto>(KeyedServices.SignUpBasicAuth);
-        var validationResult = validator.Validate(dto);
-        var basicAuthResult = validationResult.Pluck(x => new BasicAuth(x.Email, x.Password));
-        var loggedInUser = _userIdentityService.GetCurrentUser(basicAuthResult);
-        var mergedResult = basicAuthResult.Merge(loggedInUser);
-
-        var result = await _accountService.SignUpAsync(mergedResult, cancel);
-        var newMergedResult = result.Merge(loggedInUser);
-        loggedInUser = newMergedResult.Pluck(x => x.Item2);
-        var resultDto = _userMapper.Map(loggedInUser);
+        var basicAuthResult = validator.Validate(dto).Pluck(x => new BasicAuth(x.Email, x.Password));
+        var resultDto = (await basicAuthResult
+                .Accept(_userIdentityVisitor)
+                .Merge(basicAuthResult)
+                .AcceptAsync(_signUpVisitor, cancel))
+            .Accept(_userIdentityVisitor)
+            .Accept(_userMapperVisitor);
 
         return UnwrapOperationResult(resultDto);
     }
@@ -104,7 +111,7 @@ public sealed class AccountController : ControllerBase
     public async Task<IActionResult> Logout(CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        await HttpContext.SignOutAsync(SchemesNamesConsts.Cookie);
+        await HttpContext.SignOutAsync(Schemes.Cookie);
         return Ok();
     }
 
@@ -113,8 +120,10 @@ public sealed class AccountController : ControllerBase
     [Produces<DTOs.Outgoing.UserDTO>]
     public Task<IActionResult> Get(CancellationToken cancel)
     {
-        var loggedInUser = _userIdentityService.GetCurrentUser(OperationHelper.Empty);
-        var resultDto = _userMapper.Map(loggedInUser);
+        var resultDto = OperationResultExtensions
+            .Empty
+            .Accept(_userIdentityVisitor)
+            .Accept(_userMapperVisitor);
 
         return Task.FromResult(UnwrapOperationResult(resultDto));
     }

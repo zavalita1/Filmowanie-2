@@ -41,9 +41,9 @@ builder.Services.AddControllers(o =>
 builder.Services
     .AddAuthentication(o =>
     {
-        o.DefaultScheme = SchemesNamesConsts.Cookie;
+        o.DefaultScheme = Schemes.Cookie;
     })
-    .AddCookie(SchemesNamesConsts.Cookie, o =>
+    .AddCookie(Schemes.Cookie, o =>
     {
         o.Events.OnRedirectToLogin = context =>
         {
@@ -74,7 +74,7 @@ builder.Services.AddDbContext<IdentityDbContext>(options =>
     options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
 
 builder.Services.AddAuthorization(o =>
-    o.AddPolicy(SchemesNamesConsts.Admin, policy => policy.AddRequirements(new AdminAccessRequirement())));
+    o.AddPolicy(Schemes.Admin, policy => policy.AddRequirements(new AdminAccessRequirement())));
 
 var dataProtectionBuilder = builder.Services.AddDataProtection().SetApplicationName("filmowanie2");
 

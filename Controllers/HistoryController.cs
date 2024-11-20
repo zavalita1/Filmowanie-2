@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Filmowanie.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = SchemesNamesConsts.Cookie)]
+[Authorize(AuthenticationSchemes = Schemes.Cookie)]
 [Route("[controller]")]
 public class HistoryController : ControllerBase
 {

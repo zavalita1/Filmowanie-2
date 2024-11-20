@@ -1,16 +1,14 @@
 ﻿using Filmowanie.Abstractions;
+using Filmowanie.Account.Interfaces;
 using Filmowanie.DTOs.Outgoing;
 using Filmowanie.Interfaces;
 
-namespace Filmowanie.Account.Mappers;
+namespace Filmowanie.Account.Visitors;
 
-public sealed class UserMapper : IUserMapper
+public sealed class UserMapperVisitor : IUserMapperVisitor
 {
-    public OperationResult<UserDTO> Map(OperationResult<DomainUser> user)
+    public OperationResult<UserDTO> Visit(OperationResult<DomainUser> user)
     {
-        if (user.Error != null)
-            return new OperationResult<UserDTO>(default, user.Error);
-
         var userDto = new UserDTO(user.Result.Username, user.Result.IsAdmin, user.Result.HasBasicAuthSetup);
         return new OperationResult<UserDTO>(userDto, null);
     }
