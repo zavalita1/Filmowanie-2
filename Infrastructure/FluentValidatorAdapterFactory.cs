@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Filmowanie.Interfaces;
+using Filmowanie.Abstractions.Interfaces;
 using FluentValidation;
 
 namespace Filmowanie.Infrastructure;

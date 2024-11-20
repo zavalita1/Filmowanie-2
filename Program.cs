@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Filmowanie;
 using Filmowanie.Account.Constants;
+using Filmowanie.Account.Interfaces;
 using Filmowanie.Controllers;
 using Filmowanie.Database.Contexts;
-using Filmowanie.Handlers;
+using Filmowanie.DTOs.Incoming;
+using Filmowanie.Extensions;
+using Filmowanie.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,12 +37,6 @@ builder.Logging.AddDebug();
 
 builder.Services.AddSpaStaticFiles(so => so.RootPath = "ClientApp/build");
 // TODO builder.Services.AddSignalR();
-
-builder.Services.AddControllers(o =>
-{
-    o.Filters.Add<LoggingActionFilter>();
-}).AddJsonOptions(o => o.JsonSerializerOptions.PropertyNameCaseInsensitive = true);
-
 
 builder.Services
     .AddAuthentication(o =>
@@ -73,65 +73,47 @@ var dbConnectionString = builder.Configuration["dbConnectionString"]!;
 builder.Services.AddDbContext<IdentityDbContext>(options =>
     options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
 
-builder.Services.AddAuthorization(o =>
-    o.AddPolicy(Schemes.Admin, policy => policy.AddRequirements(new AdminAccessRequirement())));
-
 var dataProtectionBuilder = builder.Services.AddDataProtection().SetApplicationName("filmowanie2");
 
 if (environment != Environment.Development)
     dataProtectionBuilder.PersistKeysToDbContext<IdentityDbContext>();
 
-
-if (environment != Environment.Development)
-{
-}
-
-RegisterServices.RegisterCustomServices(builder.Services, builder.Configuration, environment);
-builder.Services.AddControllers();
+builder.Services.RegisterPolicies();
+builder.Services.RegisterCustomServices(builder.Configuration, environment);
 
 // TODO database integration
 var app = builder.Build();
-if (environment != Environment.Production)
+if (environment != Environment.Development)
 {
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    app.UseSpaStaticFiles();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseSpaStaticFiles();
+var apiGroup = app.MapGroup("api");
+apiGroup.AddEndpointFilter<LoggingActionFilter>();
 
-app.UseRouting();
+var accountRoutesBuilder = apiGroup.MapGroup("account");
 
-app.UseAuthorization();
-app.UseAuthentication();
+accountRoutesBuilder.MapPost("login/code", ([FromServices] IAccountRoutes routes, [FromBody] LoginDto dto, CancellationToken ct) => routes.Login(dto, ct));
+accountRoutesBuilder.MapPost("login/basic", ([FromServices] IAccountRoutes routes, [FromBody] BasicAuthLoginDto dto, CancellationToken ct) => routes.LoginBasic(dto, ct));
+accountRoutesBuilder.MapPost("signup", ([FromServices] IAccountRoutes routes, [FromBody] BasicAuthLoginDto dto, CancellationToken ct) => routes.SignUp(dto, ct));
+accountRoutesBuilder.MapPost("logout", ([FromServices] IAccountRoutes routes, CancellationToken ct) => routes.Logout(ct)).RequireAuthorization(Schemes.Cookie);
+accountRoutesBuilder.MapGet("", ([FromServices] IAccountRoutes routes, CancellationToken ct) => routes.Get(ct)).RequireAuthorization();//.RequireAuthorization("admin");
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller}/{action=Index}/{id?}");
-});
+app.UseWhen(
+    context => !context.Request.Path.StartsWithSegments("/api"),
+    then => then.UseSpa(spa =>
+        {
+            spa.Options.SourcePath = "ClientApp";
 
-
-app.UseSpa(spa =>
-{
-    spa.Options.SourcePath = "ClientApp";
-
-    if (environment != Environment.Production)
-    {
-        spa.UseReactDevelopmentServer(npmScript: "start");
-    }
-});
-
+            if (environment != Environment.Production)
+            {
+                spa.UseReactDevelopmentServer(npmScript: "start");
+            }
+        }
+    ));
 
 //// TODO configure signalr hubs
-//app.MapGet("getUser", () => "user");
 
 // UsersCache.HydrateCache(); TODO
- 
+
 app.Run();

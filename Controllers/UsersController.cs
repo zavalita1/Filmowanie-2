@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Threading;
 using Filmowanie.Account.Constants;
 using Filmowanie.DTOs.Outgoing;
-using Filmowanie.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Filmowanie.Controllers;

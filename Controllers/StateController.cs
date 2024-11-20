@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
 using Filmowanie.Account.Constants;
-using Filmowanie.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SignalR;

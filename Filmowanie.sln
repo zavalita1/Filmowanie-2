@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Database", "Film
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Abstractions", "Filmowanie.Abstractions\Filmowanie.Abstractions.csproj", "{23A60AA0-6F2A-4EC7-BD97-2A1B067165B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Account", "Filmowanie.Account\Filmowanie.Account.csproj", "{8E09751C-86C7-4BD8-9117-5C599777CD84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{23A60AA0-6F2A-4EC7-BD97-2A1B067165B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23A60AA0-6F2A-4EC7-BD97-2A1B067165B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23A60AA0-6F2A-4EC7-BD97-2A1B067165B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E09751C-86C7-4BD8-9117-5C599777CD84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E09751C-86C7-4BD8-9117-5C599777CD84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E09751C-86C7-4BD8-9117-5C599777CD84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E09751C-86C7-4BD8-9117-5C599777CD84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

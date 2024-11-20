@@ -2,7 +2,7 @@
 using System.Linq;
 using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Interfaces;
+using Filmowanie.Abstractions.Interfaces;
 using FluentValidation;
 
 namespace Filmowanie.Infrastructure;

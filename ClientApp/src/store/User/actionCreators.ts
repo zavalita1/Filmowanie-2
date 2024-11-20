@@ -21,7 +21,7 @@ const login = (code: string): AppThunkAction<UserAction | AppAction> => (dispatc
         return;
     }).build();
 
-    fetchWrapper<any>('account/login/code', fetchOptions).then(response => {
+    fetchWrapper<any>('api/account/login/code', fetchOptions).then(response => {
         if (response === undefined){
             return;
         }
@@ -51,7 +51,7 @@ const basicLogin = (mail: string, password: string): AppThunkAction<UserAction |
         return;
     }).build();
 
-    fetchWrapper<any>('account/login/basic', fetchOptions).then(response => {
+    fetchWrapper<any>('api/account/login/basic', fetchOptions).then(response => {
         if (response === undefined){
             return;
         }
@@ -85,7 +85,7 @@ const signUp = (mail:string, password: string) : AppThunkAction<UserAction | App
         return;
     }).build();
 
-    fetchWrapper<any>('account/signup', fetchOptions).then(response => {
+    fetchWrapper<any>('api/account/signup', fetchOptions).then(response => {
         // TODO mapping
         const userClaims : IUser = {...response};
         setUser(userClaims, dispatch);
@@ -95,7 +95,7 @@ const signUp = (mail:string, password: string) : AppThunkAction<UserAction | App
 const getUser = (init?: boolean): AppThunkAction<UserAction | AppAction> => (dispatch, getState) => {
     dispatch({ type: 'LOGGING' });
     const fetchWrapper = fetchWrapperBuilder().build();
-    fetchWrapper<any>('account').then(response => {
+    fetchWrapper<any>('api/account').then(response => {
         // TODO mapping
         const userClaims : IUser = {...response};
         setUser(userClaims, dispatch);
@@ -112,7 +112,7 @@ const setUser = (user: IUser, dispatch: (action: UserAction | AppAction) => void
 const loggedOut = () => ({type: 'UNLOGGED'} as UnloggedAction);
 
 const logOut = () : AppThunkAction<UnloggedAction> => async (dispatch, getState) => {
-    await fetch('account/logout', { method: 'POST' });
+    await fetch('api/account/logout', { method: 'POST' });
     dispatch({ type: 'UNLOGGED'});
 }
 
