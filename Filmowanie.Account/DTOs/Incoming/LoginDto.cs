@@ -1,3 +1,3 @@
-﻿namespace Filmowanie.DTOs.Incoming;
+﻿namespace Filmowanie.Account.DTOs.Incoming;
 
 public sealed record LoginDto(string Code);

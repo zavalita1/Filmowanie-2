@@ -29,17 +29,21 @@
 
 	<ItemGroup>
 		<!-- Don't publish the SPA source files, but do show them in the project files list -->
+		<Compile Remove="Constants\**" />
 		<Compile Remove="Filmowanie.Abstractions\**" />
 		<Compile Remove="Filmowanie.Account\**" />
 		<Compile Remove="Filmowanie.Database\**" />
 		<Content Remove="$(SpaRoot)**" />
+		<Content Remove="Constants\**" />
 		<Content Remove="Filmowanie.Abstractions\**" />
 		<Content Remove="Filmowanie.Account\**" />
 		<Content Remove="Filmowanie.Database\**" />
+		<EmbeddedResource Remove="Constants\**" />
 		<EmbeddedResource Remove="Filmowanie.Abstractions\**" />
 		<EmbeddedResource Remove="Filmowanie.Account\**" />
 		<EmbeddedResource Remove="Filmowanie.Database\**" />
 		<None Remove="$(SpaRoot)**" />
+		<None Remove="Constants\**" />
 		<None Remove="Filmowanie.Abstractions\**" />
 		<None Remove="Filmowanie.Account\**" />
 		<None Remove="Filmowanie.Database\**" />
@@ -50,10 +54,6 @@
 	  <ProjectReference Include="Filmowanie.Abstractions\Filmowanie.Abstractions.csproj" />
 	  <ProjectReference Include="Filmowanie.Account\Filmowanie.Account.csproj" />
 	  <ProjectReference Include="Filmowanie.Database\Filmowanie.Database.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Constants\" />
 	</ItemGroup>
 
 	<Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

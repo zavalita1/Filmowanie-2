@@ -9,5 +9,6 @@ public enum ErrorType
     IncomingDataIssue = 200,
     ValidationError = 300,
     Canceled = 400,
-    AuthorizationIssue = 500,
+    AuthorizationIssue2 = 500,
+    AuthenticationIssue = 600,
 }

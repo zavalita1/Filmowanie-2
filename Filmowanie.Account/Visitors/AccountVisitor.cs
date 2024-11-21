@@ -6,6 +6,7 @@ using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Results;
 using Filmowanie.Database.Entities;
+using Filmowanie.Database.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -76,15 +77,14 @@ public sealed class AccountVisitor : ICodeLoginVisitor, IBasicAuthLoginVisitor, 
     private static OperationResult<LoginResultData> GetInvalidCredentialsError() => new(default, new Error("Invalid credentials", ErrorType.IncomingDataIssue));
 
   
-    private static OperationResult<LoginResultData> GetIdentity(UserEntity user)
+    private static OperationResult<LoginResultData> GetIdentity(IReadOnlyUserEntity user)
     {
         var hasBasicAuth = !string.IsNullOrEmpty(user.PasswordHash);
         var claims = new[]
         {
             new Claim(ClaimsTypes.UserName, user.Username),
-            new Claim(ClaimsTypes.UserId, user.id),
+            new Claim(ClaimsTypes.UserId, user.Id),
             new Claim(ClaimsTypes.IsAdmin, user.IsAdmin.ToString(CultureInfo.InvariantCulture)),
-            new Claim(ClaimsTypes.Code, user.Code),
             new Claim(ClaimsTypes.Tenant, user.TenantId.ToString()),
             new Claim(ClaimsTypes.HasBasicAuth, hasBasicAuth.ToString(CultureInfo.InvariantCulture)),
             new Claim(ClaimsTypes.Created, user.Created.ToString("O")),

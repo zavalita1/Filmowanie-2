@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.Constants;
-using Filmowanie.DTOs.Incoming;
+using Filmowanie.Account.DTOs.Incoming;
 using FluentValidation;
 
 namespace Filmowanie.Account.Validators;

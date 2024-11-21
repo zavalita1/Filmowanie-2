@@ -1,5 +1,8 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.Providers;
 using Filmowanie.Account.Extensions;
+using Filmowanie.Database.Interfaces;
+using Filmowanie.Database.Repositories;
 using Filmowanie.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +17,11 @@ public static class RegisterServices
     {
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IFluentValidatorAdapterFactory, FluentValidatorAdapterFactory>();
-        
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
+        services.AddScoped<IUsersQueryRepository, UsersQueryRepository>();
+        services.AddScoped<IUsersCommandRepository, UsersCommandRepository>();
+
         services.RegisterAccountDomain();
     }
 }

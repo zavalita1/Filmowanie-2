@@ -7,7 +7,7 @@ public static class OperationResultExtensions
     public static OperationResult<T> CancelledOperation<T>() => new(default!, new Error("Operation canceled.", ErrorType.Canceled));
 
     public static OperationResult<TNext> Pluck<TNext, TPrevious>(this OperationResult<TPrevious> operationResult, Func<TPrevious, TNext> selector) =>
-        operationResult.Error == null? new (default!, operationResult.Error) : new(selector.Invoke(operationResult.Result), operationResult.Error);
+        operationResult.Error != null? new (default!, operationResult.Error) : new(selector.Invoke(operationResult.Result), null);
 
     public static async Task<OperationResult<TNext>> AcceptAsync<TPrevious, TNext>(this OperationResult<TPrevious> operationResult, Func<TPrevious, CancellationToken, Task<TNext>> inlineVisitor, CancellationToken cancellationToken)
     {

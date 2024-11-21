@@ -95,10 +95,11 @@ function Admin(props: AdminProps): any {
     function createUser(name: string) {
         const fetchOptions = { 
             method: "POST", 
-            headers: { 'content-type': 'application/json;charset=UTF-8', } 
+            headers: { 'content-type': 'application/json;charset=UTF-8', },
+            body: JSON.stringify({ Id: name, DisplayName: name }) // TODO
         };
     
-        fetch(`users/${name}`, fetchOptions)
+        fetch(`api/accountAdmin/addUser`, fetchOptions)
         .then(() => props.setError(`user ${name} created!`))
         .catch(() => props.setError("failed to create user :("))
         .finally(() => setReloadUsers(v => !v));

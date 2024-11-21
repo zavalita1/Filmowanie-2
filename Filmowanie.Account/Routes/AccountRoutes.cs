@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
 using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.Constants;
+using Filmowanie.Account.DTOs.Incoming;
+using Filmowanie.Account.Helpers;
 using Filmowanie.Account.Interfaces;
-using Filmowanie.DTOs.Incoming;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -55,12 +55,12 @@ public sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return UnwrapOperationResult(resultDto);
+        return RoutesResultHelper.UnwrapOperationResult(resultDto);
     }
 
-    public async Task<IResult> LoginBasic([FromBody] BasicAuthLoginDto dto, CancellationToken cancel)
+    public async Task<IResult> LoginBasic([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterFactory.GetAdapter<BasicAuthLoginDto>(KeyedServices.LoginViaBasicAuthKey);
+        var validator = _validatorAdapterFactory.GetAdapter<BasicAuthLoginDTO>(KeyedServices.LoginViaBasicAuthKey);
         var result = await validator
             .Validate(dto)
             .Pluck(x => new BasicAuth(x.Email, x.Password))
@@ -77,12 +77,12 @@ public sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return UnwrapOperationResult(resultDto);
+        return RoutesResultHelper.UnwrapOperationResult(resultDto);
     }
 
-    public async Task<IResult> SignUp([FromBody] BasicAuthLoginDto dto, CancellationToken cancel)
+    public async Task<IResult> SignUp([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterFactory.GetAdapter<BasicAuthLoginDto>(KeyedServices.SignUpBasicAuth);
+        var validator = _validatorAdapterFactory.GetAdapter<BasicAuthLoginDTO>(KeyedServices.SignUpBasicAuth);
         var basicAuthResult = validator.Validate(dto).Pluck(x => new BasicAuth(x.Email, x.Password));
         var resultDto = (await basicAuthResult
                 .Accept(_userIdentityVisitor)
@@ -91,7 +91,7 @@ public sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return UnwrapOperationResult(resultDto);
+        return RoutesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> Logout(CancellationToken cancel)
@@ -108,29 +108,8 @@ public sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return Task.FromResult(UnwrapOperationResult(resultDto));
+        return Task.FromResult(RoutesResultHelper.UnwrapOperationResult(resultDto));
     }
 
-    private static IResult UnwrapOperationResult<T>(OperationResult<T> result)
-    {
-        if (result.Error == null)
-            return TypedResults.Ok(result.Result);
-
-        const string separator = ", ";
-
-        IResult? unwrapped = result.Error!.Value.Type switch
-        {
-            ErrorType.IncomingDataIssue => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.Concat(separator)),
-            ErrorType.ValidationError => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.Concat(separator)),
-            ErrorType.AuthorizationIssue => TypedResults.Unauthorized(),
-            ErrorType.Canceled => TypedResults.StatusCode(499),
-            _ => null
-        };
-
-        if (unwrapped != null)
-            return unwrapped;
-
-        throw new InvalidOperationException($"Erroneous result! {result.Error.Value.ErrorMessages.Concat(separator)}.");
-    }
+    
 }
-

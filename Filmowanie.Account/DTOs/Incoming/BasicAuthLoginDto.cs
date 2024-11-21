@@ -1,3 +1,3 @@
-﻿namespace Filmowanie.DTOs.Incoming;
+﻿namespace Filmowanie.Account.DTOs.Incoming;
 
-public sealed record BasicAuthLoginDto(string Email, string Password);
+public sealed record BasicAuthLoginDTO(string Email, string Password);

@@ -9,5 +9,5 @@ public interface IFluentValidatorAdapter<TInput>
 
 public interface IFluentValidatorAdapter
 {
-    public bool CanHandle<T>(string key, out IValidator<T> typedValidator);
+    public bool CanHandle<T>(string key, out IValidator<T>? typedValidator);
 }

@@ -1,5 +1,5 @@
 ﻿using Filmowanie.Account.Constants;
-using Filmowanie.DTOs.Incoming;
+using Filmowanie.Account.DTOs.Incoming;
 using FluentValidation;
 
 namespace Filmowanie.Account.Validators;
@@ -10,12 +10,12 @@ public class BasicAuthSignupValidator : BasicAuthValidator
 
     public BasicAuthSignupValidator()
     {
-        RuleFor(x => x.Password).Must(x => x.Length >= MinimalPasswordLength).WithMessage($"{nameof(BasicAuthLoginDto.Password)} must have {MinimalPasswordLength} characters or more");
+        RuleFor(x => x.Password).Must(x => x.Length >= MinimalPasswordLength).WithMessage($"{nameof(BasicAuthLoginDTO.Password)} must have {MinimalPasswordLength} characters or more");
     }
 
-    public override bool CanHandle<T>(string key, out IValidator<T> typedValidator)
+    public override bool CanHandle<T>(string key, out IValidator<T>? typedValidator)
     {
-        var result = typeof(T) == typeof(BasicAuthLoginDto) && key.Equals(KeyedServices.SignUpBasicAuth);
+        var result = typeof(T) == typeof(BasicAuthLoginDTO) && key.Equals(KeyedServices.SignUpBasicAuth);
         typedValidator = result ? (IValidator<T>)this : null;
 
         return result;

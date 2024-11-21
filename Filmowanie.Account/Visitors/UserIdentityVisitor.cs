@@ -21,9 +21,9 @@ public sealed class UserIdentityVisitor : IUserIdentityVisitor
         var user = _contextAccessor.HttpContext?.User;
 
         if (user == null || user.Identity?.IsAuthenticated != true)
-            return new OperationResult<DomainUser>(default, new Error("User is not logged in!", ErrorType.AuthorizationIssue));
+            return new OperationResult<DomainUser>(default, new Error("User is not logged in!", ErrorType.AuthenticationIssue));
 
-        var id = user.Claims.Single(x => x.Type == ClaimsTypes.Id).Value;
+        var id = user.Claims.Single(x => x.Type == ClaimsTypes.UserId).Value;
         var username = user.Claims.Single(x => x.Type == ClaimsTypes.UserName).Value;
         var isAdminLiteral = user.Claims.Single(x => x.Type == ClaimsTypes.IsAdmin).Value;
         var isAdmin = bool.Parse(isAdminLiteral);

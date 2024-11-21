@@ -2,7 +2,7 @@
 
 namespace Filmowanie.Abstractions;
 
-public readonly record struct OperationResult<T>(T Result, Error? Error);
+public readonly record struct OperationResult<T>(T? Result, Error? Error);
 
 public readonly record struct Error(IEnumerable<string> ErrorMessages, ErrorType Type)
 {

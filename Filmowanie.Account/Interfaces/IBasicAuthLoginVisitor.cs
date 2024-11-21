@@ -3,4 +3,4 @@ using Filmowanie.Account.Results;
 
 namespace Filmowanie.Account.Interfaces;
 
-public interface ICodeLoginVisitor : IOperationAsyncVisitor<string, LoginResultData>;
+public interface IBasicAuthLoginVisitor : IOperationAsyncVisitor<BasicAuth, LoginResultData>;

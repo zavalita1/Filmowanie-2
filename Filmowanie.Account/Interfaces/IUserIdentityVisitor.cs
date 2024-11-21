@@ -2,5 +2,4 @@
 
 namespace Filmowanie.Account.Interfaces;
 
-public interface IUserIdentityVisitor : IOperationVisitor<DomainUser>
-{ }
+public interface IUserIdentityVisitor : IOperationVisitor<DomainUser>;

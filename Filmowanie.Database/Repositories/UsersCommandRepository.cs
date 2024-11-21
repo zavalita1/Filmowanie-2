@@ -1,10 +1,10 @@
 ﻿using Filmowanie.Abstractions;
-using Filmowanie.Account.Interfaces;
 using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Entities;
+using Filmowanie.Database.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Filmowanie.Account.Repositories;
+namespace Filmowanie.Database.Repositories;
 
 public sealed class UsersCommandRepository : IUsersCommandRepository
 {
@@ -15,7 +15,7 @@ public sealed class UsersCommandRepository : IUsersCommandRepository
         _identityDbContext = identityDbContext;
     }
 
-    public async Task<UserEntity> UpdatePasswordAndMail(string id, BasicAuth newData, CancellationToken cancellationToken)
+    public async Task<IReadOnlyUserEntity> UpdatePasswordAndMail(string id, BasicAuth newData, CancellationToken cancellationToken)
     {
         var user = await _identityDbContext.Users.SingleAsync(x => x.Code == id, cancellationToken);
         
@@ -24,5 +24,12 @@ public sealed class UsersCommandRepository : IUsersCommandRepository
 
         await _identityDbContext.SaveChangesAsync(cancellationToken);
         return user;
+    }
+
+    public async Task Insert(IReadOnlyUserEntity entity, CancellationToken cancellation)
+    {
+        var userEntity = new UserEntity(entity);
+        _identityDbContext.Users.Add(userEntity);
+        await _identityDbContext.SaveChangesAsync(cancellation);
     }
 }

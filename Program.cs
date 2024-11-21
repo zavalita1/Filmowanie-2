@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using Filmowanie;
 using Filmowanie.Account.Constants;
-using Filmowanie.Account.Interfaces;
-using Filmowanie.Controllers;
-using Filmowanie.Database.Contexts;
-using Filmowanie.DTOs.Incoming;
+using Filmowanie.Account.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -54,24 +47,11 @@ builder.Services
 
 if (environment == Environment.Production)
 {
-    var keyVaultName = builder.Configuration["KeyVaultName"];
-    var kvUri = $"https://{keyVaultName}.vault.azure.net";
-
-    var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
-    var keyVaultConfigurationProvider = new ConcurrentDictionary<string, string>();
-    var keys = client.GetPropertiesOfSecrets().AsPages().ToArray().SelectMany(x => x.Values);
-    await Parallel.ForEachAsync(keys, async (k, cancel) =>
-    {
-        var secret = await client.GetSecretAsync(k.Name, cancellationToken: cancel);
-        keyVaultConfigurationProvider.AddOrUpdate(k.Name, secret.Value.Value, (_, _) => throw new NotSupportedException("Secret names must be unique!"));
-    });
-    builder.Configuration.AddInMemoryCollection(keyVaultConfigurationProvider);
+    await SetupKeyVaultAsync(builder);
 }
 
-
 var dbConnectionString = builder.Configuration["dbConnectionString"]!;
-builder.Services.AddDbContext<IdentityDbContext>(options =>
-    options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
+builder.Services.AddDbContext<IdentityDbContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
 
 var dataProtectionBuilder = builder.Services.AddDataProtection().SetApplicationName("filmowanie2");
 
@@ -90,14 +70,7 @@ if (environment != Environment.Development)
 
 var apiGroup = app.MapGroup("api");
 apiGroup.AddEndpointFilter<LoggingActionFilter>();
-
-var accountRoutesBuilder = apiGroup.MapGroup("account");
-
-accountRoutesBuilder.MapPost("login/code", ([FromServices] IAccountRoutes routes, [FromBody] LoginDto dto, CancellationToken ct) => routes.Login(dto, ct));
-accountRoutesBuilder.MapPost("login/basic", ([FromServices] IAccountRoutes routes, [FromBody] BasicAuthLoginDto dto, CancellationToken ct) => routes.LoginBasic(dto, ct));
-accountRoutesBuilder.MapPost("signup", ([FromServices] IAccountRoutes routes, [FromBody] BasicAuthLoginDto dto, CancellationToken ct) => routes.SignUp(dto, ct));
-accountRoutesBuilder.MapPost("logout", ([FromServices] IAccountRoutes routes, CancellationToken ct) => routes.Logout(ct)).RequireAuthorization(Schemes.Cookie);
-accountRoutesBuilder.MapGet("", ([FromServices] IAccountRoutes routes, CancellationToken ct) => routes.Get(ct)).RequireAuthorization();//.RequireAuthorization("admin");
+apiGroup.RegisterAccountRoutes();
 
 app.UseWhen(
     context => !context.Request.Path.StartsWithSegments("/api"),
@@ -113,7 +86,21 @@ app.UseWhen(
     ));
 
 //// TODO configure signalr hubs
-
-// UsersCache.HydrateCache(); TODO
-
 app.Run();
+return;
+
+async Task SetupKeyVaultAsync(WebApplicationBuilder webApplicationBuilder)
+{
+    var keyVaultName = webApplicationBuilder.Configuration["KeyVaultName"];
+    var kvUri = $"https://{keyVaultName}.vault.azure.net";
+
+    var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+    var keyVaultConfigurationProvider = new ConcurrentDictionary<string, string>();
+    var keys = client.GetPropertiesOfSecrets().AsPages().ToArray().SelectMany(x => x.Values);
+    await Parallel.ForEachAsync(keys, async (k, cancel) =>
+    {
+        var secret = await client.GetSecretAsync(k.Name, cancellationToken: cancel);
+        keyVaultConfigurationProvider.AddOrUpdate(k.Name, secret.Value.Value, (_, _) => throw new NotSupportedException("Secret names must be unique!"));
+    });
+    webApplicationBuilder.Configuration.AddInMemoryCollection(keyVaultConfigurationProvider);
+}

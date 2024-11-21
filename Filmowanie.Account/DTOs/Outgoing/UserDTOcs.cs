@@ -1,3 +1,3 @@
-﻿namespace Filmowanie.DTOs.Outgoing;
+﻿namespace Filmowanie.Account.DTOs.Outgoing;
 
-public sealed record UserDTO(string Name, bool IsAdmin, bool HasRegisteredBasicAuth);
+public sealed record UserDTO(string Username, bool IsAdmin, bool HasRegisteredBasicAuth);

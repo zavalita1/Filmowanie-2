@@ -1,6 +1,8 @@
-﻿namespace Filmowanie.Database.Entities;
+﻿using Filmowanie.Database.Interfaces;
 
-public abstract class Entity
+namespace Filmowanie.Database.Entities;
+
+public abstract class Entity : IReadOnlyEntity
 {
     public virtual string Type
     {
@@ -12,4 +14,5 @@ public abstract class Entity
     public string id { get; set; }
 
     public DateTime Created { get; set; }
+    public string Id => id;
 }
