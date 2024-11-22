@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Account.Visitors;
 
-public sealed class UserIdentityVisitor : IUserIdentityVisitor
+internal sealed class UserIdentityVisitor : IUserIdentityVisitor
 {
     private readonly IHttpContextAccessor _contextAccessor;
 

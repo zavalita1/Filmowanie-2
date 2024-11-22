@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace Filmowanie.Account.Validators;
 
-public class LoginCodeValidator : AbstractValidator<LoginDto>, IFluentValidatorAdapter
+internal class LoginCodeValidator : AbstractValidator<LoginDto>, IFluentValidatorAdapter
 {
     public LoginCodeValidator()
     {

@@ -2,5 +2,4 @@
 
 namespace Filmowanie.Account.Interfaces;
 
-public interface IGetAllUsersVisitor : IOperationAsyncVisitor<IEnumerable<DomainUser>>;
-public interface IAddUserVisitor : IOperationAsyncVisitor<DomainUser, object>;
+internal interface IGetAllUsersVisitor : IOperationAsyncVisitor<IEnumerable<DomainUser>>;

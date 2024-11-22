@@ -6,19 +6,18 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Extensions;
+using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Filters;
+using Filmowanie.Voting.Extensions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Environment = Filmowanie.Enums.Environment;
-using IdentityDbContext = Filmowanie.Database.Contexts.IdentityDbContext;
+using Environment = Filmowanie.Abstractions.Enums.Environment;
 
 var builder = WebApplication
     .CreateBuilder(args);
@@ -50,16 +49,9 @@ if (environment == Environment.Production)
     await SetupKeyVaultAsync(builder);
 }
 
-var dbConnectionString = builder.Configuration["dbConnectionString"]!;
-builder.Services.AddDbContext<IdentityDbContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
-
-var dataProtectionBuilder = builder.Services.AddDataProtection().SetApplicationName("filmowanie2");
-
-if (environment != Environment.Development)
-    dataProtectionBuilder.PersistKeysToDbContext<IdentityDbContext>();
-
 builder.Services.RegisterPolicies();
 builder.Services.RegisterCustomServices(builder.Configuration, environment);
+builder.Services.RegisterDatabaseServices(builder.Configuration, environment);
 
 // TODO database integration
 var app = builder.Build();
@@ -71,6 +63,7 @@ if (environment != Environment.Development)
 var apiGroup = app.MapGroup("api");
 apiGroup.AddEndpointFilter<LoggingActionFilter>();
 apiGroup.RegisterAccountRoutes();
+apiGroup.RegisterVotingRoutes();
 
 app.UseWhen(
     context => !context.Request.Path.StartsWithSegments("/api"),
@@ -85,7 +78,7 @@ app.UseWhen(
         }
     ));
 
-//// TODO configure signalr hubs
+// TODO configure signalr hubs
 app.Run();
 return;
 

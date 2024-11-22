@@ -33,20 +33,24 @@
 		<Compile Remove="Filmowanie.Abstractions\**" />
 		<Compile Remove="Filmowanie.Account\**" />
 		<Compile Remove="Filmowanie.Database\**" />
+		<Compile Remove="Filmowanie.Voting\**" />
 		<Content Remove="$(SpaRoot)**" />
 		<Content Remove="Constants\**" />
 		<Content Remove="Filmowanie.Abstractions\**" />
 		<Content Remove="Filmowanie.Account\**" />
 		<Content Remove="Filmowanie.Database\**" />
+		<Content Remove="Filmowanie.Voting\**" />
 		<EmbeddedResource Remove="Constants\**" />
 		<EmbeddedResource Remove="Filmowanie.Abstractions\**" />
 		<EmbeddedResource Remove="Filmowanie.Account\**" />
 		<EmbeddedResource Remove="Filmowanie.Database\**" />
+		<EmbeddedResource Remove="Filmowanie.Voting\**" />
 		<None Remove="$(SpaRoot)**" />
 		<None Remove="Constants\**" />
 		<None Remove="Filmowanie.Abstractions\**" />
 		<None Remove="Filmowanie.Account\**" />
 		<None Remove="Filmowanie.Database\**" />
+		<None Remove="Filmowanie.Voting\**" />
 		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
 	</ItemGroup>
 
@@ -54,6 +58,7 @@
 	  <ProjectReference Include="Filmowanie.Abstractions\Filmowanie.Abstractions.csproj" />
 	  <ProjectReference Include="Filmowanie.Account\Filmowanie.Account.csproj" />
 	  <ProjectReference Include="Filmowanie.Database\Filmowanie.Database.csproj" />
+	  <ProjectReference Include="Filmowanie.Voting\Filmowanie.Voting.csproj" />
 	</ItemGroup>
 
 	<Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

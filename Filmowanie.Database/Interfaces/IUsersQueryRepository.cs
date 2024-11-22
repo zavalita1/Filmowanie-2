@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System.Linq.Expressions;
 using Filmowanie.Database.Entities;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Interfaces;
 

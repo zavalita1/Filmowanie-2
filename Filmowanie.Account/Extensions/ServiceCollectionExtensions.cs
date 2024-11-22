@@ -4,8 +4,6 @@ using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Routes;
 using Filmowanie.Account.Validators;
 using Filmowanie.Account.Visitors;
-using Filmowanie.Database.Interfaces;
-using Filmowanie.Database.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Filmowanie.Account.Extensions;
@@ -30,6 +28,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IUserMapperVisitor, UserDTOMapperVisitor>();
         services.AddScoped<IEnrichUserVisitor, UserDTOMapperVisitor>();
+        services.AddScoped<IUserReverseMapperVisitor, UserDTOMapperVisitor>();
 
         services.AddScoped<IGetAllUsersVisitor, UsersManagementVisitor>();
         services.AddScoped<IAddUserVisitor, UsersManagementVisitor>();

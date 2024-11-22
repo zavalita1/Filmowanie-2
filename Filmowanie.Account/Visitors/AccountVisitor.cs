@@ -5,14 +5,14 @@ using Filmowanie.Abstractions.Enums;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Results;
-using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Account.Visitors;
 
-public sealed class AccountVisitor : ICodeLoginVisitor, IBasicAuthLoginVisitor, ISignUpVisitor
+internal sealed class AccountVisitor : ICodeLoginVisitor, IBasicAuthLoginVisitor, ISignUpVisitor
 {
     private readonly IUsersQueryRepository _usersQueryRepository;
     private readonly IUsersCommandRepository _commandRepository;
@@ -82,7 +82,7 @@ public sealed class AccountVisitor : ICodeLoginVisitor, IBasicAuthLoginVisitor, 
         var hasBasicAuth = !string.IsNullOrEmpty(user.PasswordHash);
         var claims = new[]
         {
-            new Claim(ClaimsTypes.UserName, user.Username),
+            new Claim(ClaimsTypes.UserName, user.DisplayName),
             new Claim(ClaimsTypes.UserId, user.Id),
             new Claim(ClaimsTypes.IsAdmin, user.IsAdmin.ToString(CultureInfo.InvariantCulture)),
             new Claim(ClaimsTypes.Tenant, user.TenantId.ToString()),

@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Database.Interfaces;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Entities;
 

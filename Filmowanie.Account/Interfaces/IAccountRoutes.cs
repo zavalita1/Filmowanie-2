@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Filmowanie.Account.Interfaces;
 
-public interface IAccountRoutes
+internal interface IAccountRoutes
 {
     Task<IResult> Login([FromBody] LoginDto dto, CancellationToken cancel);
     Task<IResult> LoginBasic([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel);

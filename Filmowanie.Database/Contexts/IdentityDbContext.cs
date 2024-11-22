@@ -7,7 +7,7 @@ using Filmowanie.Database.Entities;
 
 namespace Filmowanie.Database.Contexts;
 
-public class IdentityDbContext : DbContext, IDataProtectionKeyContext
+internal class IdentityDbContext : DbContext, IDataProtectionKeyContext
 {
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
     public DbSet<UserEntity> Users { get; set; }

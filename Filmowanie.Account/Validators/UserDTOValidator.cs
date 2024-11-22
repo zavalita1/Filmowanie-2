@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace Filmowanie.Account.Validators;
 
-public class UserDTOValidator : AbstractValidator<UserDTO>, IFluentValidatorAdapter
+internal class UserDTOValidator : AbstractValidator<UserDTO>, IFluentValidatorAdapter
 {
     public UserDTOValidator()
     {

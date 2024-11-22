@@ -19,7 +19,7 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
     private async Task<IEnumerable<DomainUser>> GetAll(CancellationToken cancellation)
     {
         var allEntities = await _usersQueryRepository.GetAllAsync(cancellation);
-        var result = allEntities.Select(x => new DomainUser(x.Id, x.Username, x.IsAdmin, !string.IsNullOrEmpty(x.PasswordHash), x.TenantId, x.Created));
+        var result = allEntities.Select(x => new DomainUser(x.Id, x.DisplayName, x.IsAdmin, !string.IsNullOrEmpty(x.PasswordHash), x.TenantId, x.Created));
         return result;
     }
 
@@ -42,7 +42,7 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
             IsAdmin = domainUser.IsAdmin,
             PasswordHash = null!,
             TenantId = domainUser.TenantId,
-            Username = domainUser.Username
+            DisplayName = domainUser.Username
         };
 
         await _usersCommandRepository.Insert(userEntity, cancellationToken);
@@ -56,7 +56,7 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public string Code { get; set; }
-        public string Username { get; set; }
+        public string DisplayName { get; set; }
         public int TenantId { get; set; }
         public bool IsAdmin { get; set; }
     }

@@ -1,6 +1,4 @@
-﻿using Filmowanie.Database.Interfaces;
-
-namespace Filmowanie.Database.Entities;
+﻿namespace Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 public interface IReadOnlyUserEntity : IReadOnlyEntity
 {
@@ -10,7 +8,7 @@ public interface IReadOnlyUserEntity : IReadOnlyEntity
 
     public string Code { get; set; }
 
-    public string Username { get; set; }
+    public string DisplayName { get; set; }
 
     public int TenantId { get; set; }
 

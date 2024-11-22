@@ -1,4 +1,4 @@
-﻿namespace Filmowanie.Database.Interfaces;
+﻿namespace Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 public interface IReadOnlyEntity
 {

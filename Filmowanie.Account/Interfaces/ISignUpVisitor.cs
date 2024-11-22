@@ -3,4 +3,4 @@ using Filmowanie.Account.Results;
 
 namespace Filmowanie.Account.Interfaces;
 
-public interface ISignUpVisitor : IOperationAsyncVisitor<(DomainUser, BasicAuth), LoginResultData>;
+internal interface ISignUpVisitor : IOperationAsyncVisitor<(DomainUser, BasicAuth), LoginResultData>;

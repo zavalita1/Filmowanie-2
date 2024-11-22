@@ -4,7 +4,7 @@ using Filmowanie.Account.Interfaces;
 
 namespace Filmowanie.Account.Helpers;
 
-public sealed class HashHelper : IHashHelper
+internal sealed class HashHelper : IHashHelper
 {
     private const int SaltCharLength = 16;
 

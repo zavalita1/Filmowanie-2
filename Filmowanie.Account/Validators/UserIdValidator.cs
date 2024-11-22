@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Filmowanie.Account.Validators;
 
-public class UserIdValidator : AbstractValidator<string>, IFluentValidatorAdapter
+internal class UserIdValidator : AbstractValidator<string>, IFluentValidatorAdapter
 {
     private readonly char[] _legalNonAlphanumericChars = [' ', '/', '"', '\'', '/', '_'];
 

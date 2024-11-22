@@ -3,4 +3,4 @@ using Filmowanie.Account.DTOs.Outgoing;
 
 namespace Filmowanie.Account.Interfaces;
 
-public interface IEnrichUserVisitor : IOperationAsyncVisitor<string, DetailedUserDTO>;
+internal interface IEnrichUserVisitor : IOperationAsyncVisitor<string, DetailedUserDTO>;

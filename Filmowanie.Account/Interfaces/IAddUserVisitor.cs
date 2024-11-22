@@ -2,4 +2,4 @@
 
 namespace Filmowanie.Account.Interfaces;
 
-internal interface IUserIdentityVisitor : IOperationVisitor<DomainUser>;
+internal interface IAddUserVisitor : IOperationAsyncVisitor<DomainUser, object>;

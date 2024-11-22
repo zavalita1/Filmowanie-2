@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Account.Routes;
 
-public sealed class AccountRoutes : IAccountRoutes
+internal sealed class AccountRoutes : IAccountRoutes
 {
     private readonly ILogger<AccountRoutes> _log;
     private readonly IFluentValidatorAdapterFactory _validatorAdapterFactory;

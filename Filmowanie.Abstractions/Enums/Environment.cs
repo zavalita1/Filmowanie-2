@@ -1,4 +1,4 @@
-﻿namespace Filmowanie.Enums;
+﻿namespace Filmowanie.Abstractions.Enums;
 
 public enum Environment
 {

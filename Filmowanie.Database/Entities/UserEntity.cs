@@ -1,4 +1,7 @@
-﻿namespace Filmowanie.Database.Entities;
+﻿using Filmowanie.Database.Interfaces;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+
+namespace Filmowanie.Database.Entities;
 
 public class UserEntity : Entity, IReadOnlyUserEntity
 {
@@ -8,7 +11,7 @@ public class UserEntity : Entity, IReadOnlyUserEntity
 
     public virtual string Code { get; set; }
 
-    public virtual string Username { get; set; }
+    public virtual string DisplayName { get; set; }
 
     public virtual int TenantId { get; set; }
 
@@ -22,7 +25,7 @@ public class UserEntity : Entity, IReadOnlyUserEntity
         Email = other.Email;
         PasswordHash = other.PasswordHash;
         Code = other.Code;
-        Username = other.Username;
+        DisplayName = other.DisplayName;
         TenantId = other.TenantId;
         IsAdmin = other.IsAdmin;
         id = other.Id;

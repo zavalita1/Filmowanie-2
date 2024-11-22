@@ -7,7 +7,7 @@ using Filmowanie.Database.Interfaces;
 
 namespace Filmowanie.Account.Visitors;
 
-public sealed class UserDTOMapperVisitor : IUserMapperVisitor, IEnrichUserVisitor, IUserReverseMapperVisitor
+internal sealed class UserDTOMapperVisitor : IUserMapperVisitor, IEnrichUserVisitor, IUserReverseMapperVisitor
 {
     private readonly IUsersQueryRepository _usersRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -32,7 +32,7 @@ public sealed class UserDTOMapperVisitor : IUserMapperVisitor, IEnrichUserVisito
             return new OperationResult<DetailedUserDTO>(default, new Error("User not found!", ErrorType.IncomingDataIssue));
 
         var hasBasicAuthSetup = !string.IsNullOrEmpty(userEntity.PasswordHash);
-        var outgoingDto = new DetailedUserDTO(userEntity.Username, userEntity.IsAdmin, hasBasicAuthSetup, userEntity.TenantId, userEntity.Code);
+        var outgoingDto = new DetailedUserDTO(userEntity.DisplayName, userEntity.IsAdmin, hasBasicAuthSetup, userEntity.TenantId, userEntity.Code);
 
         return new OperationResult<DetailedUserDTO>(outgoingDto, null);
     }

@@ -99,7 +99,7 @@ function Admin(props: AdminProps): any {
             body: JSON.stringify({ Id: name, DisplayName: name }) // TODO
         };
     
-        fetch(`api/accountAdmin/addUser`, fetchOptions)
+        fetch(`api/user`, fetchOptions)
         .then(() => props.setError(`user ${name} created!`))
         .catch(() => props.setError("failed to create user :("))
         .finally(() => setReloadUsers(v => !v));
@@ -109,12 +109,12 @@ function Admin(props: AdminProps): any {
 
 function mapRow(row: UserDTO) {
     return <TableRow
-      key={row.name}
+        key={row.username}
     >
       <TableCell component="th" scope="row">
-        {row.name}
+            {row.username}
       </TableCell>
-      <StyledTableCell align="right"><Button><a href={`users/${row.name}`} className='button-link'>View details</a></Button></StyledTableCell>
+        <StyledTableCell align="right"><Button><a href={`api/user/${row.username}`} className='button-link'>View details</a></Button></StyledTableCell>
     </TableRow>
   }
 
@@ -172,14 +172,14 @@ function loadUsers() {
         headers: { 'content-type': 'application/json;charset=UTF-8', } 
     };
 
-    return fetch("users", fetchOptions)
+    return fetch("api/user/all", fetchOptions)
     .catch(() => alert('cos nie tak'))
     .then(response => response?.json())
     .then(data => data as UserDTO[]);
 }
 
 type UserDTO = {
-    name: string,
+    username: string,
     code: string
 };
 

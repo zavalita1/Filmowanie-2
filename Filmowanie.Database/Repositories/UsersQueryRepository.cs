@@ -2,6 +2,7 @@
 using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Filmowanie.Database.Repositories;

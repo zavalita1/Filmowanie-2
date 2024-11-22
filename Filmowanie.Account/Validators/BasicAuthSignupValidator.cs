@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Filmowanie.Account.Validators;
 
-public class BasicAuthSignupValidator : BasicAuthValidator
+internal class BasicAuthSignupValidator : BasicAuthValidator
 {
     private const int MinimalPasswordLength = 7;
 

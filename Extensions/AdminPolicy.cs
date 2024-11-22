@@ -11,13 +11,9 @@ public static class ServiceCollectionExtensions
             .AddPolicy(Schemes.Admin, policy =>
                 policy
                     .AddAuthenticationSchemes(Schemes.Cookie)
-                    .RequireClaim(ClaimsTypes.IsAdmin, "true"));
-
-        serviceCollection.AddAuthorizationBuilder()
-            .AddPolicy(Schemes.Cookie, policy =>
-                policy
-                    .AddAuthenticationSchemes(Schemes.Cookie)
-                    .RequireClaim(ClaimsTypes.IsAdmin, "true"));
+                    .RequireClaim(ClaimsTypes.IsAdmin, "True")
+                    )
+            ;
 
         return serviceCollection;
     }

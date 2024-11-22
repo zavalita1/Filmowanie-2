@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace Filmowanie.Account.Validators;
 
-public class BasicAuthValidator : AbstractValidator<BasicAuthLoginDTO>, IFluentValidatorAdapter
+internal class BasicAuthValidator : AbstractValidator<BasicAuthLoginDTO>, IFluentValidatorAdapter
 {
     public BasicAuthValidator()
     {
