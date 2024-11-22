@@ -9,6 +9,11 @@ internal class MoviesContext : DbContext
 {
     public DbSet<MovieEntity> Movies { get; set; }
 
+    public MoviesContext(DbContextOptions<MoviesContext> options)
+        : base(options)
+    {
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<MovieEntity>().ToContainer(DbContainerNames.Entities)
