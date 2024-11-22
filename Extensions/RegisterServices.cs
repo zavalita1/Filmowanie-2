@@ -21,9 +21,6 @@ public static class RegisterServices
         services.AddScoped<IFluentValidatorAdapterFactory, FluentValidatorAdapterFactory>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
-        services.AddScoped<IUsersQueryRepository, UsersQueryRepository>();
-        services.AddScoped<IUsersCommandRepository, UsersCommandRepository>();
-
         services.RegisterAccountDomain();
         services.RegisterVotingDomain();
     }
