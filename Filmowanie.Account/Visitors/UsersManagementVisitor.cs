@@ -2,6 +2,7 @@
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Account.Visitors;
 

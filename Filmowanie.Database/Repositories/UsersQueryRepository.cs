@@ -9,7 +9,7 @@ namespace Filmowanie.Database.Repositories;
 
 #nullable enable
 
-public class UsersQueryRepository : IUsersQueryRepository
+internal class UsersQueryRepository : IUsersQueryRepository
 {
     private readonly IdentityDbContext _identityDbContext;
 

@@ -15,6 +15,6 @@ internal sealed class VotingSessionRoutes : IVotingSessionRoutes
 
     public async Task<IResult> GetCurrentVotingSessionMovies(CancellationToken cancel)
     {
-
+        throw new NotSupportedException();
     }
 }

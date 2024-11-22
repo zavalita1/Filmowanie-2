@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Filmowanie.Database.Repositories;
 
-public sealed class UsersCommandRepository : IUsersCommandRepository
+internal sealed class UsersCommandRepository : IUsersCommandRepository
 {
     private readonly IdentityDbContext _identityDbContext;
 
