@@ -24,6 +24,4 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
     public virtual EmbeddedUser NominatedBy { get; set; }
 
     IReadOnlyEmbeddedUser IReadOnlyMovieEntity.NominatedBy => NominatedBy;
-
-    public virtual int TenantId { get; set; }
 }

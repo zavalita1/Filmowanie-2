@@ -1,6 +1,5 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Account.Interfaces;
-using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
@@ -20,7 +19,7 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
     private async Task<IEnumerable<DomainUser>> GetAll(CancellationToken cancellation)
     {
         var allEntities = await _usersQueryRepository.GetAllAsync(cancellation);
-        var result = allEntities.Select(x => new DomainUser(x.Id, x.DisplayName, x.IsAdmin, !string.IsNullOrEmpty(x.PasswordHash), x.TenantId, x.Created));
+        var result = allEntities.Select(x => new DomainUser(x.Id, x.DisplayName, x.IsAdmin, !string.IsNullOrEmpty(x.PasswordHash), new TenantId(x.TenantId), x.Created));
         return result;
     }
 
@@ -42,7 +41,7 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
             Id = domainUser.Id,
             IsAdmin = domainUser.IsAdmin,
             PasswordHash = null!,
-            TenantId = domainUser.TenantId,
+            TenantId = domainUser.Tenant.Id,
             DisplayName = domainUser.Username
         };
 

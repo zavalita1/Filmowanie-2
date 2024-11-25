@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Filmowanie.Abstractions.Enums;
 
-namespace Filmowanie.Database.Entities;
+namespace Filmowanie.Voting.Services;
 
-public class EventEntity : Entity
+internal class VotingPointsCalculator
 {
 }

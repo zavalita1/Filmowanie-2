@@ -13,8 +13,6 @@ public class UserEntity : Entity, IReadOnlyUserEntity
 
     public virtual string DisplayName { get; set; }
 
-    public virtual int TenantId { get; set; }
-
     public virtual bool IsAdmin { get; set; }
 
     public UserEntity()

@@ -40,7 +40,7 @@ internal sealed class UserDTOMapperVisitor : IUserMapperVisitor, IEnrichUserVisi
     public OperationResult<DomainUser> Visit(OperationResult<(DTOs.Incoming.UserDTO, DomainUser CurrentUser)> input)
     {
         var now = _dateTimeProvider.Now;
-        var domainUser = new DomainUser(input.Result!.Item1.Id, input.Result.Item1.DisplayName, false, false, input.Result.CurrentUser.TenantId, now);
+        var domainUser = new DomainUser(input.Result!.Item1.Id, input.Result.Item1.DisplayName, false, false, input.Result.CurrentUser.Tenant, now);
         return new OperationResult<DomainUser>(domainUser, null);
     }
 }

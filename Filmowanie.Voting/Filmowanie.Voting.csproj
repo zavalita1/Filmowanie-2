@@ -11,4 +11,10 @@
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Filmowanie.Abstractions\Filmowanie.Abstractions.csproj" />
+	  <ProjectReference Include="..\Filmowanie.Database\Filmowanie.Database.csproj" />
+	</ItemGroup>
+
 </Project>

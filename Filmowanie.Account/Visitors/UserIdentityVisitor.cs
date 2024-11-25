@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.Constants;
-using Filmowanie.Account.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Account.Visitors;
@@ -31,10 +31,11 @@ internal sealed class UserIdentityVisitor : IUserIdentityVisitor
         var hasBasicAuthSetup = bool.Parse(hasBasicAuthSetupLiteral);
         var tenantIdLiteral = user.Claims.Single(x => x.Type == ClaimsTypes.Tenant).Value;
         var tenantId = int.Parse(tenantIdLiteral, CultureInfo.InvariantCulture);
+        var tenant = new TenantId(tenantId);
         var createdLiteral = user.Claims.Single(x => x.Type == ClaimsTypes.Created).Value;
         var created = DateTime.Parse(createdLiteral, null, DateTimeStyles.RoundtripKind);
 
-        var result = new DomainUser(id, username, isAdmin, hasBasicAuthSetup, tenantId, created);
+        var result = new DomainUser(id, username, isAdmin, hasBasicAuthSetup, tenant, created);
         return new OperationResult<DomainUser>(result, null);
     }
 }
