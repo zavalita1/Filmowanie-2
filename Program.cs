@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ZLogger;
 using Environment = Filmowanie.Abstractions.Enums.Environment;
 
 var builder = WebApplication
@@ -24,8 +27,11 @@ var builder = WebApplication
 
 var environment = builder.Environment.IsDevelopment() ? Environment.Development : Environment.Production;
 
-builder.Logging.AddConsole();
-builder.Logging.AddDebug();
+builder.Logging.ClearProviders();
+builder.Logging.AddZLoggerConsole();
+var currentDll = Assembly.GetExecutingAssembly().Location;
+var currentDir = Path.GetDirectoryName(currentDll);
+builder.Logging.AddZLoggerFile($"{currentDir}\\AppLog.txt");
 
 builder.Services.AddSpaStaticFiles(so => so.RootPath = "ClientApp/build");
 // TODO builder.Services.AddSignalR();
@@ -77,8 +83,6 @@ app.UseWhen(
             }
         }
     ));
-
-app.MapGet("api/config31415926", () => (app.Configuration as IConfigurationRoot)!.GetDebugView());
 
 // TODO configure signalr hubs
 app.Run();
