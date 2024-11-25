@@ -31,7 +31,8 @@ builder.Logging.ClearProviders();
 builder.Logging.AddZLoggerConsole();
 var currentDll = Assembly.GetExecutingAssembly().Location;
 var currentDir = Path.GetDirectoryName(currentDll);
-builder.Logging.AddZLoggerFile($"{currentDir}\\AppLog.txt");
+var logPath = $"{currentDir}\\AppLog.txt";
+builder.Logging.AddZLoggerFile(logPath);
 
 builder.Services.AddSpaStaticFiles(so => so.RootPath = "ClientApp/build");
 // TODO builder.Services.AddSignalR();

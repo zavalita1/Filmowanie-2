@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Filmowanie.Database.Extensions;
 
@@ -18,9 +19,10 @@ public static class IServiceCollectionExtensions
         services.AddDbContext<EventsContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
 
         var dataProtectionBuilder = services.AddDataProtection().SetApplicationName("filmowanie2");
-
-        if (environment != Abstractions.Enums.Environment.Development)
-            dataProtectionBuilder.PersistKeysToDbContext<IdentityDbContext>();
+        
+        var currentDll = Assembly.GetCallingAssembly().Location;
+        var currentDir = Path.GetDirectoryName(currentDll)!;
+        dataProtectionBuilder.PersistKeysToFileSystem(new DirectoryInfo(currentDir));
 
         services.AddScoped<IUsersQueryRepository, UsersQueryRepository>();
         services.AddScoped<IUsersCommandRepository, UsersCommandRepository>();

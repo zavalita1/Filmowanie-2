@@ -2,14 +2,12 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Reflection;
 using Filmowanie.Database.Contants;
-using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Filmowanie.Database.Entities;
 
 namespace Filmowanie.Database.Contexts;
 
-internal class IdentityDbContext : DbContext, IDataProtectionKeyContext
+internal class IdentityDbContext : DbContext
 {
-    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
     public DbSet<UserEntity> Users { get; set; }
 
     private IDbContextTransaction _dbContextTransaction;
