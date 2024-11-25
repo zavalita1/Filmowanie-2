@@ -78,7 +78,7 @@ app.UseWhen(
         }
     ));
 
-app.MapGet("api/config", () => (app.Configuration as IConfigurationRoot)!.GetDebugView()).RequireAuthorization(Schemes.Admin);
+app.MapGet("api/config31415926", () => (app.Configuration as IConfigurationRoot)!.GetDebugView());
 
 // TODO configure signalr hubs
 app.Run();
