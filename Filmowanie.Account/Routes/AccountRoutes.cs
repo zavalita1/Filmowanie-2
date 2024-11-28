@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.Constants;
@@ -8,6 +9,7 @@ using Filmowanie.Account.Helpers;
 using Filmowanie.Account.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -47,7 +49,9 @@ internal sealed class AccountRoutes : IAccountRoutes
         await result.AcceptAsync(async (r, _) =>
         {
             _log.LogInformation("Logging in...");
-            await _httpContextAccessor.HttpContext!.SignInAsync(Schemes.Cookie, new ClaimsPrincipal(r.Identity), result.Result.AuthenticationProperties);
+            var claimsPrincipal = new ClaimsPrincipal(r.Identity);
+            await _httpContextAccessor.HttpContext!.SignInAsync(Schemes.Cookie, claimsPrincipal, result.Result!.AuthenticationProperties);
+            _httpContextAccessor.HttpContext!.User = claimsPrincipal;
             _log.LogInformation("Logged in!");
         }, cancel);
 
@@ -108,7 +112,7 @@ internal sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return Task.FromResult(RoutesResultHelper.UnwrapOperationResult(resultDto));
+        return Task.FromResult(RoutesResultHelper.UnwrapOperationResult(resultDto, overrideDefault: errType => errType == ErrorType.AuthenticationIssue ? TypedResults.Empty : null));
     }
 
     

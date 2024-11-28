@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Filmowanie.DTOs.Outgoing;
+﻿namespace Filmowanie.DTOs.Outgoing;
 
 public sealed record MovieDTO(string MovieName, int Votes, string PosterUrl, string Description, string FilmwebUrl, int CreatedYear, string Duration, string[] Genres, string[] Actors, string[] Directors, string[] Writers, string OriginalTitle, bool IsPlaceholder)
 {
@@ -8,7 +6,11 @@ public sealed record MovieDTO(string MovieName, int Votes, string PosterUrl, str
     {
     }
 
-    public MovieDTO(string MovieName, int Year) : this(MovieName, 0, "", "", "", Year, "", Array.Empty<string>(), Array.Empty<string>(),Array.Empty<string>(), Array.Empty<string>(), "", true)
+    /// <summary>
+    /// Placeholder constructor
+    /// </summary>
+    /// <param name="Year">First year of a decade to nominate from.</param>
+    public MovieDTO(int Year) : this("", 0, "", "", "", Year, "", [], [],[], [], "", true)
     {
     }
 }

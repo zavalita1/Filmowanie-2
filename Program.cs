@@ -8,10 +8,14 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Extensions;
+using Filmowanie.Database.Contants;
+using Filmowanie.Database.Entities.Events;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Filters;
 using Filmowanie.Voting.Extensions;
+using Filmowanie.Voting.Sagas;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -59,6 +63,29 @@ if (environment == Environment.Production)
 builder.Services.RegisterPolicies();
 builder.Services.RegisterCustomServices(builder.Configuration, environment);
 builder.Services.RegisterDatabaseServices(builder.Configuration, environment);
+
+builder.Services.AddMassTransit(x =>
+{
+    x.SetKebabCaseEndpointNameFormatter();
+    var dbConnectionString = builder.Configuration["dbConnectionString"]!;
+    x.SetCosmosSagaRepositoryProvider(dbConnectionString, cosmosConfig =>
+    {
+        cosmosConfig.DatabaseId = "db-filmowanie2";
+        cosmosConfig.CollectionId = DbContainerNames.Events;
+    });
+
+    var entryAssembly = new [] {Assembly.GetEntryAssembly()!, typeof(VotingStateInstance).Assembly}; // TODO
+
+    x.AddConsumers(entryAssembly);
+  //  x.AddSaga<VotingStateInstance>();
+    x.AddSagaStateMachine<VotingStateMachine, VotingStateInstance>();
+    x.AddActivities(entryAssembly);
+
+    x.UsingInMemory((context, cfg) =>
+    {
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 // TODO database integration
 var app = builder.Build();

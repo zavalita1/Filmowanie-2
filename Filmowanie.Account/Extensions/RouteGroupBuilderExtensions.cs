@@ -17,7 +17,7 @@ public static class RouteGroupBuilderExtensions
         accountRoutesBuilder.MapPost("login/basic", ([FromServices] IAccountRoutes routes, [FromBody] BasicAuthLoginDTO dto, CancellationToken ct) => routes.LoginBasic(dto, ct));
         accountRoutesBuilder.MapPost("signup", ([FromServices] IAccountRoutes routes, [FromBody] BasicAuthLoginDTO dto, CancellationToken ct) => routes.SignUp(dto, ct));
         accountRoutesBuilder.MapPost("logout", ([FromServices] IAccountRoutes routes, CancellationToken ct) => routes.Logout(ct)).RequireAuthorization(Schemes.Cookie);
-        accountRoutesBuilder.MapGet("", ([FromServices] IAccountRoutes routes, CancellationToken ct) => routes.Get(ct)).RequireAuthorization();
+        accountRoutesBuilder.MapGet("", ([FromServices] IAccountRoutes routes, CancellationToken ct) => routes.Get(ct));
 
         var accountAdminBuilder = builder.MapGroup("user");
         accountAdminBuilder.RequireAuthorization(Schemes.Admin);

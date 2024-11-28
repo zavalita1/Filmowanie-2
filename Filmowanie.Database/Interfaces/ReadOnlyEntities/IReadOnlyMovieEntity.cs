@@ -13,7 +13,6 @@ public interface IReadOnlyMovieEntity : IReadOnlyEntity
     string[] Genres { get;  }
     int CreationYear { get;  }
     int DurationInMinutes { get;  }
-    IReadOnlyEmbeddedUser NominatedBy { get;  }
     int TenantId { get;  }
 
     string Type { get; }

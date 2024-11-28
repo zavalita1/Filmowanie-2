@@ -6,3 +6,5 @@ public readonly record struct TenantId(int Id);
 public readonly record struct VotingSession(string Id, DateTime? CompletedDateTime);
 
 public readonly record struct BasicAuth(string Email, string Password);
+
+public readonly record struct VotingSessionId(Guid CorrelationId);

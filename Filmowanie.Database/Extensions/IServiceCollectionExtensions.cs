@@ -17,6 +17,7 @@ public static class IServiceCollectionExtensions
         services.AddDbContext<IdentityDbContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
         services.AddDbContext<MoviesContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
         services.AddDbContext<EventsContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
+        services.AddDbContext<VotingResultsContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
 
         var dataProtectionBuilder = services.AddDataProtection().SetApplicationName("filmowanie2");
         
@@ -26,6 +27,7 @@ public static class IServiceCollectionExtensions
 
         services.AddScoped<IUsersQueryRepository, UsersQueryRepository>();
         services.AddScoped<IUsersCommandRepository, UsersCommandRepository>();
-        services.AddScoped<IEventsQueryRepository, EventsQueryRepository>();
+        services.AddScoped<IVotingSessionQueryRepository, VotingSessionQueryRepository>();
+        services.AddScoped<IMovieQueryRepository, MovieQueryRepository>();
     }
 }

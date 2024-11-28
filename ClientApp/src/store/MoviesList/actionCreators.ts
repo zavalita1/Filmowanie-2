@@ -8,7 +8,7 @@ import getFetchWrapperBuilder from '../../fetchWrapper';
 const loadList = (): AppThunkAction<VoteAction | AppAction> => (dispatch, getState) => {
     const fetchWrapper = getFetchWrapperBuilder().useMinRequestTime(500).build();
     
-    fetchWrapper<any>(`movies/list`)
+    fetchWrapper<any>(`api/voting/current`)
         .then(response => {
             const mappedData = response.map((x: any) => ({
                 userCurrentVotes: x.votes,

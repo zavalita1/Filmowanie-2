@@ -92,7 +92,8 @@ const signUp = (mail:string, password: string) : AppThunkAction<UserAction | App
     });
 }
 
-const getUser = (init?: boolean): AppThunkAction<UserAction | AppAction> => (dispatch, getState) => {
+const
+    getUser = (init?: boolean): AppThunkAction<UserAction | AppAction> => (dispatch, getState) => {
     dispatch({ type: 'LOGGING' });
     const fetchWrapper = fetchWrapperBuilder().build();
     fetchWrapper<any>('api/account').then(response => {

@@ -1,60 +1,57 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Database.Interfaces;
-using Filmowanie.Database.Interfaces.ReadOnlyEntities.Events;
+using Filmowanie.Database.Entities.Events;
+using Filmowanie.Database.Repositories;
 using Filmowanie.Voting.DTOs.Outgoing;
+using Filmowanie.Voting.Sagas;
+using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Visitors;
 
-internal interface IGetMoviesForVotingSessionVisitor : IOperationAsyncVisitor<(IVotingStartedEvent, DomainUser), MovieDTO[]>;
-internal interface IEnrichMoviesForVotingSessionWithPlaceholdersVisitor : IOperationVisitor<MovieDTO[], MovieDTO[]>;
+internal interface IGetMoviesForVotingSessionVisitor : IOperationAsyncVisitor<(VotingSessionId, DomainUser), MovieDTO[]>;
+internal interface IEnrichMoviesForVotingSessionWithPlaceholdersVisitor : IOperationAsyncVisitor<MovieDTO[], MovieDTO[]>;
 
 internal sealed class MoviesVisitor : IGetMoviesForVotingSessionVisitor, IEnrichMoviesForVotingSessionWithPlaceholdersVisitor
 {
-    private readonly IEventsQueryRepository _eventsQueryRepository;
+    private readonly IRequestClient<MoviesListRequested> _requestClient;
+    private readonly IMovieQueryRepository _movieQueryRepository;
     private readonly ILogger<MoviesVisitor> _log;
 
-    public MoviesVisitor(IEventsQueryRepository eventsQueryRepository, ILogger<MoviesVisitor> log)
+    public MoviesVisitor(IRequestClient<MoviesListRequested> requestClient, IMovieQueryRepository movieQueryRepository, ILogger<MoviesVisitor> log)
     {
-        _eventsQueryRepository = eventsQueryRepository;
+        _requestClient = requestClient;
+        _movieQueryRepository = movieQueryRepository;
         _log = log;
     }
 
-    public OperationResult<MovieDTO[]> Visit(OperationResult<MovieDTO[]> movies)
+    public async Task<OperationResult<MovieDTO[]>> VisitAsync(OperationResult<MovieDTO[]> movies, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // TODO
+        return movies with { Error = null };
     }
 
-    public async Task<OperationResult<MovieDTO[]>> VisitAsync(OperationResult<(IVotingStartedEvent, DomainUser)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<MovieDTO[]>> VisitAsync(OperationResult<(VotingSessionId, DomainUser)> input, CancellationToken cancellationToken)
     {
-        var resultMovies = new List<MovieDTO>(input.Result!.Item1.Movies.Length);
-        var votingSessionId = input.Result.Item1.VotingId;
+        var correlationId = input.Result.Item1.CorrelationId;
+        var embeddedMovies = await _requestClient.GetResponse<CurrentVotingListResponse>(new MoviesListRequested(correlationId), cancellationToken);
+        var moviesIds = embeddedMovies.Message.Movies.Select(x => x.id).ToArray();
+        var moviesEntities = await _movieQueryRepository.GetMoviesAsync(x => moviesIds.Contains(x.id), cancellationToken);
 
-        var voteAddedEvents = await _eventsQueryRepository.GetVoteAddedEventsAsync(x => 
-            x.User.id == input.Result.Item2.Id && x.User.TenantId == input.Result.Item2.Tenant.Id && x.VotingId == votingSessionId, cancellationToken);
-        var voteRemovedEvents = await _eventsQueryRepository.GetVoteRemovedEventsAsync(x =>
-            x.User.id == input.Result.Item2.Id && x.User.TenantId == input.Result.Item2.Tenant.Id && x.VotingId == votingSessionId, cancellationToken);
+        if (moviesEntities.Length != moviesIds.Length)
+            return new OperationResult<MovieDTO[]>(null, new Error("Movies missing in DB!", ErrorType.InvalidState));
 
-        foreach (var movie in input.Result.Item1.Movies)
+        var movies = embeddedMovies.Message.Movies.Join(moviesEntities, x => x.id, x => x.id, (x, y) => new { Movie = y, x.Votes });
+
+        var resultMovies = new List<MovieDTO>(embeddedMovies.Message.Movies.Length);
+        
+        foreach (var movie in movies)
         {
-            var votesToAdd = voteAddedEvents.Where(x => x.Movie.id == movie.id).GroupBy(x => x.VoteType).ToDictionary(x => x.Key, x => x.Count());
-            var votesToRemove = voteRemovedEvents.Where(x => x.Movie.id == movie.id).GroupBy(x => x.VoteType).ToDictionary(x => x.Key, x => x.Count());
-            var votesToCount = votesToAdd
-                .ToDictionary(x => x.Key, x => x.Value - votesToRemove[x.Key])
-                .Where(x => x.Value != 0)
-                .ToArray();
-
-            if (votesToCount.Length > 1)
-            {
-                _log.LogError($"Invalid number of added and deleted votes for user: {input.Result.Item2.Id} (tenant: {input.Result.Item2.Tenant})!");
-                return new OperationResult<MovieDTO[]>(null, new Error("Invalid number of added and deleted votes!", ErrorType.InvalidState));
-            }
-
-            var votes = (int)votesToCount.SingleOrDefault().Key;
-            var duration = GetDurationString(movie.DurationInMinutes);
-            var movieDto = new MovieDTO(movie.Name, votes, movie.PosterUrl, movie.Description, movie.FilmwebUrl, movie.CreationYear, duration, movie.Genres, movie.Actors,
-                movie.Directors, movie.Writers, movie.OriginalTitle);
+            _log.LogInformation($"Mapping movie: {movie.Movie.Name}");
+            var votes = (int?)movie.Votes.SingleOrDefault(x => x.User.id == input.Result.Item2.Id)?.VoteType ?? 0;
+            var duration = GetDurationString(movie.Movie.DurationInMinutes);
+            var movieDto = new MovieDTO(movie.Movie.Name, votes, movie.Movie.PosterUrl, movie.Movie.Description, movie.Movie.FilmwebUrl, movie.Movie.CreationYear, duration, movie.Movie.Genres, movie.Movie.Actors,
+                movie.Movie.Directors, movie.Movie.Writers, movie.Movie.OriginalTitle);
 
             resultMovies.Add(movieDto);
         }
@@ -69,25 +66,5 @@ internal sealed class MoviesVisitor : IGetMoviesForVotingSessionVisitor, IEnrich
         var durationMinutes = (int)duration.TotalMinutes - 60 * durationHours;
         var result = durationMinutes == 0 ? $"{durationHours} godz." : $"{durationHours} godz. {durationMinutes} min.";
         return result;
-    }
-}
-
-internal interface IGetCurrentVotingSessionVisitor : IOperationAsyncVisitor<DomainUser, IVotingStartedEvent>;
-
-internal sealed class VotingSessionVisitor : IGetCurrentVotingSessionVisitor
-{
-    private readonly IEventsQueryRepository _eventsQueryRepository;
-
-    public VotingSessionVisitor(IEventsQueryRepository eventsQueryRepository)
-    {
-        _eventsQueryRepository = eventsQueryRepository;
-    }
-
-    public async Task<OperationResult<IVotingStartedEvent>> VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
-    {
-        var tenantId = input.Result.Tenant.Id;
-        var events = await _eventsQueryRepository.GetStartedEventsAsync(x => x.TenantId == tenantId, x => x.Created, 1, cancellationToken);
-        var currentVotingStartedEvent = events.Single();
-        return new OperationResult<IVotingStartedEvent>(currentVotingStartedEvent, null);
     }
 }

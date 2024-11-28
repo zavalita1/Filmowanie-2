@@ -3,7 +3,7 @@ using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Microsoft.AspNetCore.Http;
 
-namespace Filmowanie.Account.Helpers;
+namespace Filmowanie.Voting.Helpers;
 
 internal static class RoutesResultHelper
 {

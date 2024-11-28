@@ -20,8 +20,14 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
     public virtual int CreationYear { get; set; }
 
     public virtual int DurationInMinutes { get; set; }
+}
 
-    public virtual EmbeddedUser NominatedBy { get; set; }
+internal class VotingResult : Entity, IReadonlyVotingResult
+{
+    public virtual DateTime? Concluded { get; set; }
+}
 
-    IReadOnlyEmbeddedUser IReadOnlyMovieEntity.NominatedBy => NominatedBy;
+public interface IReadonlyVotingResult : IReadOnlyEntity
+{
+    public DateTime? Concluded { get;  }
 }
