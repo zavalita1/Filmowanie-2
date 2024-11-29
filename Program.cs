@@ -77,7 +77,6 @@ builder.Services.AddMassTransit(x =>
     var entryAssembly = new [] {Assembly.GetEntryAssembly()!, typeof(VotingStateInstance).Assembly}; // TODO
 
     x.AddConsumers(entryAssembly);
-  //  x.AddSaga<VotingStateInstance>();
     x.AddSagaStateMachine<VotingStateMachine, VotingStateInstance>();
     x.AddActivities(entryAssembly);
 

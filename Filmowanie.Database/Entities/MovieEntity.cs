@@ -22,7 +22,7 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
     public virtual int DurationInMinutes { get; set; }
 }
 
-internal class VotingResult : Entity, IReadonlyVotingResult
+public class VotingResult : Entity, IReadonlyVotingResult  // TODO make internal
 {
     public virtual DateTime? Concluded { get; set; }
 }

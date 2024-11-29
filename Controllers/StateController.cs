@@ -23,13 +23,6 @@ public sealed class StateController : ControllerBase
         _log = log;
     }
 
-    [HttpPost("invalidateUserCache")]
-    [Authorize(Schemes.Admin)]
-    public async Task<IActionResult> InvalidateUserCache()
-    {
-        return Ok();
-    }
-
     [HttpPost("endVote")]
     [Authorize(Schemes.Admin)]
     public async Task<IActionResult> End(CancellationToken cancel)

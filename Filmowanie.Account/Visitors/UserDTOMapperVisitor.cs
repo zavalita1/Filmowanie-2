@@ -20,7 +20,7 @@ internal sealed class UserDTOMapperVisitor : IUserMapperVisitor, IEnrichUserVisi
 
     public OperationResult<UserDTO> Visit(OperationResult<DomainUser> user)
     {
-        var userDto = new UserDTO(user.Result.Username, user.Result.IsAdmin, user.Result.HasBasicAuthSetup);
+        var userDto = new UserDTO(user.Result.DisplayName, user.Result.IsAdmin, user.Result.HasBasicAuthSetup);
         return new OperationResult<UserDTO>(userDto, null);
     }
 

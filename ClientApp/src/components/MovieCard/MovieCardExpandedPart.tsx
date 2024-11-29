@@ -71,12 +71,12 @@ function getChosenIconIndex(currentMovie: IMovie, allMovies: IMovie[]): IIconsAv
 }
 function onVotesChange(value: number, currentMovie: IMovie, props: MoviesListProps) {
     if (currentMovie.userCurrentVotes !== 0) {
-        props.reset(currentMovie.title);
+        props.reset(currentMovie.movieId, currentMovie.title);
         return;
     }
 
     const valueToIncrement = value === 1 ? -1 : value - 1;
-    props.increment(currentMovie.title, valueToIncrement);
+    props.increment(currentMovie.movieId, currentMovie.title, valueToIncrement);
 }
 function hideableContainer(hidden: boolean, element: any) {
     if (hidden) {

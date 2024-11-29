@@ -11,6 +11,7 @@ const loadList = (): AppThunkAction<VoteAction | AppAction> => (dispatch, getSta
     fetchWrapper<any>(`api/voting/current`)
         .then(response => {
             const mappedData = response.map((x: any) => ({
+                movieId: x.movieId,
                 userCurrentVotes: x.votes,
                 description: x.description,
                 posterUrl: x.posterUrl,
@@ -35,22 +36,22 @@ const loadList = (): AppThunkAction<VoteAction | AppAction> => (dispatch, getSta
     dispatch({ type: 'LOADING_VOTES', });
 }
 
-const vote = (movieTitle: string, votes: number): AppThunkAction<VoteAction | AppAction> => (dispatch, getState) => {
-    repository.placeVote(movieTitle, votes).then(() => {
+const vote = (movieId: string, movieTitle: string, votes: number): AppThunkAction<VoteAction | AppAction> => (dispatch, getState) => {
+    repository.placeVote(movieId, movieTitle, votes).then(() => {
         dispatch({ type: 'INCREMENT_VOTES', payload: { title : movieTitle, value: votes } });
         dispatch(appActions.actionCreators.setLoading(false));
     });
 }
 
-const resetVote = (movieTitle: string): AppThunkAction<VoteAction | AppAction> => (dispatch, getState) => {
-    repository.resetVote(movieTitle).then(() => {
+const resetVote = (movieId: string, movieTitle: string): AppThunkAction<VoteAction | AppAction> => (dispatch, getState) => {
+    repository.resetVote(movieId, movieTitle).then(() => {
         dispatch({ type: 'RESET_VOTES', payload: { title : movieTitle } });
         dispatch(appActions.actionCreators.setLoading(false));
     });
 }
 
 export const actionCreators = {
-    increment: (title: string, value: number) => vote(title, value),
-    reset: (title: string) => resetVote(title),
+    increment: (movieId: string, title: string, value: number) => vote(movieId, title, value),
+    reset: (movieId: string, title: string) => resetVote(movieId, title),
     loadList: loadList
 };

@@ -44,6 +44,8 @@ public static class OperationResultExtensions
         return new OperationResult<(T1, T2)>((first.Result, second.Result), error);
     }
 
+    public static OperationResult<(T1, T2, T3)> Flatten<T1, T2, T3>(this OperationResult<((T1, T2), T3)> operation) => new((operation.Result.Item1.Item1, operation.Result.Item1.Item2, operation.Result.Item2), operation.Error);
+
     public static Task<OperationResult<TOutput>> AcceptAsync<TInput, TOutput>(this OperationResult<TInput> operation, IOperationAsyncVisitor<TInput, TOutput> visitor, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)

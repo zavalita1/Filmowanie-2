@@ -18,12 +18,6 @@ public class MoviesController : ControllerBase
     {
     }
 
-    [HttpGet("list")]
-    public async Task<IActionResult> List(CancellationToken cancellation)
-    {
-        return Ok(); // TODO
-    }
-
     [HttpDelete("{movieName}")]
     [Authorize(Schemes.Admin)]
     public async Task<IActionResult> Delete([FromRoute] string movieName, CancellationToken cancellation)

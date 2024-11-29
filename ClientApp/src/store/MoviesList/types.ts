@@ -1,4 +1,5 @@
 export interface IMovie {
+    movieId: string,
     title: string, 
     posterUrl: string, 
     userCurrentVotes: number,

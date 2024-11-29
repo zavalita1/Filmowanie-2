@@ -42,7 +42,7 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
             IsAdmin = domainUser.IsAdmin,
             PasswordHash = null!,
             TenantId = domainUser.Tenant.Id,
-            DisplayName = domainUser.Username
+            DisplayName = domainUser.DisplayName
         };
 
         await _usersCommandRepository.Insert(userEntity, cancellationToken);

@@ -36,6 +36,7 @@ const loadNominationsData = (): AppThunkAction<LoadingNominationsStartedAction |
 
         const nominations = response.nominations.map(x => x as NominationDecade)
         const moviesThatCanBeNominatedAgain = response.moviesThatCanBeNominatedAgain.map((x: any) => ({
+            movieId: x.movieId,
             description: x.description,
             posterUrl: x.posterUrl,
             title: x.movieName,
