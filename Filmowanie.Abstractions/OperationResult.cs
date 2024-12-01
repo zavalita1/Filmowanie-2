@@ -2,7 +2,16 @@
 
 namespace Filmowanie.Abstractions;
 
-public readonly record struct OperationResult<T>(T? Result, Error? Error);
+public readonly record struct OperationResult<T>(T? Result, Error? Error)
+{
+    public override string ToString()
+    {
+        if (Error != null)
+            return Result?.ToString() ?? string.Empty;
+
+        return $"Erroneous result ({Error!.Value.Type}).";
+    }
+};
 
 public readonly record struct Error(IEnumerable<string> ErrorMessages, ErrorType Type)
 {

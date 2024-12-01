@@ -16,7 +16,6 @@ public static class IServiceCollectionExtensions
         var dbConnectionString = configuration["dbConnectionString"]!;
         services.AddDbContext<IdentityDbContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
         services.AddDbContext<MoviesContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
-        services.AddDbContext<EventsContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
         services.AddDbContext<VotingResultsContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
 
         var dataProtectionBuilder = services.AddDataProtection().SetApplicationName("filmowanie2");

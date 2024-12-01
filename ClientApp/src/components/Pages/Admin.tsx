@@ -109,12 +109,12 @@ function Admin(props: AdminProps): any {
 
 function mapRow(row: UserDTO) {
     return <TableRow
-        key={row.username}
+        key={row.displayName}
     >
       <TableCell component="th" scope="row">
-            {row.username}
+            {row.displayName}
       </TableCell>
-        <StyledTableCell align="right"><Button><a href={`api/user/${row.username}`} className='button-link'>View details</a></Button></StyledTableCell>
+        <StyledTableCell align="right"><Button><a href={`api/user/${row.displayName}`} className='button-link'>View details</a></Button></StyledTableCell>
     </TableRow>
   }
 
@@ -179,7 +179,7 @@ function loadUsers() {
 }
 
 type UserDTO = {
-    username: string,
+    displayName: string,
     code: string
 };
 

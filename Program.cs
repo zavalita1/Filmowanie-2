@@ -9,7 +9,7 @@ using Azure.Security.KeyVault.Secrets;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Extensions;
 using Filmowanie.Database.Contants;
-using Filmowanie.Database.Entities.Events;
+using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Filters;
@@ -26,17 +26,10 @@ using Microsoft.Extensions.Logging;
 using ZLogger;
 using Environment = Filmowanie.Abstractions.Enums.Environment;
 
-var builder = WebApplication
-    .CreateBuilder(args);
-
+var builder = WebApplication.CreateBuilder(args);
 var environment = builder.Environment.IsDevelopment() ? Environment.Development : Environment.Production;
 
-builder.Logging.ClearProviders();
-builder.Logging.AddZLoggerConsole();
-var currentDll = Assembly.GetExecutingAssembly().Location;
-var currentDir = Path.GetDirectoryName(currentDll);
-var logPath = $"{currentDir}\\AppLog.txt";
-builder.Logging.AddZLoggerFile(logPath);
+ConfigureLogging(builder);
 
 builder.Services.AddSpaStaticFiles(so => so.RootPath = "ClientApp/build");
 // TODO builder.Services.AddSignalR();
@@ -64,54 +57,16 @@ builder.Services.RegisterPolicies();
 builder.Services.RegisterCustomServices(builder.Configuration, environment);
 builder.Services.RegisterDatabaseServices(builder.Configuration, environment);
 
-builder.Services.AddMassTransit(x =>
-{
-    x.SetKebabCaseEndpointNameFormatter();
-    var dbConnectionString = builder.Configuration["dbConnectionString"]!;
-    x.SetCosmosSagaRepositoryProvider(dbConnectionString, cosmosConfig =>
-    {
-        cosmosConfig.DatabaseId = "db-filmowanie2";
-        cosmosConfig.CollectionId = DbContainerNames.Events;
-    });
+ConfigureMassTransit(builder);
 
-    var entryAssembly = new [] {Assembly.GetEntryAssembly()!, typeof(VotingStateInstance).Assembly}; // TODO
-
-    x.AddConsumers(entryAssembly);
-    x.AddSagaStateMachine<VotingStateMachine, VotingStateInstance>();
-    x.AddActivities(entryAssembly);
-
-    x.UsingInMemory((context, cfg) =>
-    {
-        cfg.ConfigureEndpoints(context);
-    });
-});
-
-// TODO database integration
 var app = builder.Build();
 if (environment != Environment.Development)
 {
     app.UseSpaStaticFiles();
 }
 
-var apiGroup = app.MapGroup("api");
-apiGroup.AddEndpointFilter<LoggingActionFilter>();
-apiGroup.RegisterAccountRoutes();
-apiGroup.RegisterVotingRoutes();
+ConfigureEndpoints(app, environment);
 
-app.UseWhen(
-    context => !context.Request.Path.StartsWithSegments("/api"),
-    then => then.UseSpa(spa =>
-        {
-            spa.Options.SourcePath = "ClientApp";
-
-            if (environment != Environment.Production)
-            {
-                spa.UseReactDevelopmentServer(npmScript: "start");
-            }
-        }
-    ));
-
-// TODO configure signalr hubs
 app.Run();
 return;
 
@@ -129,4 +84,60 @@ async Task SetupKeyVaultAsync(WebApplicationBuilder webApplicationBuilder)
         keyVaultConfigurationProvider.AddOrUpdate(k.Name, secret.Value.Value, (_, _) => throw new NotSupportedException("Secret names must be unique!"));
     });
     webApplicationBuilder.Configuration.AddInMemoryCollection(keyVaultConfigurationProvider);
+}
+
+void ConfigureEndpoints(WebApplication webApplication, Environment appEnvironment)
+{
+    var apiGroup = webApplication.MapGroup("api");
+    apiGroup.AddEndpointFilter<LoggingActionFilter>();
+    apiGroup.RegisterAccountRoutes();
+    apiGroup.RegisterVotingRoutes();
+
+    webApplication.UseWhen(
+        context => !context.Request.Path.StartsWithSegments("/api"),
+        then => then.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (appEnvironment != Environment.Production)
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
+            }
+        ));
+}
+
+void ConfigureLogging(WebApplicationBuilder appBuilder)
+{
+    appBuilder.Logging.ClearProviders();
+    appBuilder.Logging.AddZLoggerConsole();
+    var currentDll = Assembly.GetExecutingAssembly().Location;
+    var currentDir = Path.GetDirectoryName(currentDll);
+    var logPath = $"{currentDir}\\AppLog.txt";
+    appBuilder.Logging.AddZLoggerFile(logPath);
+}
+
+void ConfigureMassTransit(WebApplicationBuilder appBuilder)
+{
+    appBuilder.Services.AddMassTransit(x =>
+    {
+        x.SetKebabCaseEndpointNameFormatter();
+        var dbConnectionString = appBuilder.Configuration["dbConnectionString"]!;
+        x.SetCosmosSagaRepositoryProvider(dbConnectionString, cosmosConfig =>
+        {
+            cosmosConfig.DatabaseId = "db-filmowanie2";
+            cosmosConfig.CollectionId = DbContainerNames.Events;
+        });
+
+        var entryAssembly = new [] {Assembly.GetEntryAssembly()!, typeof(VotingStateInstance).Assembly}; // TODO
+
+        x.AddConsumers(entryAssembly);
+        x.AddSagaStateMachine<VotingStateMachine, VotingStateInstance>();
+        x.AddActivities(entryAssembly);
+
+        x.UsingInMemory((context, cfg) =>
+        {
+            cfg.ConfigureEndpoints(context);
+        });
+    });
 }

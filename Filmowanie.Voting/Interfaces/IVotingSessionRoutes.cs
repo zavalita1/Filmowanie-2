@@ -5,7 +5,13 @@ namespace Filmowanie.Voting.Interfaces;
 
 internal interface IVotingSessionRoutes
 {
-    Task<IResult> GetCurrentVotingSessionMoviesAsync(CancellationToken cancel);
+    public Task<IResult> GetCurrentVotingSessionMoviesAsync(CancellationToken cancel);
+    public Task<IResult> VoteAsync(VoteDTO dto, CancellationToken cancel);
+    public Task<IResult> GetVotingSessionStatus(CancellationToken cancel);
+}
 
-    Task<IResult> VoteAsync(VoteDTO dto, CancellationToken cancel);
+public interface IAdminVotingSessionRoutes
+{
+    public Task<IResult> NewVoting(CancellationToken cancel);
+    public Task<IResult> ConcludeVoting(CancellationToken cancel);
 }

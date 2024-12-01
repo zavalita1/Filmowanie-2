@@ -43,11 +43,4 @@ public sealed class StateController : ControllerBase
     {
         return Ok();
     }
-
-
-    [HttpGet("")]
-    public async Task<IActionResult> State(CancellationToken cancel)
-    {
-        return Ok(); // TODO
-    }
 }

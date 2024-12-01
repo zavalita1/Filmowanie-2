@@ -1,4 +1,6 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Voting.Deciders;
+using Filmowanie.Voting.Deciders.PickUserNomination;
 using Filmowanie.Voting.Interfaces;
 using Filmowanie.Voting.Routes;
 using Filmowanie.Voting.Validators;
@@ -14,14 +16,21 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFluentValidatorAdapter, VoteValidator>();
 
         services.AddScoped<IVotingSessionRoutes, VotingSessionRoutes>();
+        services.AddScoped<IAdminVotingSessionRoutes, AdminVotingSessionRoutes>();
 
         services.AddScoped<IGetMoviesForVotingSessionVisitor, MoviesVisitor>();
         services.AddScoped<IEnrichMoviesForVotingSessionWithPlaceholdersVisitor, MoviesVisitor>();
         
-        services.AddScoped<IGetCurrentVotingSessionVisitor, VotingSessionVisitor>();
-        services.AddScoped<IGetCurrentVotingSessionStatusVisitor, VotingSessionVisitor>();
-        services.AddScoped<IVotingSessionStatusVisitor, IVotingSessionStatusStatusMapperVisitor>();
+        services.AddScoped<IGetCurrentVotingSessionVisitor, VotingSessionQueryVisitor>();
+        services.AddScoped<IGetCurrentVotingSessionStatusVisitor, VotingSessionQueryVisitor>();
+        services.AddScoped<IStartNewVotingVisitor, VotingSessionCommandVisitor>();
+        services.AddScoped<IConcludeVotingVisitor, VotingSessionCommandVisitor>();
+        services.AddScoped<IVotingSessionStatusMapperVisitor, MapperMapperVisitor>();
+        services.AddScoped<IAknowledgedMapperVisitor, MapperMapperVisitor>();
         services.AddScoped<IVoteVisitor, VoteVisitor>();
+
+        services.AddSingleton<IVotingDeciderFactory, VotingDeciderFactory>();
+        services.AddSingleton<IPickUserToNominateStrategyFactory, PickUserToNominateStrategyFactory>();
 
         return services;
     }

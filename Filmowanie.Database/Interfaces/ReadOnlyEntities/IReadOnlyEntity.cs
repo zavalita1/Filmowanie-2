@@ -4,7 +4,7 @@ public interface IReadOnlyEntity
 {
     public string Id { get; }
 
-    public DateTime Created { get; set; }
+    public DateTime Created { get; }
 
-    public int TenantId { get; set; }
+    public int TenantId { get; }
 }

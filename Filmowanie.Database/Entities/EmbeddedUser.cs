@@ -3,7 +3,7 @@ using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Entities;
 
-internal class EmbeddedUser : IReadOnlyEmbeddedUser
+public class EmbeddedUser : IReadOnlyEmbeddedUser
 {
     public string id { get; set; }
 
@@ -12,16 +12,16 @@ internal class EmbeddedUser : IReadOnlyEmbeddedUser
     public int TenantId { get; set; }
 }
 
-public class EmbeddedMovie : IReadOnlyEmbeddedMovie
+public class EmbeddedUserWithNominationAward : EmbeddedUser, IReadOnlyEmbeddedUserWithNominationAward
 {
-    public string id { get; set; }
+    public string AwardMessage { get; set; }
 
-    public string Name { get; set; }
+    public Decade Decade { get; set; }
 }
 
-public class EmbeddedMovieWithVotes : EmbeddedMovie, IReadOnlyEmbeddedMovieWithVotes
+public interface IReadOnlyEmbeddedUserWithNominationAward : IReadOnlyEmbeddedUser
 {
-    public IEnumerable<Vote> Votes { get; set; }
-}
+    public string AwardMessage { get; }
 
-public sealed record Vote(IReadOnlyEmbeddedUser User, VoteType VoteType);
+    public Decade Decade { get; }
+}

@@ -1,6 +1,4 @@
-﻿using Filmowanie.Voting.DTOs.Outgoing;
-
-namespace Filmowanie.DTOs.Outgoing
+﻿namespace Filmowanie.Voting.DTOs.Outgoing
 {
     public class AknowledgedDTO
     {

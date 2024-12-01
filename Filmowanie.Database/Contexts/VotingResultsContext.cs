@@ -1,7 +1,7 @@
 ﻿using Filmowanie.Database.Contants;
-using Filmowanie.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Filmowanie.Database.Entities.Voting;
 
 namespace Filmowanie.Database.Contexts;
 

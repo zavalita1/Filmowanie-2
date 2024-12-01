@@ -16,10 +16,11 @@ internal sealed class VotingSessionRoutes : IVotingSessionRoutes
     private readonly IGetMoviesForVotingSessionVisitor _getMoviesForVotingSessionVisitor;
     private readonly IEnrichMoviesForVotingSessionWithPlaceholdersVisitor _enrichMoviesForVotingSessionWithPlaceholdersVisitor;
     private readonly IFluentValidatorAdapterFactory _validatorAdapterFactory;
-    private readonly IVotingSessionStatusVisitor _votingSessionStatusVisitor;
+    private readonly IVotingSessionStatusMapperVisitor _iVotingSessionStatusMapperVisitor;
+    private readonly IAknowledgedMapperVisitor _aknowledgedMapperVisitor;
     private readonly IVoteVisitor _voteVisitor;
 
-    public VotingSessionRoutes(IUserIdentityVisitor userIdentityVisitor, IGetCurrentVotingSessionVisitor currentVotingSessionVisitor, IGetMoviesForVotingSessionVisitor getMoviesForVotingSessionVisitor, IEnrichMoviesForVotingSessionWithPlaceholdersVisitor enrichMoviesForVotingSessionWithPlaceholdersVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IVoteVisitor voteVisitor, IGetCurrentVotingSessionStatusVisitor currentVotingSessionStatusVisitor, IVotingSessionStatusVisitor iVotingSessionStatusVisitor)
+    public VotingSessionRoutes(IUserIdentityVisitor userIdentityVisitor, IGetCurrentVotingSessionVisitor currentVotingSessionVisitor, IGetMoviesForVotingSessionVisitor getMoviesForVotingSessionVisitor, IEnrichMoviesForVotingSessionWithPlaceholdersVisitor enrichMoviesForVotingSessionWithPlaceholdersVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IVoteVisitor voteVisitor, IGetCurrentVotingSessionStatusVisitor currentVotingSessionStatusVisitor, IVotingSessionStatusMapperVisitor iIVotingSessionStatusMapperVisitor, IAknowledgedMapperVisitor aknowledgedMapperVisitor)
     {
         _userIdentityVisitor = userIdentityVisitor;
         _currentVotingSessionVisitor = currentVotingSessionVisitor;
@@ -28,7 +29,8 @@ internal sealed class VotingSessionRoutes : IVotingSessionRoutes
         _validatorAdapterFactory = validatorAdapterFactory;
         _voteVisitor = voteVisitor;
         _currentVotingSessionStatusVisitor = currentVotingSessionStatusVisitor;
-        _votingSessionStatusVisitor = iVotingSessionStatusVisitor;
+        _iVotingSessionStatusMapperVisitor = iIVotingSessionStatusMapperVisitor;
+        _aknowledgedMapperVisitor = aknowledgedMapperVisitor;
     }
 
     public async Task<IResult> GetCurrentVotingSessionMoviesAsync(CancellationToken cancel)
@@ -56,7 +58,11 @@ internal sealed class VotingSessionRoutes : IVotingSessionRoutes
             .Accept(_userIdentityVisitor);
 
         var votingSessionResult = await userIdentity.AcceptAsync(_currentVotingSessionVisitor, cancel);
-        var result = await userIdentity.Merge(votingSessionResult).Merge(validationResult).Flatten().AcceptAsync(_voteVisitor, cancel);
+        var result = (await userIdentity
+            .Merge(votingSessionResult)
+            .Merge(validationResult)
+            .Flatten()
+            .AcceptAsync(_voteVisitor, cancel)).Accept(_aknowledgedMapperVisitor);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
@@ -67,7 +73,7 @@ internal sealed class VotingSessionRoutes : IVotingSessionRoutes
             .Empty
             .Accept(_userIdentityVisitor)
             .AcceptAsync(_currentVotingSessionStatusVisitor, cancel))
-            .Accept(_votingSessionStatusVisitor);
+            .Accept(_iVotingSessionStatusMapperVisitor);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }

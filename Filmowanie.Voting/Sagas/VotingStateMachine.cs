@@ -1,8 +1,8 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
-using Filmowanie.Database.Entities.Events;
+using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Filmowanie.Database.Repositories;
+using Filmowanie.Voting.Activities;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -33,7 +33,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 .Then(ctx =>
                 {
                     _logger.LogInformation("Voting is starting...");
-                    var movies = ctx.Message.Movies.Select(x => new EmbeddedMovieWithVotes { id = x.id, Name = x.Name, Votes = Array.Empty<Vote>()}).ToArray();
+                    var movies = ctx.Message.Movies.Select(x => new EmbeddedMovieWithVotes { id = x.id, Name = x.Name, Votes = Array.Empty<Vote>() }).ToArray();
                     ctx.Saga.Movies = movies;
                     ctx.Saga.Nominations = ctx.Message.NominationsData;
                 })
@@ -52,7 +52,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 .Then(ctx => _logger.LogInformation("Adding movie.."))
                 .ThenAsync(ctx =>
                 {
-                    var nominationToConclude = ctx.Saga.Nominations.Single(x => x.User.Id == ctx.Message.User.Id);
+                    var nominationToConclude = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
                     nominationToConclude.Concluded = _dateTimeProvider.Now;
                     return ctx.Saga.Nominations.Any() ? Task.CompletedTask : ctx.TransitionToState(NominationsConcluded);
                 }));
@@ -65,8 +65,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     if (ctx.Saga.Movies.All(x => x.id != ctx.Message.Movie.id))
                         return;
 
-                    var year = 1900;// TODO get proper;
-                    var nominationData = ctx.Saga.Nominations.Single(x => x.Year == year);
+                    var nominationData = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
                     nominationData.Concluded = null;
                     await ctx.Publish(new NominationAddedEvent(ctx.Message.CorrelationId, nominationData), ctx.CancellationToken);
 
@@ -86,8 +85,8 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     if (movie.Votes.Any(x => x.User.id == messageUser.Id))
                         return;
 
-                    var user = new ReadOnlyEmbeddedUser(messageUser.Id, messageUser.DisplayName, messageUser.Tenant.Id);
-                    movie.Votes = movie.Votes.Concat([new Vote(user, ctx.Message.VoteType)]);
+                    var user = new EmbeddedUser { id = messageUser.Id, Name = messageUser.DisplayName, TenantId = messageUser.Tenant.Id };
+                    movie.Votes = movie.Votes.Concat([new Vote { User = user, VoteType = ctx.Message.VoteType }]);
                 })
                 .Publish(ctx => new VoteAddedEvent(ctx.Message.CorrelationId, ctx.Message.Movie, ctx.Message.User)));
 
@@ -108,7 +107,12 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
         During(NominationsConcluded,
             When(ConcludeVoting)
                 .Then(ctx => _logger.LogWarning("Voting ending..."))
-                .Publish(ctx => new VotingConcludedEvent(ctx.Message.CorrelationId))
+                .Publish(ctx =>
+                {
+                    var movies = ctx.Saga.Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
+                    var nominations = ctx.Saga.Nominations.ToArray();
+                    return new VotingConcludedEvent(ctx.Message.CorrelationId, ctx.Message.Tenant, movies, nominations, ctx.Saga.Created);
+                })
                 .Finalize()
         );
 
@@ -136,27 +140,15 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
     public Event<ConcludeVotingEvent> ConcludeVoting { get; private set; } = null!;
 
-    // Events
 
+    // Events
     public Event<MoviesListRequested> GetMovieListEvent { get; private set; } = null!;
 
     public Event<NominationsRequested> GeNominationsEvent { get; private set; } = null!;
 
-    // States
 
+    // States
     public State WaitingForNominations { get; private set; } = null!;
 
     public State NominationsConcluded { get; private set; } = null!;
 }
-
-public class CurrentVotingListResponse
-{
-    public IReadOnlyEmbeddedMovieWithVotes[] Movies { get; set; }
-}
-
-public class CurrentNominationsResponse
-{
-    public NominationData[] Nominations { get; set; }
-}
-
-public readonly record struct ReadOnlyEmbeddedUser(string id, string Name, int TenantId) : IReadOnlyEmbeddedUser;

@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Database.Entities.Events;
+using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Repositories;
 using Filmowanie.Voting.DTOs.Outgoing;
 using Filmowanie.Voting.Sagas;

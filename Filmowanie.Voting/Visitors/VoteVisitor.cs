@@ -1,7 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Database.Entities;
-using Filmowanie.Database.Entities.Events;
+using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Voting.DTOs.Incoming;
 using Filmowanie.Voting.Interfaces;
 using MassTransit;
