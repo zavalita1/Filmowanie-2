@@ -3,15 +3,14 @@ using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Entities;
 
-public class EmbeddedMovieWithVotes : EmbeddedMovie, IReadOnlyEmbeddedMovieWithVotes
+public class EmbeddedMovieWithVotes : IReadOnlyEmbeddedMovieWithVotes
 {
-    public IEnumerable<Vote> Votes { get; set; }
+    public IEnumerable<Vote> Votes { get; set; } = [];
+
+    public EmbeddedMovie Movie { get; set; }
+
+    public int VotingScore { get; set; }
 
     IEnumerable<IReadOnlyVote> IReadOnlyEmbeddedMovieWithVotes.Votes => Votes;
-}
-
-public class ResultEmbeddedMovie : IResultEmbeddedMovie
-{
-    public IReadOnlyEmbeddedMovieWithVotes Movie { get; set; }
-    public int VotingScore { get; set; }
+    IReadOnlyEmbeddedMovie IReadOnlyEmbeddedMovieWithVotes.Movie => Movie;
 }

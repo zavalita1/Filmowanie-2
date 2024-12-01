@@ -4,5 +4,6 @@ namespace Filmowanie.Voting.Interfaces;
 
 public interface IVotingDecider
 {
-    IEnumerable<(IResultEmbeddedMovie Movie, bool IsWinner)> AssignScores(IEnumerable<IResultEmbeddedMovie> moviesWithVotes, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> previousVotingMoviesWithVotes);
+    IEnumerable<(IReadOnlyEmbeddedMovieWithVotes Movie, bool IsWinner)> AssignScores(IEnumerable<IReadOnlyEmbeddedMovieWithVotes> moviesWithVotes,
+        IEnumerable<IReadOnlyEmbeddedMovieWithVotes> previousVotingMoviesWithVotes);
 }

@@ -44,7 +44,7 @@ export const fetchWrapper = <T>(path: string, options?: FetchWrapperConfiguratio
             }
             else if (response.status === 400) {
                 return response.json().then(message => {
-                    store?.dispatch(appActionCreators.actionCreators.setError(message.message));
+                    store?.dispatch(appActionCreators.actionCreators.setError(message));
                     store?.dispatch(appActionCreators.actionCreators.setLoading(false));
                 }).catch(() => HandleGeneralError(store));
             }

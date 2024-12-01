@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions.Enums;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.Interfaces;
 
@@ -10,16 +11,15 @@ public sealed class TrashVotingDecider : IVotingDecider
 {
     private const int InitialTrashVotesThreshold = 1;
 
-    public IEnumerable<(IResultEmbeddedMovie Movie, bool IsWinner)> AssignScores(IEnumerable<IResultEmbeddedMovie> moviesWithVotes,
+    public IEnumerable<(IReadOnlyEmbeddedMovieWithVotes Movie, bool IsWinner)> AssignScores(IEnumerable<IReadOnlyEmbeddedMovieWithVotes> moviesWithVotes,
         IEnumerable<IReadOnlyEmbeddedMovieWithVotes> previousVotingMoviesWithVotes)
     {
         var threshold = InitialTrashVotesThreshold;
 
-        var previousVotingByMovies = previousVotingMoviesWithVotes.ToDictionary(x => x.id, x => GetTrashVotesCount(x.Votes));
+        var previousVotingByMovies = previousVotingMoviesWithVotes.ToDictionary(x => x.Movie.id, x => GetTrashVotesCount(x.Votes));
 
         var moviesWithVotesCount = moviesWithVotes
-            .Select(x => x.Movie)
-            .Select(x => new { Movie = x, CurrentVotes = GetTrashVotesCount(x.Votes), PreviousVotes = previousVotingByMovies.GetValueOrDefault(x.id, 0) })
+            .Select(x => new { MovieContainer = x, CurrentVotes = GetTrashVotesCount(x.Votes), PreviousVotes = previousVotingByMovies.GetValueOrDefault(x.Movie.id, 0) })
             .OrderByDescending(x => x.CurrentVotes)
             .ThenByDescending(x => x.PreviousVotes);
 
@@ -30,7 +30,7 @@ public sealed class TrashVotingDecider : IVotingDecider
                 yield break;
 
             previousPair = (movie.CurrentVotes, movie.PreviousVotes);
-            var result = new ResultEmbeddedMovie { Movie = movie.Movie, VotingScore = movie.CurrentVotes};
+            var result = new EmbeddedMovieWithVotes { Movie = movie.MovieContainer.Movie.AsMutable(), VotingScore = movie.CurrentVotes};
             yield return (result, true);
         }
     }

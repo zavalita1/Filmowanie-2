@@ -12,15 +12,20 @@ public class EmbeddedUser : IReadOnlyEmbeddedUser
     public int TenantId { get; set; }
 }
 
-public class EmbeddedUserWithNominationAward : EmbeddedUser, IReadOnlyEmbeddedUserWithNominationAward
+public class EmbeddedUserWithNominationAward : IReadOnlyEmbeddedUserWithNominationAward
 {
+    public EmbeddedUser User { get; set; }
+
     public string AwardMessage { get; set; }
 
     public Decade Decade { get; set; }
+
+    IReadOnlyEmbeddedUser IReadOnlyEmbeddedUserWithNominationAward.User => User;
 }
 
-public interface IReadOnlyEmbeddedUserWithNominationAward : IReadOnlyEmbeddedUser
+public interface IReadOnlyEmbeddedUserWithNominationAward 
 {
+    public IReadOnlyEmbeddedUser User {get;}
     public string AwardMessage { get; }
 
     public Decade Decade { get; }

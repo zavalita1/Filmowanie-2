@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions.Enums;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.Interfaces;
 
@@ -8,23 +9,23 @@ namespace Filmowanie.Voting.Deciders;
 
 public sealed class VotingDecider : IVotingDecider
 {
-    public IEnumerable<(IResultEmbeddedMovie Movie, bool IsWinner)> AssignScores(IEnumerable<IResultEmbeddedMovie> moviesWithVotes, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> previousVotingMoviesWithVotes)
+    public IEnumerable<(IReadOnlyEmbeddedMovieWithVotes Movie, bool IsWinner)> AssignScores(IEnumerable<IReadOnlyEmbeddedMovieWithVotes> moviesWithVotes,
+        IEnumerable<IReadOnlyEmbeddedMovieWithVotes> previousVotingMoviesWithVotes)
     {
-        var previousVotingByMovies = previousVotingMoviesWithVotes.ToDictionary(x => x.id, x => GetVotesCount(x.Votes));
+        var previousVotingByMovies = previousVotingMoviesWithVotes.ToDictionary(x => x.Movie.id, x => GetVotesCount(x.Votes));
 
         var sorted = moviesWithVotes
-            .Select(x => x.Movie)
-            .Select(x => new { Movie = x, CurrentVotes = GetVotesCount(x.Votes), PreviousVotes = previousVotingByMovies.GetValueOrDefault(x.id, 0) })
+            .Select(x => new { MovieContainer = x, CurrentVotes = GetVotesCount(x.Votes), PreviousVotes = previousVotingByMovies.GetValueOrDefault(x.Movie.id, 0) })
             .OrderByDescending(x => x.CurrentVotes)
             .ThenBy(x => x.PreviousVotes)
             .ToArray();
 
-        var result = new ResultEmbeddedMovie { Movie = sorted[0].Movie, VotingScore = sorted[0].CurrentVotes };
+        var result = new EmbeddedMovieWithVotes { Movie = sorted[0].MovieContainer.Movie.AsMutable(), VotingScore = sorted[0].CurrentVotes };
         yield return (result, true);
 
         foreach (var loser in sorted.Skip(1))
         {
-            var loserResult = new ResultEmbeddedMovie { Movie = loser.Movie, VotingScore = loser.CurrentVotes };
+            var loserResult = new EmbeddedMovieWithVotes { Movie = loser.MovieContainer.Movie.AsMutable(), VotingScore = loser.CurrentVotes };
             yield return (loserResult, false);
         }
     }

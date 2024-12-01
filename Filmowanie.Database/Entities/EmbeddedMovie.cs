@@ -13,13 +13,12 @@ public class EmbeddedMovie : IReadOnlyEmbeddedMovie
 
 public class EmbeddedMovieWithNominationContext : IReadOnlyEmbeddedMovieWithNominationContext
 {
-    public string id { get; set; }
-
-    public string Name { get; set; }
+    public EmbeddedMovie Movie { get; set; }
 
     public EmbeddedUser NominatedBy { get; set; }
 
     IReadOnlyEmbeddedUser IReadOnlyEmbeddedMovieWithNominationContext.NominatedBy => NominatedBy;
+    IReadOnlyEmbeddedMovie IReadOnlyEmbeddedMovieWithNominationContext.Movie => Movie;
 
     public DateTime NominationConcluded { get; set; }
     public DateTime NominationStarted { get; set; }

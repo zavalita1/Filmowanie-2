@@ -13,6 +13,7 @@ using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Filters;
+using Filmowanie.Voting.Consumers;
 using Filmowanie.Voting.Extensions;
 using Filmowanie.Voting.Sagas;
 using MassTransit;
@@ -131,7 +132,7 @@ void ConfigureMassTransit(WebApplicationBuilder appBuilder)
 
         var entryAssembly = new [] {Assembly.GetEntryAssembly()!, typeof(VotingStateInstance).Assembly}; // TODO
 
-        x.AddConsumers(entryAssembly);
+        x.AddConsumer<VotingConcludedConsumer>();
         x.AddSagaStateMachine<VotingStateMachine, VotingStateInstance>();
         x.AddActivities(entryAssembly);
 

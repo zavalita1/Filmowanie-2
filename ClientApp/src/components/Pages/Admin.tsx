@@ -49,10 +49,6 @@ function Admin(props: AdminProps): any {
             <div> Status: {VotingState[props.state!]}</div>
             <br />
             <div>
-                <Button onClick={startVoting} disabled={props.state == VotingState.Voting}> Resume voting. </Button>
-            </div>
-            <br />
-            <div>
                 <Button onClick={endVoting} disabled={props.state == VotingState.Results}> End voting. </Button>
             </div>
             <br />
@@ -86,9 +82,6 @@ function Admin(props: AdminProps): any {
             </div>
 
             <br />
-            <div>
-                <Button onClick={invalidateUserCache}> Invalidate user cache </Button>
-            </div>
         </React.Fragment>
     );
 
@@ -118,15 +111,6 @@ function mapRow(row: UserDTO) {
     </TableRow>
   }
 
-function startVoting() {
-    const fetchOptions = { 
-        method: "POST", 
-        headers: { 'content-type': 'application/json;charset=UTF-8', } 
-    };
-
-    fetch("state/startVote", fetchOptions);
-}
-
 
 function endVoting() {
     const fetchOptions = { 
@@ -134,16 +118,7 @@ function endVoting() {
         headers: { 'content-type': 'application/json;charset=UTF-8', } 
     };
 
-    fetch("state/endVote", fetchOptions);
-}
-
-function invalidateUserCache() {
-    const fetchOptions = { 
-        method: "POST", 
-        headers: { 'content-type': 'application/json;charset=UTF-8', } 
-    };
-
-    fetch("state/invalidateUserCache", fetchOptions);
+    fetch("api/voting/admin/end", fetchOptions);
 }
 
 function newVoting() {
@@ -152,7 +127,7 @@ function newVoting() {
         headers: { 'content-type': 'application/json;charset=UTF-8', } 
     };
 
-    fetch("state/newVote", fetchOptions).catch(() => alert('cos nie tak'));
+    fetch("api/voting/admin/start", fetchOptions).catch(() => alert('cos nie tak'));
 }
 
 

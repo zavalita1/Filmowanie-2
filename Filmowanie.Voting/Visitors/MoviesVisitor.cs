@@ -35,13 +35,13 @@ internal sealed class MoviesVisitor : IGetMoviesForVotingSessionVisitor, IEnrich
     {
         var correlationId = input.Result.Item1.CorrelationId;
         var embeddedMovies = await _requestClient.GetResponse<CurrentVotingListResponse>(new MoviesListRequested(correlationId), cancellationToken);
-        var moviesIds = embeddedMovies.Message.Movies.Select(x => x.id).ToArray();
+        var moviesIds = embeddedMovies.Message.Movies.Select(x => x.Movie.id).ToArray();
         var moviesEntities = await _movieQueryRepository.GetMoviesAsync(x => moviesIds.Contains(x.id), cancellationToken);
 
         if (moviesEntities.Length != moviesIds.Length)
             return new OperationResult<MovieDTO[]>(null, new Error("Movies missing in DB!", ErrorType.InvalidState));
 
-        var movies = embeddedMovies.Message.Movies.Join(moviesEntities, x => x.id, x => x.id, (x, y) => new { Movie = y, x.Votes });
+        var movies = embeddedMovies.Message.Movies.Join(moviesEntities, x => x.Movie.id, x => x.id, (x, y) => new { Movie = y, x.Votes });
 
         var resultMovies = new List<MovieDTO>(embeddedMovies.Message.Movies.Length);
         

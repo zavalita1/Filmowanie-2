@@ -6,7 +6,7 @@ public readonly record struct OperationResult<T>(T? Result, Error? Error)
 {
     public override string ToString()
     {
-        if (Error != null)
+        if (Error == null)
             return Result?.ToString() ?? string.Empty;
 
         return $"Erroneous result ({Error!.Value.Type}).";

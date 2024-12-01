@@ -18,21 +18,19 @@ public interface IReadOnlyEmbeddedMovie
     public int MovieCreationYear { get; }
 }
 
-public interface IReadOnlyEmbeddedMovieWithNominationContext : IReadOnlyEmbeddedMovie
+public interface IReadOnlyEmbeddedMovieWithNominationContext
 {
+    public IReadOnlyEmbeddedMovie Movie { get; }
     public IReadOnlyEmbeddedUser NominatedBy { get; }
 
     public DateTime NominationConcluded { get; }
     public DateTime NominationStarted { get; }
 }
 
-public interface IReadOnlyEmbeddedMovieWithVotes : IReadOnlyEmbeddedMovie
+public interface IReadOnlyEmbeddedMovieWithVotes
 {
-    public IEnumerable<IReadOnlyVote> Votes { get; }
-}
+    public IReadOnlyEmbeddedMovie Movie { get;  }
 
-public interface IResultEmbeddedMovie
-{
-    public IReadOnlyEmbeddedMovieWithVotes Movie { get; }
+    public IEnumerable<IReadOnlyVote> Votes { get; }
     public int VotingScore { get; }
 }

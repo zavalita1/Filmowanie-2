@@ -23,6 +23,8 @@ public class VotingStateInstance : SagaStateMachineInstance
     public int TenantId { get; set; }
 
     public DateTime Created { get; set; }
+
+    public ErrorData? Error { get; set; }
 }
 
 public sealed class NominationData
@@ -41,7 +43,13 @@ public sealed class NominationDataEmbeddedUser
     public string Id { get; set; }
 }
 
-public record StartVotingEvent(Guid CorrelationId, EmbeddedMovie[] Movies, NominationData[] NominationsData, DateTime Created) : IEvent { }
+public class ErrorData
+{
+    public string ErrorMessage { get; set; }
+    public string CallStack { get; set; }
+}
+
+public record StartVotingEvent(Guid CorrelationId, EmbeddedMovie[] Movies, NominationData[] NominationsData, DateTime Created, TenantId TenantId) : IEvent { }
 public record AddMovieEvent(Guid CorrelationId, EmbeddedMovie Movie, DomainUser User, Decade Decade) : IEvent { }
 public record RemoveMovieEvent(Guid CorrelationId, EmbeddedMovie Movie, DomainUser User, Decade Decade) : IEvent { }
 public record RemoveVoteEvent(Guid CorrelationId, EmbeddedMovie Movie, DomainUser User) : IEvent { }
@@ -57,6 +65,8 @@ public record NominationAddedEvent(Guid CorrelationId, NominationData Nomination
 
 public record MoviesListRequested(Guid CorrelationId) : IEvent { }
 public record NominationsRequested(Guid CorrelationId) : IEvent { }
+public record ResultsCalculated(Guid CorrelationId) : IEvent { }
+public record ErrorEvent(Guid CorrelationId, string Message) : IEvent { }
 
 public interface IEvent
 {

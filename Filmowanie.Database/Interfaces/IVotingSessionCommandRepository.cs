@@ -7,7 +7,7 @@ public interface IVotingSessionCommandRepository
 {
     public Task InsertAsync(IReadonlyVotingResult votingResult, CancellationToken cancellationToken);
 
-    public Task UpdateAsync(string id, IEnumerable<IResultEmbeddedMovie> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards,
+    public Task UpdateAsync(string id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards,
         DateTime concluded,
         IEnumerable<IReadOnlyEmbeddedMovieWithNominationContext> moviesAdded,
         IReadOnlyEmbeddedMovie winner,

@@ -15,6 +15,6 @@ internal sealed class MapperMapperVisitor : IVotingSessionStatusMapperVisitor, I
 
     public OperationResult<AknowledgedDTO> Visit<T>(OperationResult<T> input)
     {
-        return new OperationResult<AknowledgedDTO>();
+        return new OperationResult<AknowledgedDTO>(new AknowledgedDTO { Message = "OK"}, null);
     }
 }

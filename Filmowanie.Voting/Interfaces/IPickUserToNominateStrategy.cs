@@ -1,17 +1,16 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.Enums;
+﻿using Filmowanie.Abstractions.Enums;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Voting.Interfaces;
 
 public interface IPickUserToNominateStrategy
 {
-    DomainUser GetUserToNominate(IReadOnlyEmbeddedMovie movieToReplace, IDictionary<string, PickUserToNominateContext> userContexts);
+    IReadOnlyEmbeddedUser GetUserToNominate(IReadOnlyEmbeddedMovie movieToReplace, IDictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> userContexts);
 }
 
 public sealed class PickUserToNominateContext
 {
-    public double AverageNominationPendingTime { get; set; }
+    public double AverageNominationPendingTimeInDays { get; set; }
 
     public int NominationsCount { get; set; }
 

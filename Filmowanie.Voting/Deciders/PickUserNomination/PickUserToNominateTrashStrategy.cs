@@ -1,4 +1,6 @@
-﻿using Filmowanie.Abstractions;
+﻿using Filmowanie.Abstractions.Enums;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+using Filmowanie.Voting.Extensions;
 using Filmowanie.Voting.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -13,11 +15,11 @@ public sealed class PickUserToNominateTrashStrategy : IPickUserToNominateStrateg
         _log = log;
     }
 
-    public DomainUser GetUserToNominate(IDictionary<DomainUser, PickUserToNominateContext> userContexts)
+    public IReadOnlyEmbeddedUser GetUserToNominate(IReadOnlyEmbeddedMovie movieToReplace, IDictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> userContexts)
     {
-        var userScores = new Dictionary<DomainUser, int>(userContexts.Count);
+        var userScores = new Dictionary<IReadOnlyEmbeddedUser, int>(userContexts.Count);
         var userContextToConsider = userContexts
-            .Where(x => x.Value.VoteForMovie is { Type: MovieVoteType.Trash })
+            .Where(x => x.Value.Votes.Any(y => y.Item2 == VoteType.Thrash && y.MovieId == movieToReplace.id))
             .Select(GetScore)
             .ToArray();
 
@@ -37,18 +39,16 @@ public sealed class PickUserToNominateTrashStrategy : IPickUserToNominateStrateg
         return userScores.MaxBy(x => x.Value).Key;
     }
 
-    private (DomainUser User, decimal Score) GetScore(KeyValuePair<DomainUser, PickUserToNominateContext> context)
+    private (IReadOnlyEmbeddedUser User, double Score) GetScore(KeyValuePair<IReadOnlyEmbeddedUser, PickUserToNominateContext> context)
     {
-        var nominationPendingComponent = (decimal)Math.Pow(1.2, Math.Floor(context.Value.NominationPendingTimeInDaysMean));
-        var participationComponent = 1 / (1 + 5 * context.Value.VotingParticipationPercent);
-        var previousNominationsLength = context.Value.PreviousNominations.Length + context.Value.PendingNominationsCount;
+        var nominationPendingComponent = Math.Pow(1.2, Math.Floor(context.Value.AverageNominationPendingTimeInDays));
+        var participationComponent = 1 / (1 + 5 * context.Value.ParticipationPercent);
+        var previousNominationsLength = context.Value.NominationsCount;
         var result = -1 * previousNominationsLength * nominationPendingComponent * participationComponent;
-        var previousNominationsString = GetPreviousNominationsString(context.Value.PreviousNominations);
+
         _log.LogInformation("{type}: user: {user} participation percent: {percent}, previous nominations: {prev}, giving score: {score}."
             , nameof(PickUserToNominateTrashStrategy),
-            context.Key.Name, context.Value.VotingParticipationPercent, previousNominationsString, result);
+            context.Key.Name, context.Value.ParticipationPercent, context.Value.NominationsCount, result);
         return (context.Key, result);
     }
-
-    private static string GetPreviousNominationsString(IEnumerable<IMovie> movies) => movies.Count().ToString();
 }

@@ -24,7 +24,7 @@ internal sealed class VotingSessionCommandRepository : IVotingSessionCommandRepo
         return _ctx.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(string id, IEnumerable<IResultEmbeddedMovie> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards, DateTime concluded, IEnumerable<IReadOnlyEmbeddedMovieWithNominationContext> moviesAdded, IReadOnlyEmbeddedMovie winner, CancellationToken cancellationToken)
+    public async Task UpdateAsync(string id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards, DateTime concluded, IEnumerable<IReadOnlyEmbeddedMovieWithNominationContext> moviesAdded, IReadOnlyEmbeddedMovie winner, CancellationToken cancellationToken)
     {
         var votingResultEntity = await _ctx.VotingResults.SingleAsync(x => x.id == id, cancellationToken);
 
@@ -32,6 +32,7 @@ internal sealed class VotingSessionCommandRepository : IVotingSessionCommandRepo
         votingResultEntity.Concluded = concluded;
         votingResultEntity.UsersAwardedWithNominations = usersAwards.Select(IReadOnlyEntitiesExtensions.AsMutable).ToArray();
         votingResultEntity.MoviesAdded = moviesAdded.Select(IReadOnlyEntitiesExtensions.AsMutable).ToArray();
+        votingResultEntity.Winner = winner.AsMutable();
 
         await _ctx.SaveChangesAsync(cancellationToken);
     }

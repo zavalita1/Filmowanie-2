@@ -39,10 +39,10 @@ export function InitStore() {
 export function InitActions(store: Store) {
     const promise = fetch('api/voting/state').then(async response => {
         const data = await response.json();
-        if (data.state === "Results") {
+        if (data.status === "Results") {
             store.dispatch({ type: 'VOTING_ENDED' });
         }
-        else if (data.state === "Voting") {
+        else if (data.status === "Voting") {
             store.dispatch({ type: 'VOTING_STARTED' });
         }
     }).catch((ex) => {

@@ -33,14 +33,14 @@ public sealed class VotingSessionCommandVisitor : IStartNewVotingVisitor, IConcl
             return new OperationResult<VotingSessionId>(default, new Error("Previous voting has not concluded!", ErrorType.InvalidState));
 
         var lastVotingResult = votingSessions.Single();
-        var movies = lastVotingResult.Movies.Select(x => new EmbeddedMovie { id = x.Movie.id, Name = x.Movie.Name }).ToArray();
+        var movies = lastVotingResult.Movies.Select(x => new EmbeddedMovie { id = x.Movie.id, Name = x.Movie.Name }).Where(x => x.id != lastVotingResult.Winner.id).ToArray();
         var nominationsData = lastVotingResult.UsersAwardedWithNominations.Select(x => new NominationData
         {
             Concluded = null,
-            User = new NominationDataEmbeddedUser { DisplayName = x.Name, Id = x.id}
+            User = new NominationDataEmbeddedUser { DisplayName = x.User.Name, Id = x.User.id}
         }).ToArray();
 
-        var @event = new StartVotingEvent(correlationId, movies, nominationsData, _dateTimeProvider.Now);
+        var @event = new StartVotingEvent(correlationId, movies, nominationsData, _dateTimeProvider.Now, input.Result.Tenant);
         await _bus.Publish(@event, cancellationToken);
 
         var votingSessionId = new VotingSessionId(correlationId);

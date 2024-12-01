@@ -33,9 +33,10 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 .Then(ctx =>
                 {
                     _logger.LogInformation("Voting is starting...");
-                    var movies = ctx.Message.Movies.Select(x => new EmbeddedMovieWithVotes { id = x.id, Name = x.Name, Votes = Array.Empty<Vote>() }).ToArray();
+                    var movies = ctx.Message.Movies.Select(x => new EmbeddedMovieWithVotes { Movie = x, Votes = Array.Empty<Vote>() }).ToArray();
                     ctx.Saga.Movies = movies;
                     ctx.Saga.Nominations = ctx.Message.NominationsData;
+                    ctx.Saga.TenantId = ctx.Message.TenantId.Id;
                 })
                 .ThenAsync(async ctx =>
                 {
@@ -62,7 +63,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 .Then(ctx => _logger.LogInformation("Removing movie..."))
                 .ThenAsync(async ctx =>
                 {
-                    if (ctx.Saga.Movies.All(x => x.id != ctx.Message.Movie.id))
+                    if (ctx.Saga.Movies.All(x => x.Movie.id != ctx.Message.Movie.id))
                         return;
 
                     var nominationData = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
@@ -79,7 +80,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
             When(AddVoteEvent)
                 .Then(ctx =>
                 {
-                    var movie = ctx.Saga.Movies.Single(x => x.id == ctx.Message.Movie.id);
+                    var movie = ctx.Saga.Movies.Single(x => x.Movie.id == ctx.Message.Movie.id);
                     var messageUser = ctx.Message.User;
 
                     if (movie.Votes.Any(x => x.User.id == messageUser.Id))
@@ -94,7 +95,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
             When(RemoveVoteEvent)
                 .Then(ctx =>
                 {
-                    var movie = ctx.Saga.Movies.Single(x => x.id == ctx.Message.Movie.id);
+                    var movie = ctx.Saga.Movies.Single(x => x.Movie.id == ctx.Message.Movie.id);
                     var messageUser = ctx.Message.User;
 
                     if (movie.Votes.All(x => x.User.id != messageUser.Id))
@@ -113,15 +114,18 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     var nominations = ctx.Saga.Nominations.ToArray();
                     return new VotingConcludedEvent(ctx.Message.CorrelationId, ctx.Message.Tenant, movies, nominations, ctx.Saga.Created);
                 })
-                .Finalize()
+                .TransitionTo(CalculatingResults)
         );
+
+        During(CalculatingResults, When(ResultsCalculatedEvent).Finalize());
+        During(CalculatingResults, When(Error).Then(ctx => ctx.Saga.Error = new ErrorData { ErrorMessage = "ERROR!"}).TransitionTo(NominationsConcluded)); // TODO
 
         During([WaitingForNominations, NominationsConcluded],
             When(GetMovieListEvent)
                 .Respond(ctx => new CurrentVotingListResponse { Movies = ctx.Saga.Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray() }));
 
         During([WaitingForNominations, NominationsConcluded],
-            When(GeNominationsEvent)
+            When(GetNominationsEvent)
                 .Respond(ctx => new CurrentNominationsResponse { Nominations = ctx.Saga.Nominations.ToArray() }));
     }
 
@@ -140,15 +144,19 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
     public Event<ConcludeVotingEvent> ConcludeVoting { get; private set; } = null!;
 
-
     // Events
     public Event<MoviesListRequested> GetMovieListEvent { get; private set; } = null!;
 
-    public Event<NominationsRequested> GeNominationsEvent { get; private set; } = null!;
+    public Event<NominationsRequested> GetNominationsEvent { get; private set; } = null!;
+    
+    public Event<ResultsCalculated> ResultsCalculatedEvent { get; private set; } = null!;
+    public Event<ErrorEvent> Error { get; private set; } = null!;
 
 
     // States
     public State WaitingForNominations { get; private set; } = null!;
 
     public State NominationsConcluded { get; private set; } = null!;
+
+    public State CalculatingResults { get; private set; } = null!;
 }

@@ -1,8 +1,6 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces;
-using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.Sagas;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -35,7 +33,7 @@ public class CreateVotingSessionEntryActivity : IStateMachineActivity<VotingStat
     public async Task Execute(BehaviorContext<VotingStateInstance, StartVotingEvent> context, IBehavior<VotingStateInstance, StartVotingEvent> next)
     {
         _logger.LogInformation("Adding Voting Session entry in db..");
-        var votingResult = new Models.VotingResult { Created = _dateTimeProvider.Now, Id = context.Saga.CorrelationId.ToString(), TenantId = context.Saga.TenantId, Movies = [], UsersAwardedWithNominations = [] };
+        var votingResult = new VotingResult { Created = _dateTimeProvider.Now, id = context.Saga.CorrelationId.ToString(), TenantId = context.Message.TenantId.Id, Movies = [], UsersAwardedWithNominations = [] };
         await _votingSessionCommandRepository.InsertAsync(votingResult, context.CancellationToken);
         await next.Execute(context).ConfigureAwait(false);
     }

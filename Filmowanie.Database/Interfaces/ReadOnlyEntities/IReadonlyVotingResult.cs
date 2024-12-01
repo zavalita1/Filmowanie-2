@@ -6,7 +6,7 @@ public interface IReadonlyVotingResult : IReadOnlyEntity
 {
     public DateTime? Concluded { get; }
 
-    public IResultEmbeddedMovie[] Movies { get; }
+    public IReadOnlyEmbeddedMovieWithVotes[] Movies { get; }
     public IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations { get; }
 
     public IReadOnlyEmbeddedMovie[] MoviesGoingByeBye { get; }

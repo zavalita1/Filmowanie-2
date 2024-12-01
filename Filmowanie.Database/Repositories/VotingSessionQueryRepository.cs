@@ -19,7 +19,7 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
     public async Task<IReadonlyVotingResult?> GetCurrent(TenantId tenantId,
         CancellationToken cancellationToken)
     {
-        var currentVotingSession = await _ctx.VotingResults.SingleOrDefaultAsync(x => x.Concluded == null, cancellationToken);
+        var currentVotingSession = await _ctx.VotingResults.SingleOrDefaultAsync(x => x.TenantId == tenantId.Id && x.Concluded == null, cancellationToken);
         return currentVotingSession;
     }
 
