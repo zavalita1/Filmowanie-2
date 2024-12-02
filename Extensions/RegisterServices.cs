@@ -2,9 +2,8 @@
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Providers;
 using Filmowanie.Account.Extensions;
-using Filmowanie.Database.Interfaces;
-using Filmowanie.Database.Repositories;
 using Filmowanie.Infrastructure;
+using Filmowanie.Nomination.Extensions;
 using Filmowanie.Voting.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -23,5 +22,6 @@ public static class RegisterServices
 
         services.RegisterAccountDomain();
         services.RegisterVotingDomain();
+        services.RegisterNominationDomain();
     }
 }

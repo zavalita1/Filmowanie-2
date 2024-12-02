@@ -8,6 +8,7 @@ namespace Filmowanie.Database.Contexts;
 internal class MoviesContext : DbContext
 {
     public DbSet<MovieEntity> Movies { get; set; }
+    public DbSet<MoviesThatCanBeNominatedAgainEntity> MoviesThatCanBeNominatedAgain { get; set; }
 
     public MoviesContext(DbContextOptions<MoviesContext> options)
         : base(options)
@@ -17,6 +18,10 @@ internal class MoviesContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<MovieEntity>().ToContainer(DbContainerNames.Entities)
+            .HasPartitionKey(x => x.id)
+            .HasDiscriminator(x => x.Type);
+
+        builder.Entity<MoviesThatCanBeNominatedAgainEntity>().ToContainer(DbContainerNames.Entities)
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
 

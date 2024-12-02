@@ -5,16 +5,19 @@ using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Voting.DTOs.Incoming;
 using Filmowanie.Voting.Interfaces;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Visitors;
 
 internal sealed class VoteVisitor : IVoteVisitor
 {
     private readonly IBus _bus;
+    private readonly ILogger<VoteVisitor> _log;
 
-    public VoteVisitor(IBus bus)
+    public VoteVisitor(IBus bus, ILogger<VoteVisitor> log)
     {
         _bus = bus;
+        _log = log;
     }
 
     public async Task<OperationResult<object>> VisitAsync(OperationResult<(DomainUser, VotingSessionId, VoteDTO)> input, CancellationToken cancellationToken)
@@ -35,4 +38,6 @@ internal sealed class VoteVisitor : IVoteVisitor
         
         return new OperationResult<object>(default, null);
     }
+
+    public ILogger Log => _log;
 }

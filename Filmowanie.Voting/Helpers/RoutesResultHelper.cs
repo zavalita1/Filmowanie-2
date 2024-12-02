@@ -17,7 +17,7 @@ internal static class RoutesResultHelper
         {
             ErrorType.IncomingDataIssue => TypedResults.BadRequest(string.Join(separator, result.Error!.Value.ErrorMessages)),
             ErrorType.ValidationError => TypedResults.BadRequest(string.Join(separator, result.Error!.Value.ErrorMessages)),
-            ErrorType.AuthorizationIssue2 => TypedResults.Forbid(),
+            ErrorType.AuthorizationIssue => TypedResults.Forbid(),
             ErrorType.AuthenticationIssue => TypedResults.Unauthorized(),
             ErrorType.Canceled => TypedResults.StatusCode(499),
             _ => null

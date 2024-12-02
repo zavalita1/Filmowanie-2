@@ -7,6 +7,7 @@ using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Voting.Interfaces;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Visitors;
 
@@ -15,12 +16,14 @@ public sealed class VotingSessionCommandVisitor : IStartNewVotingVisitor, IConcl
     private readonly IVotingSessionQueryRepository _votingSessionQueryRepository;
     private readonly IBus _bus;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly ILogger<VotingSessionCommandVisitor> _log;
 
-    public VotingSessionCommandVisitor(IVotingSessionQueryRepository votingSessionQueryRepository, IBus bus, IDateTimeProvider dateTimeProvider)
+    public VotingSessionCommandVisitor(IVotingSessionQueryRepository votingSessionQueryRepository, IBus bus, IDateTimeProvider dateTimeProvider, ILogger<VotingSessionCommandVisitor> log)
     {
         _votingSessionQueryRepository = votingSessionQueryRepository;
         _bus = bus;
         _dateTimeProvider = dateTimeProvider;
+        _log = log;
     }
 
     public async Task<OperationResult<VotingSessionId>> VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
@@ -53,4 +56,6 @@ public sealed class VotingSessionCommandVisitor : IStartNewVotingVisitor, IConcl
         await _bus.Publish(@event, cancellationToken);
         return OperationResultExtensions.Empty;
     }
+
+    public ILogger Log => _log;
 }

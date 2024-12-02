@@ -36,22 +36,9 @@ export function InitStore() {
     return { history, store };
 }
 
-export function InitActions(store: Store) {
-    const promise = fetch('api/voting/state').then(async response => {
-        const data = await response.json();
-        if (data.status === "Results") {
-            store.dispatch({ type: 'VOTING_ENDED' });
-        }
-        else if (data.status === "Voting") {
-            store.dispatch({ type: 'VOTING_STARTED' });
-        }
-    }).catch((ex) => {
-        debugger;
-        // TODO
-    });
-
+export async function InitActions(store: Store) {
     store.dispatch(actionCreators.getUser(true) as any);
-    return promise;
+    return;
 }
 
 export function getStore() { return store; };

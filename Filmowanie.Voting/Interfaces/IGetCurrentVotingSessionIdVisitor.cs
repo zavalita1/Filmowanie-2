@@ -5,8 +5,7 @@ using Filmowanie.Voting.DTOs.Outgoing;
 
 namespace Filmowanie.Voting.Interfaces;
 
-internal interface IGetCurrentVotingSessionVisitor : IOperationAsyncVisitor<DomainUser, VotingSessionId>;
-internal interface IGetCurrentVotingSessionStatusVisitor : IOperationAsyncVisitor<DomainUser, VotingState>;
+
 internal interface IVotingSessionStatusMapperVisitor : IOperationVisitor<VotingState, VotingSessionStatusDto>;
 internal interface IAknowledgedMapperVisitor : IOperationVisitor<AknowledgedDTO>;
 internal interface IVoteVisitor : IOperationAsyncVisitor<(DomainUser, VotingSessionId, VoteDTO), object>;

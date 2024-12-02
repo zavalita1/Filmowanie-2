@@ -21,8 +21,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGetMoviesForVotingSessionVisitor, MoviesVisitor>();
         services.AddScoped<IEnrichMoviesForVotingSessionWithPlaceholdersVisitor, MoviesVisitor>();
         
-        services.AddScoped<IGetCurrentVotingSessionVisitor, VotingSessionQueryVisitor>();
-        services.AddScoped<IGetCurrentVotingSessionStatusVisitor, VotingSessionQueryVisitor>();
+        services.AddScoped<IGetCurrentVotingSessionIdVisitor, VotingSessionIdQueryVisitor>();
+        services.AddScoped<IGetCurrentVotingSessionStatusVisitor, VotingSessionIdQueryVisitor>();
         services.AddScoped<IStartNewVotingVisitor, VotingSessionCommandVisitor>();
         services.AddScoped<IConcludeVotingVisitor, VotingSessionCommandVisitor>();
         services.AddScoped<IVotingSessionStatusMapperVisitor, MapperMapperVisitor>();

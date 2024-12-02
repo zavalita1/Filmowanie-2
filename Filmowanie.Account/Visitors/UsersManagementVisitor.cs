@@ -2,6 +2,7 @@
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Account.Visitors;
 
@@ -9,11 +10,13 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
 {
     private readonly IUsersQueryRepository _usersQueryRepository;
     private readonly IUsersCommandRepository _usersCommandRepository;
+    private readonly ILogger<UsersManagementVisitor> _log;
 
-    public UsersManagementVisitor(IUsersQueryRepository usersQueryRepository, IUsersCommandRepository usersCommandRepository)
+    public UsersManagementVisitor(IUsersQueryRepository usersQueryRepository, IUsersCommandRepository usersCommandRepository, ILogger<UsersManagementVisitor> log)
     {
         _usersQueryRepository = usersQueryRepository;
         _usersCommandRepository = usersCommandRepository;
+        _log = log;
     }
 
     private async Task<IEnumerable<DomainUser>> GetAll(CancellationToken cancellation)
@@ -48,6 +51,8 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
         await _usersCommandRepository.Insert(userEntity, cancellationToken);
         return new(default, null);
     }
+
+    public ILogger Log => _log;
 
     private class User : IReadOnlyUserEntity
     {

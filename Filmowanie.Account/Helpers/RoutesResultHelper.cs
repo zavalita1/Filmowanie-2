@@ -1,13 +1,14 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
+using Filmowanie.Account.Constants;
 using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Account.Helpers;
 
 internal static class RoutesResultHelper
 {
-    public static IResult UnwrapOperationResult<T>(OperationResult<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null)
+    public static IResult UnwrapOperationResult<T>(OperationResult<T> result, IResult? onSuccess = null, Func<Error, IResult?>? overrideDefault = null)
     {
         if (result.Error == null)
             return onSuccess ?? TypedResults.Ok(result.Result);
@@ -18,13 +19,21 @@ internal static class RoutesResultHelper
         {
             ErrorType.IncomingDataIssue => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.Concat(separator)),
             ErrorType.ValidationError => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.Concat(separator)),
-            ErrorType.AuthorizationIssue2 => TypedResults.Forbid(),
+            ErrorType.AuthorizationIssue => TypedResults.Forbid(),
             ErrorType.AuthenticationIssue => TypedResults.Unauthorized(),
             ErrorType.Canceled => TypedResults.StatusCode(499),
             _ => null
         };
 
-        var overriddenValue = overrideDefault?.Invoke(result.Error!.Value.Type);
+        if (result.Error!.Value.Type == ErrorType.AuthenticationIssue)
+        {
+            if (result.Error!.Value.ErrorMessages.Contains(Messages.CookieExpired))
+                return TypedResults.Unauthorized();
+
+            return TypedResults.Problem("Please log in", statusCode: 401);
+        }
+
+        var overriddenValue = overrideDefault?.Invoke(result.Error.Value);
         unwrapped = overriddenValue ?? unwrapped;
 
         if (unwrapped != null)

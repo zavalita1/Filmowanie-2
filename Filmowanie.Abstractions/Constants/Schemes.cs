@@ -1,4 +1,4 @@
-﻿namespace Filmowanie.Account.Constants;
+﻿namespace Filmowanie.Abstractions.Constants;
 
 public class Schemes
 {

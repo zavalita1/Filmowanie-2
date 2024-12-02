@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
@@ -112,7 +113,7 @@ internal sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return Task.FromResult(RoutesResultHelper.UnwrapOperationResult(resultDto, overrideDefault: errType => errType == ErrorType.AuthenticationIssue ? TypedResults.Empty : null));
+        return Task.FromResult(RoutesResultHelper.UnwrapOperationResult(resultDto));
     }
 
     

@@ -3,6 +3,7 @@ import { KnownAction as AppAction } from '../App/types';
 import * as appActionCreators from '../App/actionCreators';
 import { AppThunkAction } from '../';
 import fetchWrapperBuilder from '../../fetchWrapper';
+import { VotingConcludedAction, VotingStartedAction } from "../votingState";
 
 const login = (code: string): AppThunkAction<UserAction | AppAction> => (dispatch, getState) => {
     dispatch({ type: 'LOGGING' });
@@ -93,13 +94,34 @@ const signUp = (mail:string, password: string) : AppThunkAction<UserAction | App
 }
 
 const
-    getUser = (init?: boolean): AppThunkAction<UserAction | AppAction> => (dispatch, getState) => {
+    getUser = (init?: boolean): AppThunkAction<UserAction | AppAction | VotingConcludedAction | VotingStartedAction> => (dispatch, getState) => {
     dispatch({ type: 'LOGGING' });
     const fetchWrapper = fetchWrapperBuilder().build();
+
     fetchWrapper<any>('api/account').then(response => {
         // TODO mapping
         const userClaims : IUser = {...response};
-        setUser(userClaims, dispatch);
+
+        const nominationsPromise = fetchWrapper<any>('api/nominations');
+        const promise = fetch('api/voting/state').then(async response => {
+            const data = await response.json();
+            if (data.status === "Results") {
+                dispatch({ type: 'VOTING_ENDED' });
+            }
+            else if (data.status === "Voting") {
+                dispatch({ type: 'VOTING_STARTED' });
+            }
+        }).catch((ex) => {
+            debugger;
+            // TODO
+        });
+
+        Promise.all([promise, nominationsPromise]).then(dtos => {
+            userClaims.hasNominations = dtos[1].nominations?.length > 0;
+            setUser(userClaims, dispatch);
+        });
+
+
     }).catch(error => {
        console.log('error during getting user', error);
     });

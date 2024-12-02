@@ -4,6 +4,7 @@ using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.DTOs.Outgoing;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Database.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Account.Visitors;
 
@@ -11,11 +12,13 @@ internal sealed class UserDTOMapperVisitor : IUserMapperVisitor, IEnrichUserVisi
 {
     private readonly IUsersQueryRepository _usersRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly ILogger<UserDTOMapperVisitor> _log;
 
-    public UserDTOMapperVisitor(IUsersQueryRepository usersRepository, IDateTimeProvider dateTimeProvider)
+    public UserDTOMapperVisitor(IUsersQueryRepository usersRepository, IDateTimeProvider dateTimeProvider, ILogger<UserDTOMapperVisitor> log)
     {
         _usersRepository = usersRepository;
         _dateTimeProvider = dateTimeProvider;
+        _log = log;
     }
 
     public OperationResult<UserDTO> Visit(OperationResult<DomainUser> user)
@@ -43,4 +46,6 @@ internal sealed class UserDTOMapperVisitor : IUserMapperVisitor, IEnrichUserVisi
         var domainUser = new DomainUser(input.Result!.Item1.Id, input.Result.Item1.DisplayName, false, false, input.Result.CurrentUser.Tenant, now);
         return new OperationResult<DomainUser>(domainUser, null);
     }
+
+    public ILogger Log => _log;
 }

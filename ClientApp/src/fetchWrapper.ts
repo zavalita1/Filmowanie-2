@@ -34,8 +34,8 @@ export const fetchWrapper = <T>(path: string, options?: FetchWrapperConfiguratio
             if (response.status === 401) {
                 store?.dispatch(userActionCreators.actionCreators.loggedOut());
                 
-                response.text().then(t => {
-                    if (t !== "Please log in") {
+                response.json().then(t => {
+                    if (t?.detail !== "Please log in") {
                         store?.dispatch(appActionCreators.actionCreators.setError("Czas sesji upłynął, zaloguj się ponownie."));
                     }
                 });

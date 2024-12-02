@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Abstractions.Extensions;
 
@@ -7,7 +8,7 @@ public static class OperationResultExtensions
     public static OperationResult<T> CancelledOperation<T>() => new(default!, new Error("Operation canceled.", ErrorType.Canceled));
 
     public static OperationResult<TNext> Pluck<TNext, TPrevious>(this OperationResult<TPrevious> operationResult, Func<TPrevious, TNext> selector) =>
-        operationResult.Error != null? new (default!, operationResult.Error) : new(selector.Invoke(operationResult.Result), null);
+        operationResult.Error != null ? new (default!, operationResult.Error) : new(selector.Invoke(operationResult.Result), null);
 
     public static async Task<OperationResult<TNext>> AcceptAsync<TPrevious, TNext>(this OperationResult<TPrevious> operationResult, Func<TPrevious, CancellationToken, Task<TNext>> inlineVisitor, CancellationToken cancellationToken)
     {
@@ -54,6 +55,7 @@ public static class OperationResultExtensions
         if (operation.Error != null)
             return Task.FromResult(new OperationResult<TOutput>(default!, operation.Error));
 
+        LogOperation(visitor, operation);
         return visitor.VisitAsync(operation, cancellationToken);
     }
 
@@ -65,6 +67,7 @@ public static class OperationResultExtensions
         if (operation.Error != null)
             return Task.FromResult(new OperationResult<TOutput>(default!, operation.Error));
 
+        LogOperation(visitor, operation);
         return visitor.VisitAsync(operation, cancellationToken);
     }
 
@@ -73,6 +76,7 @@ public static class OperationResultExtensions
         if (operation.Error != null)
             return new OperationResult<TOutput>(default!, operation.Error);
 
+        LogOperation(visitor, operation);
         return visitor.Visit(operation);
     }
 
@@ -81,6 +85,15 @@ public static class OperationResultExtensions
         if (operation.Error != null)
             return new OperationResult<TOutput>(default!, operation.Error);
 
+        LogOperation(visitor, operation);
         return visitor.Visit(operation);
+    }
+
+    private static void LogOperation(IVisitor visitor, object operationResult)
+    {
+        if (!visitor.Log.IsEnabled(LogLevel.Debug)) 
+            return;
+
+        visitor.Log.LogDebug($"Visiting {visitor.GetType().Name} Visitor. Using result: {operationResult}.");
     }
 }

@@ -1,6 +1,4 @@
-﻿using Filmowanie.Database.Entities.Voting;
-
-namespace Filmowanie.Voting.Sagas;
+﻿namespace Filmowanie.Database.Entities.Voting;
 
 public class CurrentNominationsResponse
 {

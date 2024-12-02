@@ -80,9 +80,7 @@ const MoviesListComponent = (props: MoviesListProps) => {
 function renderMoviesList() {
     return props.movies.map(movie => {
     if (movie.isPlaceholder) {
-        let message = `${movie.title} ${movie.createdYear}`;
-        message = message.slice(0, -1) + 'X';
-        return <MovieCardPlaceholder message={message} ></MovieCardPlaceholder>
+        return <MovieCardPlaceholder message={movie.title} ></MovieCardPlaceholder>
     }
 
     const getAdminButton = (movie: IMovie) => !props.isAdmin ? undefined : <AdminButton movie={movie}></AdminButton>;

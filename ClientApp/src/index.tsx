@@ -14,5 +14,4 @@ Init.InitActions(store).then(() => {
     SetupSignalRConnection.SetupSignalRConnection(store);
 });
 
-
 //registerServiceWorker();

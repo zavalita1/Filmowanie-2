@@ -4,16 +4,19 @@ using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.Constants;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Account.Visitors;
 
 internal sealed class UserIdentityVisitor : IUserIdentityVisitor
 {
     private readonly IHttpContextAccessor _contextAccessor;
+    private readonly ILogger<UserIdentityVisitor> _log;
 
-    public UserIdentityVisitor(IHttpContextAccessor contextAccessor)
+    public UserIdentityVisitor(IHttpContextAccessor contextAccessor, ILogger<UserIdentityVisitor> log)
     {
         _contextAccessor = contextAccessor;
+        _log = log;
     }
 
     public OperationResult<DomainUser> Visit<T>(OperationResult<T> operationResult)
@@ -21,7 +24,11 @@ internal sealed class UserIdentityVisitor : IUserIdentityVisitor
         var user = _contextAccessor.HttpContext?.User;
 
         if (user == null || user.Identity?.IsAuthenticated != true)
-            return new OperationResult<DomainUser>(default, new Error("User is not logged in!", ErrorType.AuthenticationIssue));
+        {
+            var errors = _contextAccessor.HttpContext!.Request.Cookies.ContainsKey(".AspNetCore.cookie") ? (string[])[Messages.CookieExpired, Messages.UserNotLoggerIn] : [Messages.UserNotLoggerIn];
+            return new OperationResult<DomainUser>(default, new Error(errors, ErrorType.AuthenticationIssue));
+        }
+            
 
         var id = user.Claims.Single(x => x.Type == ClaimsTypes.UserId).Value;
         var username = user.Claims.Single(x => x.Type == ClaimsTypes.UserName).Value;
@@ -38,4 +45,6 @@ internal sealed class UserIdentityVisitor : IUserIdentityVisitor
         var result = new DomainUser(id, username, isAdmin, hasBasicAuthSetup, tenant, created);
         return new OperationResult<DomainUser>(result, null);
     }
+
+    public ILogger Log => _log;
 }

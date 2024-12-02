@@ -1,4 +1,4 @@
-﻿using Filmowanie.Account.Constants;
+﻿using Filmowanie.Abstractions.Constants;
 using Filmowanie.Voting.DTOs.Incoming;
 using Filmowanie.Voting.Interfaces;
 using Microsoft.AspNetCore.Builder;

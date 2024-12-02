@@ -146,9 +146,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
     // Events
     public Event<MoviesListRequested> GetMovieListEvent { get; private set; } = null!;
-
     public Event<NominationsRequested> GetNominationsEvent { get; private set; } = null!;
-    
     public Event<ResultsCalculated> ResultsCalculatedEvent { get; private set; } = null!;
     public Event<ErrorEvent> Error { get; private set; } = null!;
 

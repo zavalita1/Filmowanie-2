@@ -29,5 +29,6 @@ public static class IServiceCollectionExtensions
         services.AddScoped<IVotingSessionQueryRepository, VotingSessionQueryRepository>();
         services.AddScoped<IVotingSessionCommandRepository, VotingSessionCommandRepository>();
         services.AddScoped<IMovieQueryRepository, MovieQueryRepository>();
+        services.AddScoped<IMovieCommandRepository, MovieCommandRepository>();
     }
 }

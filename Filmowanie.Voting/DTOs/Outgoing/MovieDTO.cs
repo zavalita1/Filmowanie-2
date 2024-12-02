@@ -6,7 +6,7 @@ public sealed record MovieDTO(string MovieId, string MovieName, int Votes, strin
     {
     }
 
-    public MovieDTO(string MovieId, string MovieName, int Year) : this(MovieId, MovieName, 0, "", "", "", Year, "", Array.Empty<string>(), Array.Empty<string>(),Array.Empty<string>(), Array.Empty<string>(), "", true)
+    public MovieDTO(string placeholderTitle, int year) : this("", placeholderTitle, 0, "", "", "", year, "", [], [],[], [], "", true)
     {
     }
 }

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Filmowanie.Abstractions.Constants;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Extensions;
 using Filmowanie.Database.Contants;
@@ -13,6 +14,7 @@ using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Filters;
+using Filmowanie.Nomination.Extensions;
 using Filmowanie.Voting.Consumers;
 using Filmowanie.Voting.Extensions;
 using Filmowanie.Voting.Sagas;
@@ -93,6 +95,7 @@ void ConfigureEndpoints(WebApplication webApplication, Environment appEnvironmen
     apiGroup.AddEndpointFilter<LoggingActionFilter>();
     apiGroup.RegisterAccountRoutes();
     apiGroup.RegisterVotingRoutes();
+    apiGroup.RegisterNominationRoutes();
 
     webApplication.UseWhen(
         context => !context.Request.Path.StartsWithSegments("/api"),
@@ -130,9 +133,15 @@ void ConfigureMassTransit(WebApplicationBuilder appBuilder)
             cosmosConfig.CollectionId = DbContainerNames.Events;
         });
 
-        var entryAssembly = new [] {Assembly.GetEntryAssembly()!, typeof(VotingStateInstance).Assembly}; // TODO
+        var entryAssembly = new []
+        {
+            Assembly.GetEntryAssembly()!, 
+            typeof(VotingStateInstance).Assembly, 
+            typeof(Filmowanie.Nomination.Consumers.VotingConcludedConsumer).Assembly
+        }; // TODO
 
         x.AddConsumer<VotingConcludedConsumer>();
+        x.AddConsumer<Filmowanie.Nomination.Consumers.VotingConcludedConsumer>();
         x.AddSagaStateMachine<VotingStateMachine, VotingStateInstance>();
         x.AddActivities(entryAssembly);
 

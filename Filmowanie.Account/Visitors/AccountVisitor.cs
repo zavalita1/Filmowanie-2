@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
@@ -101,4 +102,6 @@ internal sealed class AccountVisitor : ICodeLoginVisitor, IBasicAuthLoginVisitor
 
         return new OperationResult<LoginResultData>(new LoginResultData(claimsIdentity, authProps), null);
     }
+
+    public ILogger Log => _log;
 }
