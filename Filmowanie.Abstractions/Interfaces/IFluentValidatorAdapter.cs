@@ -2,7 +2,7 @@
 
 namespace Filmowanie.Abstractions.Interfaces;
 
-public interface IFluentValidatorAdapter<TInput>
+public interface IFluentValidatorAdapter<TInput> : IOperationVisitor<TInput, TInput>
 {
     public OperationResult<TInput> Validate(TInput input);
 }

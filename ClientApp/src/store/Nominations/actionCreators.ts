@@ -19,7 +19,7 @@ const nominateMovie = (movieFilmwebUrl: string, pickPosterManually: boolean): Ap
    if (pickPosterManually) {
     dispatch({type: 'NOMINATING_MOVIE_WAITING_FOR_POSTERS'});
     const fetchWrapper = fetchWrapperBuilder().build();
-    fetchWrapper<PostersListDTO>(`movies/posters?movieUrl=${movieFilmwebUrl}`).then(response => {
+    fetchWrapper<PostersListDTO>(`api/nominations/posters?movieUrl=${movieFilmwebUrl}`).then(response => {
         dispatch({type: 'NOMINATING_MOVIE_WAITING_FOR_POSTER_PICK', payload: { posterUrls: response.posterUrls }});
     }).catch(error => {
     console.log('error during getting posters', error);
@@ -32,7 +32,7 @@ const loadNominationsData = (): AppThunkAction<LoadingNominationsStartedAction |
     dispatch({type: 'LOADING_NOMINATIONS_DATA_STARTED'});
 
     const fetchWrapper = fetchWrapperBuilder().build();
-    fetchWrapper<NominationsDataDTO>('nominateMovie/getData').then(response => {
+    fetchWrapper<NominationsDataDTO>('api/nominations/fullData').then(response => {
 
         const nominations = response.nominations.map(x => x as NominationDecade)
         const moviesThatCanBeNominatedAgain = response.moviesThatCanBeNominatedAgain.map((x: any) => ({
@@ -70,7 +70,7 @@ const confirmMovieNomination = (): AppThunkAction<NominatedAction | AppAction | 
        headers: { 'content-type': 'application/json;charset=UTF-8', } 
    };
    const fetchWrapper = fetchWrapperBuilder().build();
-   fetchWrapper<NominationAknowledgedDTO>('nominateMovie', fetchOptions).then(response => {
+   fetchWrapper<NominationAknowledgedDTO>('api/nominations', fetchOptions).then(response => {
     dispatch({ type: 'NOMINATING_MOVIE_END', payload: { decade: response.decade, success: response !== undefined} });
     userActions.actionCreators.getUser(false)(dispatch as any, getState);
     dispatch({ type: 'RELOAD_MOVIE_LIST'});

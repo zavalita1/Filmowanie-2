@@ -53,9 +53,13 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 .Then(ctx => _logger.LogInformation("Adding movie.."))
                 .ThenAsync(ctx =>
                 {
+                    var movieWithVotes = new EmbeddedMovieWithVotes(ctx.Message.Movie);
+                    ctx.Saga.Movies = ctx.Saga.Movies.Concat([movieWithVotes]);
+
                     var nominationToConclude = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
                     nominationToConclude.Concluded = _dateTimeProvider.Now;
-                    return ctx.Saga.Nominations.Any() ? Task.CompletedTask : ctx.TransitionToState(NominationsConcluded);
+                    nominationToConclude.MovieId = ctx.Message.Movie.id;
+                    return ctx.Saga.Nominations.All(x => x.Concluded == null) ? Task.CompletedTask : ctx.TransitionToState(NominationsConcluded);
                 }));
 
         During([WaitingForNominations, NominationsConcluded],
@@ -68,7 +72,9 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
                     var nominationData = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
                     nominationData.Concluded = null;
+                    nominationData.MovieId = null;
                     await ctx.Publish(new NominationAddedEvent(ctx.Message.CorrelationId, nominationData), ctx.CancellationToken);
+                    ctx.Saga.Movies = ctx.Saga.Movies.Where(x => x.Movie.id != ctx.Message.Movie.id).ToArray();
 
                     var currentState = await Accessor.Get(ctx);
                     if (currentState.Name == nameof(NominationsConcluded))
@@ -126,7 +132,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During([WaitingForNominations, NominationsConcluded],
             When(GetNominationsEvent)
-                .Respond(ctx => new CurrentNominationsResponse { Nominations = ctx.Saga.Nominations.ToArray() }));
+                .Respond(ctx => new CurrentNominationsResponse { Nominations = ctx.Saga.Nominations.ToArray(), CorrelationId = ctx.Saga.CorrelationId }));
     }
 
     // Commands

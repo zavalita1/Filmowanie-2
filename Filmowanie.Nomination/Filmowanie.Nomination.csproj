@@ -11,6 +11,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Filmowanie.Abstractions\Filmowanie.Abstractions.csproj" />
 	  <ProjectReference Include="..\Filmowanie.Database\Filmowanie.Database.csproj" />
 	</ItemGroup>

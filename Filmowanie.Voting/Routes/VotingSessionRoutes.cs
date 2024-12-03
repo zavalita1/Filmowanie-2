@@ -3,7 +3,6 @@ using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Voting.DTOs.Incoming;
 using Filmowanie.Voting.Helpers;
 using Filmowanie.Voting.Interfaces;
-using Filmowanie.Voting.Visitors;
 using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Voting.Routes;

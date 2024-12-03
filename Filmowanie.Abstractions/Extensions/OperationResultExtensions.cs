@@ -30,6 +30,8 @@ public static class OperationResultExtensions
 
     public static OperationResult<object> Empty => new(default!, null);
 
+    public static OperationResult<T> FromResult<T>(T result) => new(result, null);
+
     public static OperationResult<(T1, T2)> Merge<T1, T2>(this OperationResult<T1> first, OperationResult<T2> second)
     {
         var error = (Error?)null;

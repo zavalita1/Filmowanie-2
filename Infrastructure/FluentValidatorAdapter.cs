@@ -1,19 +1,21 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Interfaces;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Infrastructure;
 
 public sealed class FluentValidatorAdapter<TInput> : IFluentValidatorAdapter<TInput>
 {
     private readonly IValidator<TInput> _validator;
+    private readonly ILogger<FluentValidatorAdapter<TInput>> _log;
 
-    public FluentValidatorAdapter(IValidator<TInput> validator)
+    public FluentValidatorAdapter(IValidator<TInput> validator, ILogger<FluentValidatorAdapter<TInput>> log)
     {
         _validator = validator;
+        _log = log;
     }
 
     public OperationResult<TInput> Validate(TInput input)
@@ -28,4 +30,8 @@ public sealed class FluentValidatorAdapter<TInput> : IFluentValidatorAdapter<TIn
         var error = new Error(errorMessage, ErrorType.ValidationError);
         return new OperationResult<TInput>(input, error);
     }
+
+    public OperationResult<TInput> Visit(OperationResult<TInput> input) => Validate(input.Result);
+
+    public ILogger Log => _log;
 }

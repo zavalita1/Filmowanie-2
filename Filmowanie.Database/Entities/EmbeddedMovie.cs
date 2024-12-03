@@ -9,6 +9,16 @@ public class EmbeddedMovie : IReadOnlyEmbeddedMovie
     public virtual string Name { get; set; }
 
     public virtual int MovieCreationYear { get; set; }
+
+    public EmbeddedMovie()
+    { }
+
+    public EmbeddedMovie(IReadOnlyEmbeddedMovie other)
+    {
+        id = other.id;
+        Name = other.Name;
+        MovieCreationYear = other.MovieCreationYear;
+    }
 }
 
 public class EmbeddedMovieWithNominationContext : IReadOnlyEmbeddedMovieWithNominationContext

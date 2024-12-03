@@ -19,6 +19,7 @@ public static class RegisterServices
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IFluentValidatorAdapterFactory, FluentValidatorAdapterFactory>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddSingleton<IGuidProvider, GuidProvider>();
 
         services.RegisterAccountDomain();
         services.RegisterVotingDomain();

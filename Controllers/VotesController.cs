@@ -28,10 +28,4 @@ public class VotesController : ControllerBase
     {
         return Ok(); // TODO
     }
-
-    [HttpPost("vote")]
-    public async Task<IActionResult> Vote([FromBody] VoteDTO vote, CancellationToken cancel)
-    {
-        return Ok(); // TODO
-    }
 }

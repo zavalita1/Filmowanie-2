@@ -16,13 +16,15 @@ public sealed class VotingSessionCommandVisitor : IStartNewVotingVisitor, IConcl
     private readonly IVotingSessionQueryRepository _votingSessionQueryRepository;
     private readonly IBus _bus;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IGuidProvider _guidProvider;
     private readonly ILogger<VotingSessionCommandVisitor> _log;
 
-    public VotingSessionCommandVisitor(IVotingSessionQueryRepository votingSessionQueryRepository, IBus bus, IDateTimeProvider dateTimeProvider, ILogger<VotingSessionCommandVisitor> log)
+    public VotingSessionCommandVisitor(IVotingSessionQueryRepository votingSessionQueryRepository, IBus bus, IDateTimeProvider dateTimeProvider, IGuidProvider guidProvider, ILogger<VotingSessionCommandVisitor> log)
     {
         _votingSessionQueryRepository = votingSessionQueryRepository;
         _bus = bus;
         _dateTimeProvider = dateTimeProvider;
+        _guidProvider = guidProvider;
         _log = log;
     }
 
@@ -30,7 +32,7 @@ public sealed class VotingSessionCommandVisitor : IStartNewVotingVisitor, IConcl
     {
         var votingSessions = await _votingSessionQueryRepository
             .Get(x => x.TenantId == input.Result.Tenant.Id && x.Concluded != null, x => x.Concluded!, -1, cancellationToken);
-        var correlationId = Guid.NewGuid();
+        var correlationId = _guidProvider.NewGuid();
 
         if (!votingSessions.Any())
             return new OperationResult<VotingSessionId>(default, new Error("Previous voting has not concluded!", ErrorType.InvalidState));

@@ -33,7 +33,7 @@ public sealed class NominationData
     public Decade Year { get; init; }
     public DateTime? Concluded { get; set; }
 
-    public string MovieId { get; set; }
+    public string? MovieId { get; set; }
 }
 
 public sealed class NominationDataEmbeddedUser

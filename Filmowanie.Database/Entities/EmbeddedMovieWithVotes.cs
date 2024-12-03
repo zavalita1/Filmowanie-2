@@ -5,7 +5,7 @@ namespace Filmowanie.Database.Entities;
 
 public class EmbeddedMovieWithVotes : IReadOnlyEmbeddedMovieWithVotes
 {
-    public IEnumerable<Vote> Votes { get; set; } = [];
+    public IEnumerable<Vote> Votes { get; set; }
 
     public EmbeddedMovie Movie { get; set; }
 
@@ -13,4 +13,15 @@ public class EmbeddedMovieWithVotes : IReadOnlyEmbeddedMovieWithVotes
 
     IEnumerable<IReadOnlyVote> IReadOnlyEmbeddedMovieWithVotes.Votes => Votes;
     IReadOnlyEmbeddedMovie IReadOnlyEmbeddedMovieWithVotes.Movie => Movie;
+
+    public EmbeddedMovieWithVotes(IReadOnlyEmbeddedMovie other) : this()
+    {
+        Movie = new EmbeddedMovie(other);
+    }
+
+    public EmbeddedMovieWithVotes()
+    {
+        Votes = [];
+        VotingScore = 0;
+    }
 }

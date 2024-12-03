@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -10,12 +11,14 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
 {
     private readonly IUsersQueryRepository _usersQueryRepository;
     private readonly IUsersCommandRepository _usersCommandRepository;
+    private readonly IGuidProvider _guidProvider;
     private readonly ILogger<UsersManagementVisitor> _log;
 
-    public UsersManagementVisitor(IUsersQueryRepository usersQueryRepository, IUsersCommandRepository usersCommandRepository, ILogger<UsersManagementVisitor> log)
+    public UsersManagementVisitor(IUsersQueryRepository usersQueryRepository, IUsersCommandRepository usersCommandRepository, IGuidProvider guidProvider, ILogger<UsersManagementVisitor> log)
     {
         _usersQueryRepository = usersQueryRepository;
         _usersCommandRepository = usersCommandRepository;
+        _guidProvider = guidProvider;
         _log = log;
     }
 
@@ -35,7 +38,7 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
     public async Task<OperationResult<object>> VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
     {
         var domainUser = input.Result!;
-        var code = Guid.NewGuid().ToString();
+        var code = _guidProvider.NewGuid().ToString();
         var userEntity = new User
         {
             Code = code,

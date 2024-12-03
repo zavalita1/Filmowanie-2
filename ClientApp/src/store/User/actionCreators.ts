@@ -5,7 +5,9 @@ import { AppThunkAction } from '../';
 import fetchWrapperBuilder from '../../fetchWrapper';
 import { VotingConcludedAction, VotingStartedAction } from "../votingState";
 
-const login = (code: string): AppThunkAction<UserAction | AppAction> => (dispatch, getState) => {
+type ActionTypes = UserAction | AppAction | VotingConcludedAction | VotingStartedAction;
+
+const login = (code: string): AppThunkAction<ActionTypes> => (dispatch, getState) => {
     dispatch({ type: 'LOGGING' });
     
     const body = JSON.stringify({code});
@@ -29,13 +31,11 @@ const login = (code: string): AppThunkAction<UserAction | AppAction> => (dispatc
 
         // TODO mapping
         const userClaims : IUser = {...response};
-
-        dispatch({ type: 'LOGGED', payload: userClaims });
-        dispatch(appActionCreators.actionCreators.setLoading(false));
+        return getNominationsAndStateData(userClaims, fetchWrapper, dispatch);
     });
 }
 
-const basicLogin = (mail: string, password: string): AppThunkAction<UserAction | AppAction> => (dispatch, getState) => {
+const basicLogin = (mail: string, password: string): AppThunkAction<ActionTypes> => (dispatch, getState) => {
     dispatch({ type: 'LOGGING' });
     
     const body = JSON.stringify({email: mail, password});
@@ -59,13 +59,11 @@ const basicLogin = (mail: string, password: string): AppThunkAction<UserAction |
         
         // TODO mapping
         const userClaims : IUser = {...response};
-
-        dispatch({ type: 'LOGGED', payload: userClaims });
-        dispatch(appActionCreators.actionCreators.setLoading(false));
+        return getNominationsAndStateData(userClaims, fetchWrapper, dispatch);
     });
 }
 
-const signUp = (mail:string, password: string) : AppThunkAction<UserAction | AppAction> => (dispatch, getState) => {
+const signUp = (mail:string, password: string) : AppThunkAction<ActionTypes> => (dispatch, getState) => {
     const body = JSON.stringify({email: mail, password});
     const fetchOptions = { 
         method: "POST", 
@@ -94,15 +92,21 @@ const signUp = (mail:string, password: string) : AppThunkAction<UserAction | App
 }
 
 const
-    getUser = (init?: boolean): AppThunkAction<UserAction | AppAction | VotingConcludedAction | VotingStartedAction> => (dispatch, getState) => {
+    getUser = (init?: boolean): AppThunkAction<ActionTypes> => (dispatch, getState) => {
     dispatch({ type: 'LOGGING' });
     const fetchWrapper = fetchWrapperBuilder().build();
 
     fetchWrapper<any>('api/account').then(response => {
         // TODO mapping
         const userClaims : IUser = {...response};
+        return getNominationsAndStateData(userClaims, fetchWrapper, dispatch);
+    }).catch(error => {
+       console.log('error during getting user', error);
+    });
+}
 
-        const nominationsPromise = fetchWrapper<any>('api/nominations');
+const getNominationsAndStateData = (userClaims: IUser, fetchWrapper: <T>(path: string, options?: RequestInit) => Promise<T>, dispatch: (arg: ActionTypes) => void) => {
+    const nominationsPromise = fetchWrapper<any>('api/nominations');
         const promise = fetch('api/voting/state').then(async response => {
             const data = await response.json();
             if (data.status === "Results") {
@@ -116,15 +120,10 @@ const
             // TODO
         });
 
-        Promise.all([promise, nominationsPromise]).then(dtos => {
+        return Promise.all([promise, nominationsPromise]).then(dtos => {
             userClaims.hasNominations = dtos[1].nominations?.length > 0;
             setUser(userClaims, dispatch);
         });
-
-
-    }).catch(error => {
-       console.log('error during getting user', error);
-    });
 }
 
 const setUser = (user: IUser, dispatch: (action: UserAction | AppAction) => void) => {

@@ -20,4 +20,24 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
     public virtual int CreationYear { get; set; }
 
     public virtual int DurationInMinutes { get; set; }
+
+    public MovieEntity()
+    {
+    }
+
+    public MovieEntity(IReadOnlyMovieEntity other)
+    {
+        Name = other.Name;
+        OriginalTitle = other.OriginalTitle;
+        Description = other.Description;
+        PosterUrl = other.PosterUrl;
+        FilmwebUrl = other.FilmwebUrl;
+        Actors = other.Actors;
+        Writers = other.Writers;
+        Directors = other.Directors;
+        Genres = other.Genres;
+        CreationYear = other.CreationYear;
+        DurationInMinutes = other.DurationInMinutes;
+        id = other.Id;
+    }
 }
