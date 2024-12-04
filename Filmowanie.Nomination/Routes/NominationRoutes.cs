@@ -16,12 +16,13 @@ internal sealed class NominationRoutes : INominationRoutes
     private readonly IGetNominationsVisitor _getNominationsVisitor;
     private readonly IGetNominationsDTOVisitor _getNominationsDtoVisitor;
     private readonly IGetPostersVisitor _getPostersVisitor;
-    private readonly INominationsCommandVisitor _nominationsCommandVisitor;
+    private readonly INominationsCompleterVisitor _nominationsCompleterVisitor;
+    private readonly INominationsResetterVisitor _nominationsResetterVisitor;
     private readonly IGetCurrentVotingSessionIdVisitor _currentVotingSessionIdVisitor;
     private readonly IMovieThatCanBeNominatedAgainEnricherVisitor _movieThatCanBeNominatedAgainEnricherVisitor;
     private readonly IFluentValidatorAdapterFactory _validatorAdapterFactory;
 
-    public NominationRoutes(IUserIdentityVisitor userIdentityVisitor, IGetNominationsVisitor getNominationsVisitor, IGetCurrentVotingSessionIdVisitor currentVotingSessionIdVisitor, IMovieThatCanBeNominatedAgainEnricherVisitor movieThatCanBeNominatedAgainEnricherVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IGetNominationsDTOVisitor getNominationsDtoVisitor, IGetPostersVisitor getPostersVisitor, INominationsCommandVisitor nominationsCommandVisitor)
+    public NominationRoutes(IUserIdentityVisitor userIdentityVisitor, IGetNominationsVisitor getNominationsVisitor, IGetCurrentVotingSessionIdVisitor currentVotingSessionIdVisitor, IMovieThatCanBeNominatedAgainEnricherVisitor movieThatCanBeNominatedAgainEnricherVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IGetNominationsDTOVisitor getNominationsDtoVisitor, IGetPostersVisitor getPostersVisitor, INominationsCompleterVisitor nominationsCompleterVisitor, INominationsResetterVisitor nominationsResetterVisitor)
     {
         _userIdentityVisitor = userIdentityVisitor;
         _getNominationsVisitor = getNominationsVisitor;
@@ -30,7 +31,8 @@ internal sealed class NominationRoutes : INominationRoutes
         _validatorAdapterFactory = validatorAdapterFactory;
         _getNominationsDtoVisitor = getNominationsDtoVisitor;
         _getPostersVisitor = getPostersVisitor;
-        _nominationsCommandVisitor = nominationsCommandVisitor;
+        _nominationsCompleterVisitor = nominationsCompleterVisitor;
+        _nominationsResetterVisitor = nominationsResetterVisitor;
     }
 
     public async Task<IResult> GetNominationsAsync(CancellationToken cancellationToken)
@@ -72,6 +74,23 @@ internal sealed class NominationRoutes : INominationRoutes
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
 
+    public async Task<IResult> DeleteMovie(string movieId, CancellationToken cancellationToken)
+    {
+        var validator = _validatorAdapterFactory.GetAdapter<string>(KeyedServices.MovieId);
+        var identityResult = OperationResultExtensions.Empty.Accept(_userIdentityVisitor);
+        var votingSessionIdResult = await identityResult.AcceptAsync(_currentVotingSessionIdVisitor, cancellationToken);
+
+        var result = await OperationResultExtensions
+            .FromResult(movieId)
+            .Accept(validator)
+            .Merge(identityResult)
+            .Merge(votingSessionIdResult)
+            .Flatten()
+            .AcceptAsync(_nominationsResetterVisitor, cancellationToken);
+
+        return RoutesResultHelper.UnwrapOperationResult(result);
+    }
+
     public async Task<IResult> NominateAsync(NominationDTO dto, CancellationToken cancellationToken)
     {
         var validator = _validatorAdapterFactory.GetAdapter<(NominationDTO, DomainUser, CurrentNominationsResponse)>();
@@ -86,7 +105,7 @@ internal sealed class NominationRoutes : INominationRoutes
             .Merge(nominations)
             .Flatten()
             .Accept(validator)
-            .AcceptAsync(_nominationsCommandVisitor, cancellationToken);
+            .AcceptAsync(_nominationsCompleterVisitor, cancellationToken);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }

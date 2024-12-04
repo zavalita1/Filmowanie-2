@@ -6,6 +6,7 @@ using Filmowanie.Nomination.Routes;
 using Filmowanie.Nomination.Validators;
 using Filmowanie.Nomination.Visitors;
 using Microsoft.Extensions.DependencyInjection;
+using INominationsReseterVisitor = Filmowanie.Nomination.Visitors.INominationsReseterVisitor;
 
 namespace Filmowanie.Nomination.Extensions;
 
@@ -16,12 +17,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<INominationRoutes, NominationRoutes>();
         services.AddScoped<IGetNominationsVisitor, NominationsVisitor>();
         services.AddScoped<IGetNominationsDTOVisitor, NominationsVisitor>();
-        services.AddScoped<INominationsCommandVisitor, NominationsCommandVisitor>();
+        services.AddScoped<INominationsReseterVisitor, INominationsReseterVisitor>();
         services.AddScoped<IMovieThatCanBeNominatedAgainEnricherVisitor, MovieThatCanBeNominatedAgainEnricherVisitor>();
         services.AddScoped<IGetPostersVisitor, GetPostersVisitor>();
         
         services.AddScoped<IFluentValidatorAdapter, NominationValidator>();
         services.AddScoped<IFluentValidatorAdapter, NominationMovieUrlValidator>();
+        services.AddScoped<IFluentValidatorAdapter, NominationMovieIdValidator>();
 
         services.AddHttpClient(HttpClientNames.Filmweb, client =>
         {

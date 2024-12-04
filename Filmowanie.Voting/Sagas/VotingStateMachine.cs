@@ -1,4 +1,5 @@
-﻿using Filmowanie.Abstractions.Interfaces;
+﻿using Filmowanie.Abstractions.Extensions;
+using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -70,7 +71,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     if (ctx.Saga.Movies.All(x => x.Movie.id != ctx.Message.Movie.id))
                         return;
 
-                    var nominationData = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
+                    var nominationData = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Movie.MovieCreationYear.ToDecade());
                     nominationData.Concluded = null;
                     nominationData.MovieId = null;
                     await ctx.Publish(new NominationAddedEvent(ctx.Message.CorrelationId, nominationData), ctx.CancellationToken);
@@ -124,7 +125,9 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
         );
 
         During(CalculatingResults, When(ResultsCalculatedEvent).Finalize());
-        During(CalculatingResults, When(Error).Then(ctx => ctx.Saga.Error = new ErrorData { ErrorMessage = "ERROR!"}).TransitionTo(NominationsConcluded)); // TODO
+        During(CalculatingResults, When(Error)
+            .Then(ctx => ctx.Saga.Error = new ErrorData { ErrorMessage = ctx.Message.Message, CallStack = ctx.Message.CallStack })
+            .TransitionTo(NominationsConcluded));
 
         During([WaitingForNominations, NominationsConcluded],
             When(GetMovieListEvent)

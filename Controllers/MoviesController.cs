@@ -26,9 +26,4 @@ public class MoviesController : ControllerBase
         return Ok(); // TODO
     }
 
-    [HttpGet(template: "posters")]
-    public async Task<IActionResult> GetPosterUrls([FromQuery] string movieUrl, CancellationToken cancellation)
-    {
-        return Ok(); // TODO
-    }
 }

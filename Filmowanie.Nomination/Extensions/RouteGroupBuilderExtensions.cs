@@ -15,6 +15,7 @@ public static class RouteGroupBuilderExtensions
         accountRoutesBuilder.MapGet("", ([FromServices] INominationRoutes routes, CancellationToken ct) => routes.GetNominationsAsync(ct));
         accountRoutesBuilder.MapGet("fullData", ([FromServices] INominationRoutes routes, CancellationToken ct) => routes.GetNominationsFullDataAsync(ct));
         accountRoutesBuilder.MapGet("posters", ([FromServices] INominationRoutes routes, [FromQuery] string movieUrl, CancellationToken ct) => routes.GetPosters(movieUrl, ct));
+        accountRoutesBuilder.MapDelete("", ([FromServices] INominationRoutes routes, [FromQuery] string movieId, CancellationToken ct) => routes.DeleteMovie(movieId, ct));
         accountRoutesBuilder.MapPost("", ([FromServices] INominationRoutes routes, [FromBody] NominationDTO dto, CancellationToken ct) => routes.NominateAsync(dto, ct));
 
         return builder;

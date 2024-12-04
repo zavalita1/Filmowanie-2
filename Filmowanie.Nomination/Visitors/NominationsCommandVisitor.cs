@@ -12,16 +12,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Nomination.Visitors;
 
-internal sealed class NominationsCommandVisitor : INominationsCommandVisitor
+internal sealed class NominationsResetterVisitor : INominationsResetterVisitor, INominationsCompleterVisitor
 {
-    private readonly ILogger<NominationsCommandVisitor> _log;
+    private readonly ILogger<INominationsResetterVisitor> _log;
     private readonly IFilmwebPathResolver _filmwebPathResolver;
     private readonly IFilmwebHandler _filmwebHandler;
     private readonly IMovieCommandRepository _movieCommandRepository;
     private readonly IMovieQueryRepository _movieQueryRepository;
     private readonly IBus _bus;
 
-    public NominationsCommandVisitor(ILogger<NominationsCommandVisitor> log, IFilmwebPathResolver filmwebPathResolver, IFilmwebHandler filmwebHandler, IMovieCommandRepository movieCommandRepository, IMovieQueryRepository movieQueryRepository, IBus bus)
+    public NominationsResetterVisitor(ILogger<INominationsResetterVisitor> log, IFilmwebPathResolver filmwebPathResolver, IFilmwebHandler filmwebHandler, IMovieCommandRepository movieCommandRepository, IMovieQueryRepository movieQueryRepository, IBus bus)
     {
         _log = log;
         _filmwebPathResolver = filmwebPathResolver;
@@ -62,6 +62,21 @@ internal sealed class NominationsCommandVisitor : INominationsCommandVisitor
 
         var dto = new AknowledgedNominationDTO { Decade = movie.CreationYear.ToDecade().ToString()[1..], Message = "OK"};
         return new OperationResult<AknowledgedNominationDTO>(dto, null);
+    }
+
+    public async Task<OperationResult<AknowledgedNominationDTO>> VisitAsync(OperationResult<(string MovieId, DomainUser User, VotingSessionId VotingSessionId)> input, CancellationToken cancellationToken)
+    {
+        var (movieId, user, votingSessionId) = input.Result;
+        var movies = await _movieQueryRepository.GetMoviesAsync(x => x.id == movieId, cancellationToken);
+
+        if (!movies.Any())
+            return new OperationResult<AknowledgedNominationDTO>(null, new Error("No such movie found!", ErrorType.IncomingDataIssue));
+
+        var movieEntity = movies.Single();
+        var movie = new EmbeddedMovie { id = movieEntity.id, MovieCreationYear = movieEntity.CreationYear, Name = movieEntity.Name };
+
+        await _bus.Publish(new RemoveMovieEvent(votingSessionId.CorrelationId, movie , user), cancellationToken);
+        return new OperationResult<AknowledgedNominationDTO>(new AknowledgedNominationDTO { Message = "OK" }, null);
     }
 
     public ILogger Log => _log;
