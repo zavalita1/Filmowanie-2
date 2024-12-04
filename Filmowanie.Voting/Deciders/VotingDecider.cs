@@ -1,8 +1,8 @@
-﻿using Filmowanie.Abstractions.Enums;
-using Filmowanie.Database.Entities;
+﻿using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+using Filmowanie.Voting.Extensions;
 using Filmowanie.Voting.Interfaces;
 
 namespace Filmowanie.Voting.Deciders;
@@ -30,5 +30,5 @@ public sealed class VotingDecider : IVotingDecider
         }
     }
 
-    private static int GetVotesCount(IEnumerable<IReadOnlyVote> votes) => votes.Sum(x => x.VoteType == VoteType.Thrash ? 0 : (int)x.VoteType);
+    private static int GetVotesCount(IEnumerable<IReadOnlyVote> votes) => votes.Select(x => x.VoteType).Sum(VoteTypeExtensions.GetVoteCount);
 }

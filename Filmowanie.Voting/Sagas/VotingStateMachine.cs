@@ -4,6 +4,7 @@ using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.Activities;
+using Filmowanie.Voting.Extensions;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -95,6 +96,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
                     var user = new EmbeddedUser { id = messageUser.Id, Name = messageUser.DisplayName, TenantId = messageUser.Tenant.Id };
                     movie.Votes = movie.Votes.Concat([new Vote { User = user, VoteType = ctx.Message.VoteType }]);
+                    movie.VotingScore += ctx.Message.VoteType.GetVoteCount();
                 })
                 .Publish(ctx => new VoteAddedEvent(ctx.Message.CorrelationId, ctx.Message.Movie, ctx.Message.User)));
 
@@ -108,7 +110,9 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     if (movie.Votes.All(x => x.User.id != messageUser.Id))
                         return;
 
-                    movie.Votes = movie.Votes.Where(x => x.User.id != messageUser.Id).ToArray();
+                    var voteToRemove = movie.Votes.Single(x => x.User.id == messageUser.Id);
+                    movie.Votes = movie.Votes.Except([voteToRemove]).ToArray();
+                    movie.VotingScore -= voteToRemove.VoteType.GetVoteCount();
                 })
                 .Publish(ctx => new VoteAddedEvent(ctx.Message.CorrelationId, ctx.Message.Movie, ctx.Message.User)));
 

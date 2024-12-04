@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Nomination.Visitors;
 
-internal sealed class NominationsResetterVisitor : INominationsResetterVisitor, INominationsCompleterVisitor
+internal sealed class NominationsCommandVisitor : INominationsResetterVisitor, INominationsCompleterVisitor
 {
     private readonly ILogger<INominationsResetterVisitor> _log;
     private readonly IFilmwebPathResolver _filmwebPathResolver;
@@ -21,7 +21,7 @@ internal sealed class NominationsResetterVisitor : INominationsResetterVisitor, 
     private readonly IMovieQueryRepository _movieQueryRepository;
     private readonly IBus _bus;
 
-    public NominationsResetterVisitor(ILogger<INominationsResetterVisitor> log, IFilmwebPathResolver filmwebPathResolver, IFilmwebHandler filmwebHandler, IMovieCommandRepository movieCommandRepository, IMovieQueryRepository movieQueryRepository, IBus bus)
+    public NominationsCommandVisitor(ILogger<INominationsResetterVisitor> log, IFilmwebPathResolver filmwebPathResolver, IFilmwebHandler filmwebHandler, IMovieCommandRepository movieCommandRepository, IMovieQueryRepository movieQueryRepository, IBus bus)
     {
         _log = log;
         _filmwebPathResolver = filmwebPathResolver;

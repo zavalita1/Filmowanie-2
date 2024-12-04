@@ -21,6 +21,11 @@ public static class RouteGroupBuilderExtensions
 
         adminGroup.MapPost("start", ([FromServices] IAdminVotingSessionRoutes routes, CancellationToken ct) => routes.NewVoting(ct));
         adminGroup.MapPost("end", ([FromServices] IAdminVotingSessionRoutes routes, CancellationToken ct) => routes.ConcludeVoting(ct));
+
+        var votingResultsGroup = accountRoutesBuilder.MapGroup("results").RequireAuthorization();
+
+        votingResultsGroup.MapGet("", ([FromServices] IVotingResultRoutes routes, [FromQuery] string votingSessionId, CancellationToken ct) => routes.GetResults(votingSessionId, ct));
+        votingResultsGroup.MapGet("list", ([FromServices] IVotingResultRoutes routes, CancellationToken ct) => routes.GetVotingSessionsList(ct));
        
         return builder;
     }

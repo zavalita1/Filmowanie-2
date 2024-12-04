@@ -14,19 +14,28 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterVotingDomain(this IServiceCollection services)
     {
         services.AddScoped<IFluentValidatorAdapter, VoteValidator>();
+        services.AddScoped<IFluentValidatorAdapter, VotingSessionIdValidator>();
 
         services.AddScoped<IVotingSessionRoutes, VotingSessionRoutes>();
         services.AddScoped<IAdminVotingSessionRoutes, AdminVotingSessionRoutes>();
+        services.AddScoped<IVotingResultRoutes, VotingResultRoutes>();
 
         services.AddScoped<IGetMoviesForVotingSessionVisitor, MoviesVisitor>();
         services.AddScoped<IEnrichMoviesForVotingSessionWithPlaceholdersVisitor, MoviesVisitor>();
         
-        services.AddScoped<IGetCurrentVotingSessionIdVisitor, VotingSessionIdQueryVisitor>();
-        services.AddScoped<IGetCurrentVotingSessionStatusVisitor, VotingSessionIdQueryVisitor>();
+        services.AddScoped<IGetVotingSessionsMetadataVisitor, VotingSessionResultIdQueryVisitor>();
+        services.AddScoped<IGetCurrentVotingSessionIdVisitor, VotingSessionResultIdQueryVisitor>();
+        services.AddScoped<IGetCurrentVotingSessionStatusVisitor, VotingSessionResultIdQueryVisitor>();
+        services.AddScoped<IGetVotingSessionResultVisitor, VotingSessionResultIdQueryVisitor>();
+
         services.AddScoped<IStartNewVotingVisitor, VotingSessionCommandVisitor>();
         services.AddScoped<IConcludeVotingVisitor, VotingSessionCommandVisitor>();
-        services.AddScoped<IVotingSessionStatusMapperVisitor, MapperMapperVisitor>();
-        services.AddScoped<IAknowledgedMapperVisitor, MapperMapperVisitor>();
+
+        services.AddScoped<IVotingSessionStatusMapperVisitor, VotingMapperVisitor>();
+        services.AddScoped<IVotingSessionIdMapperVisitor, VotingMapperVisitor>();
+        services.AddScoped<IVotingSessionsMapperVisitor, VotingMapperVisitor>();
+        services.AddScoped<IAknowledgedMapperVisitor, VotingMapperVisitor>();
+
         services.AddScoped<IVoteVisitor, VoteVisitor>();
 
         services.AddSingleton<IVotingDeciderFactory, VotingDeciderFactory>();

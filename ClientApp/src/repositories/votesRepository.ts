@@ -1,9 +1,9 @@
 import { VoteAknowledgedDTO, VotingResultDTO } from "../DTO/Incoming/VotingResultDTO";
 import getFetchWrapperBuilder from '../fetchWrapper';
 
-export async function getVotingResult() {
+export async function getVotingResult(votingSessionId: string) {
     const fetchWrapper = getFetchWrapperBuilder().useTimeout(5000).build();
-    const response = await fetchWrapper<VotingResultDTO>('votes/');
+    const response = await fetchWrapper<VotingResultDTO>(`api/voting/results?votingSessionId=${votingSessionId}`);
 
     return response;
 }

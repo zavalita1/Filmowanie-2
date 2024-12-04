@@ -21,7 +21,7 @@ type ResultProps = UserState & {
 const ResultsWrapper = (props: ResultProps) => {
     const subWrapperProps = {
         initializeChildren: props.votes !== undefined ? undefined : () => 
-            getVotingResult().then(data => {
+            getVotingResult("").then(data => {
                 props.setLoading(false);
                 return { votes: data };
         }),

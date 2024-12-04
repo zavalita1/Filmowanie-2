@@ -1,4 +1,5 @@
-﻿using Filmowanie.Abstractions.Extensions;
+﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
@@ -38,7 +39,8 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
     public Task Consume(ConsumeContext<Fault<VotingConcludedEvent>> context)
     {
         var message = string.Join(",", context.Message.Exceptions.Select(x => x.Message));
-        return context.Publish(new ErrorEvent(context.Message.Message.CorrelationId, message));
+        var callStacks = string.Join(";;;;;;;;;;;;", context.Message.Exceptions.Select(x => x.StackTrace));
+        return context.Publish(new ErrorEvent(context.Message.Message.CorrelationId, message, callStacks));
     }
 
     public async Task Consume(ConsumeContext<VotingConcludedEvent> context)
@@ -48,7 +50,7 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         var message = context.Message;
 
         var lastVotingResults = (await _votingSessionQueryRepository.Get(x => x.Concluded != null && x.TenantId == message.Tenant.Id, x => x.Concluded!, -1 * DecidersTimeWindow, context.CancellationToken)).ToArray();
-        var readonlyCurrentVotingResult = (await _votingSessionQueryRepository.GetCurrent(context.Message.Tenant, context.CancellationToken))!;
+        var readonlyCurrentVotingResult = (await _votingSessionQueryRepository.Get(x => x.TenantId == message.Tenant.Id && x.Concluded == null, context.CancellationToken))!;
         var votingResults = GetVotingResults(message.MoviesWithVotes, lastVotingResults.FirstOrDefault()); // null only if it's initial voting
 
         var moviesAdded = message.NominationsData.Join(message.MoviesWithVotes, x => x.MovieId, x => x.Movie.id, (x, y) => new EmbeddedMovieWithNominationContext

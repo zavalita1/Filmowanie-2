@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Interfaces;
-using Filmowanie.Abstractions;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,10 +15,10 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
         _ctx = ctx;
     }
 
-    public async Task<IReadonlyVotingResult?> GetCurrent(TenantId tenantId,
+    public async Task<IReadonlyVotingResult?> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate,
         CancellationToken cancellationToken)
     {
-        var currentVotingSession = await _ctx.VotingResults.SingleOrDefaultAsync(x => x.TenantId == tenantId.Id && x.Concluded == null, cancellationToken);
+        var currentVotingSession = await _ctx.VotingResults.SingleOrDefaultAsync(predicate, cancellationToken);
         return currentVotingSession;
     }
 
@@ -31,5 +30,11 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
         var query = _ctx.VotingResults.Where(predicate);
         var currentVotingSession = await sortFunction.Invoke(query).Take(Math.Abs(take)).ToArrayAsync(cancellationToken);
         return currentVotingSession;
+    }
+
+    public async Task<IEnumerable<T>> Get<T>(Expression<Func<IReadonlyVotingResult, bool>> predicate, Expression<Func<IReadonlyVotingResult, T>> selector, CancellationToken cancellationToken)
+    {
+        var entities = await _ctx.VotingResults.Where(predicate).Select(selector).ToArrayAsync(cancellationToken);
+        return entities;
     }
 }
