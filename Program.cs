@@ -125,6 +125,11 @@ void ConfigureMassTransit(WebApplicationBuilder appBuilder)
 {
     appBuilder.Services.AddMassTransit(x =>
     {
+        x.AddConfigureEndpointsCallback((context, name, cfg) =>
+        {
+            cfg.UseMessageRetry(r => r.Immediate(5));
+        });
+
         x.SetKebabCaseEndpointNameFormatter();
         var dbConnectionString = appBuilder.Configuration["dbConnectionString"]!;
         x.SetCosmosSagaRepositoryProvider(dbConnectionString, cosmosConfig =>
