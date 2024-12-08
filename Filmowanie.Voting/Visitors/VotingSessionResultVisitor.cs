@@ -34,10 +34,11 @@ internal sealed class VotingSessionResultVisitor : IGetVotingSessionResultVisito
             return new OperationResult<VotingResultDTO>(null, new Error("No such vote found!", ErrorType.IncomingDataIssue));
 
         var resultsRows = new List<VotingResultRowDTO>(votingResult.Movies.Length);
-        foreach (var movie in votingResult.Movies.OrderByDescending(x => x.VotingScore))
+        var sortedMovies = votingResult.Movies.OrderByDescending(x => x.VotingScore).ThenByDescending(x => x.Movie.id == votingResult.Winner.id ? 1 : 0).ToArray();
+        for (var i = 0; i < sortedMovies.Length; i++)
         {
-            var isWinner = string.Equals(votingResult.Winner.Name, movie.Movie.Name, StringComparison.OrdinalIgnoreCase);
-            var row = new VotingResultRowDTO(movie.Movie.Name, movie.VotingScore, isWinner);
+            var movie = sortedMovies[i];
+            var row = new VotingResultRowDTO(movie.Movie.Name, movie.VotingScore, i == 0);
             resultsRows.Add(row);
         }
 
@@ -50,7 +51,8 @@ internal sealed class VotingSessionResultVisitor : IGetVotingSessionResultVisito
             trashRows.Add(row);
         }
 
-        var result = new VotingResultDTO(resultsRows.ToArray(), trashRows.ToArray());
+        var sortedTrash = trashRows.OrderByDescending(x => x.IsAwarded ? 1 : 0).ThenByDescending(x => x.Voters.Length).ToArray();
+        var result = new VotingResultDTO(resultsRows.ToArray(), sortedTrash);
         return new OperationResult<VotingResultDTO>(result, null);
     }
 
