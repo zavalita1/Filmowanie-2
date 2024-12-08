@@ -2,6 +2,7 @@
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -39,9 +40,12 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         var message = context.Message;
         var votingResultOfInterest = (await _votesRepository.Get(x => x.Concluded != null && x.TenantId == message.Tenant.Id, x => x.Concluded!, -1 * TimeWindow, context.CancellationToken)).Last();
 
-        var newMoviesToAdd = votingResultOfInterest.MoviesGoingByeBye.Select(x => (IReadOnlyCanNominateMovieAgainEvent)new CanNominateMovieAgainEventRecord(x, _guidProvider.NewGuid().ToString(), _dateTimeProvider.Now, message.Tenant.Id));
+        var newMoviesToAdd = votingResultOfInterest.MoviesGoingByeBye.Select(x => GetReadOnlyCanNominateMovieAgainEvent(x, message));
         await _movieCommandRepository.InsertCanBeNominatedAgainAsync(newMoviesToAdd, context.CancellationToken);
 
         _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
     }
+
+    private IReadOnlyCanNominateMovieAgainEvent GetReadOnlyCanNominateMovieAgainEvent(IReadOnlyEmbeddedMovie x, VotingConcludedEvent message) 
+        => new CanNominateMovieAgainEventRecord(x,  "nominate-again-event-" + _guidProvider.NewGuid(), _dateTimeProvider.Now, message.Tenant.Id);
 }

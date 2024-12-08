@@ -2,6 +2,7 @@
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Filmowanie.Database.Repositories;
 
@@ -33,5 +34,12 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
         var entity = new MovieEntity(movieEntity);
         _ctx.Movies.Add(entity);
         return _ctx.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateMovieAsync(string entityId, string posterUrl, CancellationToken cancellationToken)
+    {
+        var movie = await _ctx.Movies.SingleAsync(x => x.id == entityId, cancellationToken: cancellationToken);
+        movie.PosterUrl = posterUrl;
+        await _ctx.SaveChangesAsync(cancellationToken);
     }
 }

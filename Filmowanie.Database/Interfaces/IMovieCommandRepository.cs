@@ -5,7 +5,9 @@ namespace Filmowanie.Database.Interfaces;
 
 public interface IMovieCommandRepository
 {
-    Task InsertCanBeNominatedAgainAsync(IEnumerable<IReadOnlyCanNominateMovieAgainEvent> canNominateMovieAgainEvents, CancellationToken cancellationToken);
-    Task InsertNominatedAgainAsync(IReadOnlyNominatedMovieAgainEvent nominatedAgainEvent, CancellationToken cancellationToken);
-    Task InsertMovieAsync(IReadOnlyMovieEntity movieEntity, CancellationToken cancellationToken);
+    public Task InsertCanBeNominatedAgainAsync(IEnumerable<IReadOnlyCanNominateMovieAgainEvent> canNominateMovieAgainEvents, CancellationToken cancellationToken);
+    public Task InsertNominatedAgainAsync(IReadOnlyNominatedMovieAgainEvent nominatedAgainEvent, CancellationToken cancellationToken);
+    public Task InsertMovieAsync(IReadOnlyMovieEntity movieEntity, CancellationToken cancellationToken);
+
+    public Task UpdateMovieAsync(string entityId, string posterUrl, CancellationToken cancellationToken);
 }

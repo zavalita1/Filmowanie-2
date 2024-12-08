@@ -63,8 +63,9 @@ internal sealed class NominationsCommandVisitor : INominationsResetterVisitor, I
 
             var movieId = canBeNominatedAgainEvents[0].Movie.id;
             embeddedMovie = new EmbeddedMovie { id = movieId, MovieCreationYear = movie.CreationYear, Name = movie.Name };
-            var nominatedAgainEvent = new NominatedMovieAgainEventRecord(embeddedMovie, movieId, _dateTimeProvider.Now, user.Tenant.Id);
+            var nominatedAgainEvent = new NominatedMovieAgainEventRecord(embeddedMovie, "nominated-again-event-" + movieId, _dateTimeProvider.Now, user.Tenant.Id);
             await _movieCommandRepository.InsertNominatedAgainAsync(nominatedAgainEvent, cancellationToken);
+            await _movieCommandRepository.UpdateMovieAsync(movieId, movie.PosterUrl, cancellationToken);
         }
         else
         {
