@@ -41,7 +41,8 @@ public static class OperationResultExtensions
             var firstErrors = first.Error?.ErrorMessages ?? Array.Empty<string>();
             var secondErrors = second.Error?.ErrorMessages ?? Array.Empty<string>();
             var errorType = (ErrorType) Math.Max((int)(first.Error?.Type ?? 0), (int)(second.Error?.Type ?? 0));
-            error = new Error(firstErrors.Concat(secondErrors), errorType);
+            var errorMessages = firstErrors.Concat(secondErrors).Distinct();
+            error = new Error(errorMessages, errorType);
         }
         
         return new OperationResult<(T1, T2)>((first.Result, second.Result), error);
@@ -49,28 +50,33 @@ public static class OperationResultExtensions
 
     public static OperationResult<(T1, T2, T3)> Flatten<T1, T2, T3>(this OperationResult<((T1, T2), T3)> operation) => new((operation.Result.Item1.Item1, operation.Result.Item1.Item2, operation.Result.Item2), operation.Error);
 
-    public static Task<OperationResult<TOutput>> AcceptAsync<TInput, TOutput>(this OperationResult<TInput> operation, IOperationAsyncVisitor<TInput, TOutput> visitor, CancellationToken cancellationToken)
+    public static async Task<OperationResult<TOutput>> AcceptAsync<TInput, TOutput>(this OperationResult<TInput> operation, IOperationAsyncVisitor<TInput, TOutput> visitor, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
-            return Task.FromResult(CancelledOperation<TOutput>().Merge(operation).Pluck(x => x.Item1));
+            return (CancelledOperation<TOutput>().Merge(operation).Pluck(x => x.Item1));
 
         if (operation.Error != null)
-            return Task.FromResult(new OperationResult<TOutput>(default!, operation.Error));
+            return (new OperationResult<TOutput>(default!, operation.Error));
 
         LogOperation(visitor, operation);
-        return visitor.VisitAsync(operation, cancellationToken);
+        var result = await visitor.VisitAsync(operation, cancellationToken);
+        LogResult(visitor, result);
+        return result;
     }
 
-    public static Task<OperationResult<TOutput>> AcceptAsync<TInput, TOutput>(this OperationResult<TInput> operation, IOperationAsyncVisitor<TOutput> visitor, CancellationToken cancellationToken)
+    public static async Task<OperationResult<TOutput>> AcceptAsync<TInput, TOutput>(this OperationResult<TInput> operation, IOperationAsyncVisitor<TOutput> visitor, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
-            return Task.FromResult(CancelledOperation<TOutput>().Merge(operation).Pluck(x => x.Item1));
+            return CancelledOperation<TOutput>().Merge(operation).Pluck(x => x.Item1);
 
         if (operation.Error != null)
-            return Task.FromResult(new OperationResult<TOutput>(default!, operation.Error));
+            return new OperationResult<TOutput>(default!, operation.Error);
 
         LogOperation(visitor, operation);
-        return visitor.VisitAsync(operation, cancellationToken);
+        var result = await visitor.VisitAsync(operation, cancellationToken);
+        LogResult(visitor, result);
+
+        return result;
     }
 
     public static OperationResult<TOutput> Accept<TInput, TOutput>(this OperationResult<TInput> operation, IOperationVisitor<TInput, TOutput> visitor)
@@ -79,7 +85,9 @@ public static class OperationResultExtensions
             return new OperationResult<TOutput>(default!, operation.Error);
 
         LogOperation(visitor, operation);
-        return visitor.Visit(operation);
+        var result = visitor.Visit(operation);
+        LogResult(visitor, result);
+        return result;
     }
 
     public static OperationResult<TOutput> Accept<TInput, TOutput>(this OperationResult<TInput> operation, IOperationVisitor<TOutput> visitor)
@@ -88,7 +96,9 @@ public static class OperationResultExtensions
             return new OperationResult<TOutput>(default!, operation.Error);
 
         LogOperation(visitor, operation);
-        return visitor.Visit(operation);
+        var result = visitor.Visit(operation);
+        LogResult(visitor, result);
+        return result;
     }
 
     private static void LogOperation(IVisitor visitor, object operationResult)
@@ -97,5 +107,20 @@ public static class OperationResultExtensions
             return;
 
         visitor.Log.LogDebug($"Visiting {visitor.GetType().Name} Visitor. Using result: {operationResult}.");
+    }
+
+    private static void LogResult<T>(IVisitor visitor, OperationResult<T> operationResult)
+    {
+        if (operationResult.Error != null)
+        {
+            var messages = string.Join(",", operationResult.Error.Value.ErrorMessages);
+            visitor.Log.LogError($"ERROR!! In visitor: {visitor.GetType().Name}. Error message: {messages}! Error type: {operationResult.Error.Value.Type}.");
+            return;
+        }
+
+        if (!visitor.Log.IsEnabled(LogLevel.Debug))
+            return;
+
+        visitor.Log.LogDebug($"Visiting {visitor.GetType().Name} Visitor Concluded. Result: {operationResult}.");
     }
 }

@@ -27,10 +27,8 @@ internal static class RoutesResultHelper
 
         if (result.Error!.Value.Type == ErrorType.AuthenticationIssue)
         {
-            if (result.Error!.Value.ErrorMessages.Contains(Messages.CookieExpired))
-                return TypedResults.Unauthorized();
-
-            return TypedResults.Problem("Please log in", statusCode: 401);
+            var message = result.Error!.Value.ErrorMessages.Contains(Messages.CookieExpired) ? "Cookie expired!" : "Please log in";
+            return TypedResults.Problem(message, statusCode: 401);
         }
 
         var overriddenValue = overrideDefault?.Invoke(result.Error.Value);

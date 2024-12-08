@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
+using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces;
@@ -20,8 +21,9 @@ internal sealed class NominationsCommandVisitor : INominationsResetterVisitor, I
     private readonly IMovieCommandRepository _movieCommandRepository;
     private readonly IMovieQueryRepository _movieQueryRepository;
     private readonly IBus _bus;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public NominationsCommandVisitor(ILogger<INominationsResetterVisitor> log, IFilmwebPathResolver filmwebPathResolver, IFilmwebHandler filmwebHandler, IMovieCommandRepository movieCommandRepository, IMovieQueryRepository movieQueryRepository, IBus bus)
+    public NominationsCommandVisitor(ILogger<INominationsResetterVisitor> log, IFilmwebPathResolver filmwebPathResolver, IFilmwebHandler filmwebHandler, IMovieCommandRepository movieCommandRepository, IMovieQueryRepository movieQueryRepository, IBus bus, IDateTimeProvider dateTimeProvider)
     {
         _log = log;
         _filmwebPathResolver = filmwebPathResolver;
@@ -29,6 +31,7 @@ internal sealed class NominationsCommandVisitor : INominationsResetterVisitor, I
         _movieCommandRepository = movieCommandRepository;
         _movieQueryRepository = movieQueryRepository;
         _bus = bus;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<OperationResult<AknowledgedNominationDTO>> VisitAsync(OperationResult<(NominationDTO Dto, DomainUser User, CurrentNominationsResponse CurrentNominations)> input, CancellationToken cancellationToken)
@@ -48,16 +51,27 @@ internal sealed class NominationsCommandVisitor : INominationsResetterVisitor, I
         var existingMovies = await _movieQueryRepository.GetMoviesAsync(x => x.TenantId == user.Tenant.Id && x.Name == movie.Name, cancellationToken);
         if (existingMovies.Any())
         {
-            var canBeNominatedAgain = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEntityAsync(x => x.TenantId == user.Tenant.Id, cancellationToken);
-            var canBeNominatedAgainMovie = canBeNominatedAgain?.Movies.SingleOrDefault(x => x.Name.Equals(movie.Name, StringComparison.OrdinalIgnoreCase));
-            if (canBeNominatedAgainMovie == null)
+            var canBeNominatedAgainEvents = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEntityAsync(x => x.TenantId == user.Tenant.Id && x.Movie.Name == movie.Name, cancellationToken);
+            var nominatedAgainEvents = await _movieQueryRepository.GetMoviesNominatedAgainEntityAsync(x => x.TenantId == user.Tenant.Id && x.Movie.Name == movie.Name, cancellationToken);
+
+            var maxDateCanBeNominatedAgain = canBeNominatedAgainEvents.OrderByDescending(x => x.Created).FirstOrDefault()?.Created;
+            var maxDateNominatedAgain = nominatedAgainEvents.OrderByDescending(x => x.Created).FirstOrDefault()?.Created ?? DateTime.MinValue;
+            var canBeNominatedAgain = maxDateCanBeNominatedAgain > maxDateNominatedAgain;
+
+            if (!canBeNominatedAgain)
                 return new OperationResult<AknowledgedNominationDTO>(null, new Error("This movie had already been watched or is still waiting until it can be nominated again!", ErrorType.IncomingDataIssue));
 
-            embeddedMovie = new EmbeddedMovie { id = canBeNominatedAgainMovie.id, MovieCreationYear = movie.CreationYear, Name = movie.Name };
+            var movieId = canBeNominatedAgainEvents[0].Movie.id;
+            embeddedMovie = new EmbeddedMovie { id = movieId, MovieCreationYear = movie.CreationYear, Name = movie.Name };
+            var nominatedAgainEvent = new NominatedMovieAgainEventRecord(embeddedMovie, movieId, _dateTimeProvider.Now, user.Tenant.Id);
+            await _movieCommandRepository.InsertNominatedAgainAsync(nominatedAgainEvent, cancellationToken);
+        }
+        else
+        {
+            await _movieCommandRepository.InsertMovieAsync(movie, cancellationToken);
         }
 
         var addMovieEvent = new AddMovieEvent(input.Result.CurrentNominations.CorrelationId, embeddedMovie, user, movie.CreationYear.ToDecade());
-        await _movieCommandRepository.InsertMovieAsync(movie, cancellationToken);
         await _bus.Publish(addMovieEvent, cancellationToken);
 
         var dto = new AknowledgedNominationDTO { Decade = movie.CreationYear.ToDecade().ToString()[1..], Message = "OK"};

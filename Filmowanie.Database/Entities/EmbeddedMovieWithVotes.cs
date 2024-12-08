@@ -21,7 +21,7 @@ public class EmbeddedMovieWithVotes : IReadOnlyEmbeddedMovieWithVotes
 
     public EmbeddedMovieWithVotes()
     {
-        Votes = [];
+        Votes = new List<Vote>();
         VotingScore = 0;
     }
 }

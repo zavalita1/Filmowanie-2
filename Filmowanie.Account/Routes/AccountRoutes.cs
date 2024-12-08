@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Constants;
-using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.Constants;
@@ -10,7 +9,6 @@ using Filmowanie.Account.Helpers;
 using Filmowanie.Account.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 

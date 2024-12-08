@@ -12,13 +12,15 @@ internal sealed class AdminVotingSessionRoutes : IAdminVotingSessionRoutes
     private readonly IStartNewVotingVisitor _startNewVotingVisitor;
     private readonly IUserIdentityVisitor _userIdentityVisitor;
     private readonly IGetCurrentVotingSessionIdVisitor _currentVotingSessionIdStatusVisitor;
+    private readonly IRequireCurrentVotingSessionIdVisitor _requireCurrentVotingSessionIdVisitor;
 
-    public AdminVotingSessionRoutes(IConcludeVotingVisitor concludeVotingVisitor, IStartNewVotingVisitor startNewVotingVisitor, IUserIdentityVisitor userIdentityVisitor, IGetCurrentVotingSessionIdVisitor currentVotingSessionIdStatusVisitor)
+    public AdminVotingSessionRoutes(IConcludeVotingVisitor concludeVotingVisitor, IStartNewVotingVisitor startNewVotingVisitor, IUserIdentityVisitor userIdentityVisitor, IGetCurrentVotingSessionIdVisitor currentVotingSessionIdStatusVisitor, IRequireCurrentVotingSessionIdVisitor requireCurrentVotingSessionIdVisitor)
     {
         _concludeVotingVisitor = concludeVotingVisitor;
         _startNewVotingVisitor = startNewVotingVisitor;
         _userIdentityVisitor = userIdentityVisitor;
         _currentVotingSessionIdStatusVisitor = currentVotingSessionIdStatusVisitor;
+        _requireCurrentVotingSessionIdVisitor = requireCurrentVotingSessionIdVisitor;
     }
 
     public async Task<IResult> NewVoting(CancellationToken cancel)
@@ -39,6 +41,7 @@ internal sealed class AdminVotingSessionRoutes : IAdminVotingSessionRoutes
 
         var result = await (await user
             .AcceptAsync(_currentVotingSessionIdStatusVisitor, cancel))
+            .Accept(_requireCurrentVotingSessionIdVisitor)
             .Merge(user)
             .AcceptAsync(_concludeVotingVisitor, cancel);
 

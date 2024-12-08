@@ -4,5 +4,5 @@ namespace Filmowanie.Database.Interfaces;
 
 public interface IReadOnlyMoviesThatCanBeNominatedAgainEntity : IReadOnlyEntity
 {
-    public IEnumerable<IReadOnlyEmbeddedMovie> Movies { get; }
+    public IReadOnlyEmbeddedMovie Movie { get; }
 }

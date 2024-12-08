@@ -42,7 +42,8 @@ public sealed class VotingSessionCommandVisitor : IStartNewVotingVisitor, IConcl
         var nominationsData = lastVotingResult.UsersAwardedWithNominations.Select(x => new NominationData
         {
             Concluded = null,
-            User = new NominationDataEmbeddedUser { DisplayName = x.User.Name, Id = x.User.id}
+            User = new NominationDataEmbeddedUser { DisplayName = x.User.Name, Id = x.User.id},
+            Year = x.Decade
         }).ToArray();
 
         var @event = new StartVotingEvent(correlationId, movies, nominationsData, _dateTimeProvider.Now, input.Result.Tenant);

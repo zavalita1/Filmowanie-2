@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Helpers;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Nomination.DTOs.Outgoing;
@@ -23,10 +24,27 @@ internal sealed class MovieThatCanBeNominatedAgainEnricherVisitor : IMovieThatCa
         var user = input.Result.Item2;
 
         var moviesThatCanBeNominatedAgainList = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEntityAsync(x => x.TenantId == user.Tenant.Id, cancellationToken);
-        var moviesThatCanBeNominatedAgainIds = moviesThatCanBeNominatedAgainList?.Movies.Select(x => x.id).ToArray() ?? [];
+        var moviesNominatedAgainList = await _movieQueryRepository.GetMoviesNominatedAgainEntityAsync(x => x.TenantId == user.Tenant.Id, cancellationToken);
+
+        var userNominationsDecades = input.Result.Item1.Nominations.Select(StringExtensions.ToDecade).ToArray();
+        var filteredMoviesThatCanBeNominatedAgain = moviesThatCanBeNominatedAgainList
+            .Where(x => userNominationsDecades.Contains(x.Movie.MovieCreationYear.ToDecade()))
+            .GroupBy(x => x.Movie.id, x => x.Created)
+            .ToDictionary(x => x.Key, x => x.Max());
+
+        var filteredMoviesNominatedAgainList = moviesNominatedAgainList.Where(x => userNominationsDecades.Contains(x.Movie.MovieCreationYear.ToDecade()))
+            .GroupBy(x => x.Movie.id, x => x.Created)
+            .ToDictionary(x => x.Key, x => x.Max());
+
+        var moviesThatCanBeNominatedAgainIds = filteredMoviesThatCanBeNominatedAgain
+            .Where(x => !filteredMoviesNominatedAgainList.ContainsKey(x.Key) || filteredMoviesNominatedAgainList[x.Key] < x.Value)
+            .Select(x => x.Key);
+
         var moviesThatCanBeNominatedAgain = await _movieQueryRepository.GetMoviesAsync(x => moviesThatCanBeNominatedAgainIds.Contains(x.id), cancellationToken);
 
-        var moviesThatCanBeNominatedAgainDTOs = moviesThatCanBeNominatedAgain.Select(x => new MovieDTO(x.id, x.Name, x.PosterUrl, x.Description, x.FilmwebUrl, x.CreationYear,
+        var moviesThatCanBeNominatedAgainDTOs = moviesThatCanBeNominatedAgain
+            .OrderBy(x => x.CreationYear)
+            .Select(x => new MovieDTO(x.id, x.Name, x.PosterUrl, x.Description, x.FilmwebUrl, x.CreationYear,
             StringHelper.GetDurationString(x.DurationInMinutes), x.Genres, x.Actors, x.Directors, x.Writers, x.OriginalTitle)).ToArray();
 
         var result = new NominationsFullDataDTO { Nominations = input.Result.Item1.Nominations, MoviesThatCanBeNominatedAgain =  moviesThatCanBeNominatedAgainDTOs};

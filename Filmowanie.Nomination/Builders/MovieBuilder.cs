@@ -140,7 +140,7 @@ public sealed class MovieBuilder
             ? _description[(_movieName!.Length + 9)..]
             : _description;
 
-        var movieId = guidProvider.NewGuid().ToString();
+        var movieId = "movie-" + guidProvider.NewGuid();
         var now = dateTimeProvider.Now;
 
         return new Movie(movieId, now, _movieName, originalTitle, description, _posterUrl, _filmwebUrl, _actors.ToArray(), _writers.ToArray(), _directors.ToArray(), _genres.ToArray(), _year, (int)_duration.TotalMinutes, _tenant.Id, "", movieId);

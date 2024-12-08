@@ -42,6 +42,4 @@ public class CreateVotingSessionEntryActivity : IStateMachineActivity<VotingStat
     {
         await next.Faulted(context).ConfigureAwait(false);
     }
-
-
 }

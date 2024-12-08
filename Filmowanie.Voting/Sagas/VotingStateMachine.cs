@@ -94,7 +94,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     if (movie.Votes.Any(x => x.User.id == messageUser.Id))
                         return;
 
-                    var user = new EmbeddedUser { id = messageUser.Id, Name = messageUser.DisplayName, TenantId = messageUser.Tenant.Id };
+                    var user = new EmbeddedUser { id = messageUser.Id, Name = messageUser.Name, TenantId = messageUser.Tenant.Id };
                     movie.Votes = movie.Votes.Concat([new Vote { User = user, VoteType = ctx.Message.VoteType }]);
                     movie.VotingScore += ctx.Message.VoteType.GetVoteCount();
                 })

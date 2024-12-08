@@ -48,7 +48,7 @@ internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
             IsAdmin = domainUser.IsAdmin,
             PasswordHash = null!,
             TenantId = domainUser.Tenant.Id,
-            DisplayName = domainUser.DisplayName
+            DisplayName = domainUser.Name // TODO fix this
         };
 
         await _usersCommandRepository.Insert(userEntity, cancellationToken);

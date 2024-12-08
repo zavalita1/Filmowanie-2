@@ -3,6 +3,7 @@ using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using System.Linq.Expressions;
 using Filmowanie.Database.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Filmowanie.Database.Entities;
 
 namespace Filmowanie.Database.Repositories;
 
@@ -20,8 +21,13 @@ internal sealed class MovieQueryRepository : IMovieQueryRepository
         return await _ctx.Movies.Where(predicate).ToArrayAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyMoviesThatCanBeNominatedAgainEntity?> GetMoviesThatCanBeNominatedAgainEntityAsync(Expression<Func<IReadOnlyMoviesThatCanBeNominatedAgainEntity, bool>> predicate, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEntityAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate, CancellationToken cancellationToken)
     {
-        return await _ctx.MoviesThatCanBeNominatedAgain.SingleOrDefaultAsync(predicate, cancellationToken);
+        return await _ctx.CanNominateMovieAgainEvents.Where(predicate).ToArrayAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyNominatedMovieAgainEvent[]> GetMoviesNominatedAgainEntityAsync(Expression<Func<IReadOnlyNominatedMovieAgainEvent, bool>> predicate, CancellationToken cancellationToken)
+    {
+        return await _ctx.NominatedMovieAgainEvents.Where(predicate).ToArrayAsync(cancellationToken);
     }
 }

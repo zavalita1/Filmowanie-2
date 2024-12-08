@@ -1,9 +1,7 @@
 ﻿using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Entities;
-using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Filmowanie.Database.Repositories;
 
@@ -16,10 +14,17 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
         _ctx = ctx;
     }
 
-    public async Task UpdateMoviesThatCanBeNominatedAgainEntityAsync(string entityId, IEnumerable<IReadOnlyEmbeddedMovie> movies, CancellationToken cancellationToken)
+    public async Task InsertCanBeNominatedAgainAsync(IEnumerable<IReadOnlyCanNominateMovieAgainEvent> canNominateMovieAgainEvents, CancellationToken cancellationToken)
     {
-        var entity = await _ctx.MoviesThatCanBeNominatedAgain.SingleAsync(x => x.Id == entityId, cancellationToken);
-        entity.Movies = movies.Select(IReadOnlyEntitiesExtensions.AsMutable).ToArray();
+        var entity = canNominateMovieAgainEvents.Select(x => new CanNominateMovieAgainEvent(x));
+        await _ctx.CanNominateMovieAgainEvents.AddRangeAsync(entity, cancellationToken);
+        await _ctx.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task InsertNominatedAgainAsync(IReadOnlyNominatedMovieAgainEvent nominatedAgainEvent, CancellationToken cancellationToken)
+    {
+        var entity = new NominatedMovieAgainEvent(nominatedAgainEvent);
+        await _ctx.NominatedMovieAgainEvents.AddAsync(entity, cancellationToken);
         await _ctx.SaveChangesAsync(cancellationToken);
     }
 

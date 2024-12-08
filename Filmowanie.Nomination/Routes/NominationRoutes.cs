@@ -19,10 +19,11 @@ internal sealed class NominationRoutes : INominationRoutes
     private readonly INominationsCompleterVisitor _nominationsCompleterVisitor;
     private readonly INominationsResetterVisitor _nominationsResetterVisitor;
     private readonly IGetCurrentVotingSessionIdVisitor _currentVotingSessionIdVisitor;
+    private readonly IRequireCurrentVotingSessionIdVisitor _requireCurrentVotingSessionIdVisitor;
     private readonly IMovieThatCanBeNominatedAgainEnricherVisitor _movieThatCanBeNominatedAgainEnricherVisitor;
     private readonly IFluentValidatorAdapterFactory _validatorAdapterFactory;
 
-    public NominationRoutes(IUserIdentityVisitor userIdentityVisitor, IGetNominationsVisitor getNominationsVisitor, IGetCurrentVotingSessionIdVisitor currentVotingSessionIdVisitor, IMovieThatCanBeNominatedAgainEnricherVisitor movieThatCanBeNominatedAgainEnricherVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IGetNominationsDTOVisitor getNominationsDtoVisitor, IGetPostersVisitor getPostersVisitor, INominationsCompleterVisitor nominationsCompleterVisitor, INominationsResetterVisitor nominationsResetterVisitor)
+    public NominationRoutes(IUserIdentityVisitor userIdentityVisitor, IGetNominationsVisitor getNominationsVisitor, IGetCurrentVotingSessionIdVisitor currentVotingSessionIdVisitor, IMovieThatCanBeNominatedAgainEnricherVisitor movieThatCanBeNominatedAgainEnricherVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IGetNominationsDTOVisitor getNominationsDtoVisitor, IGetPostersVisitor getPostersVisitor, INominationsCompleterVisitor nominationsCompleterVisitor, INominationsResetterVisitor nominationsResetterVisitor, IRequireCurrentVotingSessionIdVisitor requireCurrentVotingSessionIdVisitor)
     {
         _userIdentityVisitor = userIdentityVisitor;
         _getNominationsVisitor = getNominationsVisitor;
@@ -33,6 +34,7 @@ internal sealed class NominationRoutes : INominationRoutes
         _getPostersVisitor = getPostersVisitor;
         _nominationsCompleterVisitor = nominationsCompleterVisitor;
         _nominationsResetterVisitor = nominationsResetterVisitor;
+        _requireCurrentVotingSessionIdVisitor = requireCurrentVotingSessionIdVisitor;
     }
 
     public async Task<IResult> GetNominationsAsync(CancellationToken cancellationToken)
@@ -78,7 +80,9 @@ internal sealed class NominationRoutes : INominationRoutes
     {
         var validator = _validatorAdapterFactory.GetAdapter<string>(KeyedServices.MovieId);
         var identityResult = OperationResultExtensions.Empty.Accept(_userIdentityVisitor);
-        var votingSessionIdResult = await identityResult.AcceptAsync(_currentVotingSessionIdVisitor, cancellationToken);
+        var votingSessionIdResult = (await identityResult
+                .AcceptAsync(_currentVotingSessionIdVisitor, cancellationToken))
+                .Accept(_requireCurrentVotingSessionIdVisitor);
 
         var result = await OperationResultExtensions
             .FromResult(movieId)

@@ -1,9 +1,9 @@
-﻿using Filmowanie.Database.Entities;
+﻿using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using InvalidOperationException = System.InvalidOperationException;
 
 namespace Filmowanie.Nomination.Consumers;
 
@@ -11,16 +11,18 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
 {
     private readonly ILogger<VotingConcludedConsumer> _logger;
     private readonly IVotingSessionQueryRepository _votesRepository;
-    private readonly IMovieQueryRepository _movieQueryRepository;
     private readonly IMovieCommandRepository _movieCommandRepository;
+    private readonly IGuidProvider _guidProvider;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private const int TimeWindow = 10;
 
-    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingSessionQueryRepository votesRepository, IMovieQueryRepository movieQueryRepository, IMovieCommandRepository movieCommandRepository)
+    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingSessionQueryRepository votesRepository, IMovieCommandRepository movieCommandRepository, IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider)
     {
         _logger = logger;
         _votesRepository = votesRepository;
-        _movieQueryRepository = movieQueryRepository;
         _movieCommandRepository = movieCommandRepository;
+        _guidProvider = guidProvider;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public Task Consume(ConsumeContext<Fault<VotingConcludedEvent>> context)
@@ -37,15 +39,8 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         var message = context.Message;
         var votingResultOfInterest = (await _votesRepository.Get(x => x.Concluded != null && x.TenantId == message.Tenant.Id, x => x.Concluded!, -1 * TimeWindow, context.CancellationToken)).Last();
 
-        var moviesThatCanBeNominatedAgain = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEntityAsync(x => x.TenantId == message.Tenant.Id, context.CancellationToken);
-
-        if (moviesThatCanBeNominatedAgain == null)
-            throw new InvalidOperationException("No entry for movies that can be nominated again in db!");
-
-        var newMoviesToAdd = votingResultOfInterest.MoviesGoingByeBye.Select(x => new EmbeddedMovie { id = x.id, MovieCreationYear = x.MovieCreationYear, Name = x.Name });
-        var movies = moviesThatCanBeNominatedAgain.Movies.Concat(newMoviesToAdd);
-
-        await _movieCommandRepository.UpdateMoviesThatCanBeNominatedAgainEntityAsync(moviesThatCanBeNominatedAgain.Id, movies, context.CancellationToken);
+        var newMoviesToAdd = votingResultOfInterest.MoviesGoingByeBye.Select(x => (IReadOnlyCanNominateMovieAgainEvent)new CanNominateMovieAgainEventRecord(x, _guidProvider.NewGuid().ToString(), _dateTimeProvider.Now, message.Tenant.Id));
+        await _movieCommandRepository.InsertCanBeNominatedAgainAsync(newMoviesToAdd, context.CancellationToken);
 
         _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
     }

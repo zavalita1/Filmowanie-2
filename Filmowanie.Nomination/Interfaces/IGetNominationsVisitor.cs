@@ -5,7 +5,7 @@ using Filmowanie.Nomination.DTOs.Outgoing;
 
 namespace Filmowanie.Nomination.Interfaces;
 
-internal interface IGetNominationsVisitor : IOperationAsyncVisitor<VotingSessionId, CurrentNominationsResponse>;
+internal interface IGetNominationsVisitor : IOperationAsyncVisitor<VotingSessionId?, CurrentNominationsResponse>;
 internal interface IGetPostersVisitor : IOperationAsyncVisitor<string, PostersDTO>;
 internal interface IGetNominationsDTOVisitor : IOperationVisitor<(CurrentNominationsResponse, DomainUser), NominationsDataDTO>;
 internal interface INominationsResetterVisitor : IOperationAsyncVisitor<(string MovieId, DomainUser User, VotingSessionId VotingSessionId), AknowledgedNominationDTO>;

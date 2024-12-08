@@ -12,18 +12,20 @@ internal sealed class UserDTOMapperVisitor : IUserMapperVisitor, IEnrichUserVisi
 {
     private readonly IUsersQueryRepository _usersRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IGuidProvider _guidProvider;
     private readonly ILogger<UserDTOMapperVisitor> _log;
 
-    public UserDTOMapperVisitor(IUsersQueryRepository usersRepository, IDateTimeProvider dateTimeProvider, ILogger<UserDTOMapperVisitor> log)
+    public UserDTOMapperVisitor(IUsersQueryRepository usersRepository, IDateTimeProvider dateTimeProvider, IGuidProvider guidProvider, ILogger<UserDTOMapperVisitor> log)
     {
         _usersRepository = usersRepository;
         _dateTimeProvider = dateTimeProvider;
+        _guidProvider = guidProvider;
         _log = log;
     }
 
     public OperationResult<UserDTO> Visit(OperationResult<DomainUser> user)
     {
-        var userDto = new UserDTO(user.Result.DisplayName, user.Result.IsAdmin, user.Result.HasBasicAuthSetup);
+        var userDto = new UserDTO(user.Result.Name, user.Result.IsAdmin, user.Result.HasBasicAuthSetup);
         return new OperationResult<UserDTO>(userDto, null);
     }
 
@@ -43,7 +45,9 @@ internal sealed class UserDTOMapperVisitor : IUserMapperVisitor, IEnrichUserVisi
     public OperationResult<DomainUser> Visit(OperationResult<(DTOs.Incoming.UserDTO, DomainUser CurrentUser)> input)
     {
         var now = _dateTimeProvider.Now;
-        var domainUser = new DomainUser(input.Result!.Item1.Id, input.Result.Item1.DisplayName, false, false, input.Result.CurrentUser.Tenant, now);
+        var guid = _guidProvider.NewGuid();
+        var userId = $"user-{guid}";
+        var domainUser = new DomainUser(userId, input.Result.Item1.Id, false, false, input.Result.CurrentUser.Tenant, now);
         return new OperationResult<DomainUser>(domainUser, null);
     }
 

@@ -8,7 +8,8 @@ namespace Filmowanie.Database.Contexts;
 internal class MoviesContext : DbContext
 {
     public DbSet<MovieEntity> Movies { get; set; }
-    public DbSet<MoviesThatCanBeNominatedAgainEntity> MoviesThatCanBeNominatedAgain { get; set; }
+    public DbSet<CanNominateMovieAgainEvent> CanNominateMovieAgainEvents { get; set; }
+    public DbSet<NominatedMovieAgainEvent> NominatedMovieAgainEvents { get; set; }
 
     public MoviesContext(DbContextOptions<MoviesContext> options)
         : base(options)
@@ -21,7 +22,11 @@ internal class MoviesContext : DbContext
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
 
-        builder.Entity<MoviesThatCanBeNominatedAgainEntity>().ToContainer(DbContainerNames.Entities)
+        builder.Entity<CanNominateMovieAgainEvent>().ToContainer(DbContainerNames.Events)
+            .HasPartitionKey(x => x.id)
+            .HasDiscriminator(x => x.Type);
+
+        builder.Entity<NominatedMovieAgainEvent>().ToContainer(DbContainerNames.Events)
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
 
