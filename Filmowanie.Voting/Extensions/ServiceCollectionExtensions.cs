@@ -19,6 +19,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IVotingSessionRoutes, VotingSessionRoutes>();
         services.AddScoped<IAdminVotingSessionRoutes, AdminVotingSessionRoutes>();
         services.AddScoped<IVotingResultRoutes, VotingResultRoutes>();
+        
+        services.AddScoped<IWinnersMetadataMapperVisitor, WinnersMetadataMapperVisitor>();
+        
+        services.AddScoped<IHistoryDTOMapperVisitor, HistoryDTOMapperVisitor>();
 
         services.AddScoped<IGetMoviesForVotingSessionVisitor, MoviesVisitor>();
         services.AddScoped<IEnrichMoviesForVotingSessionWithPlaceholdersVisitor, MoviesVisitor>();

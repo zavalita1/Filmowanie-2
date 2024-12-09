@@ -17,13 +17,15 @@ internal sealed class VotingSessionResultVisitor : IGetVotingSessionResultVisito
 {
     private readonly IVotingSessionQueryRepository _votingSessionQueryRepository;
     private readonly IRequestClient<MoviesListRequested> _getMoviesListRequestClient;
+    private readonly IMovieQueryRepository _movieQueryRepository;
     private readonly ILogger<VotingSessionIdQueryVisitor> _log;
 
-    public VotingSessionResultVisitor(IVotingSessionQueryRepository votingSessionQueryRepository, ILogger<VotingSessionIdQueryVisitor> log, IRequestClient<MoviesListRequested> getMoviesListRequestClient)
+    public VotingSessionResultVisitor(IVotingSessionQueryRepository votingSessionQueryRepository, ILogger<VotingSessionIdQueryVisitor> log, IRequestClient<MoviesListRequested> getMoviesListRequestClient, IMovieQueryRepository movieQueryRepository)
     {
         _votingSessionQueryRepository = votingSessionQueryRepository;
         _log = log;
         _getMoviesListRequestClient = getMoviesListRequestClient;
+        _movieQueryRepository = movieQueryRepository;
     }
 
     public async Task<OperationResult<VotingResultDTO>> VisitAsync(OperationResult<(TenantId Tenant, VotingSessionId? VotingSessionId)> input, CancellationToken cancellationToken)
@@ -58,8 +60,13 @@ internal sealed class VotingSessionResultVisitor : IGetVotingSessionResultVisito
 
     public async Task<OperationResult<VotingMetadata[]>> VisitAsync(OperationResult<TenantId> input, CancellationToken cancellationToken)
     {
-        var votingSessions = await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Id && x.Concluded != null, x => new { x.Id, x.Concluded, x.Winner.Name }, cancellationToken);
-        var result = votingSessions.Select(x => new VotingMetadata(x.Id, x.Concluded!.Value, x.Name)).ToArray();
+        var votingSessions = (await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Id && x.Concluded != null, x => new { x.Id, x.Concluded, MovieId = x.Winner.id }, cancellationToken)).ToArray();
+        var moviesIds = votingSessions.Select(x => x.MovieId).ToArray();
+        var movies = await _movieQueryRepository.GetMoviesAsync(x => x.TenantId == input.Result.Id && moviesIds.Contains(x.id), cancellationToken);
+        var result = votingSessions
+            .Join(movies, x => x.MovieId, x => x.id, (x, y) =>
+                new VotingMetadata(x.Id, x.Concluded!.Value, new VotingMetadataWinnerData(y.Id, y.Name, y.OriginalTitle, y.CreationYear)))
+            .ToArray();
 
         return new OperationResult<VotingMetadata[]>(result, null);
     }

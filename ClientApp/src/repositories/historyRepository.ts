@@ -5,7 +5,7 @@ import { VotingSessionsDTO } from "../DTO/Incoming/VotingSessionsDTO";
 
 export async function getHistory() {
     const fetchWrapper = getFetchWrapperBuilder().build();
-    const response = await fetchWrapper<HistoryDTO>('history/list');
+    const response = await fetchWrapper<HistoryDTO>('api/voting/results/winners');
 
     return response;
 }
@@ -19,7 +19,7 @@ export async function getHistoryStandings() {
 
 export async function getPreviousVotingLists() {
     const fetchWrapper = getFetchWrapperBuilder().build();
-    const response = await fetchWrapper<VotingSessionsDTO>('history/previousVotingSessions');
+    const response = await fetchWrapper<VotingSessionsDTO>('api/voting/results/list');
     let votesAgo = 0;
     const result = { votingSessions: response.votingSessions.map(x => ({...x, id: ++votesAgo }))}
 

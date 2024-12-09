@@ -8,3 +8,6 @@ internal interface IEnrichMoviesForVotingSessionWithPlaceholdersVisitor : IOpera
 
 public interface IGetVotingSessionResultVisitor : IOperationAsyncVisitor<(TenantId Tenant, VotingSessionId? VotingSessionId), VotingResultDTO>;
 internal interface IGetVotingSessionsMetadataVisitor : IOperationAsyncVisitor<TenantId, VotingMetadata[]>;
+
+internal interface IWinnersMetadataMapperVisitor : IOperationAsyncVisitor<(VotingMetadata[], TenantId), WinnerMetadata[]>;
+internal interface IHistoryDTOMapperVisitor : IOperationVisitor<WinnerMetadata[], HistoryDTO>;

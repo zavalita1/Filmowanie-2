@@ -14,9 +14,11 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
     private readonly IGetVotingSessionResultVisitor _getVotingSessionResultVisitor;
     private readonly IVotingSessionIdMapperVisitor _votingSessionIdMapperVisitor;
     private readonly IGetVotingSessionsMetadataVisitor _getVotingSessionsMetadataVisitor;
+    private readonly IWinnersMetadataMapperVisitor _winnersMetadataMapperVisitor;
+    private readonly IHistoryDTOMapperVisitor _historyDtoMapperVisitor;
     private readonly IVotingSessionsMapperVisitor _mapperVisitor;
 
-    public VotingResultRoutes(IUserIdentityVisitor userIdentityVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IGetVotingSessionResultVisitor getVotingSessionResultVisitor, IVotingSessionIdMapperVisitor votingSessionIdMapperVisitor, IGetVotingSessionsMetadataVisitor getVotingSessionsMetadataVisitor, IVotingSessionsMapperVisitor mapperVisitor)
+    public VotingResultRoutes(IUserIdentityVisitor userIdentityVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IGetVotingSessionResultVisitor getVotingSessionResultVisitor, IVotingSessionIdMapperVisitor votingSessionIdMapperVisitor, IGetVotingSessionsMetadataVisitor getVotingSessionsMetadataVisitor, IVotingSessionsMapperVisitor mapperVisitor, IWinnersMetadataMapperVisitor winnersMetadataMapperVisitor, IHistoryDTOMapperVisitor historyDtoMapperVisitor)
     {
         _userIdentityVisitor = userIdentityVisitor;
         _validatorAdapterFactory = validatorAdapterFactory;
@@ -24,6 +26,8 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
         _votingSessionIdMapperVisitor = votingSessionIdMapperVisitor;
         _getVotingSessionsMetadataVisitor = getVotingSessionsMetadataVisitor;
         _mapperVisitor = mapperVisitor;
+        _winnersMetadataMapperVisitor = winnersMetadataMapperVisitor;
+        _historyDtoMapperVisitor = historyDtoMapperVisitor;
     }
 
     public async Task<IResult> GetResults(string votingSessionId, CancellationToken cancellationToken)
@@ -51,6 +55,21 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
             .AcceptAsync(_getVotingSessionsMetadataVisitor, cancellationToken))
             .Accept(_mapperVisitor);
 
+        return RoutesResultHelper.UnwrapOperationResult(result);
+    }
+
+    public async Task<IResult> GetWinnersList(CancellationToken cancellationToken)
+    {
+        var tenantResult = OperationResultExtensions.Empty
+            .Accept(_userIdentityVisitor)
+            .Pluck(x => x.Tenant);
+
+        var result = (await (await tenantResult
+                .AcceptAsync(_getVotingSessionsMetadataVisitor, cancellationToken))
+            .Merge(tenantResult)
+            .AcceptAsync(_winnersMetadataMapperVisitor, cancellationToken))
+            .Accept(_historyDtoMapperVisitor);
+            
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
 }

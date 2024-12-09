@@ -33,8 +33,9 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
     }
 
     public async Task<IEnumerable<T>> Get<T>(Expression<Func<IReadonlyVotingResult, bool>> predicate, Expression<Func<IReadonlyVotingResult, T>> selector, CancellationToken cancellationToken)
+        where T : class
     {
-        var entities = await _ctx.VotingResults.Where(predicate).Select(selector).ToArrayAsync(cancellationToken);
+        var entities = await _ctx.VotingResults.Where(predicate).Select(selector).AsNoTracking().ToArrayAsync(cancellationToken);
         return entities;
     }
 }

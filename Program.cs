@@ -56,6 +56,7 @@ if (environment == Environment.Production)
     await SetupKeyVaultAsync(builder);
 }
 
+builder.Services.AddMemoryCache();
 builder.Services.RegisterPolicies();
 builder.Services.RegisterCustomServices(builder.Configuration, environment);
 builder.Services.RegisterDatabaseServices(builder.Configuration, environment);
