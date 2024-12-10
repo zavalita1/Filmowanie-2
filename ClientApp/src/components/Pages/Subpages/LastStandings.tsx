@@ -38,7 +38,7 @@ type HistoryProps = UserState & {
 
 function HistoryListSubPage(props: { data: HistoryStandingsDTO}) {
     const seriesData: ChartDataset<any, any>[] = [];
-    Object.entries(props.data).forEach(x => populateSeriesData(x[1], seriesData));
+    props.data.rows.forEach(x => populateSeriesData(x, seriesData));
 
     const seriesLenght = seriesData[0].data.length;
     function getXAxisLabel(x: number): any {

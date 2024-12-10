@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IWinnersMetadataMapperVisitor, WinnersMetadataMapperVisitor>();
         
         services.AddScoped<IHistoryDTOMapperVisitor, HistoryDTOMapperVisitor>();
+        services.AddScoped<IHistoryStandingsDTOMapperVisitor, HistoryDTOMapperVisitor>();
 
         services.AddScoped<IGetMoviesForVotingSessionVisitor, MoviesVisitor>();
         services.AddScoped<IEnrichMoviesForVotingSessionWithPlaceholdersVisitor, MoviesVisitor>();

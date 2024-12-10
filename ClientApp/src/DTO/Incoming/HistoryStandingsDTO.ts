@@ -1,5 +1,5 @@
 export type HistoryStandingsDTO = {
-    [key: number]: HistoryStandingsRowDTO
+    rows: HistoryStandingsRowDTO[]
 }
 
 export type HistoryStandingsRowDTO = {

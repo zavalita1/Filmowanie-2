@@ -4,7 +4,9 @@ namespace Filmowanie.Voting.Interfaces;
 
 internal interface IVotingResultRoutes
 {
-    Task<IResult> GetResults(string votingSessionId, CancellationToken cancellationToken);
-    Task<IResult> GetVotingSessionsList(CancellationToken cancellationToken);
-    Task<IResult> GetWinnersList(CancellationToken cancellationToken);
+    public Task<IResult> GetResults(string votingSessionId, CancellationToken cancellationToken);
+    public Task<IResult> GetVotingSessionsList(CancellationToken cancellationToken);
+    public Task<IResult> GetWinnersList(CancellationToken cancellationToken);
+
+    public Task<IResult> GetLast10Standings(CancellationToken cancellationToken);
 }

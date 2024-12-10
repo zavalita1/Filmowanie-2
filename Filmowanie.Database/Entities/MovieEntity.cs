@@ -38,6 +38,6 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
         Genres = other.Genres;
         CreationYear = other.CreationYear;
         DurationInMinutes = other.DurationInMinutes;
-        id = other.Id;
+        id = ((IReadOnlyEntity)other).id;
     }
 }

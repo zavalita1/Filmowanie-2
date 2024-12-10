@@ -25,7 +25,7 @@ internal sealed class VotingSessionIdQueryVisitor : IGetCurrentVotingSessionIdVi
         if (currentVotingResults == null)
             return new OperationResult<VotingSessionId?>(null, null);
 
-        var correlationId = Guid.Parse(currentVotingResults.Id);
+        var correlationId = Guid.Parse(currentVotingResults.id);
         var votingSessionId = new VotingSessionId(correlationId);
         return new OperationResult<VotingSessionId?>(votingSessionId, null);
     }

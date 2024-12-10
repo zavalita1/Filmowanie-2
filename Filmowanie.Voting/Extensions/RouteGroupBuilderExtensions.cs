@@ -27,6 +27,7 @@ public static class RouteGroupBuilderExtensions
         votingResultsGroup.MapGet("", ([FromServices] IVotingResultRoutes routes, [FromQuery] string votingSessionId, CancellationToken ct) => routes.GetResults(votingSessionId, ct));
         votingResultsGroup.MapGet("list", ([FromServices] IVotingResultRoutes routes, CancellationToken ct) => routes.GetVotingSessionsList(ct));
         votingResultsGroup.MapGet("winners", ([FromServices] IVotingResultRoutes routes, CancellationToken ct) => routes.GetWinnersList(ct));
+        votingResultsGroup.MapGet("laststandings", ([FromServices] IVotingResultRoutes routes, CancellationToken ct) => routes.GetLast10Standings(ct));
        
         return builder;
     }

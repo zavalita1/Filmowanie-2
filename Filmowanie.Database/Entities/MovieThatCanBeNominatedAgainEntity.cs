@@ -41,5 +41,5 @@ public interface IReadOnlyNominatedMovieAgainEvent : IReadOnlyEntity
     public IReadOnlyEmbeddedMovie Movie { get; }
 }
 
-public readonly record struct CanNominateMovieAgainEventRecord(IReadOnlyEmbeddedMovie Movie, string Id, DateTime Created, int TenantId) : IReadOnlyCanNominateMovieAgainEvent;
-public readonly record struct NominatedMovieAgainEventRecord(IReadOnlyEmbeddedMovie Movie, string Id, DateTime Created, int TenantId) : IReadOnlyNominatedMovieAgainEvent;
+public readonly record struct CanNominateMovieAgainEventRecord(IReadOnlyEmbeddedMovie Movie, string id, DateTime Created, int TenantId) : IReadOnlyCanNominateMovieAgainEvent;
+public readonly record struct NominatedMovieAgainEventRecord(IReadOnlyEmbeddedMovie Movie, string id, DateTime Created, int TenantId) : IReadOnlyNominatedMovieAgainEvent;

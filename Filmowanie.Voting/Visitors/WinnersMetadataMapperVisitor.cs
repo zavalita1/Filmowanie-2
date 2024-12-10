@@ -46,7 +46,9 @@ internal sealed class WinnersMetadataMapperVisitor : IWinnersMetadataMapperVisit
             return new OperationResult<WinnerMetadata[]>(default, new Error("Invalid cache object!", ErrorType.InvalidState));
 
         var result = input.Result.Item1.Join(typedValue, x => x.Winner.Id, x => x.Key, (x, y) => 
-            new WinnerMetadata(x.Winner.Id, x.Winner.Name, x.Winner.OriginalTitle, x.Winner.CreationYear, y.Value, x.Concluded)).ToArray();
+            new WinnerMetadata(x.Winner.Id, x.Winner.Name, x.Winner.OriginalTitle, x.Winner.CreationYear, y.Value, x.Concluded))
+            .OrderByDescending(x => x.Watched)
+            .ToArray();
         return new OperationResult<WinnerMetadata[]>(result, null);
     }
 

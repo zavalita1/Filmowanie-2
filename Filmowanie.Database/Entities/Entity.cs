@@ -15,7 +15,5 @@ public abstract class Entity : IReadOnlyEntity
     public virtual string id { get; set; }
 
     public DateTime Created { get; set; }
-    public string Id => id;
-
     public int TenantId { get; set; }
 }

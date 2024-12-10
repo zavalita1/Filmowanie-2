@@ -8,13 +8,6 @@ export async function getVotingResult(votingSessionId: string) {
     return response;
 }
 
-export async function getPreviousVotingResult(votingSessionsAgo: number) {
-    const fetchWrapper = getFetchWrapperBuilder().useTimeout(5000).build();
-    const response = await fetchWrapper<VotingResultDTO>(`votes/previousVotingSessions?votingSessionsAgo=${votingSessionsAgo}`);
-
-    return response;
-}
-
 export async function placeVote(movieId: string, movieTitle: string, votes: Number) {
     const body = JSON.stringify({ movieId, movieTitle, votes});
     const fetchOptions = { 

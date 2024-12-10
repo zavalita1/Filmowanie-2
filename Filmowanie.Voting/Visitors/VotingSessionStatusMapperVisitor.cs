@@ -41,8 +41,11 @@ internal sealed class VotingMapperVisitor : IVotingSessionStatusMapperVisitor, I
 
     public OperationResult<VotingSessionsDTO> Visit(OperationResult<VotingMetadata[]> input)
     {
-        var dto = input.Result!.Select(x => new VotingSessionDTO(x.VotingSessionId, x.Concluded.ToString("D", new CultureInfo("pl")), x.Concluded.ToString("s")));
-        var result = new VotingSessionsDTO(dto.ToArray());
+        var dto = input.Result!
+            .OrderByDescending(x => x.Concluded)
+            .Select(x => new VotingSessionDTO(x.VotingSessionId, x.Concluded.ToString("D", new CultureInfo("pl")), x.Concluded.ToString("s")))
+            .ToArray();
+        var result = new VotingSessionsDTO(dto);
 
         return new OperationResult<VotingSessionsDTO>(result, null);
     }

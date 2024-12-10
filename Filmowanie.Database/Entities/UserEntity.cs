@@ -25,7 +25,7 @@ public class UserEntity : Entity, IReadOnlyUserEntity
         DisplayName = other.DisplayName;
         TenantId = other.TenantId;
         IsAdmin = other.IsAdmin;
-        id = other.Id;
+        id = other.id;
         Created = other.Created;
     }
 }

@@ -3,7 +3,7 @@ export type VotingSessionsDTO = {
 };
 
 export type VotingSessionDTO = {
-    id: number,
+    id: string,
     ended: string
     endedUnlocalized: string
 }

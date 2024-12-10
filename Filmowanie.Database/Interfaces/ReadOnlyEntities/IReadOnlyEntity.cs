@@ -2,7 +2,7 @@
 
 public interface IReadOnlyEntity
 {
-    public string Id { get; }
+    public string id { get; }
 
     public DateTime Created { get; }
 

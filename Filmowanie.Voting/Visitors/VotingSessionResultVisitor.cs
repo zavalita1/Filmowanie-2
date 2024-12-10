@@ -60,12 +60,12 @@ internal sealed class VotingSessionResultVisitor : IGetVotingSessionResultVisito
 
     public async Task<OperationResult<VotingMetadata[]>> VisitAsync(OperationResult<TenantId> input, CancellationToken cancellationToken)
     {
-        var votingSessions = (await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Id && x.Concluded != null, x => new { x.Id, x.Concluded, MovieId = x.Winner.id }, cancellationToken)).ToArray();
+        var votingSessions = (await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Id && x.Concluded != null, x => new { Id = x.id, x.Concluded, MovieId = x.Winner.id }, cancellationToken)).ToArray();
         var moviesIds = votingSessions.Select(x => x.MovieId).ToArray();
         var movies = await _movieQueryRepository.GetMoviesAsync(x => x.TenantId == input.Result.Id && moviesIds.Contains(x.id), cancellationToken);
         var result = votingSessions
             .Join(movies, x => x.MovieId, x => x.id, (x, y) =>
-                new VotingMetadata(x.Id, x.Concluded!.Value, new VotingMetadataWinnerData(y.Id, y.Name, y.OriginalTitle, y.CreationYear)))
+                new VotingMetadata(x.Id, x.Concluded!.Value, new VotingMetadataWinnerData(((IReadOnlyEntity)y).id, y.Name, y.OriginalTitle, y.CreationYear)))
             .ToArray();
 
         return new OperationResult<VotingMetadata[]>(result, null);
@@ -83,15 +83,20 @@ internal sealed class VotingSessionResultVisitor : IGetVotingSessionResultVisito
             else
             {
                 // this is for admin only
-                var votingSessionId = Guid.Parse(currentVoting.Id);
+                var votingSessionId = Guid.Parse(currentVoting.id);
                 var embeddedMovies = await _getMoviesListRequestClient.GetResponse<CurrentVotingListResponse>(new MoviesListRequested(votingSessionId), cancellationToken);
                 var movies = embeddedMovies.Message.Movies;
                 votingResult = new VotingResult(votingSessionId.ToString(), DateTime.Now, 1, DateTime.Now, movies, [], [], [], movies.First().Movie);
             }
         }
         else
-            votingResult = await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Tenant.Id && x.Id == input.Result.VotingSessionId!.Value.CorrelationId.ToString(),
+        {
+            var votingSessionId = input.Result.VotingSessionId!.Value.CorrelationId.ToString();
+            var tenantId = input.Result.Tenant.Id;
+            votingResult = await _votingSessionQueryRepository.Get(x => x.TenantId == tenantId && x.id == votingSessionId,
                 cancellationToken);
+
+        }
 
         return votingResult;
     }
@@ -99,5 +104,5 @@ internal sealed class VotingSessionResultVisitor : IGetVotingSessionResultVisito
 
     public ILogger Log => _log;
 
-    private readonly record struct VotingResult(string Id, DateTime Created, int TenantId, DateTime? Concluded, IReadOnlyEmbeddedMovieWithVotes[] Movies, IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations, IReadOnlyEmbeddedMovie[] MoviesGoingByeBye, IReadOnlyEmbeddedMovieWithNominationContext[] MoviesAdded, IReadOnlyEmbeddedMovie Winner) : IReadonlyVotingResult;
+    private readonly record struct VotingResult(string id, DateTime Created, int TenantId, DateTime? Concluded, IReadOnlyEmbeddedMovieWithVotes[] Movies, IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations, IReadOnlyEmbeddedMovie[] MoviesGoingByeBye, IReadOnlyEmbeddedMovieWithNominationContext[] MoviesAdded, IReadOnlyEmbeddedMovie Winner) : IReadonlyVotingResult;
 }

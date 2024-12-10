@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { ApplicationState } from '../../store';
 import { VotingState } from '../../store/votingState';
 import { UserState, actionCreators } from '../../store/User';
-import { getVotingResult, getPreviousVotingResult } from "../../repositories/votesRepository";
+import { getVotingResult } from "../../repositories/votesRepository";
 import { VotingResultDTO } from '../../DTO/Incoming/VotingResultDTO';
 import { VotingList } from '../Lists/VotingList';
 import TrashVotingList from '../Lists/TrashVotingList';

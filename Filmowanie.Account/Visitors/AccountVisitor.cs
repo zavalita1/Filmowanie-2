@@ -84,7 +84,7 @@ internal sealed class AccountVisitor : ICodeLoginVisitor, IBasicAuthLoginVisitor
         var claims = new[]
         {
             new Claim(ClaimsTypes.UserName, user.DisplayName),
-            new Claim(ClaimsTypes.UserId, user.Id),
+            new Claim(ClaimsTypes.UserId, user.id),
             new Claim(ClaimsTypes.IsAdmin, user.IsAdmin.ToString(CultureInfo.InvariantCulture)),
             new Claim(ClaimsTypes.Tenant, user.TenantId.ToString()),
             new Claim(ClaimsTypes.HasBasicAuth, hasBasicAuth.ToString(CultureInfo.InvariantCulture)),

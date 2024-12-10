@@ -12,7 +12,7 @@ export async function getHistory() {
 
 export async function getHistoryStandings() {
     const fetchWrapper = getFetchWrapperBuilder().build();
-    const response = await fetchWrapper<HistoryStandingsDTO>('history/laststandings/9');
+    const response = await fetchWrapper<HistoryStandingsDTO>('api/voting/results/laststandings/');
 
     return response;
 }
@@ -20,9 +20,7 @@ export async function getHistoryStandings() {
 export async function getPreviousVotingLists() {
     const fetchWrapper = getFetchWrapperBuilder().build();
     const response = await fetchWrapper<VotingSessionsDTO>('api/voting/results/list');
-    let votesAgo = 0;
-    const result = { votingSessions: response.votingSessions.map(x => ({...x, id: ++votesAgo }))}
-
-    return result;
+    
+    return response;
 }
 

@@ -19,7 +19,7 @@ internal sealed class VotingSessionCommandRepository : IVotingSessionCommandRepo
 
     public Task InsertAsync(IReadonlyVotingResult votingResult, CancellationToken cancellationToken)
     {
-        var votingResultEntity = new VotingResult { Concluded = votingResult.Concluded, Created = votingResult.Created, id = votingResult.Id, TenantId = votingResult.TenantId };
+        var votingResultEntity = new VotingResult { Concluded = votingResult.Concluded, Created = votingResult.Created, id = votingResult.id, TenantId = votingResult.TenantId };
         _ctx.VotingResults.Add(votingResultEntity);
         return _ctx.SaveChangesAsync(cancellationToken);
     }

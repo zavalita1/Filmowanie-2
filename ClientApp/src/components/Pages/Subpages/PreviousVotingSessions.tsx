@@ -16,7 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Results from '../Results';
-import { getPreviousVotingResult } from '../../../repositories/votesRepository';
+import { getVotingResult } from '../../../repositories/votesRepository';
 import { VotingResultDTO } from '../../../DTO/Incoming/VotingResultDTO';
 
 const HistoryWrapper = (props: PreviousVotingSessionsProps) => {
@@ -41,7 +41,7 @@ function PreviousVotingSessionsSubPage(props: PreviousVotingSessionsProps) {
     const [endedYear, setEndedYear] = React.useState<number | undefined>();
     const [endedMonth, setEndedMonth] = React.useState<number | undefined>();
     const [endedDate, setEndedDate] = React.useState<string | undefined>();
-    const [selectedVotesAgo, setSelectedVotesAgo] = React.useState<number | undefined>(undefined);
+    const [selectedVotesId, setSelectedVotesId] = React.useState<string | undefined>(undefined);
     const [votes, setVotes] = React.useState<VotingResultDTO | undefined>(undefined);
 
     const allDatesToChoseFrom = props.votingSessions.map(x => ({Date: new Date(x.endedUnlocalized), DTO: x}));
@@ -93,7 +93,7 @@ function PreviousVotingSessionsSubPage(props: PreviousVotingSessionsProps) {
         </Select>
       </FormControl>
         {
-            selectedVotesAgo === undefined 
+                selectedVotesId === undefined
             ? <></> 
             : <Results votes={votes} shouldAlwaysRender={true}></Results>
         }
@@ -104,10 +104,10 @@ function PreviousVotingSessionsSubPage(props: PreviousVotingSessionsProps) {
         const endedDate = event.target.value;
         const votingSession = props.votingSessions.find(x => x.ended === endedDate);
 
-        const votes = await getPreviousVotingResult(votingSession!.id);
+        const votes = await getVotingResult(votingSession!.id);
         props.setLoading(false);
         setVotes(votes);
-        setSelectedVotesAgo(votingSession!.id);
+        setSelectedVotesId(votingSession!.id);
         setEndedDate(endedDate);
       };
 }

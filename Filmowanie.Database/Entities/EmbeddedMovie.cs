@@ -32,6 +32,4 @@ public class EmbeddedMovieWithNominationContext : IReadOnlyEmbeddedMovieWithNomi
 
     public DateTime NominationConcluded { get; set; }
     public DateTime NominationStarted { get; set; }
-
-    public int MovieCreationYear { get; set; }
 }

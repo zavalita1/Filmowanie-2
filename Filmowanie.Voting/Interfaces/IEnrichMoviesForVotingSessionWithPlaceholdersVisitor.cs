@@ -11,3 +11,4 @@ internal interface IGetVotingSessionsMetadataVisitor : IOperationAsyncVisitor<Te
 
 internal interface IWinnersMetadataMapperVisitor : IOperationAsyncVisitor<(VotingMetadata[], TenantId), WinnerMetadata[]>;
 internal interface IHistoryDTOMapperVisitor : IOperationVisitor<WinnerMetadata[], HistoryDTO>;
+internal interface IHistoryStandingsDTOMapperVisitor : IOperationAsyncVisitor<TenantId, MovieVotingStandingsListDTO>;

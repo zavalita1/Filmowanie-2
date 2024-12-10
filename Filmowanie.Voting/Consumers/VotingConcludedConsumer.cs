@@ -64,7 +64,7 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         var assignNominationsUserContexts = GetPickUserToNominateContexts(lastVotingResults, moviesAdded, message);
         var nominations = GetNominations(assignNominationsUserContexts, message, votingResults);
 
-        await _votingSessionCommandRepository.UpdateAsync(readonlyCurrentVotingResult.Id, votingResults.Movies, nominations, now, moviesAdded, votingResults.Winner, context.CancellationToken);
+        await _votingSessionCommandRepository.UpdateAsync(readonlyCurrentVotingResult.id, votingResults.Movies, nominations, now, moviesAdded, votingResults.Winner, context.CancellationToken);
         await context.Publish(new ResultsCalculated(message.CorrelationId));
 
         _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");

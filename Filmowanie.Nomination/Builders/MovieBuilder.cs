@@ -143,8 +143,8 @@ public sealed class MovieBuilder
         var movieId = "movie-" + guidProvider.NewGuid();
         var now = dateTimeProvider.Now;
 
-        return new Movie(movieId, now, _movieName, originalTitle, description, _posterUrl, _filmwebUrl, _actors.ToArray(), _writers.ToArray(), _directors.ToArray(), _genres.ToArray(), _year, (int)_duration.TotalMinutes, _tenant.Id, "", movieId);
+        return new Movie(movieId, now, _movieName, originalTitle, description, _posterUrl, _filmwebUrl, _actors.ToArray(), _writers.ToArray(), _directors.ToArray(), _genres.ToArray(), _year, (int)_duration.TotalMinutes, _tenant.Id, "");
     }
 
-    private readonly record struct Movie(string Id, DateTime Created, string Name, string OriginalTitle, string Description, string PosterUrl, string FilmwebUrl, string[] Actors, string[] Writers, string[] Directors, string[] Genres, int CreationYear, int DurationInMinutes, int TenantId, string Type, string id) : IReadOnlyMovieEntity;
+    private readonly record struct Movie(string id, DateTime Created, string Name, string OriginalTitle, string Description, string PosterUrl, string FilmwebUrl, string[] Actors, string[] Writers, string[] Directors, string[] Genres, int CreationYear, int DurationInMinutes, int TenantId, string Type) : IReadOnlyMovieEntity;
 }

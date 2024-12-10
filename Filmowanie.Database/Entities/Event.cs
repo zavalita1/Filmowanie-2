@@ -14,7 +14,6 @@ public abstract class Event : IReadOnlyEntity
     public virtual string id { get; set; }
 
     public DateTime Created { get; set; }
-    public string Id => id;
 
     public int TenantId { get; set; }
 
@@ -25,7 +24,7 @@ public abstract class Event : IReadOnlyEntity
 
     protected Event(IReadOnlyEntity entity)
     {
-        id = entity.Id;
+        id = entity.id;
         Created = entity.Created;
         TenantId = entity.TenantId;
     }
