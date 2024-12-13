@@ -1,0 +1,33 @@
+﻿using Filmowanie.Database.Entities.Voting;
+using MassTransit;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+
+namespace Filmowanie.Notification.Consumers;
+
+public sealed class RemoveVoteEventConsumer : IConsumer<RemoveVoteEvent>, IConsumer<Fault<RemoveVoteEvent>>
+{
+    private readonly ILogger<RemoveVoteEventConsumer> _logger;
+    private readonly IHubContext<VotingStateHub> _votingHubContext;
+
+    public RemoveVoteEventConsumer(ILogger<RemoveVoteEventConsumer> logger, IHubContext<VotingStateHub> votingHubContext)
+    {
+        _logger = logger;
+        _votingHubContext = votingHubContext;
+    }
+
+    public Task Consume(ConsumeContext<Fault<RemoveVoteEvent>> context)
+    {
+        var message = string.Join(",", context.Message.Exceptions.Select(x => x.Message));
+        var callStacks = string.Join(";;;;;;;;;;;;", context.Message.Exceptions.Select(x => x.StackTrace));
+        return context.Publish(new ErrorEvent(context.Message.Message.CorrelationId, message, callStacks));
+    }
+
+    public async Task Consume(ConsumeContext<RemoveVoteEvent> context)
+    {
+        _logger.LogInformation($"Consuming {nameof(RemoveVoteEvent)}...");
+        var userId = context.Message.User;
+        await _votingHubContext.Clients.All.SendAsync("voted", userId.Name, context.CancellationToken);
+        _logger.LogInformation($"Consumed {nameof(RemoveVoteEvent)} event.");
+    }
+}

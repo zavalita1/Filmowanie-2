@@ -8,7 +8,7 @@ namespace Filmowanie.Nomination.Validators;
 
 internal partial class NominationMovieIdValidator : AbstractValidator<string>, IFluentValidatorAdapter
 {
-    private const string MovieIdPrefix = "MovieEntity-";
+    private const string MovieIdPrefix = "movie-";
 
     public NominationMovieIdValidator()
     {

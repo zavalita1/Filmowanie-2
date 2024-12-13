@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Filmowanie.Abstractions.Constants;
-using Filmowanie.Account.Constants;
 using Filmowanie.Account.Extensions;
 using Filmowanie.Database.Contants;
 using Filmowanie.Database.Entities.Voting;
@@ -15,6 +14,8 @@ using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Filters;
 using Filmowanie.Nomination.Extensions;
+using Filmowanie.Notification;
+using Filmowanie.Notification.Consumers;
 using Filmowanie.Voting.Consumers;
 using Filmowanie.Voting.Extensions;
 using Filmowanie.Voting.Sagas;
@@ -35,7 +36,7 @@ var environment = builder.Environment.IsDevelopment() ? Environment.Development 
 ConfigureLogging(builder);
 
 builder.Services.AddSpaStaticFiles(so => so.RootPath = "ClientApp/build");
-// TODO builder.Services.AddSignalR();
+builder.Services.AddSignalR();
 
 builder.Services
     .AddAuthentication(o =>
@@ -99,7 +100,7 @@ void ConfigureEndpoints(WebApplication webApplication, Environment appEnvironmen
     apiGroup.RegisterNominationRoutes();
 
     webApplication.UseWhen(
-        context => !context.Request.Path.StartsWithSegments("/api"),
+        context => !context.Request.Path.StartsWithSegments("/api") && !context.Request.Path.StartsWithSegments("/votesHub"),
         then => then.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
@@ -110,6 +111,8 @@ void ConfigureEndpoints(WebApplication webApplication, Environment appEnvironmen
                 }
             }
         ));
+
+    webApplication.MapHub<VotingStateHub>("/votesHub");
 }
 
 void ConfigureLogging(WebApplicationBuilder appBuilder)
@@ -143,7 +146,8 @@ void ConfigureMassTransit(WebApplicationBuilder appBuilder)
         {
             Assembly.GetEntryAssembly()!, 
             typeof(VotingStateInstance).Assembly, 
-            typeof(Filmowanie.Nomination.Consumers.VotingConcludedConsumer).Assembly
+            typeof(Filmowanie.Nomination.Consumers.VotingConcludedConsumer).Assembly,
+            typeof(ConcludeVotingEventConsumer).Assembly,
         }; // TODO
 
         x.AddConsumer<VotingConcludedConsumer>();

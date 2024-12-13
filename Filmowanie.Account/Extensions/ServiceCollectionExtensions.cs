@@ -4,6 +4,7 @@ using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Routes;
 using Filmowanie.Account.Validators;
 using Filmowanie.Account.Visitors;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Filmowanie.Account.Extensions;
@@ -34,6 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAddUserVisitor, UsersManagementVisitor>();
 
         services.AddSingleton<IHashHelper, HashHelper>();
+        services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
         return services;
     }

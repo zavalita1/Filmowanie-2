@@ -6,7 +6,7 @@ namespace Filmowanie.Voting.Validators;
 
 internal class VoteValidator : AbstractValidator<VoteDTO>, IFluentValidatorAdapter
 {
-    private const string MovieIdPrefix = "MovieEntity-";
+    private const string MovieIdPrefix = "movie-";
 
     public VoteValidator()
     {

@@ -92,7 +92,7 @@ function renderMoviesList() {
 
 function AdminButton(props: {movie: IMovie}) {
     function onClick() {
-        fetch(`movies/${props.movie.title}`, { method: "DELETE"});
+        fetch(`api/nominations?movieId=${props.movie.movieId}`, { method: "DELETE"});
     }
 
     return <Button onClick={onClick}>Delete this movie</Button>

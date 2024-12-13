@@ -38,7 +38,7 @@ internal sealed class HistoryDTOMapperVisitor : IHistoryDTOMapperVisitor, IHisto
         var votingSessions = (await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Id && x.Concluded != null, x => x, cancellationToken))
             .Reverse()
             .Take(10)
-            .Select(x => new VotingSessionData(x, x.Movies.OrderByDescending(y => y.VotingScore).Select(y => new VotingSessionPlacesData(y, 1 + counter++ % 10)).ToArray()))
+            .Select(x => new VotingSessionData(x, GetPlaces(x).ToArray()))
             .ToArray();
 
         //AdjustWithExAequo(votingSessions);
@@ -71,13 +71,13 @@ internal sealed class HistoryDTOMapperVisitor : IHistoryDTOMapperVisitor, IHisto
         }
     }
 
-    private VotingSessionPlacesData[] GetPlaces(IReadonlyVotingResult result)
+    private IEnumerable<VotingSessionPlacesData> GetPlaces(IReadonlyVotingResult result)
     {
         var moviesSorted = result.Movies.OrderByDescending(x => x.VotingScore);
         var counter = 0;
         foreach (var movie in moviesSorted)
         {
-            yield return new VotingSessionPlacesData(movie, 1+ (counter++ % 10))
+            yield return new VotingSessionPlacesData(movie, ++counter);
         }
     }
 

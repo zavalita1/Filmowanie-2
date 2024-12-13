@@ -35,6 +35,7 @@
 		<Compile Remove="Filmowanie.Account\**" />
 		<Compile Remove="Filmowanie.Database\**" />
 		<Compile Remove="Filmowanie.Nomination\**" />
+		<Compile Remove="Filmowanie.Notification\**" />
 		<Compile Remove="Filmowanie.Voting\**" />
 		<Content Remove="$(SpaRoot)**" />
 		<Content Remove="Constants\**" />
@@ -42,12 +43,14 @@
 		<Content Remove="Filmowanie.Account\**" />
 		<Content Remove="Filmowanie.Database\**" />
 		<Content Remove="Filmowanie.Nomination\**" />
+		<Content Remove="Filmowanie.Notification\**" />
 		<Content Remove="Filmowanie.Voting\**" />
 		<EmbeddedResource Remove="Constants\**" />
 		<EmbeddedResource Remove="Filmowanie.Abstractions\**" />
 		<EmbeddedResource Remove="Filmowanie.Account\**" />
 		<EmbeddedResource Remove="Filmowanie.Database\**" />
 		<EmbeddedResource Remove="Filmowanie.Nomination\**" />
+		<EmbeddedResource Remove="Filmowanie.Notification\**" />
 		<EmbeddedResource Remove="Filmowanie.Voting\**" />
 		<None Remove="$(SpaRoot)**" />
 		<None Remove="Constants\**" />
@@ -55,6 +58,7 @@
 		<None Remove="Filmowanie.Account\**" />
 		<None Remove="Filmowanie.Database\**" />
 		<None Remove="Filmowanie.Nomination\**" />
+		<None Remove="Filmowanie.Notification\**" />
 		<None Remove="Filmowanie.Voting\**" />
 		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
 	</ItemGroup>
@@ -64,6 +68,7 @@
 	  <ProjectReference Include="Filmowanie.Account\Filmowanie.Account.csproj" />
 	  <ProjectReference Include="Filmowanie.Database\Filmowanie.Database.csproj" />
 	  <ProjectReference Include="Filmowanie.Nomination\Filmowanie.Nomination.csproj" />
+	  <ProjectReference Include="Filmowanie.Notification\Filmowanie.Notification.csproj" />
 	  <ProjectReference Include="Filmowanie.Voting\Filmowanie.Voting.csproj" />
 	</ItemGroup>
 
