@@ -4,6 +4,7 @@ import * as appActionCreators from '../App/actionCreators';
 import { AppThunkAction } from '../';
 import fetchWrapperBuilder from '../../fetchWrapper';
 import { VotingConcludedAction, VotingStartedAction } from "../votingState";
+import * as Init from "../../initialize";
 
 type ActionTypes = UserAction | AppAction | VotingConcludedAction | VotingStartedAction;
 
@@ -100,6 +101,8 @@ const
         // TODO mapping
         const userClaims : IUser = {...response};
         return getNominationsAndStateData(userClaims, fetchWrapper, dispatch);
+    }).then(() => {
+        Init.requestPushNotificationPermission();
     }).catch(error => {
        console.log('error during getting user', error);
     });

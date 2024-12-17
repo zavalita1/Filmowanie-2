@@ -62,6 +62,29 @@ const LoggingView = (props: HomeProps) => {
   );
 }
 
+// TODO add UI for this
+async function revokePushNotificationPermissions() {
+  const registration = await navigator.serviceWorker.getRegistration();
+
+  if (!registration) return;
+
+  const subscription = await registration.pushManager.getSubscription();
+
+  if (!subscription) return;
+
+  fetch('/remove-subscription', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ endpoint: subscription.endpoint })
+  });
+  const unsubscribed = await subscription.unsubscribe();
+  if (unsubscribed) {
+    console.info('Successfully unsubscribed from push notifications.');
+  }
+}
+
 
 export default connect(
   (state: ApplicationState) => state.user,
