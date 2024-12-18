@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Filmowanie.Database.Extensions;
 
-public static class IServiceCollectionExtensions
+public static class ServiceCollectionExtensions
 {
     public static void RegisterDatabaseServices(this IServiceCollection services, IConfiguration configuration, Abstractions.Enums.Environment environment)
     {
@@ -17,6 +17,7 @@ public static class IServiceCollectionExtensions
         services.AddDbContext<IdentityDbContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
         services.AddDbContext<MoviesContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
         services.AddDbContext<VotingResultsContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
+        services.AddDbContext<PushSubscriptionsContext>(options => options.UseCosmos(connectionString: dbConnectionString, databaseName: "db-filmowanie2"));
 
         var dataProtectionBuilder = services.AddDataProtection().SetApplicationName("filmowanie2");
         
@@ -30,5 +31,8 @@ public static class IServiceCollectionExtensions
         services.AddScoped<IVotingSessionCommandRepository, VotingSessionCommandRepository>();
         services.AddScoped<IMovieQueryRepository, MovieQueryRepository>();
         services.AddScoped<IMovieCommandRepository, MovieCommandRepository>();
+        
+        // TODO
+        services.AddScoped<PushSubscriptionRepository, PushSubscriptionRepository>();
     }
 }

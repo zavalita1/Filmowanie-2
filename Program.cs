@@ -14,9 +14,8 @@ using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Filters;
 using Filmowanie.Nomination.Extensions;
-using Filmowanie.Notification;
 using Filmowanie.Notification.Consumers;
-using Filmowanie.Voting.Consumers;
+using Filmowanie.Notification.Extensions;
 using Filmowanie.Voting.Extensions;
 using Filmowanie.Voting.Sagas;
 using MassTransit;
@@ -61,6 +60,7 @@ builder.Services.AddMemoryCache();
 builder.Services.RegisterPolicies();
 builder.Services.RegisterCustomServices(builder.Configuration, environment);
 builder.Services.RegisterDatabaseServices(builder.Configuration, environment);
+builder.Services.RegisterNotificationDomain();
 
 ConfigureMassTransit(builder);
 
@@ -98,9 +98,10 @@ void ConfigureEndpoints(WebApplication webApplication, Environment appEnvironmen
     apiGroup.RegisterAccountRoutes();
     apiGroup.RegisterVotingRoutes();
     apiGroup.RegisterNominationRoutes();
+    apiGroup.RegisterNotificationRoutes();
 
     webApplication.UseWhen(
-        context => !context.Request.Path.StartsWithSegments("/api") && !context.Request.Path.StartsWithSegments("/votesHub"),
+        context => !context.Request.Path.StartsWithSegments("/api") && !context.Request.Path.StartsWithSegments(Filmowanie.Notification.Extensions.RouteGroupBuilderExtensions.VotesHubPath),
         then => then.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
@@ -111,8 +112,6 @@ void ConfigureEndpoints(WebApplication webApplication, Environment appEnvironmen
                 }
             }
         ));
-
-    webApplication.MapHub<VotingStateHub>("/votesHub");
 }
 
 void ConfigureLogging(WebApplicationBuilder appBuilder)
@@ -150,8 +149,7 @@ void ConfigureMassTransit(WebApplicationBuilder appBuilder)
             typeof(ConcludeVotingEventConsumer).Assembly,
         }; // TODO
 
-        x.AddConsumer<VotingConcludedConsumer>();
-        x.AddConsumer<Filmowanie.Nomination.Consumers.VotingConcludedConsumer>();
+        x.AddConsumers(entryAssembly);
         x.AddSagaStateMachine<VotingStateMachine, VotingStateInstance>();
         x.AddActivities(entryAssembly);
 

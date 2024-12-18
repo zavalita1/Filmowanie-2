@@ -7,6 +7,18 @@ using Filmowanie.Database.Entities;
 
 namespace Filmowanie.Database.Repositories;
 
+internal sealed class PushSubscriptionRepository
+{
+    private readonly PushSubscriptionsContext _ctx;
+
+    public PushSubscriptionRepository(PushSubscriptionsContext ctx)
+    {
+        _ctx = ctx;
+    }
+
+
+}
+
 internal sealed class MovieQueryRepository : IMovieQueryRepository
 {
     private readonly MoviesContext _ctx;
