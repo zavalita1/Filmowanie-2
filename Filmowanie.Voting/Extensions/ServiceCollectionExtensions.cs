@@ -21,22 +21,18 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IVotingResultRoutes, VotingResultRoutes>();
         
         services.AddScoped<IWinnersMetadataMapperVisitor, WinnersMetadataMapperVisitor>();
-        
         services.AddScoped<IHistoryDTOMapperVisitor, HistoryDTOMapperVisitor>();
-        services.AddScoped<IHistoryStandingsDTOMapperVisitor, HistoryDTOMapperVisitor>();
-
-        services.AddScoped<IGetMoviesForVotingSessionVisitor, MoviesVisitor>();
-        services.AddScoped<IEnrichMoviesForVotingSessionWithPlaceholdersVisitor, MoviesVisitor>();
-        
+        services.AddScoped<IHistoryStandingsDTOMapperVisitor, HistoryStandingsDTOMapper>();
+        services.AddScoped<IGetMoviesForVotingSessionVisitor, GetMoviesForVotingSessionVisitor>();
+        services.AddScoped<IEnrichMoviesForVotingSessionWithPlaceholdersVisitor, EnrichMoviesForVotingSessionWithPlaceholdersVisitor>();
         services.AddScoped<IGetVotingSessionsMetadataVisitor, VotingSessionResultVisitor>();
-        services.AddScoped<IGetVotingSessionResultVisitor, VotingSessionResultVisitor>();
+        services.AddScoped<IGetVotingResultDTOVisitor, GetVotingResultDTOVisitor>();
 
         services.AddScoped<IRequireCurrentVotingSessionIdVisitor, VotingSessionIdQueryVisitor>();
         services.AddScoped<IGetCurrentVotingSessionIdVisitor, VotingSessionIdQueryVisitor>();
         services.AddScoped<IGetCurrentVotingSessionStatusVisitor, VotingSessionIdQueryVisitor>();
-
-        services.AddScoped<IStartNewVotingVisitor, VotingSessionCommandVisitor>();
-        services.AddScoped<IConcludeVotingVisitor, VotingSessionCommandVisitor>();
+        services.AddScoped<IStartNewVotingVisitor, StartNewVotingVisitor>();
+        services.AddScoped<IConcludeVotingVisitor, ConcludeVotingVisitor>();
 
         services.AddScoped<IVotingSessionStatusMapperVisitor, VotingMapperVisitor>();
         services.AddScoped<IVotingSessionIdMapperVisitor, VotingMapperVisitor>();

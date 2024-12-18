@@ -6,7 +6,7 @@ namespace Filmowanie.Voting.Interfaces;
 
 internal interface IEnrichMoviesForVotingSessionWithPlaceholdersVisitor : IOperationAsyncVisitor<(MovieDTO[], VotingSessionId), MovieDTO[]>;
 
-public interface IGetVotingSessionResultVisitor : IOperationAsyncVisitor<(TenantId Tenant, VotingSessionId? VotingSessionId), VotingResultDTO>;
+public interface IGetVotingResultDTOVisitor : IOperationAsyncVisitor<(TenantId Tenant, VotingSessionId? VotingSessionId), VotingResultDTO>;
 internal interface IGetVotingSessionsMetadataVisitor : IOperationAsyncVisitor<TenantId, VotingMetadata[]>;
 
 internal interface IWinnersMetadataMapperVisitor : IOperationAsyncVisitor<(VotingMetadata[], TenantId), WinnerMetadata[]>;

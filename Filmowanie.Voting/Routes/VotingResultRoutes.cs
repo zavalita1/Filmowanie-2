@@ -11,7 +11,7 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
 {
     private readonly IFluentValidatorAdapterFactory _validatorAdapterFactory;
     private readonly IUserIdentityVisitor _userIdentityVisitor;
-    private readonly IGetVotingSessionResultVisitor _getVotingSessionResultVisitor;
+    private readonly IGetVotingResultDTOVisitor _getVotingSessionResultVisitor;
     private readonly IVotingSessionIdMapperVisitor _votingSessionIdMapperVisitor;
     private readonly IGetVotingSessionsMetadataVisitor _getVotingSessionsMetadataVisitor;
     private readonly IWinnersMetadataMapperVisitor _winnersMetadataMapperVisitor;
@@ -19,7 +19,7 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
     private readonly IHistoryStandingsDTOMapperVisitor _historyStandingsDtoMapperVisitor;
     private readonly IVotingSessionsMapperVisitor _mapperVisitor;
 
-    public VotingResultRoutes(IUserIdentityVisitor userIdentityVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IGetVotingSessionResultVisitor getVotingSessionResultVisitor, IVotingSessionIdMapperVisitor votingSessionIdMapperVisitor, IGetVotingSessionsMetadataVisitor getVotingSessionsMetadataVisitor, IVotingSessionsMapperVisitor mapperVisitor, IWinnersMetadataMapperVisitor winnersMetadataMapperVisitor, IHistoryDTOMapperVisitor historyDtoMapperVisitor, IHistoryStandingsDTOMapperVisitor historyStandingsDtoMapperVisitor)
+    public VotingResultRoutes(IUserIdentityVisitor userIdentityVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IGetVotingResultDTOVisitor getVotingSessionResultVisitor, IVotingSessionIdMapperVisitor votingSessionIdMapperVisitor, IGetVotingSessionsMetadataVisitor getVotingSessionsMetadataVisitor, IVotingSessionsMapperVisitor mapperVisitor, IWinnersMetadataMapperVisitor winnersMetadataMapperVisitor, IHistoryDTOMapperVisitor historyDtoMapperVisitor, IHistoryStandingsDTOMapperVisitor historyStandingsDtoMapperVisitor)
     {
         _userIdentityVisitor = userIdentityVisitor;
         _validatorAdapterFactory = validatorAdapterFactory;

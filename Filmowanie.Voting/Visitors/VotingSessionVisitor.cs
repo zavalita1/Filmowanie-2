@@ -9,7 +9,7 @@ namespace Filmowanie.Voting.Visitors;
 internal sealed class VotingSessionIdQueryVisitor : IGetCurrentVotingSessionIdVisitor, IGetCurrentVotingSessionStatusVisitor, IRequireCurrentVotingSessionIdVisitor
 {
     private readonly IVotingSessionQueryRepository _votingSessionQueryRepository;
-    private readonly ILogger<VotingSessionIdQueryVisitor> _log;
+    private readonly ILogger<IGetCurrentVotingSessionIdVisitor> _log;
 
     public VotingSessionIdQueryVisitor(IVotingSessionQueryRepository votingSessionQueryRepository, ILogger<VotingSessionIdQueryVisitor> log)
     {
@@ -17,7 +17,6 @@ internal sealed class VotingSessionIdQueryVisitor : IGetCurrentVotingSessionIdVi
         _log = log;
     }
 
-    // IGetCurrentVotingSessionVisitor
     public async Task<OperationResult<VotingSessionId?>> VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
     {
         var currentVotingResults = await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Tenant.Id && x.Concluded == null, cancellationToken);
@@ -30,7 +29,6 @@ internal sealed class VotingSessionIdQueryVisitor : IGetCurrentVotingSessionIdVi
         return new OperationResult<VotingSessionId?>(votingSessionId, null);
     }
 
-    // IGetCurrentVotingSessionStatusVisitor
     async Task<OperationResult<VotingState>> IOperationAsyncVisitor<DomainUser, VotingState>.VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
     {
         var sagaId = await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Tenant.Id && x.Concluded == null, cancellationToken);

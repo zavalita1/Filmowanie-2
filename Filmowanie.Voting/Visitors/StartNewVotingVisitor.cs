@@ -1,6 +1,5 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
@@ -11,15 +10,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Visitors;
 
-public sealed class VotingSessionCommandVisitor : IStartNewVotingVisitor, IConcludeVotingVisitor
+internal sealed class StartNewVotingVisitor : IStartNewVotingVisitor
 {
     private readonly IVotingSessionQueryRepository _votingSessionQueryRepository;
     private readonly IBus _bus;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
-    private readonly ILogger<VotingSessionCommandVisitor> _log;
 
-    public VotingSessionCommandVisitor(IVotingSessionQueryRepository votingSessionQueryRepository, IBus bus, IDateTimeProvider dateTimeProvider, IGuidProvider guidProvider, ILogger<VotingSessionCommandVisitor> log)
+    private readonly ILogger<StartNewVotingVisitor> _log;
+
+    public StartNewVotingVisitor(IVotingSessionQueryRepository votingSessionQueryRepository, IBus bus, IDateTimeProvider dateTimeProvider, IGuidProvider guidProvider, ILogger<StartNewVotingVisitor> log)
     {
         _votingSessionQueryRepository = votingSessionQueryRepository;
         _bus = bus;
@@ -42,7 +42,7 @@ public sealed class VotingSessionCommandVisitor : IStartNewVotingVisitor, IConcl
         var nominationsData = lastVotingResult.UsersAwardedWithNominations.Select(x => new NominationData
         {
             Concluded = null,
-            User = new NominationDataEmbeddedUser { DisplayName = x.User.Name, Id = x.User.id},
+            User = new NominationDataEmbeddedUser { DisplayName = x.User.Name, Id = x.User.id },
             Year = x.Decade
         }).ToArray();
 
@@ -51,13 +51,6 @@ public sealed class VotingSessionCommandVisitor : IStartNewVotingVisitor, IConcl
 
         var votingSessionId = new VotingSessionId(correlationId);
         return new OperationResult<VotingSessionId>(votingSessionId, null);
-    }
-
-    public async Task<OperationResult<object>> VisitAsync(OperationResult<(VotingSessionId, DomainUser)> input, CancellationToken cancellationToken)
-    {
-        var @event = new ConcludeVotingEvent(input.Result.Item1.CorrelationId, input.Result.Item2.Tenant);
-        await _bus.Publish(@event, cancellationToken);
-        return OperationResultExtensions.Empty;
     }
 
     public ILogger Log => _log;
