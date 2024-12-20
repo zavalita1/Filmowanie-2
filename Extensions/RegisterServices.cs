@@ -3,6 +3,7 @@ using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Providers;
 using Filmowanie.Account.Extensions;
 using Filmowanie.Infrastructure;
+using Filmowanie.Interfaces;
 using Filmowanie.Nomination.Extensions;
 using Filmowanie.Voting.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,8 @@ public static class RegisterServices
     public static void RegisterCustomServices(this IServiceCollection services, IConfiguration configuration, Environment environment)
     {
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        services.AddScoped<IFluentValidatorAdapterFactory, FluentValidatorAdapterFactory>();
+        services.AddScoped<IFluentValidatorAdapterProvider, FluentValidatorAdapterProvider>();
+        services.AddScoped<IFluentValidationAdapterFactory, FluentValidationAdapterFactory>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IGuidProvider, GuidProvider>();
 

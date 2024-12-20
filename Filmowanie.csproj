@@ -36,7 +36,9 @@
 		<Compile Remove="Filmowanie.Database\**" />
 		<Compile Remove="Filmowanie.Nomination\**" />
 		<Compile Remove="Filmowanie.Notification\**" />
+		<Compile Remove="Filmowanie.Tests\**" />
 		<Compile Remove="Filmowanie.Voting\**" />
+		<Compile Remove="Tests\**" />
 		<Content Remove="$(SpaRoot)**" />
 		<Content Remove="Constants\**" />
 		<Content Remove="Filmowanie.Abstractions\**" />
@@ -44,14 +46,18 @@
 		<Content Remove="Filmowanie.Database\**" />
 		<Content Remove="Filmowanie.Nomination\**" />
 		<Content Remove="Filmowanie.Notification\**" />
+		<Content Remove="Filmowanie.Tests\**" />
 		<Content Remove="Filmowanie.Voting\**" />
+		<Content Remove="Tests\**" />
 		<EmbeddedResource Remove="Constants\**" />
 		<EmbeddedResource Remove="Filmowanie.Abstractions\**" />
 		<EmbeddedResource Remove="Filmowanie.Account\**" />
 		<EmbeddedResource Remove="Filmowanie.Database\**" />
 		<EmbeddedResource Remove="Filmowanie.Nomination\**" />
 		<EmbeddedResource Remove="Filmowanie.Notification\**" />
+		<EmbeddedResource Remove="Filmowanie.Tests\**" />
 		<EmbeddedResource Remove="Filmowanie.Voting\**" />
+		<EmbeddedResource Remove="Tests\**" />
 		<None Remove="$(SpaRoot)**" />
 		<None Remove="Constants\**" />
 		<None Remove="Filmowanie.Abstractions\**" />
@@ -59,7 +65,9 @@
 		<None Remove="Filmowanie.Database\**" />
 		<None Remove="Filmowanie.Nomination\**" />
 		<None Remove="Filmowanie.Notification\**" />
+		<None Remove="Filmowanie.Tests\**" />
 		<None Remove="Filmowanie.Voting\**" />
+		<None Remove="Tests\**" />
 		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
 	</ItemGroup>
 

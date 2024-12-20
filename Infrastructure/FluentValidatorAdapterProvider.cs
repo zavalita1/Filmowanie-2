@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Interfaces;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore.Diagnostics.Internal;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Infrastructure;
 
-public sealed class FluentValidatorAdapterFactory : IFluentValidatorAdapterFactory
+public sealed class FluentValidatorAdapterProvider : IFluentValidatorAdapterProvider
 {
     private readonly IEnumerable<IFluentValidatorAdapter> _validators;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IFluentValidationAdapterFactory _factory;
 
-    public FluentValidatorAdapterFactory(IEnumerable<IFluentValidatorAdapter> validators, IServiceProvider serviceProvider)
+    public FluentValidatorAdapterProvider(IEnumerable<IFluentValidatorAdapter> validators, IFluentValidationAdapterFactory factory)
     {
         _validators = validators;
-        _serviceProvider = serviceProvider;
+        _factory = factory;
     }
 
     public IFluentValidatorAdapter<TInput> GetAdapter<TInput>(string keyedInstance)
@@ -30,9 +28,9 @@ public sealed class FluentValidatorAdapterFactory : IFluentValidatorAdapterFacto
         }
 
         if (typedValidator == null)
-            throw new InvalidOperationException($"No registered validator found for type: {nameof(TInput)} and key: {keyedInstance}");
+            throw new InvalidOperationException($"No registered validator found for type: {typeof(TInput).Name} and key: {keyedInstance}");
 
-        var adapter = new FluentValidatorAdapter<TInput>(typedValidator, _serviceProvider.GetRequiredService<ILogger<FluentValidatorAdapter<TInput>>>());
+        var adapter = _factory.Create(typedValidator);
         return adapter;
     }
 

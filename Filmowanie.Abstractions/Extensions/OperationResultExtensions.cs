@@ -6,12 +6,21 @@ namespace Filmowanie.Abstractions.Extensions;
 public static class OperationResultExtensions
 {
     public static OperationResult<T> CancelledOperation<T>() => new(default!, new Error("Operation canceled.", ErrorType.Canceled));
+    
+    public static OperationResult<object> Empty => new(default!, null);
+
+    public static OperationResult<T> ToOperationResult<T>(this T result) => new(result, null);
 
     public static OperationResult<TNext> Pluck<TNext, TPrevious>(this OperationResult<TPrevious> operationResult, Func<TPrevious, TNext> selector) =>
-        operationResult.Error != null ? new (default!, operationResult.Error) : new(selector.Invoke(operationResult.Result), null);
+        operationResult.Error != null 
+            ? new (default!, operationResult.Error) 
+            : new(selector.Invoke(operationResult.Result!), null);
 
     public static async Task<OperationResult<TNext>> AcceptAsync<TPrevious, TNext>(this OperationResult<TPrevious> operationResult, Func<TPrevious, CancellationToken, Task<TNext>> inlineVisitor, CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return CancelledOperation<TNext>().Merge(operationResult).Pluck(x => x.Item1);
+
         if (operationResult.Error != null)
             return new OperationResult<TNext>(default!, operationResult.Error);
 
@@ -21,6 +30,9 @@ public static class OperationResultExtensions
 
     public static async Task<OperationResult<T>> AcceptAsync<T>(this OperationResult<T> operationResult, Func<T, CancellationToken, Task> inlineVisitor, CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return CancelledOperation<T>().Merge(operationResult).Pluck(x => x.Item1);
+
         if (operationResult.Error != null)
             return operationResult with { Result = default! };
 
@@ -28,10 +40,7 @@ public static class OperationResultExtensions
         return operationResult with { Error = null };
     }
 
-    public static OperationResult<object> Empty => new(default!, null);
-
-    public static OperationResult<T> FromResult<T>(T result) => new(result, null);
-
+  
     public static OperationResult<(T1, T2)> Merge<T1, T2>(this OperationResult<T1> first, OperationResult<T2> second)
     {
         var error = (Error?)null;

@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Nomination", "Fi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Notification", "Filmowanie.Notification\Filmowanie.Notification.csproj", "{BF1CC478-68BE-4D4F-9894-2F59F084A036}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7427800D-1D46-4761-8A40-1ED9E368CF17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Tests", "Tests\Filmowanie.Tests\Filmowanie.Tests.csproj", "{450669BE-613F-4BA8-9D25-DA61B7B11892}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,9 +55,16 @@ Global
 		{BF1CC478-68BE-4D4F-9894-2F59F084A036}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF1CC478-68BE-4D4F-9894-2F59F084A036}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF1CC478-68BE-4D4F-9894-2F59F084A036}.Release|Any CPU.Build.0 = Release|Any CPU
+		{450669BE-613F-4BA8-9D25-DA61B7B11892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{450669BE-613F-4BA8-9D25-DA61B7B11892}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{450669BE-613F-4BA8-9D25-DA61B7B11892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{450669BE-613F-4BA8-9D25-DA61B7B11892}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{450669BE-613F-4BA8-9D25-DA61B7B11892} = {7427800D-1D46-4761-8A40-1ED9E368CF17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A8B75422-61AD-4E75-A7F5-8359F36C8126}

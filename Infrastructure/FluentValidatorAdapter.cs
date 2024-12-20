@@ -26,8 +26,7 @@ public sealed class FluentValidatorAdapter<TInput> : IFluentValidatorAdapter<TIn
             return new OperationResult<TInput>(input, null);
 
         var errorMessages = fluentResult.Errors.Select(x => x.ErrorMessage);
-        var errorMessage = string.Join(',', errorMessages);
-        var error = new Error(errorMessage, ErrorType.ValidationError);
+        var error = new Error(errorMessages, ErrorType.ValidationError);
         return new OperationResult<TInput>(input, error);
     }
 

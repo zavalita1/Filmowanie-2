@@ -9,7 +9,7 @@ namespace Filmowanie.Voting.Routes;
 
 internal sealed class VotingResultRoutes : IVotingResultRoutes
 {
-    private readonly IFluentValidatorAdapterFactory _validatorAdapterFactory;
+    private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
     private readonly IUserIdentityVisitor _userIdentityVisitor;
     private readonly IGetVotingResultDTOVisitor _getVotingSessionResultVisitor;
     private readonly IVotingSessionIdMapperVisitor _votingSessionIdMapperVisitor;
@@ -19,10 +19,10 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
     private readonly IHistoryStandingsDTOMapperVisitor _historyStandingsDtoMapperVisitor;
     private readonly IVotingSessionsMapperVisitor _mapperVisitor;
 
-    public VotingResultRoutes(IUserIdentityVisitor userIdentityVisitor, IFluentValidatorAdapterFactory validatorAdapterFactory, IGetVotingResultDTOVisitor getVotingSessionResultVisitor, IVotingSessionIdMapperVisitor votingSessionIdMapperVisitor, IGetVotingSessionsMetadataVisitor getVotingSessionsMetadataVisitor, IVotingSessionsMapperVisitor mapperVisitor, IWinnersMetadataMapperVisitor winnersMetadataMapperVisitor, IHistoryDTOMapperVisitor historyDtoMapperVisitor, IHistoryStandingsDTOMapperVisitor historyStandingsDtoMapperVisitor)
+    public VotingResultRoutes(IUserIdentityVisitor userIdentityVisitor, IFluentValidatorAdapterProvider validatorAdapterProvider, IGetVotingResultDTOVisitor getVotingSessionResultVisitor, IVotingSessionIdMapperVisitor votingSessionIdMapperVisitor, IGetVotingSessionsMetadataVisitor getVotingSessionsMetadataVisitor, IVotingSessionsMapperVisitor mapperVisitor, IWinnersMetadataMapperVisitor winnersMetadataMapperVisitor, IHistoryDTOMapperVisitor historyDtoMapperVisitor, IHistoryStandingsDTOMapperVisitor historyStandingsDtoMapperVisitor)
     {
         _userIdentityVisitor = userIdentityVisitor;
-        _validatorAdapterFactory = validatorAdapterFactory;
+        _validatorAdapterProvider = validatorAdapterProvider;
         _getVotingSessionResultVisitor = getVotingSessionResultVisitor;
         _votingSessionIdMapperVisitor = votingSessionIdMapperVisitor;
         _getVotingSessionsMetadataVisitor = getVotingSessionsMetadataVisitor;
@@ -34,9 +34,9 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
 
     public async Task<IResult> GetResults(string votingSessionId, CancellationToken cancellationToken)
     {
-        var validator = _validatorAdapterFactory.GetAdapter<string>(KeyedServices.VotingSessionId);
-        var dtoResult = OperationResultExtensions
-            .FromResult(votingSessionId)
+        var validator = _validatorAdapterProvider.GetAdapter<string>(KeyedServices.VotingSessionId);
+        var dtoResult = votingSessionId
+            .ToOperationResult()
             .Accept(validator)
             .Accept(_votingSessionIdMapperVisitor);
 

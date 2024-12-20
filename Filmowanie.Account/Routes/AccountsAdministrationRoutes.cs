@@ -18,15 +18,15 @@ internal class AccountsAdministrationRoutes : IAccountsAministrationRoutes
     private readonly IFluentValidatorAdapter<UserDTO> _validator;
     private readonly IFluentValidatorAdapter<string> _userIdValidator;
 
-    public AccountsAdministrationRoutes(IFluentValidatorAdapterFactory validatorAdapterFactory, IEnrichUserVisitor enrichUserVisitor, IGetAllUsersVisitor getAllUsersVisitor, IUserReverseMapperVisitor reverseMapperVisitor, IAddUserVisitor addUserVisitor, IUserIdentityVisitor userIdentityVisitor)
+    public AccountsAdministrationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IEnrichUserVisitor enrichUserVisitor, IGetAllUsersVisitor getAllUsersVisitor, IUserReverseMapperVisitor reverseMapperVisitor, IAddUserVisitor addUserVisitor, IUserIdentityVisitor userIdentityVisitor)
     {
         _enrichUserVisitor = enrichUserVisitor;
         _getAllUsersVisitor = getAllUsersVisitor;
         _reverseMapperVisitor = reverseMapperVisitor;
         _addUserVisitor = addUserVisitor;
         _userIdentityVisitor = userIdentityVisitor;
-        _validator = validatorAdapterFactory.GetAdapter<UserDTO>(KeyedServices.Username);
-        _userIdValidator = validatorAdapterFactory.GetAdapter<string>(KeyedServices.Username);
+        _validator = validatorAdapterProvider.GetAdapter<UserDTO>(KeyedServices.Username);
+        _userIdValidator = validatorAdapterProvider.GetAdapter<string>(KeyedServices.Username);
     }
 
     public async Task<IResult> GetUsers(CancellationToken cancel)

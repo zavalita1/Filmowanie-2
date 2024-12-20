@@ -17,7 +17,7 @@ namespace Filmowanie.Account.Routes;
 internal sealed class AccountRoutes : IAccountRoutes
 {
     private readonly ILogger<AccountRoutes> _log;
-    private readonly IFluentValidatorAdapterFactory _validatorAdapterFactory;
+    private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
     private readonly ICodeLoginVisitor _accountVisitor;
     private readonly IBasicAuthLoginVisitor _basicAuthLoginVisitor;
     private readonly ISignUpVisitor _signUpVisitor;
@@ -25,10 +25,10 @@ internal sealed class AccountRoutes : IAccountRoutes
     private readonly IUserMapperVisitor _userMapperVisitor;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AccountRoutes(ILogger<AccountRoutes> log, IFluentValidatorAdapterFactory validatorAdapterFactory, ICodeLoginVisitor accountVisitor, IBasicAuthLoginVisitor basicAuthLoginVisitor, ISignUpVisitor signUpVisitor, IUserIdentityVisitor userIdentityVisitor, IUserMapperVisitor userMapperVisitor, IHttpContextAccessor httpContextAccessor)
+    public AccountRoutes(ILogger<AccountRoutes> log, IFluentValidatorAdapterProvider validatorAdapterProvider, ICodeLoginVisitor accountVisitor, IBasicAuthLoginVisitor basicAuthLoginVisitor, ISignUpVisitor signUpVisitor, IUserIdentityVisitor userIdentityVisitor, IUserMapperVisitor userMapperVisitor, IHttpContextAccessor httpContextAccessor)
     {
         _log = log;
-        _validatorAdapterFactory = validatorAdapterFactory;
+        _validatorAdapterProvider = validatorAdapterProvider;
         _accountVisitor = accountVisitor;
         _basicAuthLoginVisitor = basicAuthLoginVisitor;
         _signUpVisitor = signUpVisitor;
@@ -39,7 +39,7 @@ internal sealed class AccountRoutes : IAccountRoutes
 
     public async Task<IResult> Login([FromBody] LoginDto dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterFactory.GetAdapter<LoginDto>();
+        var validator = _validatorAdapterProvider.GetAdapter<LoginDto>();
 
         var result =  await validator.Validate(dto)
             .Pluck(x => x.Code)
@@ -63,7 +63,7 @@ internal sealed class AccountRoutes : IAccountRoutes
 
     public async Task<IResult> LoginBasic([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterFactory.GetAdapter<BasicAuthLoginDTO>(KeyedServices.LoginViaBasicAuthKey);
+        var validator = _validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.LoginViaBasicAuthKey);
         var result = await validator
             .Validate(dto)
             .Pluck(x => new BasicAuth(x.Email, x.Password))
@@ -85,7 +85,7 @@ internal sealed class AccountRoutes : IAccountRoutes
 
     public async Task<IResult> SignUp([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterFactory.GetAdapter<BasicAuthLoginDTO>(KeyedServices.SignUpBasicAuth);
+        var validator = _validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.SignUpBasicAuth);
         var basicAuthResult = validator.Validate(dto).Pluck(x => new BasicAuth(x.Email, x.Password));
         var resultDto = (await basicAuthResult
                 .Accept(_userIdentityVisitor)
