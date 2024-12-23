@@ -10,13 +10,12 @@ internal sealed class HashHelper : IHashHelper
 
     public string GetHash(string secret, string saltSeed)
     {
-        var salt = GetHashBytes(saltSeed).Take(SaltCharLength).ToArray();
+        var saltEncoded = Encoding.UTF8.GetBytes(saltSeed);
+        var salt = GetHashBytes(saltEncoded).Take(SaltCharLength).ToArray();
 
-        if (salt.Length < SaltCharLength)
-            throw new InvalidOperationException("Salt is shorter than required!");
-
-        var secretBytes = GetBytes(secret);
-        var secretHash = GetHashBytes(secretBytes.Concat(salt).ToArray()).Concat(salt).ToArray();
+        var secretEncoded = Encoding.UTF8.GetBytes(secret);
+        var secretWithSalt = secretEncoded.Concat(salt).ToArray();
+        var secretHash = GetHashBytes(secretWithSalt).Concat(salt).ToArray();
         var result = GetString(secretHash);
         return result;
     }
@@ -25,8 +24,8 @@ internal sealed class HashHelper : IHashHelper
     {
         var expectedValueWithSaltBytes = GetBytes(expectedHash);
         var saltBytes = expectedValueWithSaltBytes.TakeLast(SaltCharLength).ToArray();
-        var secretBytes = GetBytes(secret);
-        var secretWithSaltBytes = GetHashBytes(secretBytes.Concat(saltBytes).ToArray());
+        var encodedSecret = Encoding.UTF8.GetBytes(secret);
+        var secretWithSaltBytes = GetHashBytes(encodedSecret.Concat(saltBytes).ToArray());
         var expectedValue = GetString(secretWithSaltBytes.Concat(saltBytes).ToArray());
         var actualValue = GetString(expectedValueWithSaltBytes);
 
@@ -35,20 +34,8 @@ internal sealed class HashHelper : IHashHelper
 
     private static string GetString(byte[] hashBytes)
     {
-        var sb = new StringBuilder();
-        foreach (var hashByte in hashBytes)
-        {
-            sb.Append(hashByte.ToString("X2"));
-        }
-
-        var hash = sb.ToString();
-        return hash;
-    }
-
-    private static byte[] GetHashBytes(string value)
-    {
-        var bytes = GetBytes(value);
-        return GetHashBytes(bytes);
+        var result = Convert.ToHexString(hashBytes);
+        return result;
     }
 
     private static byte[] GetHashBytes(byte[] bytes)
@@ -59,7 +46,7 @@ internal sealed class HashHelper : IHashHelper
 
     private static byte[] GetBytes(string value)
     {
-        var bytes = Encoding.UTF8.GetBytes(value);
+        var bytes = Convert.FromHexString(value);
         return bytes;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Voting.DTOs.Outgoing;
 using Filmowanie.Voting.Interfaces;

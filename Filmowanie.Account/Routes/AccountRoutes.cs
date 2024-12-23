@@ -113,6 +113,4 @@ internal sealed class AccountRoutes : IAccountRoutes
 
         return Task.FromResult(RoutesResultHelper.UnwrapOperationResult(resultDto));
     }
-
-    
 }

@@ -22,9 +22,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFluentValidatorAdapter, UserDTOValidator>();
         services.AddScoped<IFluentValidatorAdapter, UserIdValidator>();
 
-        services.AddScoped<ICodeLoginVisitor, AccountVisitor>();
-        services.AddScoped<ISignUpVisitor, AccountVisitor>();
-        services.AddScoped<IBasicAuthLoginVisitor, AccountVisitor>();
+        services.AddScoped<ICodeLoginVisitor, AccountCodeLoginVisitor>();
+        services.AddScoped<ISignUpVisitor, AccountSignUpVisitor>();
+        services.AddScoped<IBasicAuthLoginVisitor, AccountBasicAuthLoginVisitor>();
         services.AddScoped<IUserIdentityVisitor, UserIdentityVisitor>();
 
         services.AddScoped<IUserMapperVisitor, UserDTOMapperVisitor>();
@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IHashHelper, HashHelper>();
         services.AddSingleton<IUserIdProvider, UserIdProvider>();
+        services.AddSingleton<ILoginResultDataExtractor, LoginResultDataExtractor>();
 
         return services;
     }

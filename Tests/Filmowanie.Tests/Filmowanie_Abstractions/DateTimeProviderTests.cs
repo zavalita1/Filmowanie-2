@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace Filmowanie.Tests.Filmowanie_Abstractions;
 
-public class UnitTest1
+public class DateTimeProviderTests
 {
     [Fact]
     public void Now_ShouldReturnCurrentUtcDateTime()

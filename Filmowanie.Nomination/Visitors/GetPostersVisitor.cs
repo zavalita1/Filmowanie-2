@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
 using Microsoft.Extensions.Logging;
