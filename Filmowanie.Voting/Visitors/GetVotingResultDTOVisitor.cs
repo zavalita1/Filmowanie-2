@@ -61,10 +61,10 @@ internal sealed class GetVotingResultDTOVisitor : IGetVotingResultDTOVisitor
         IReadonlyVotingResult? votingResult;
         if (input.Result.VotingSessionId == null)
         {
-            var currentVoting = await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Tenant.Id && x.Concluded == null, cancellationToken);
+            var currentVoting = await _votingSessionQueryRepository.Get(x => x.Concluded == null, input.Result.Tenant, cancellationToken);
 
             if (currentVoting == null)
-                votingResult = (await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Tenant.Id && x.Concluded != null, x => x.Concluded!, -1, cancellationToken)).Single();
+                votingResult = (await _votingSessionQueryRepository.Get(x => x.Concluded != null, input.Result.Tenant, x => x.Concluded!, -1, cancellationToken)).Single();
             else
             {
                 // this is for admin only
@@ -77,9 +77,8 @@ internal sealed class GetVotingResultDTOVisitor : IGetVotingResultDTOVisitor
         else
         {
             var votingSessionId = input.Result.VotingSessionId!.Value.CorrelationId.ToString();
-            var tenantId = input.Result.Tenant.Id;
-            votingResult = await _votingSessionQueryRepository.Get(x => x.TenantId == tenantId && x.id == votingSessionId,
-                cancellationToken);
+            var tenantId = input.Result.Tenant;
+            votingResult = await _votingSessionQueryRepository.Get(x => x.id == votingSessionId, tenantId, cancellationToken);
 
         }
 

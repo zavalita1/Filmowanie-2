@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Database.Contexts;
+using Filmowanie.Database.Decorators;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Repositories;
 using Microsoft.AspNetCore.DataProtection;
@@ -26,10 +27,14 @@ public static class ServiceCollectionExtensions
         dataProtectionBuilder.PersistKeysToFileSystem(new DirectoryInfo(currentDir));
 
         services.AddScoped<IUsersQueryRepository, UsersQueryRepository>();
+
         services.AddScoped<IUsersCommandRepository, UsersCommandRepository>();
         services.AddScoped<IVotingSessionQueryRepository, VotingSessionQueryRepository>();
+        services.Decorate<IVotingSessionQueryRepository, VotingSessionQueryRepositoryDecorator>();
         services.AddScoped<IVotingSessionCommandRepository, VotingSessionCommandRepository>();
         services.AddScoped<IMovieQueryRepository, MovieQueryRepository>();
+        services.Decorate<IMovieQueryRepository, MovieQueryRepositoryDecorator>();
+
         services.AddScoped<IMovieCommandRepository, MovieCommandRepository>();
         
         // TODO

@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Filmowanie.Database.Contexts;
-using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,7 @@ internal class UsersQueryRepository : IUsersQueryRepository
         _identityDbContext = identityDbContext;
     }
 
-    public async Task<IReadOnlyUserEntity?> GetUserAsync(Expression<Func<UserEntity, bool>> predicate, CancellationToken cancellationToken)
+    public async Task<IReadOnlyUserEntity?> GetUserAsync(Expression<Func<IReadOnlyUserEntity, bool>> predicate, CancellationToken cancellationToken)
     {
         return await _identityDbContext.Users.SingleOrDefaultAsync(predicate, cancellationToken);
     }

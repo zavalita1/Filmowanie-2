@@ -25,8 +25,8 @@ internal sealed class MovieThatCanBeNominatedAgainEnricherVisitor : IMovieThatCa
     {
         var user = input.Result.Item2;
 
-        var moviesThatCanBeNominatedAgainList = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEntityAsync(x => x.TenantId == user.Tenant.Id, cancellationToken);
-        var moviesNominatedAgainList = await _movieQueryRepository.GetMoviesNominatedAgainEntityAsync(x => x.TenantId == user.Tenant.Id, cancellationToken);
+        var moviesThatCanBeNominatedAgainList = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEntityAsync(x => true, user.Tenant, cancellationToken);
+        var moviesNominatedAgainList = await _movieQueryRepository.GetMoviesNominatedAgainEntityAsync(x => true, user.Tenant, cancellationToken);
 
         var userNominationsDecades = input.Result.Item1.Nominations.Select(StringExtensions.ToDecade).ToArray();
         var filteredMoviesThatCanBeNominatedAgain = moviesThatCanBeNominatedAgainList
@@ -42,7 +42,7 @@ internal sealed class MovieThatCanBeNominatedAgainEnricherVisitor : IMovieThatCa
             .Where(x => !filteredMoviesNominatedAgainList.ContainsKey(x.Key) || filteredMoviesNominatedAgainList[x.Key] < x.Value)
             .Select(x => x.Key);
 
-        var moviesThatCanBeNominatedAgain = await _movieQueryRepository.GetMoviesAsync(x => moviesThatCanBeNominatedAgainIds.Contains(x.id), cancellationToken);
+        var moviesThatCanBeNominatedAgain = await _movieQueryRepository.GetMoviesAsync(x => moviesThatCanBeNominatedAgainIds.Contains(x.id), user.Tenant, cancellationToken);
 
         var moviesThatCanBeNominatedAgainDTOs = moviesThatCanBeNominatedAgain
             .OrderBy(x => x.CreationYear)

@@ -1,5 +1,3 @@
-using AutoFixture;
-using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Validators;
 using FluentAssertions;
@@ -35,38 +33,5 @@ public sealed class BasicAuthSignupValidatorTests : BasicAuthValidatorTests
 
         // Assert
         result.IsValid.Should().BeTrue();
-    }
-
-    [Fact]
-    public void CanHandle_ShouldReturnTrue_ForValidTypeAndKey()
-    {
-        // Act
-        var canHandle = _validator.CanHandle<BasicAuthLoginDTO>(KeyedServices.SignUpBasicAuth, out var typedValidator);
-
-        // Assert
-        canHandle.Should().BeTrue();
-        typedValidator.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void CanHandle_ShouldReturnFalse_ForInvalidType()
-    {
-        // Act
-        var canHandle = _validator.CanHandle<object>(KeyedServices.SignUpBasicAuth, out var typedValidator);
-
-        // Assert
-        canHandle.Should().BeFalse();
-        typedValidator.Should().BeNull();
-    }
-
-    [Fact]
-    public void CanHandle_ShouldReturnFalse_ForInvalidKey()
-    {
-        // Act
-        var canHandle = _validator.CanHandle<BasicAuthLoginDTO>("InvalidKey", out var typedValidator);
-
-        // Assert
-        canHandle.Should().BeFalse();
-        typedValidator.Should().BeNull();
     }
 }

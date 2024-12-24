@@ -1,3 +1,4 @@
+using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Validators;
 using FluentAssertions;
@@ -45,7 +46,7 @@ public class BasicAuthValidatorTests
     public void Validate_ShouldReturnError_WhenEmailIsInvalid()
     {
         // Arrange
-        var dto = new BasicAuthLoginDTO { Email = "invalid-email", Password = "password" };
+        var dto = new BasicAuthLoginDTO ("invalid-email", "password");
 
         // Act
         var result = _validator.Validate(dto);
@@ -59,7 +60,7 @@ public class BasicAuthValidatorTests
     public void Validate_ShouldReturnError_WhenPasswordIsNull()
     {
         // Arrange
-        var dto = new BasicAuthLoginDTO { Email = "test@example.com", Password = null };
+        var dto = new BasicAuthLoginDTO("test@example.com", null);
 
         // Act
         var result = _validator.Validate(dto);
@@ -73,7 +74,7 @@ public class BasicAuthValidatorTests
     public void Validate_ShouldReturnError_WhenPasswordIsEmpty()
     {
         // Arrange
-        var dto = new BasicAuthLoginDTO { Email = "test@example.com", Password = "" };
+        var dto = new BasicAuthLoginDTO ("test@example.com", "");
 
         // Act
         var result = _validator.Validate(dto);
@@ -87,7 +88,7 @@ public class BasicAuthValidatorTests
     public void Validate_ShouldReturnSuccess_WhenEmailAndPasswordAreValid()
     {
         // Arrange
-        var dto = new BasicAuthLoginDTO { Email = "test@example.com", Password = "password" };
+        var dto = new BasicAuthLoginDTO("test@example.com", "password");
 
         // Act
         var result = _validator.Validate(dto);

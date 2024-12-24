@@ -2,7 +2,7 @@
 
 namespace Filmowanie.Database.Entities;
 
-public class UserEntity : Entity, IReadOnlyUserEntity
+internal class UserEntity : Entity, IReadOnlyUserEntity
 {
     public virtual string Email { get; set; }
 

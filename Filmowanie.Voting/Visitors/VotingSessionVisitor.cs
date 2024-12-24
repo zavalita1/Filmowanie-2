@@ -20,7 +20,7 @@ internal sealed class VotingSessionIdQueryVisitor : IGetCurrentVotingSessionIdVi
 
     public async Task<OperationResult<VotingSessionId?>> VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
     {
-        var currentVotingResults = await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Tenant.Id && x.Concluded == null, cancellationToken);
+        var currentVotingResults = await _votingSessionQueryRepository.Get(x => x.Concluded == null, input.Result.Tenant, cancellationToken);
 
         if (currentVotingResults == null)
             return new OperationResult<VotingSessionId?>(null, null);
@@ -32,7 +32,7 @@ internal sealed class VotingSessionIdQueryVisitor : IGetCurrentVotingSessionIdVi
 
     async Task<OperationResult<VotingState>> IOperationAsyncVisitor<DomainUser, VotingState>.VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
     {
-        var sagaId = await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Tenant.Id && x.Concluded == null, cancellationToken);
+        var sagaId = await _votingSessionQueryRepository.Get(x => x.Concluded == null, input.Result.Tenant, cancellationToken);
         var state = sagaId == null ? VotingState.Results : VotingState.Voting;
         return new OperationResult<VotingState>(state, null);
     }

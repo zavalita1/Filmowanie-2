@@ -21,7 +21,7 @@ internal sealed class HistoryStandingsDTOMapper : IHistoryStandingsDTOMapperVisi
 
     public async Task<OperationResult<MovieVotingStandingsListDTO>> VisitAsync(OperationResult<TenantId> input, CancellationToken cancellationToken)
     {
-        var votingSessions = (await _votingSessionQueryRepository.Get(x => x.TenantId == input.Result.Id && x.Concluded != null, x => x, cancellationToken))
+        var votingSessions = (await _votingSessionQueryRepository.Get(x => x.Concluded != null, x => x, input.Result, cancellationToken))
             .Reverse()
             .Take(10)
             .Select(x => new VotingSessionData(x, GetPlaces(x).ToArray()))

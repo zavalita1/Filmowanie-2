@@ -26,13 +26,13 @@ internal sealed class WinnersMetadataMapperVisitor : IWinnersMetadataMapperVisit
 
     public async Task<OperationResult<WinnerMetadata[]>> VisitAsync(OperationResult<(VotingMetadata[], TenantId)> input, CancellationToken cancellationToken)
     {
-        var winnersIds = input.Result!.Item1.Select(x => x.Winner.Id).ToHashSet();
+        var winnersIds = input.Result.Item1.Select(x => x.Winner.Id).ToHashSet();
         var cacheKey = $"{CacheKeyPrefix}-{winnersIds.GetHashCode()}";
         if (!_memoryCache.TryGetValue(cacheKey, out var cached))
         {
             var results = await _sessionQueryRepository.Get(
-                x => x.TenantId == input.Result.Item2.Id,
-                x => x,
+                x => true,
+                x => x, input.Result.Item2,
                 cancellationToken);
             var toCache = results
                 .SelectMany(x => x.MoviesAdded.Where(y => winnersIds.Contains(y.Movie.id)))

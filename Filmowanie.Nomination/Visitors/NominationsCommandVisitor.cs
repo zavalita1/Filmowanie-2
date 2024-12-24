@@ -49,11 +49,11 @@ internal sealed class NominationsCommandVisitor : INominationsResetterVisitor, I
         if (allowedDecades.All(x => x != movie.CreationYear.ToDecade()))
             return new OperationResult<AknowledgedNominationDTO>(null, new Error($"This movie is not from decades: {string.Join(',', allowedDecades)}!", ErrorType.IncomingDataIssue));
 
-        var existingMovies = await _movieQueryRepository.GetMoviesAsync(x => x.TenantId == user.Tenant.Id && x.Name == movie.Name, cancellationToken);
+        var existingMovies = await _movieQueryRepository.GetMoviesAsync(x => x.Name == movie.Name, user.Tenant, cancellationToken);
         if (existingMovies.Any())
         {
-            var canBeNominatedAgainEvents = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEntityAsync(x => x.TenantId == user.Tenant.Id && x.Movie.Name == movie.Name, cancellationToken);
-            var nominatedAgainEvents = await _movieQueryRepository.GetMoviesNominatedAgainEntityAsync(x => x.TenantId == user.Tenant.Id && x.Movie.Name == movie.Name, cancellationToken);
+            var canBeNominatedAgainEvents = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEntityAsync(x => x.Movie.Name == movie.Name, user.Tenant, cancellationToken);
+            var nominatedAgainEvents = await _movieQueryRepository.GetMoviesNominatedAgainEntityAsync(x => x.Movie.Name == movie.Name, user.Tenant, cancellationToken);
 
             var maxDateCanBeNominatedAgain = canBeNominatedAgainEvents.OrderByDescending(x => x.Created).FirstOrDefault()?.Created;
             var maxDateNominatedAgain = nominatedAgainEvents.OrderByDescending(x => x.Created).FirstOrDefault()?.Created ?? DateTime.MinValue;
@@ -83,7 +83,7 @@ internal sealed class NominationsCommandVisitor : INominationsResetterVisitor, I
     public async Task<OperationResult<AknowledgedNominationDTO>> VisitAsync(OperationResult<(string MovieId, DomainUser User, VotingSessionId VotingSessionId)> input, CancellationToken cancellationToken)
     {
         var (movieId, user, votingSessionId) = input.Result;
-        var movies = await _movieQueryRepository.GetMoviesAsync(x => x.id == movieId, cancellationToken);
+        var movies = await _movieQueryRepository.GetMoviesAsync(x => x.id == movieId, user.Tenant, cancellationToken);
 
         if (!movies.Any())
             return new OperationResult<AknowledgedNominationDTO>(null, new Error("No such movie found!", ErrorType.IncomingDataIssue));

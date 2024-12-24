@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using System.Linq.Expressions;
+using Filmowanie.Abstractions;
 using Filmowanie.Database.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Filmowanie.Database.Entities;
@@ -28,17 +29,19 @@ internal sealed class MovieQueryRepository : IMovieQueryRepository
         _ctx = ctx;
     }
 
-    public async Task<IReadOnlyMovieEntity[]> GetMoviesAsync(Expression<Func<IReadOnlyMovieEntity, bool>> predicate, CancellationToken cancellationToken)
+    public async Task<IReadOnlyMovieEntity[]> GetMoviesAsync(Expression<Func<IReadOnlyMovieEntity, bool>> predicate, TenantId tenant, CancellationToken cancellationToken)
     {
         return await _ctx.Movies.Where(predicate).ToArrayAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEntityAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEntityAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate, TenantId tenant,
+        CancellationToken cancellationToken)
     {
         return await _ctx.CanNominateMovieAgainEvents.Where(predicate).ToArrayAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyNominatedMovieAgainEvent[]> GetMoviesNominatedAgainEntityAsync(Expression<Func<IReadOnlyNominatedMovieAgainEvent, bool>> predicate, CancellationToken cancellationToken)
+    public async Task<IReadOnlyNominatedMovieAgainEvent[]> GetMoviesNominatedAgainEntityAsync(Expression<Func<IReadOnlyNominatedMovieAgainEvent, bool>> predicate, TenantId tenant,
+        CancellationToken cancellationToken)
     {
         return await _ctx.NominatedMovieAgainEvents.Where(predicate).ToArrayAsync(cancellationToken);
     }

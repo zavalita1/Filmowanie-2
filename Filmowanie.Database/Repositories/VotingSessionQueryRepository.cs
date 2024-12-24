@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Filmowanie.Abstractions;
 using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -16,13 +17,15 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
     }
 
     public async Task<IReadonlyVotingResult?> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate,
+        TenantId tenant,
         CancellationToken cancellationToken)
     {
         var currentVotingSession = await _ctx.VotingResults.SingleOrDefaultAsync(predicate, cancellationToken);
         return currentVotingSession;
     }
 
-    public async Task<IEnumerable<IReadonlyVotingResult>> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate, Expression<Func<IReadonlyVotingResult, object>> sortBy, int take,
+    public async Task<IEnumerable<IReadonlyVotingResult>> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate, TenantId tenant, Expression<Func<IReadonlyVotingResult, object>> sortBy,
+        int take,
         CancellationToken cancellationToken)
     {
         Func<IQueryable<IReadonlyVotingResult>, IOrderedQueryable<IReadonlyVotingResult>> sortFunction = take > 0 ? x => x.OrderBy(sortBy) : x => x.OrderByDescending(sortBy);
@@ -32,7 +35,8 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
         return currentVotingSession;
     }
 
-    public async Task<IEnumerable<T>> Get<T>(Expression<Func<IReadonlyVotingResult, bool>> predicate, Expression<Func<IReadonlyVotingResult, T>> selector, CancellationToken cancellationToken)
+    public async Task<IEnumerable<T>> Get<T>(Expression<Func<IReadonlyVotingResult, bool>> predicate, Expression<Func<IReadonlyVotingResult, T>> selector, TenantId tenant,
+        CancellationToken cancellationToken)
         where T : class
     {
         var entities = await _ctx.VotingResults.Where(predicate).Select(selector).AsNoTracking().ToArrayAsync(cancellationToken);

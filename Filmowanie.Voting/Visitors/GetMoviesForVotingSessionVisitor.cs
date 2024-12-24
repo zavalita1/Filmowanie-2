@@ -30,7 +30,7 @@ internal sealed class GetMoviesForVotingSessionVisitor : IGetMoviesForVotingSess
         var correlationId = input.Result.Item1.CorrelationId;
         var embeddedMovies = await _getMoviesListRequestClient.GetResponse<CurrentVotingListResponse>(new MoviesListRequested(correlationId), cancellationToken);
         var moviesIds = embeddedMovies.Message.Movies.Select(x => x.Movie.id).ToArray();
-        var moviesEntities = await _movieQueryRepository.GetMoviesAsync(x => moviesIds.Contains(x.id), cancellationToken);
+        var moviesEntities = await _movieQueryRepository.GetMoviesAsync(x => moviesIds.Contains(x.id), input.Result.Item2.Tenant, cancellationToken);
 
         if (moviesEntities.Length != moviesIds.Length)
             return new OperationResult<MovieDTO[]>(null, new Error("Movies missing in DB!", ErrorType.InvalidState));

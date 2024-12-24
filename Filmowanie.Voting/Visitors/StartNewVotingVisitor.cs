@@ -32,7 +32,7 @@ internal sealed class StartNewVotingVisitor : IStartNewVotingVisitor
     public async Task<OperationResult<VotingSessionId>> VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
     {
         var votingSessions = await _votingSessionQueryRepository
-            .Get(x => x.TenantId == input.Result.Tenant.Id && x.Concluded != null, x => x.Concluded!, -1, cancellationToken);
+            .Get(x => x.Concluded != null, input.Result.Tenant, x => x.Concluded!, -1, cancellationToken);
         var correlationId = _guidProvider.NewGuid();
 
         if (!votingSessions.Any())

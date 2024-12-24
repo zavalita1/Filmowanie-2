@@ -49,8 +49,8 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         var now = _dateTimeProvider.Now;
         var message = context.Message;
 
-        var lastVotingResults = (await _votingSessionQueryRepository.Get(x => x.Concluded != null && x.TenantId == message.Tenant.Id, x => x.Concluded!, -1 * DecidersTimeWindow, context.CancellationToken)).ToArray();
-        var readonlyCurrentVotingResult = (await _votingSessionQueryRepository.Get(x => x.TenantId == message.Tenant.Id && x.Concluded == null, context.CancellationToken))!;
+        var lastVotingResults = (await _votingSessionQueryRepository.Get(x => x.Concluded != null, message.Tenant, x => x.Concluded!, -1 * DecidersTimeWindow, context.CancellationToken)).ToArray();
+        var readonlyCurrentVotingResult = (await _votingSessionQueryRepository.Get(x => x.Concluded == null, message.Tenant, context.CancellationToken))!;
         var votingResults = GetVotingResults(message.MoviesWithVotes, lastVotingResults.FirstOrDefault()); // null only if it's initial voting
 
         var moviesAdded = message.NominationsData.Join(message.MoviesWithVotes, x => x.MovieId, x => x.Movie.id, (x, y) => new EmbeddedMovieWithNominationContext
