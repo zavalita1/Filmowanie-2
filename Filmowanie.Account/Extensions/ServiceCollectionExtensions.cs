@@ -27,12 +27,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IBasicAuthLoginVisitor, AccountBasicAuthLoginVisitor>();
         services.AddScoped<IUserIdentityVisitor, UserIdentityVisitor>();
 
-        services.AddScoped<IUserMapperVisitor, UserDTOMapperVisitor>();
-        services.AddScoped<IEnrichUserVisitor, UserDTOMapperVisitor>();
-        services.AddScoped<IUserReverseMapperVisitor, UserDTOMapperVisitor>();
+        services.AddSingleton<IUserMapperVisitor, UserMapperVisitor>();
+        services.AddScoped<IEnrichUserVisitor, EnrichUserVisitor>();
+        services.AddScoped<IUserReverseMapperVisitor, UserReverseMapperVisitor>();
 
-        services.AddScoped<IGetAllUsersVisitor, UsersManagementVisitor>();
-        services.AddScoped<IAddUserVisitor, UsersManagementVisitor>();
+        services.AddScoped<IGetAllUsersVisitor, GetAllUsersVisitor>();
+        services.AddScoped<IAddUserVisitor, AddUserVisitor>();
 
         services.AddSingleton<IHashHelper, HashHelper>();
         services.AddSingleton<IUserIdProvider, UserIdProvider>();

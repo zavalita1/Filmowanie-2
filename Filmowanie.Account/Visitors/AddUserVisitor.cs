@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Account.Interfaces;
@@ -8,37 +9,25 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Account.Visitors;
 
-internal class UsersManagementVisitor : IGetAllUsersVisitor, IAddUserVisitor
+internal sealed class AddUserVisitor : IAddUserVisitor
 {
-    private readonly IUsersQueryRepository _usersQueryRepository;
     private readonly IUsersCommandRepository _usersCommandRepository;
     private readonly IGuidProvider _guidProvider;
-    private readonly ILogger<UsersManagementVisitor> _log;
+    private readonly ILogger<AddUserVisitor> _log;
 
-    public UsersManagementVisitor(IUsersQueryRepository usersQueryRepository, IUsersCommandRepository usersCommandRepository, IGuidProvider guidProvider, ILogger<UsersManagementVisitor> log)
+    public AddUserVisitor(IUsersCommandRepository usersCommandRepository, IGuidProvider guidProvider, ILogger<AddUserVisitor> log)
     {
-        _usersQueryRepository = usersQueryRepository;
         _usersCommandRepository = usersCommandRepository;
         _guidProvider = guidProvider;
         _log = log;
     }
 
-    private async Task<IEnumerable<DomainUser>> GetAll(CancellationToken cancellation)
-    {
-        var allEntities = await _usersQueryRepository.GetAllAsync(cancellation);
-        var result = allEntities.Select(x => new DomainUser(x.id, x.DisplayName, x.IsAdmin, !string.IsNullOrEmpty(x.PasswordHash), new TenantId(x.TenantId), x.Created));
-        return result;
-    }
-
-    public async Task<OperationResult<IEnumerable<DomainUser>>> VisitAsync<T>(OperationResult<T> input, CancellationToken cancellationToken)
-    {
-        var all = await GetAll(cancellationToken);
-        return new OperationResult<IEnumerable<DomainUser>>(all, null);
-    }
-
     public async Task<OperationResult<object>> VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
     {
-        var domainUser = input.Result!;
+        if (input.Result == default)
+            return new OperationResult<object>(null, new Error("Domain user is null", ErrorType.IncomingDataIssue));
+
+        var domainUser = input.Result;
         var code = _guidProvider.NewGuid().ToString();
         var userEntity = new User
         {

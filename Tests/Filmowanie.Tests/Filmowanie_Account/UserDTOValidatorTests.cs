@@ -20,17 +20,77 @@ public sealed class UserDTOValidatorTests
     }
 
     [Fact]
-    public void Validate_ShouldInvokeUserIdValidator()
+    public void Validate_ShouldReturnError_WhenValueIsEmpty()
     {
         // Arrange
-        var dto = new UserDTO("valid-id", "whatever");
-        _userIdValidator.Validate(Arg.Any<ValidationContext<UserDTO>>()).Returns(new ValidationResult());
+        var value = "";
+        var dto = new UserDTO(value, "whatever");
 
         // Act
         var result = _validator.Validate(dto);
 
         // Assert
-        _userIdValidator.Received(1).Validate(Arg.Any<ValidationContext<UserDTO>>());
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle(e => e.ErrorMessage == "Value cannot be empty!");
+    }
+
+    [Fact]
+    public void Validate_ShouldReturnError_WhenValueIsTooShort()
+    {
+        // Arrange
+        var value = "short";
+        var dto = new UserDTO(value, "whatever");
+
+        // Act
+        var result = _validator.Validate(dto);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle(e => e.ErrorMessage == "Length must be between 6 and 30 characters");
+    }
+
+    [Fact]
+    public void Validate_ShouldReturnError_WhenValueIsTooLong()
+    {
+        // Arrange
+        var value = new string('a', 31);
+        var dto = new UserDTO(value, "whatever");
+
+        // Act
+        var result = _validator.Validate(dto);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle(e => e.ErrorMessage == "Length must be between 6 and 30 characters");
+    }
+
+    [Fact]
+    public void Validate_ShouldReturnError_WhenValueContainsIllegalCharacters()
+    {
+        // Arrange
+        var value = "invalid@value";
+        var dto = new UserDTO(value, "whatever");
+
+        // Act
+        var result = _validator.Validate(dto);
+
+        // Assert
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().ContainSingle(e => e.ErrorMessage == "Can't contain illegal characters");
+    }
+
+    [Fact]
+    public void Validate_ShouldReturnSuccess_WhenValueIsValid()
+    {
+        // Arrange
+        var value = "valid_value";
+        var dto = new UserDTO(value, "whatever");
+
+        // Act
+        var result = _validator.Validate(dto);
+
+        // Assert
+        result.IsValid.Should().BeTrue();
     }
 
     [Fact]

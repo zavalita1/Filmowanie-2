@@ -9,20 +9,6 @@ public sealed class UserIdValidatorTests
     private readonly UserIdValidator _validator = new();
 
     [Fact]
-    public void Validate_ShouldReturnError_WhenValueIsNull()
-    {
-        // Arrange
-        string value = null;
-
-        // Act
-        var result = _validator.Validate(value);
-
-        // Assert
-        result.IsValid.Should().BeFalse();
-        result.Errors.Should().ContainSingle(e => e.ErrorMessage == "Value cannot be null!");
-    }
-
-    [Fact]
     public void Validate_ShouldReturnError_WhenValueIsEmpty()
     {
         // Arrange

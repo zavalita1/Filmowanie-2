@@ -19,7 +19,7 @@ public sealed class AccountBasicAuthLoginVisitorTests
     private readonly IHashHelper _hashHelper;
     private readonly ILoginResultDataExtractor _extractor;
     private readonly AccountBasicAuthLoginVisitor _visitor;
-    private UsersRepositoryForTests _usersQueryRepository;
+    private readonly UsersRepositoryForTests _usersQueryRepository;
 
 
     public AccountBasicAuthLoginVisitorTests()
@@ -43,7 +43,7 @@ public sealed class AccountBasicAuthLoginVisitorTests
 
         // Assert
         result.Error.Should().NotBeNull();
-        result.Error.Value.ErrorMessages.Should().Contain("Invalid credentials");
+        result.Error!.Value.ErrorMessages.Should().Contain("Invalid credentials");
         result.Error.Value.Type.Should().Be(ErrorType.IncomingDataIssue);
     }
 
@@ -60,7 +60,7 @@ public sealed class AccountBasicAuthLoginVisitorTests
 
         // Assert
         result.Error.Should().NotBeNull();
-        result.Error.Value.ErrorMessages.Should().Contain("Invalid credentials");
+        result.Error!.Value.ErrorMessages.Should().Contain("Invalid credentials");
         result.Error.Value.Type.Should().Be(ErrorType.IncomingDataIssue);
     }
 
@@ -68,7 +68,7 @@ public sealed class AccountBasicAuthLoginVisitorTests
     public async Task VisitAsync_ShouldReturnLoginResultData_WhenCredentialsAreValid()
     {
         // Arrange
-        var basicAuth = new BasicAuth { Email = "test@example.com", Password = "password" };
+        var basicAuth = new BasicAuth { Email = "test2@example.com", Password = "password" };
         var data = new OperationResult<BasicAuth>(basicAuth);
         _hashHelper.DoesHashEqual("looo", basicAuth.Password).Returns(true);
         var loginResultData = new LoginResultData(null!, null!);
@@ -84,16 +84,11 @@ public sealed class AccountBasicAuthLoginVisitorTests
 
     private sealed class UsersRepositoryForTests : IUsersQueryRepository
     {
-        public readonly UserEntity[] MockUsers;
-
-        public UsersRepositoryForTests()
-        {
-            MockUsers =
-            [
-                new UserEntity { Email = "loo@to.com" },
-                new UserEntity { Email = "test2@example.com", PasswordHash = "looo",  }
-            ];
-        }
+        public readonly UserEntity[] MockUsers =
+        [
+            new() { Email = "loo@to.com" },
+            new() { Email = "test2@example.com", PasswordHash = "looo",  }
+        ];
 
         public Task<IReadOnlyUserEntity?> GetUserAsync(Expression<Func<IReadOnlyUserEntity, bool>> predicate, CancellationToken cancellationToken)
         {
