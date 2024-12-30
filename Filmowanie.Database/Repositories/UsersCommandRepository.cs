@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Entities;
+using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +30,7 @@ internal sealed class UsersCommandRepository : IUsersCommandRepository
 
     public async Task Insert(IReadOnlyUserEntity entity, CancellationToken cancellation)
     {
-        var userEntity = new UserEntity(entity);
+        var userEntity = entity.AsMutable();
         _identityDbContext.Users.Add(userEntity);
         await _identityDbContext.SaveChangesAsync(cancellation);
     }

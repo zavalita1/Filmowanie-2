@@ -75,7 +75,7 @@ public sealed class MovieQueryRepositoryDecoratorTests
         public readonly NominatedMovieAgainEvent[] NominatedMovieAgainEvents =
         [
             new() { TenantId = 21, Movie = new EmbeddedMovie { Name = "Testyy1"}},
-            new() { TenantId = 3, Movie = new EmbeddedMovie { Name = "Testyy2"}},
+            new() { TenantId = 3, Movie = new EmbeddedMovie { Name = "Testyy2", MovieCreationYear = 2137 }},
             new() { TenantId = 3, Movie = new EmbeddedMovie { Name = "Testyy2b"}},
             new() { TenantId = 7, Movie = new EmbeddedMovie { Name = "Testyy3"}},
         ];

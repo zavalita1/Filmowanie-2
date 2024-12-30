@@ -1,6 +1,4 @@
 ﻿using Filmowanie.Database.Contexts;
-using Filmowanie.Database.Entities;
-using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -17,9 +15,9 @@ internal sealed class VotingSessionCommandRepository : IVotingSessionCommandRepo
         _ctx = ctx;
     }
 
-    public Task InsertAsync(IReadonlyVotingResult votingResult, CancellationToken cancellationToken)
+    public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancellationToken)
     {
-        var votingResultEntity = new VotingResult { Concluded = votingResult.Concluded, Created = votingResult.Created, id = votingResult.id, TenantId = votingResult.TenantId };
+        var votingResultEntity = votingResult.AsMutable();
         _ctx.VotingResults.Add(votingResultEntity);
         return _ctx.SaveChangesAsync(cancellationToken);
     }

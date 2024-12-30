@@ -70,7 +70,7 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
     }
 
-    private VotingResults GetVotingResults(IReadOnlyEmbeddedMovieWithVotes[] currentMovies, IReadonlyVotingResult? previous)
+    private VotingResults GetVotingResults(IReadOnlyEmbeddedMovieWithVotes[] currentMovies, IReadOnlyVotingResult? previous)
     {
         var regularDecider = _votingDeciderFactory.ForRegularVoting();
         var previousMovies = previous?.Movies.ToArray() ?? [];
@@ -86,7 +86,7 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         return new (moviesGoingByeBye, movies, winner.Movie);
     }
 
-    private static Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> GetPickUserToNominateContexts(IReadonlyVotingResult[] lastVotingResults, EmbeddedMovieWithNominationContext[] moviesAdded, VotingConcludedEvent message)
+    private static Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> GetPickUserToNominateContexts(IReadOnlyVotingResult[] lastVotingResults, EmbeddedMovieWithNominationContext[] moviesAdded, VotingConcludedEvent message)
     {
         var groups = lastVotingResults
             .SelectMany(x => x.MoviesAdded)

@@ -2,7 +2,7 @@
 
 namespace Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
-public interface IReadonlyVotingResult : IReadOnlyEntity
+public interface IReadOnlyVotingResult : IReadOnlyEntity
 {
     public DateTime? Concluded { get; }
 

@@ -6,19 +6,19 @@ namespace Filmowanie.Database.Extensions;
 
 public static class IReadOnlyEntitiesExtensions
 {
-    public static Vote AsMutable(this IReadOnlyVote vote) => new() { VoteType = vote.VoteType, User = vote.User.AsMutable() };
+    public static Vote AsMutable(this IReadOnlyVote vote) => new(vote);
 
-    public static EmbeddedUser AsMutable(this IReadOnlyEmbeddedUser user) => new() { id = user.id, Name = user.Name, TenantId = user.TenantId };
+    public static EmbeddedUser AsMutable(this IReadOnlyEmbeddedUser user) => new(user);
 
-    public static EmbeddedUserWithNominationAward AsMutable(this IReadOnlyEmbeddedUserWithNominationAward user) =>
-        new() { User = user.User.AsMutable(), AwardMessage = user.AwardMessage, Decade = user.Decade };
+    public static EmbeddedUserWithNominationAward AsMutable(this IReadOnlyEmbeddedUserWithNominationAward user) => new(user);
 
-    public static EmbeddedMovieWithNominationContext AsMutable(this IReadOnlyEmbeddedMovieWithNominationContext movie) => new()
-        { Movie = movie.Movie.AsMutable(), NominatedBy = movie.NominatedBy.AsMutable(), NominationConcluded = movie.NominationConcluded, NominationStarted = movie.NominationStarted };
+    public static EmbeddedMovieWithNominationContext AsMutable(this IReadOnlyEmbeddedMovieWithNominationContext movie) => new(movie);
 
-    public static EmbeddedMovieWithVotes AsMutable(this IReadOnlyEmbeddedMovieWithVotes movie) =>
-        new() { Movie = movie.Movie.AsMutable(), Votes = movie.Votes.Select(AsMutable), VotingScore = movie.VotingScore };
+    public static EmbeddedMovieWithVotes AsMutable(this IReadOnlyEmbeddedMovieWithVotes movie) => new(movie);
+    public static EmbeddedMovie AsMutable(this IReadOnlyEmbeddedMovie readOnlyEmbeddedMovie) => new(readOnlyEmbeddedMovie);
 
-    public static EmbeddedMovie AsMutable(this IReadOnlyEmbeddedMovie readOnlyEmbeddedMovie) => new()
-        { id = readOnlyEmbeddedMovie.id, MovieCreationYear = readOnlyEmbeddedMovie.MovieCreationYear, Name = readOnlyEmbeddedMovie.Name };
+    internal static MovieEntity AsMutable(this IReadOnlyMovieEntity entity) => new(entity);
+    internal static NominatedMovieAgainEvent AsMutable(this IReadOnlyNominatedMovieAgainEvent entity) => new(entity);
+    internal static UserEntity AsMutable(this IReadOnlyUserEntity entity) => new(entity);
+    internal static VotingResult AsMutable(this IReadOnlyVotingResult entity) => new(entity);
 };

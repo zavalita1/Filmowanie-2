@@ -1,4 +1,5 @@
-﻿using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+﻿using Filmowanie.Database.Extensions;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Entities;
 
@@ -13,33 +14,8 @@ internal class CanNominateMovieAgainEvent : Event, IReadOnlyCanNominateMovieAgai
 
     public CanNominateMovieAgainEvent(IReadOnlyCanNominateMovieAgainEvent other) : base(other)
     {
-        Movie = new EmbeddedMovie(other.Movie);
+        Movie = other.Movie.AsMutable();
     }
-}
-
-internal class NominatedMovieAgainEvent : Event, IReadOnlyNominatedMovieAgainEvent
-{
-    public EmbeddedMovie Movie { get; set; }
-
-    IReadOnlyEmbeddedMovie IReadOnlyNominatedMovieAgainEvent.Movie => Movie;
-
-    public NominatedMovieAgainEvent() {}
-
-    public NominatedMovieAgainEvent(IReadOnlyNominatedMovieAgainEvent other) : base(other)
-    {
-        Movie = new EmbeddedMovie(other.Movie);
-    }
-}
-
-public interface IReadOnlyCanNominateMovieAgainEvent : IReadOnlyEntity
-{
-    public IReadOnlyEmbeddedMovie Movie { get; }
-}
-
-public interface IReadOnlyNominatedMovieAgainEvent : IReadOnlyEntity
-{
-    public IReadOnlyEmbeddedMovie Movie { get; }
 }
 
 public readonly record struct CanNominateMovieAgainEventRecord(IReadOnlyEmbeddedMovie Movie, string id, DateTime Created, int TenantId) : IReadOnlyCanNominateMovieAgainEvent;
-public readonly record struct NominatedMovieAgainEventRecord(IReadOnlyEmbeddedMovie Movie, string id, DateTime Created, int TenantId) : IReadOnlyNominatedMovieAgainEvent;

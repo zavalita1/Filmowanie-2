@@ -56,9 +56,9 @@ internal sealed class GetVotingResultDTOVisitor : IGetVotingResultDTOVisitor
         return new OperationResult<VotingResultDTO>(result, null);
     }
 
-    private async Task<IReadonlyVotingResult?> GetReadonlyVotingResultAsync(OperationResult<(TenantId Tenant, VotingSessionId? VotingSessionId)> input, CancellationToken cancellationToken)
+    private async Task<IReadOnlyVotingResult?> GetReadonlyVotingResultAsync(OperationResult<(TenantId Tenant, VotingSessionId? VotingSessionId)> input, CancellationToken cancellationToken)
     {
-        IReadonlyVotingResult? votingResult;
+        IReadOnlyVotingResult? votingResult;
         if (input.Result.VotingSessionId == null)
         {
             var currentVoting = await _votingSessionQueryRepository.Get(x => x.Concluded == null, input.Result.Tenant, cancellationToken);
@@ -85,7 +85,7 @@ internal sealed class GetVotingResultDTOVisitor : IGetVotingResultDTOVisitor
         return votingResult;
     }
 
-    private readonly record struct VotingResult(string id, DateTime Created, int TenantId, DateTime? Concluded, IReadOnlyEmbeddedMovieWithVotes[] Movies, IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations, IReadOnlyEmbeddedMovie[] MoviesGoingByeBye, IReadOnlyEmbeddedMovieWithNominationContext[] MoviesAdded, IReadOnlyEmbeddedMovie Winner) : IReadonlyVotingResult;
+    private readonly record struct VotingResult(string id, DateTime Created, int TenantId, DateTime? Concluded, IReadOnlyEmbeddedMovieWithVotes[] Movies, IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations, IReadOnlyEmbeddedMovie[] MoviesGoingByeBye, IReadOnlyEmbeddedMovieWithNominationContext[] MoviesAdded, IReadOnlyEmbeddedMovie Winner) : IReadOnlyVotingResult;
 
     public ILogger Log => _log;
 }

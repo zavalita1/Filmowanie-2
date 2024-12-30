@@ -5,7 +5,7 @@ namespace Filmowanie.Database.Interfaces;
 
 public interface IVotingSessionCommandRepository
 {
-    public Task InsertAsync(IReadonlyVotingResult votingResult, CancellationToken cancellationToken);
+    public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancellationToken);
 
     public Task UpdateAsync(string id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards,
         DateTime concluded,

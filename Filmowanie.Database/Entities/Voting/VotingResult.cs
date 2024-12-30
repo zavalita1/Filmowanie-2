@@ -1,8 +1,9 @@
-﻿using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+﻿using Filmowanie.Database.Extensions;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Entities.Voting;
 
-public class VotingResult : Entity, IReadonlyVotingResult
+public class VotingResult : Entity, IReadOnlyVotingResult
 {
     public IEnumerable<EmbeddedMovieWithVotes> Movies { get; set; } = new List<EmbeddedMovieWithVotes>();
     public IEnumerable<EmbeddedUserWithNominationAward> UsersAwardedWithNominations { get; set; } = new List<EmbeddedUserWithNominationAward>();
@@ -12,9 +13,22 @@ public class VotingResult : Entity, IReadonlyVotingResult
     public virtual EmbeddedMovie Winner { get; set; }
 
 
-    IReadOnlyEmbeddedMovieWithVotes[] IReadonlyVotingResult.Movies => Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
-    IReadOnlyEmbeddedUserWithNominationAward[] IReadonlyVotingResult.UsersAwardedWithNominations => UsersAwardedWithNominations.Cast<IReadOnlyEmbeddedUserWithNominationAward>().ToArray();
-    IReadOnlyEmbeddedMovie[] IReadonlyVotingResult.MoviesGoingByeBye => MoviesGoingByeBye.Cast<IReadOnlyEmbeddedMovie>().ToArray();
-    IReadOnlyEmbeddedMovieWithNominationContext[] IReadonlyVotingResult.MoviesAdded => MoviesAdded.Cast<IReadOnlyEmbeddedMovieWithNominationContext>().ToArray();
-    IReadOnlyEmbeddedMovie IReadonlyVotingResult.Winner => Winner;
+    IReadOnlyEmbeddedMovieWithVotes[] IReadOnlyVotingResult.Movies => Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
+    IReadOnlyEmbeddedUserWithNominationAward[] IReadOnlyVotingResult.UsersAwardedWithNominations => UsersAwardedWithNominations.Cast<IReadOnlyEmbeddedUserWithNominationAward>().ToArray();
+    IReadOnlyEmbeddedMovie[] IReadOnlyVotingResult.MoviesGoingByeBye => MoviesGoingByeBye.Cast<IReadOnlyEmbeddedMovie>().ToArray();
+    IReadOnlyEmbeddedMovieWithNominationContext[] IReadOnlyVotingResult.MoviesAdded => MoviesAdded.Cast<IReadOnlyEmbeddedMovieWithNominationContext>().ToArray();
+    IReadOnlyEmbeddedMovie IReadOnlyVotingResult.Winner => Winner;
+
+    public VotingResult()
+    { }
+
+    public VotingResult(IReadOnlyVotingResult other) : this()
+    {
+        Movies = other.Movies.Select(x => x.AsMutable());
+        UsersAwardedWithNominations = other.UsersAwardedWithNominations.Select(x => x.AsMutable());
+        MoviesGoingByeBye = other.MoviesGoingByeBye.Select(x => x.AsMutable());
+        MoviesAdded = other.MoviesAdded.Select(x => x.AsMutable());
+        Concluded = other.Concluded;
+        Winner = other.Winner.AsMutable();
+    }
 }

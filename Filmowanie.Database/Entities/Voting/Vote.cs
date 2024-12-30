@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions.Enums;
+using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Entities.Voting;
@@ -9,12 +10,12 @@ public class Vote : IReadOnlyVote
     public virtual VoteType VoteType { get; set; }
 
     IReadOnlyEmbeddedUser IReadOnlyVote.User => User;
-}
 
-public interface IReadOnlyVote
-{
-    public VoteType VoteType { get; }
+    public Vote() { }
 
-    public IReadOnlyEmbeddedUser User { get; }
-
+    public Vote(IReadOnlyVote vote)
+    {
+        VoteType = vote.VoteType;
+        User = vote.User.AsMutable();
+    }
 }

@@ -20,16 +20,3 @@ public class EmbeddedMovie : IReadOnlyEmbeddedMovie
         MovieCreationYear = other.MovieCreationYear;
     }
 }
-
-public class EmbeddedMovieWithNominationContext : IReadOnlyEmbeddedMovieWithNominationContext
-{
-    public EmbeddedMovie Movie { get; set; }
-
-    public EmbeddedUser NominatedBy { get; set; }
-
-    IReadOnlyEmbeddedUser IReadOnlyEmbeddedMovieWithNominationContext.NominatedBy => NominatedBy;
-    IReadOnlyEmbeddedMovie IReadOnlyEmbeddedMovieWithNominationContext.Movie => Movie;
-
-    public DateTime NominationConcluded { get; set; }
-    public DateTime NominationStarted { get; set; }
-}

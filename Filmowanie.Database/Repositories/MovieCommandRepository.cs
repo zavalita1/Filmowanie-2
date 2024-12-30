@@ -1,11 +1,13 @@
 ﻿using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Entities;
+using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Filmowanie.Database.Repositories;
 
+// TODO db tests
 internal sealed class MovieCommandRepository : IMovieCommandRepository
 {
     private readonly MoviesContext _ctx;
@@ -24,14 +26,14 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
 
     public async Task InsertNominatedAgainAsync(IReadOnlyNominatedMovieAgainEvent nominatedAgainEvent, CancellationToken cancellationToken)
     {
-        var entity = new NominatedMovieAgainEvent(nominatedAgainEvent);
+        var entity = nominatedAgainEvent.AsMutable();
         await _ctx.NominatedMovieAgainEvents.AddAsync(entity, cancellationToken);
         await _ctx.SaveChangesAsync(cancellationToken);
     }
 
     public Task InsertMovieAsync(IReadOnlyMovieEntity movieEntity, CancellationToken cancellationToken)
     {
-        var entity = new MovieEntity(movieEntity);
+        var entity = movieEntity.AsMutable();
         _ctx.Movies.Add(entity);
         return _ctx.SaveChangesAsync(cancellationToken);
     }

@@ -16,7 +16,7 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
         _ctx = ctx;
     }
 
-    public async Task<IReadonlyVotingResult?> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate,
+    public async Task<IReadOnlyVotingResult?> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate,
         TenantId tenant,
         CancellationToken cancellationToken)
     {
@@ -24,18 +24,18 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
         return currentVotingSession;
     }
 
-    public async Task<IEnumerable<IReadonlyVotingResult>> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate, TenantId tenant, Expression<Func<IReadonlyVotingResult, object>> sortBy,
+    public async Task<IEnumerable<IReadOnlyVotingResult>> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, TenantId tenant, Expression<Func<IReadOnlyVotingResult, object>> sortBy,
         int take,
         CancellationToken cancellationToken)
     {
-        Func<IQueryable<IReadonlyVotingResult>, IOrderedQueryable<IReadonlyVotingResult>> sortFunction = take > 0 ? x => x.OrderBy(sortBy) : x => x.OrderByDescending(sortBy);
+        Func<IQueryable<IReadOnlyVotingResult>, IOrderedQueryable<IReadOnlyVotingResult>> sortFunction = take > 0 ? x => x.OrderBy(sortBy) : x => x.OrderByDescending(sortBy);
         
         var query = _ctx.VotingResults.Where(predicate);
         var currentVotingSession = await sortFunction.Invoke(query).Take(Math.Abs(take)).ToArrayAsync(cancellationToken);
         return currentVotingSession;
     }
 
-    public async Task<IEnumerable<T>> Get<T>(Expression<Func<IReadonlyVotingResult, bool>> predicate, Expression<Func<IReadonlyVotingResult, T>> selector, TenantId tenant,
+    public async Task<IEnumerable<T>> Get<T>(Expression<Func<IReadOnlyVotingResult, bool>> predicate, Expression<Func<IReadOnlyVotingResult, T>> selector, TenantId tenant,
         CancellationToken cancellationToken)
         where T : class
     {

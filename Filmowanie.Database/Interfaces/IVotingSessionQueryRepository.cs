@@ -6,9 +6,9 @@ namespace Filmowanie.Database.Interfaces;
 
 public interface IVotingSessionQueryRepository
 {
-    public Task<IReadonlyVotingResult?> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate, TenantId tenant, CancellationToken cancellationToken);
-    public Task<IEnumerable<IReadonlyVotingResult>> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate, TenantId tenant, Expression<Func<IReadonlyVotingResult, object>> sortBy, int take,
+    public Task<IReadOnlyVotingResult?> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, TenantId tenant, CancellationToken cancellationToken);
+    public Task<IEnumerable<IReadOnlyVotingResult>> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, TenantId tenant, Expression<Func<IReadOnlyVotingResult, object>> sortBy, int take,
         CancellationToken cancellationToken);
-    public Task<IEnumerable<T>> Get<T>(Expression<Func<IReadonlyVotingResult, bool>> predicate, Expression<Func<IReadonlyVotingResult, T>> selector, TenantId tenant,
+    public Task<IEnumerable<T>> Get<T>(Expression<Func<IReadOnlyVotingResult, bool>> predicate, Expression<Func<IReadOnlyVotingResult, T>> selector, TenantId tenant,
         CancellationToken cancellationToken) where T : class;
 }

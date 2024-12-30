@@ -64,21 +64,21 @@ public sealed class VotingSessionQueryRepositoryDecoratorTests
             new() { TenantId = 7, Created = new DateTime(2010, 04, 10, 11, 1, 1)},
         ];
 
-        public Task<IReadonlyVotingResult?> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate, TenantId tenant, CancellationToken cancellationToken)
+        public Task<IReadOnlyVotingResult?> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, TenantId tenant, CancellationToken cancellationToken)
         {
             var func = predicate.Compile();
             var result = MockVotingResults.Single(func);
-            return Task.FromResult<IReadonlyVotingResult?>(result);
+            return Task.FromResult<IReadOnlyVotingResult?>(result);
         }
 
-        public Task<IEnumerable<IReadonlyVotingResult>> Get(Expression<Func<IReadonlyVotingResult, bool>> predicate, TenantId tenant, Expression<Func<IReadonlyVotingResult, object>> sortBy, int take, CancellationToken cancellationToken)
+        public Task<IEnumerable<IReadOnlyVotingResult>> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, TenantId tenant, Expression<Func<IReadOnlyVotingResult, object>> sortBy, int take, CancellationToken cancellationToken)
         {
             var func = predicate.Compile();
             var result = MockVotingResults.Where(func);
             return Task.FromResult(result);
         }
 
-        public Task<IEnumerable<T>> Get<T>(Expression<Func<IReadonlyVotingResult, bool>> predicate, Expression<Func<IReadonlyVotingResult, T>> selector, TenantId tenant, CancellationToken cancellationToken) where T : class
+        public Task<IEnumerable<T>> Get<T>(Expression<Func<IReadOnlyVotingResult, bool>> predicate, Expression<Func<IReadOnlyVotingResult, T>> selector, TenantId tenant, CancellationToken cancellationToken) where T : class
         {
             var func = predicate.Compile();
             var selc = selector.Compile();

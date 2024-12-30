@@ -58,7 +58,7 @@ internal sealed class HistoryStandingsDTOMapper : IHistoryStandingsDTOMapperVisi
         }
     }
 
-    private static IEnumerable<VotingSessionPlacesData> GetPlaces(IReadonlyVotingResult result)
+    private static IEnumerable<VotingSessionPlacesData> GetPlaces(IReadOnlyVotingResult result)
     {
         var moviesSorted = result.Movies.OrderByDescending(x => x.VotingScore);
         var counter = 0;
@@ -69,7 +69,7 @@ internal sealed class HistoryStandingsDTOMapper : IHistoryStandingsDTOMapperVisi
     }
 
 
-    private readonly record struct VotingSessionData(IReadonlyVotingResult Data, VotingSessionPlacesData[] Places);
+    private readonly record struct VotingSessionData(IReadOnlyVotingResult Data, VotingSessionPlacesData[] Places);
 
     private record VotingSessionPlacesData(IReadOnlyEmbeddedMovieWithVotes Data, int Place)
     {

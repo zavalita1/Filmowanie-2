@@ -93,4 +93,61 @@ public class ReadonlyEntitiesExtensionsTests
         result.Should().BeEquivalentTo(entity);
         result.Should().NotBe(entity);
     }
+
+    [Fact]
+    public void MovieEntity_ShouldBeEquivalent()
+    {
+        // Arrange
+        var entity = _fixture.Create<MovieEntity>();
+
+        // Act
+        var result = entity.AsMutable();
+
+        // Assert
+        result.Should().BeEquivalentTo(entity);
+        result.Should().NotBe(entity);
+    }
+
+
+    [Fact]
+    public void NominatedMovieAgainEvent_ShouldBeEquivalent()
+    {
+        // Arrange
+        var entity = _fixture.Create<NominatedMovieAgainEvent>();
+
+        // Act
+        var result = entity.AsMutable();
+
+        // Assert
+        result.Should().BeEquivalentTo(entity);
+        result.Should().NotBe(entity);
+    }
+
+    [Fact]
+    public void User_ShouldBeEquivalent()
+    {
+        // Arrange
+        var entity = _fixture.Create<UserEntity>();
+
+        // Act
+        var result = entity.AsMutable();
+
+        // Assert
+        result.Should().BeEquivalentTo(entity);
+        result.Should().NotBe(entity);
+    } 
+    
+    [Fact]
+    public void VotingResult_ShouldBeEquivalent()
+    {
+        // Arrange
+        var entity = _fixture.Create<VotingResult>();
+
+        // Act
+        var result = entity.AsMutable();
+
+        // Assert
+        result.Should().BeEquivalentTo(entity);
+        result.Should().NotBe(entity);
+    }
 }

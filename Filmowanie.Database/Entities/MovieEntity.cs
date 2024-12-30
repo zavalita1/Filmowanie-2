@@ -44,5 +44,7 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
         CreationYear = other.CreationYear;
         DurationInMinutes = other.DurationInMinutes;
         id = ((IReadOnlyEntity)other).id;
+        Created = other.Created;
+        TenantId = other.TenantId;
     }
 }

@@ -4,21 +4,8 @@ using System.Linq.Expressions;
 using Filmowanie.Abstractions;
 using Filmowanie.Database.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Filmowanie.Database.Entities;
 
 namespace Filmowanie.Database.Repositories;
-
-internal sealed class PushSubscriptionRepository
-{
-    private readonly PushSubscriptionsContext _ctx;
-
-    public PushSubscriptionRepository(PushSubscriptionsContext ctx)
-    {
-        _ctx = ctx;
-    }
-
-
-}
 
 internal sealed class MovieQueryRepository : IMovieQueryRepository
 {
