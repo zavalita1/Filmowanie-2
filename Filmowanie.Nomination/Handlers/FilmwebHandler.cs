@@ -12,6 +12,7 @@ using HtmlAgilityPack;
 
 namespace Filmowanie.Nomination.Handlers;
 
+// TODO refactor to ditch regexes, write UTs
 internal sealed partial class FilmwebHandler : IFilmwebHandler
 {
     private readonly IHttpClientFactory _clientFactory;

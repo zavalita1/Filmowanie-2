@@ -1,13 +1,13 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.Enums;
+﻿using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Nomination.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Nomination.Helpers;
 
-internal static class RoutesResultHelper
+internal class RoutesResultHelper : IRoutesResultHelper
 {
-    public static IResult UnwrapOperationResult<T>(OperationResult<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null)
+    public IResult UnwrapOperationResult<T>(OperationResult<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null)
     {
         if (result.Error == null)
             return onSuccess ?? TypedResults.Ok(result.Result);

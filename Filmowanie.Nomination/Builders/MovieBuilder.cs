@@ -1,7 +1,6 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Filmowanie.Nomination.Builders;
 
@@ -92,40 +91,6 @@ public sealed class MovieBuilder
     {
         _filmwebUrl = filmwebUrl;
         return this;
-    }
-
-    public MovieBuilder FromOther(IReadOnlyMovieEntity other)
-    {
-        var result = WithName(other.Name)
-            .WithDescription(other.Description)
-            .WithTenant(new TenantId(other.TenantId))
-            .WithOriginalTitle(other.OriginalTitle)
-            .WithPosterUrl(other.PosterUrl)
-            .WithCreationYear(other.CreationYear.ToString())
-            .WithDuration(other.DurationInMinutes.ToString())
-            .WithFilmwebUrl(other.FilmwebUrl);
-
-        foreach (var actor in other.Actors)
-        {
-            result = result.WithActor(actor);
-        }
-
-        foreach (var director in other.Directors)
-        {
-            result = result.WithDirector(director);
-        }
-
-        foreach (var writer in other.Writers)
-        {
-            result = result.WithWriter(writer);
-        }
-
-        foreach (var genre in other.Genres)
-        {
-            result = result.WithGenre(genre);
-        }
-
-        return result;
     }
 
     public IReadOnlyMovieEntity Build(IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider)

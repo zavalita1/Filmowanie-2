@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.Handlers;
+using Filmowanie.Nomination.Helpers;
 using Filmowanie.Nomination.Interfaces;
 using Filmowanie.Nomination.Routes;
 using Filmowanie.Nomination.Validators;
@@ -34,6 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFilmwebPathResolver, FilmwebPathResolver>();
         services.AddSingleton<IFilmwebPostersUrlsRetriever, FilmwebPostersUrlsRetriever>();
         services.AddSingleton<IFilmwebHandler, FilmwebHandler>();
+        services.AddSingleton<IRoutesResultHelper, RoutesResultHelper>();
 
         return services;
     }

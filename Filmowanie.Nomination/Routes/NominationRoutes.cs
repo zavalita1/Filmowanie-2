@@ -4,7 +4,6 @@ using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.DTOs.Incoming;
-using Filmowanie.Nomination.Helpers;
 using Filmowanie.Nomination.Interfaces;
 using Microsoft.AspNetCore.Http;
 
@@ -22,8 +21,9 @@ internal sealed class NominationRoutes : INominationRoutes
     private readonly IRequireCurrentVotingSessionIdVisitor _requireCurrentVotingSessionIdVisitor;
     private readonly IMovieThatCanBeNominatedAgainEnricherVisitor _movieThatCanBeNominatedAgainEnricherVisitor;
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
+    private readonly IRoutesResultHelper _routesResultHelper;
 
-    public NominationRoutes(IUserIdentityVisitor userIdentityVisitor, IGetNominationsVisitor getNominationsVisitor, IGetCurrentVotingSessionIdVisitor currentVotingSessionIdVisitor, IMovieThatCanBeNominatedAgainEnricherVisitor movieThatCanBeNominatedAgainEnricherVisitor, IFluentValidatorAdapterProvider validatorAdapterProvider, IGetNominationsDTOVisitor getNominationsDtoVisitor, IGetPostersVisitor getPostersVisitor, INominationsCompleterVisitor nominationsCompleterVisitor, INominationsResetterVisitor nominationsResetterVisitor, IRequireCurrentVotingSessionIdVisitor requireCurrentVotingSessionIdVisitor)
+    public NominationRoutes(IUserIdentityVisitor userIdentityVisitor, IGetNominationsVisitor getNominationsVisitor, IGetCurrentVotingSessionIdVisitor currentVotingSessionIdVisitor, IMovieThatCanBeNominatedAgainEnricherVisitor movieThatCanBeNominatedAgainEnricherVisitor, IFluentValidatorAdapterProvider validatorAdapterProvider, IGetNominationsDTOVisitor getNominationsDtoVisitor, IGetPostersVisitor getPostersVisitor, INominationsCompleterVisitor nominationsCompleterVisitor, INominationsResetterVisitor nominationsResetterVisitor, IRequireCurrentVotingSessionIdVisitor requireCurrentVotingSessionIdVisitor, IRoutesResultHelper routesResultHelper)
     {
         _userIdentityVisitor = userIdentityVisitor;
         _getNominationsVisitor = getNominationsVisitor;
@@ -35,6 +35,7 @@ internal sealed class NominationRoutes : INominationRoutes
         _nominationsCompleterVisitor = nominationsCompleterVisitor;
         _nominationsResetterVisitor = nominationsResetterVisitor;
         _requireCurrentVotingSessionIdVisitor = requireCurrentVotingSessionIdVisitor;
+        _routesResultHelper = routesResultHelper;
     }
 
     public async Task<IResult> GetNominationsAsync(CancellationToken cancellationToken)
@@ -47,7 +48,7 @@ internal sealed class NominationRoutes : INominationRoutes
             .Merge(identityResult)
             .Accept(_getNominationsDtoVisitor);
 
-        return RoutesResultHelper.UnwrapOperationResult(result);
+        return _routesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> GetNominationsFullDataAsync(CancellationToken cancellationToken)
@@ -62,10 +63,10 @@ internal sealed class NominationRoutes : INominationRoutes
                         .Merge(identityResult)
                         .AcceptAsync(_movieThatCanBeNominatedAgainEnricherVisitor, cancellationToken);
 
-        return RoutesResultHelper.UnwrapOperationResult(result);
+        return _routesResultHelper.UnwrapOperationResult(result);
     }
 
-    public async Task<IResult> GetPosters(string movieUrl, CancellationToken cancellationToken)
+    public async Task<IResult> GetPostersAsync(string movieUrl, CancellationToken cancellationToken)
     {
         var validator = _validatorAdapterProvider.GetAdapter<string>(KeyedServices.MovieUrl);
         var result = await movieUrl
@@ -73,10 +74,10 @@ internal sealed class NominationRoutes : INominationRoutes
             .Accept(validator)
             .AcceptAsync(_getPostersVisitor, cancellationToken);
 
-        return RoutesResultHelper.UnwrapOperationResult(result);
+        return _routesResultHelper.UnwrapOperationResult(result);
     }
 
-    public async Task<IResult> DeleteMovie(string movieId, CancellationToken cancellationToken)
+    public async Task<IResult> DeleteMovieAsync(string movieId, CancellationToken cancellationToken)
     {
         var validator = _validatorAdapterProvider.GetAdapter<string>(KeyedServices.MovieId);
         var identityResult = OperationResultExtensions.Empty.Accept(_userIdentityVisitor);
@@ -92,7 +93,7 @@ internal sealed class NominationRoutes : INominationRoutes
             .Flatten()
             .AcceptAsync(_nominationsResetterVisitor, cancellationToken);
 
-        return RoutesResultHelper.UnwrapOperationResult(result);
+        return _routesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> NominateAsync(NominationDTO dto, CancellationToken cancellationToken)
@@ -111,6 +112,6 @@ internal sealed class NominationRoutes : INominationRoutes
             .Accept(validator)
             .AcceptAsync(_nominationsCompleterVisitor, cancellationToken);
 
-        return RoutesResultHelper.UnwrapOperationResult(result);
+        return _routesResultHelper.UnwrapOperationResult(result);
     }
 }

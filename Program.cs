@@ -130,7 +130,7 @@ void ConfigureMassTransit(WebApplicationBuilder appBuilder)
     {
         x.AddConfigureEndpointsCallback((context, name, cfg) =>
         {
-            cfg.UseMessageRetry(r => r.Immediate(5));
+            cfg.UseMessageRetry(r => r.Incremental(5, TimeSpan.Zero, TimeSpan.FromMilliseconds(250)));
         });
 
         x.SetKebabCaseEndpointNameFormatter();

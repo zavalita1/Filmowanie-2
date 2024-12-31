@@ -30,5 +30,8 @@ public class VotingResult : Entity, IReadOnlyVotingResult
         MoviesAdded = other.MoviesAdded.Select(x => x.AsMutable());
         Concluded = other.Concluded;
         Winner = other.Winner.AsMutable();
+        Created = other.Created;
+        TenantId = other.TenantId;
+        id = other.id;
     }
 }

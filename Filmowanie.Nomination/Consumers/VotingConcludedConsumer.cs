@@ -38,7 +38,8 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         _logger.LogInformation($"Consuming {nameof(VotingConcludedEvent)}...");
         
         var message = context.Message;
-        var votingResultOfInterest = (await _votesRepository.Get(x => x.Concluded != null, message.Tenant, x => x.Concluded!, -1 * TimeWindow, context.CancellationToken)).Last();
+        var readOnlyVotingResults = await _votesRepository.Get(x => x.Concluded != null, message.Tenant, x => x.Concluded!, -1 * TimeWindow, context.CancellationToken);
+        var votingResultOfInterest = readOnlyVotingResults.Last();
 
         var newMoviesToAdd = votingResultOfInterest.MoviesGoingByeBye.Select(x => GetReadOnlyCanNominateMovieAgainEvent(x, message));
         await _movieCommandRepository.InsertCanBeNominatedAgainAsync(newMoviesToAdd, context.CancellationToken);
@@ -47,5 +48,5 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
     }
 
     private IReadOnlyCanNominateMovieAgainEvent GetReadOnlyCanNominateMovieAgainEvent(IReadOnlyEmbeddedMovie x, VotingConcludedEvent message) 
-        => new CanNominateMovieAgainEventRecord(x,  "nominate-again-event-" + _guidProvider.NewGuid(), _dateTimeProvider.Now, message.Tenant.Id);
+        => new CanNominateMovieAgainEventRecord(x, $"nominate-again-event-{_guidProvider.NewGuid()}", _dateTimeProvider.Now, message.Tenant.Id);
 }

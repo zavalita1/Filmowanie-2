@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Filmowanie.Abstractions;
-using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
