@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Filmowanie.Nomination.Handlers;
-using FluentValidation;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace Filmowanie.Tests.Filmowanie_Nomination;
 

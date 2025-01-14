@@ -10,6 +10,8 @@ namespace Filmowanie.Tests.Filmowanie_Account;
 
 public sealed class ResultHelperTests
 {
+    private readonly RoutesResultHelper _routesResultHelper = new();
+
     [Fact]
     public void RoutesResultHelperUnwrapOperationResult_ShouldReturnOk_WhenNoError()
     {
@@ -17,7 +19,7 @@ public sealed class ResultHelperTests
         var result = new OperationResult<string> { Result = "Success", Error = null };
 
         // Act
-        var response = RoutesResultHelper.UnwrapOperationResult(result);
+        var response = _routesResultHelper.UnwrapOperationResult(result);
 
         // Assert
         response.Should().BeOfType<Ok<string>>();
@@ -31,7 +33,7 @@ public sealed class ResultHelperTests
         var result = new OperationResult<string> { Error = error };
 
         // Act
-        var response = RoutesResultHelper.UnwrapOperationResult(result);
+        var response = _routesResultHelper.UnwrapOperationResult(result);
 
         // Assert
         response.Should().BeOfType<BadRequest<string>>();
@@ -45,7 +47,7 @@ public sealed class ResultHelperTests
         var result = new OperationResult<string> { Error = error };
 
         // Act
-        var response = RoutesResultHelper.UnwrapOperationResult(result);
+        var response = _routesResultHelper.UnwrapOperationResult(result);
 
         // Assert
         response.Should().BeOfType<ProblemHttpResult>();
@@ -60,7 +62,7 @@ public sealed class ResultHelperTests
         var result = new OperationResult<string> { Error = error };
 
         // Act
-        var response = RoutesResultHelper.UnwrapOperationResult(result);
+        var response = _routesResultHelper.UnwrapOperationResult(result);
 
         // Assert
         response.Should().BeOfType<ProblemHttpResult>();
@@ -75,7 +77,7 @@ public sealed class ResultHelperTests
         var result = new OperationResult<string> { Error = error };
 
         // Act
-        Action act = () => RoutesResultHelper.UnwrapOperationResult(result);
+        Action act = () => _routesResultHelper.UnwrapOperationResult(result);
 
         // Assert
         act.Should().Throw<InvalidOperationException>()

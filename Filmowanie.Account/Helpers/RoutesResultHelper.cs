@@ -3,13 +3,14 @@ using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Account.Constants;
+using Filmowanie.Account.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Account.Helpers;
 
-internal static class RoutesResultHelper
+internal class RoutesResultHelper : IRoutesResultHelper
 {
-    public static IResult UnwrapOperationResult<T>(OperationResult<T> result, IResult? onSuccess = null, Func<Error, IResult?>? overrideDefault = null)
+    public IResult UnwrapOperationResult<T>(OperationResult<T> result, IResult? onSuccess = null, Func<Error, IResult?>? overrideDefault = null)
     {
         if (result.Error == null)
             return onSuccess ?? TypedResults.Ok(result.Result);

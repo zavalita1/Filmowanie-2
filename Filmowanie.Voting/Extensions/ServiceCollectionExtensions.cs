@@ -2,6 +2,7 @@
 using Filmowanie.Voting.Deciders;
 using Filmowanie.Voting.Deciders.PickUserNomination;
 using Filmowanie.Voting.Interfaces;
+using Filmowanie.Voting.Retrievers;
 using Filmowanie.Voting.Routes;
 using Filmowanie.Voting.Validators;
 using Filmowanie.Voting.Visitors;
@@ -40,9 +41,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAknowledgedMapperVisitor, VotingMapperVisitor>();
 
         services.AddScoped<IVoteVisitor, VoteVisitor>();
+        services.AddScoped<IVotingResultsRetriever, VotingResultsRetriever>();
+        services.AddScoped<INominationsRetriever, NominationsRetriever>();
 
         services.AddSingleton<IVotingDeciderFactory, VotingDeciderFactory>();
         services.AddSingleton<IPickUserToNominateStrategyFactory, PickUserToNominateStrategyFactory>();
+        services.AddSingleton<IPickUserToNominateContextRetriever, PickUserToNominateContextRetriever>();
 
         return services;
     }

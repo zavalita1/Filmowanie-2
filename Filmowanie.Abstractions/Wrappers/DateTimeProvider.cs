@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
 
-namespace Filmowanie.Abstractions.Providers;
+namespace Filmowanie.Abstractions.Wrappers;
 
 public class DateTimeProvider : IDateTimeProvider
 {

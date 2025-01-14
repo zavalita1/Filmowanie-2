@@ -5,9 +5,7 @@ using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
-using Filmowanie.Account.Helpers;
 using Filmowanie.Account.Interfaces;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,9 +21,10 @@ internal sealed class AccountRoutes : IAccountRoutes
     private readonly ISignUpVisitor _signUpVisitor;
     private readonly IUserIdentityVisitor _userIdentityVisitor;
     private readonly IUserMapperVisitor _userMapperVisitor;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IRoutesResultHelper _routesResultHelper;
+    private readonly IHttpContextWrapper _httpContextWrapper;
 
-    public AccountRoutes(ILogger<AccountRoutes> log, IFluentValidatorAdapterProvider validatorAdapterProvider, ICodeLoginVisitor accountVisitor, IBasicAuthLoginVisitor basicAuthLoginVisitor, ISignUpVisitor signUpVisitor, IUserIdentityVisitor userIdentityVisitor, IUserMapperVisitor userMapperVisitor, IHttpContextAccessor httpContextAccessor)
+    public AccountRoutes(ILogger<AccountRoutes> log, IFluentValidatorAdapterProvider validatorAdapterProvider, ICodeLoginVisitor accountVisitor, IBasicAuthLoginVisitor basicAuthLoginVisitor, ISignUpVisitor signUpVisitor, IUserIdentityVisitor userIdentityVisitor, IUserMapperVisitor userMapperVisitor, IRoutesResultHelper routesResultHelper, IHttpContextWrapper httpContextWrapper)
     {
         _log = log;
         _validatorAdapterProvider = validatorAdapterProvider;
@@ -34,7 +33,8 @@ internal sealed class AccountRoutes : IAccountRoutes
         _signUpVisitor = signUpVisitor;
         _userIdentityVisitor = userIdentityVisitor;
         _userMapperVisitor = userMapperVisitor;
-        _httpContextAccessor = httpContextAccessor;
+        _routesResultHelper = routesResultHelper;
+        _httpContextWrapper = httpContextWrapper;
     }
 
     public async Task<IResult> Login([FromBody] LoginDto dto, CancellationToken cancel)
@@ -49,8 +49,7 @@ internal sealed class AccountRoutes : IAccountRoutes
         {
             _log.LogInformation("Logging in...");
             var claimsPrincipal = new ClaimsPrincipal(r.Identity);
-            await _httpContextAccessor.HttpContext!.SignInAsync(Schemes.Cookie, claimsPrincipal, result.Result!.AuthenticationProperties);
-            _httpContextAccessor.HttpContext!.User = claimsPrincipal;
+            await _httpContextWrapper.SignInAsync(Schemes.Cookie, claimsPrincipal, result.Result!.AuthenticationProperties);
             _log.LogInformation("Logged in!");
         }, cancel);
 
@@ -58,7 +57,7 @@ internal sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return RoutesResultHelper.UnwrapOperationResult(resultDto);
+        return _routesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> LoginBasic([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
@@ -72,7 +71,7 @@ internal sealed class AccountRoutes : IAccountRoutes
         await result.AcceptAsync(async (r, _) =>
         {
             _log.LogInformation("Logging in...");
-            await _httpContextAccessor.HttpContext!.SignInAsync(Schemes.Cookie, new ClaimsPrincipal(r.Identity), result.Result.AuthenticationProperties);
+            await _httpContextWrapper.SignInAsync(Schemes.Cookie, new ClaimsPrincipal(r.Identity), r.AuthenticationProperties);
             _log.LogInformation("Logged in!");
         }, cancel);
 
@@ -80,7 +79,7 @@ internal sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return RoutesResultHelper.UnwrapOperationResult(resultDto);
+        return _routesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> SignUp([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
@@ -94,13 +93,13 @@ internal sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return RoutesResultHelper.UnwrapOperationResult(resultDto);
+        return _routesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> Logout(CancellationToken cancel)
     {
         cancel.ThrowIfCancellationRequested();
-        await _httpContextAccessor.HttpContext!.SignOutAsync(Schemes.Cookie);
+        await _httpContextWrapper.SignOutAsync(Schemes.Cookie);
         return TypedResults.Ok();
     }
 
@@ -111,6 +110,6 @@ internal sealed class AccountRoutes : IAccountRoutes
             .Accept(_userIdentityVisitor)
             .Accept(_userMapperVisitor);
 
-        return Task.FromResult(RoutesResultHelper.UnwrapOperationResult(resultDto));
+        return Task.FromResult(_routesResultHelper.UnwrapOperationResult(resultDto));
     }
 }

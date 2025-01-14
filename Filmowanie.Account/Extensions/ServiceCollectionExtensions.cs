@@ -38,6 +38,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IUserIdProvider, UserIdProvider>();
         services.AddSingleton<ILoginResultDataExtractor, LoginResultDataExtractor>();
 
+        services.AddScoped<IHttpContextWrapper, HttpContextWrapper>();
+
         return services;
     }
 }

@@ -1,4 +1,4 @@
-using Filmowanie.Abstractions.Providers;
+using Filmowanie.Abstractions.Wrappers;
 using FluentAssertions;
 
 namespace Filmowanie.Tests.Filmowanie_Abstractions;

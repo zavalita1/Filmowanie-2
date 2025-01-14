@@ -1,0 +1,11 @@
+﻿using Filmowanie.Database.Entities;
+using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+using Filmowanie.Voting.DomainModels;
+
+namespace Filmowanie.Voting.Interfaces;
+
+internal interface INominationsRetriever
+{
+    List<EmbeddedUserWithNominationAward> GetNominations(Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> assignNominationsUserContexts, VotingConcludedEvent message, VotingResults votingResults);
+}

@@ -2,7 +2,6 @@
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
-using Filmowanie.Account.Helpers;
 using Filmowanie.Account.Interfaces;
 using Microsoft.AspNetCore.Http;
 
@@ -17,14 +16,16 @@ internal class AccountsAdministrationRoutes : IAccountsAministrationRoutes
     private readonly IUserIdentityVisitor _userIdentityVisitor;
     private readonly IFluentValidatorAdapter<UserDTO> _validator;
     private readonly IFluentValidatorAdapter<string> _userIdValidator;
+    private readonly IRoutesResultHelper _routesResultHelper;
 
-    public AccountsAdministrationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IEnrichUserVisitor enrichUserVisitor, IGetAllUsersVisitor getAllUsersVisitor, IUserReverseMapperVisitor reverseMapperVisitor, IAddUserVisitor addUserVisitor, IUserIdentityVisitor userIdentityVisitor)
+    public AccountsAdministrationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IEnrichUserVisitor enrichUserVisitor, IGetAllUsersVisitor getAllUsersVisitor, IUserReverseMapperVisitor reverseMapperVisitor, IAddUserVisitor addUserVisitor, IUserIdentityVisitor userIdentityVisitor, IRoutesResultHelper routesResultHelper)
     {
         _enrichUserVisitor = enrichUserVisitor;
         _getAllUsersVisitor = getAllUsersVisitor;
         _reverseMapperVisitor = reverseMapperVisitor;
         _addUserVisitor = addUserVisitor;
         _userIdentityVisitor = userIdentityVisitor;
+        _routesResultHelper = routesResultHelper;
         _validator = validatorAdapterProvider.GetAdapter<UserDTO>(KeyedServices.Username);
         _userIdValidator = validatorAdapterProvider.GetAdapter<string>(KeyedServices.Username);
     }
@@ -35,7 +36,7 @@ internal class AccountsAdministrationRoutes : IAccountsAministrationRoutes
             .Empty
             .AcceptAsync(_getAllUsersVisitor, cancel);
 
-        return RoutesResultHelper.UnwrapOperationResult(result);
+        return _routesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> GetUser(string userId, CancellationToken cancel)
@@ -44,7 +45,7 @@ internal class AccountsAdministrationRoutes : IAccountsAministrationRoutes
             .Validate(userId)
             .AcceptAsync(_enrichUserVisitor, cancel);
 
-        return RoutesResultHelper.UnwrapOperationResult(result);
+        return _routesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> AddUser(UserDTO dto, CancellationToken cancel)
@@ -55,6 +56,6 @@ internal class AccountsAdministrationRoutes : IAccountsAministrationRoutes
             .Accept(_reverseMapperVisitor)
             .AcceptAsync(_addUserVisitor, cancel);
 
-        return RoutesResultHelper.UnwrapOperationResult(result, TypedResults.Created());
+        return _routesResultHelper.UnwrapOperationResult(result, TypedResults.Created());
     }
 }
