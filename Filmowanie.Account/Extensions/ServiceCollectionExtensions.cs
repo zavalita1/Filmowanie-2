@@ -37,6 +37,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IHashHelper, HashHelper>();
         services.AddSingleton<IUserIdProvider, UserIdProvider>();
         services.AddSingleton<ILoginResultDataExtractor, LoginResultDataExtractor>();
+        services.AddSingleton<IRoutesResultHelper, RoutesResultHelper>();
 
         services.AddScoped<IHttpContextWrapper, HttpContextWrapper>();
 

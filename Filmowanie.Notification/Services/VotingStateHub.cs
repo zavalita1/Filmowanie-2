@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace Filmowanie.Notification;
+namespace Filmowanie.Notification.Services;
 
 public sealed class VotingStateHub : Hub
 {

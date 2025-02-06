@@ -26,7 +26,16 @@ public static class OperationResultExtensions
         if (operationResult.Error != null)
             return new OperationResult<TNext>(default!, operationResult.Error);
 
-        var result = await inlineVisitor.Invoke(operationResult.Result, cancellationToken);
+        var result = await inlineVisitor.Invoke(operationResult.Result!, cancellationToken);
+        return new OperationResult<TNext>(result, null);
+    }
+
+    public static OperationResult<TNext> Accept<TPrevious, TNext>(this OperationResult<TPrevious> operationResult, Func<TPrevious, TNext> inlineVisitor)
+    {
+        if (operationResult.Error != null)
+            return new OperationResult<TNext>(default!, operationResult.Error);
+
+        var result = inlineVisitor.Invoke(operationResult.Result!);
         return new OperationResult<TNext>(result, null);
     }
 
@@ -38,7 +47,7 @@ public static class OperationResultExtensions
         if (operationResult.Error != null)
             return operationResult with { Result = default! };
 
-        await inlineVisitor.Invoke(operationResult.Result, cancellationToken);
+        await inlineVisitor.Invoke(operationResult.Result!, cancellationToken);
         return operationResult with { Error = null };
     }
 
@@ -56,7 +65,7 @@ public static class OperationResultExtensions
             error = new Error(errorMessages, errorType);
         }
         
-        return new OperationResult<(T1, T2)>((first.Result, second.Result), error);
+        return new OperationResult<(T1, T2)>((first.Result!, second.Result!), error);
     }
 
     public static OperationResult<(T1, T2, T3)> Flatten<T1, T2, T3>(this OperationResult<((T1, T2), T3)> operation) => new((operation.Result.Item1.Item1, operation.Result.Item1.Item2, operation.Result.Item2), operation.Error);

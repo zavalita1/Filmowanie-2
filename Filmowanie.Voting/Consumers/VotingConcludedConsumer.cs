@@ -3,8 +3,6 @@ using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces;
-using Filmowanie.Voting.Deciders;
-using Filmowanie.Voting.Deciders.PickUserNomination;
 using Filmowanie.Voting.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -23,7 +21,7 @@ internal sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>,
 
     private const int DecidersTimeWindow = 10;
 
-    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingSessionCommandRepository votingSessionCommandRepository, IDateTimeProvider dateTimeProvider, IVotingSessionQueryRepository votingSessionQueryRepository, IVotingDeciderFactory votingDeciderFactory, IPickUserToNominateStrategyFactory pickUserToNominateStrategyFactory, IPickUserToNominateContextRetriever pickUserToNominateContextRetriever, IVotingResultsRetriever votingResultsRetriever, INominationsRetriever nominationsRetriever)
+    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingSessionCommandRepository votingSessionCommandRepository, IDateTimeProvider dateTimeProvider, IVotingSessionQueryRepository votingSessionQueryRepository, IPickUserToNominateContextRetriever pickUserToNominateContextRetriever, IVotingResultsRetriever votingResultsRetriever, INominationsRetriever nominationsRetriever)
     {
         _logger = logger;
         _votingSessionCommandRepository = votingSessionCommandRepository;

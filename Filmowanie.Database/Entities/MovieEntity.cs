@@ -2,11 +2,6 @@
 
 namespace Filmowanie.Database.Entities;
 
-internal class PushSubscriptionEntity : Event
-{
-    public string Endpoint { get; set; }
-}
-
 internal class MovieEntity : Entity, IReadOnlyMovieEntity
 {
     public virtual string Name { get; set; }

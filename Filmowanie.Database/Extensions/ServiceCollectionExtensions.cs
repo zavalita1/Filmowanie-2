@@ -37,7 +37,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IMovieCommandRepository, MovieCommandRepository>();
         
-        // TODO
-        services.AddScoped<PushSubscriptionRepository, PushSubscriptionRepository>();
+        services.AddScoped<IPushSubscriptionCommandRepository, PushSubscriptionCommandRepository>();
+        services.AddScoped<IPushSubscriptionQueryRepository, PushSubscriptionQueryRepository>();
+        services.Decorate<IPushSubscriptionQueryRepository, PushSubscriptionQueryDecorator>();
     }
 }

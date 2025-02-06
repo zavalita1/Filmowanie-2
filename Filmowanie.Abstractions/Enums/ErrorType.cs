@@ -5,6 +5,7 @@
 /// </summary>
 public enum ErrorType 
 {
+    Network = 90,
     InvalidState = 100,
     IncomingDataIssue = 200,
     ValidationError = 300,

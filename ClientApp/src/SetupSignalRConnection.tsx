@@ -4,7 +4,7 @@ import { ApplicationState } from "./store";
 
 
 export function SetupSignalRConnection(store: Store<ApplicationState>) {
-    const connection = new signalR.HubConnectionBuilder().withUrl("/votesHub").withAutomaticReconnect().build();
+    const connection = new signalR.HubConnectionBuilder().withUrl("/api/votesHub").withAutomaticReconnect().build();
     connection.on("ReceiveMessage", function (user, message) {
         alert(`${user} + ${message}`);
     });

@@ -102,7 +102,7 @@ const
         const userClaims : IUser = {...response};
         return getNominationsAndStateData(userClaims, fetchWrapper, dispatch);
     }).then(() => {
-        Init.requestPushNotificationPermission();
+       // Init.requestPushNotificationPermission();
     }).catch(error => {
        console.log('error during getting user', error);
     });
@@ -132,13 +132,17 @@ const getNominationsAndStateData = (userClaims: IUser, fetchWrapper: <T>(path: s
 const setUser = (user: IUser, dispatch: (action: UserAction | AppAction) => void) => {
     dispatch({ type: 'LOGGED', payload:  user });
     dispatch(appActionCreators.actionCreators.setLoading(false));
+    const domEvent = new Event("userLogsIn");
+    window.dispatchEvent(domEvent);
+    localStorage.setItem("isLogged", "True");
 }
 
 const loggedOut = () => ({type: 'UNLOGGED'} as UnloggedAction);
 
 const logOut = () : AppThunkAction<UnloggedAction> => async (dispatch, getState) => {
     await fetch('api/account/logout', { method: 'POST' });
-    dispatch({ type: 'UNLOGGED'});
+    dispatch({ type: 'UNLOGGED' });
+    localStorage.setItem("isLogged", "False");
 }
 
 export const actionCreators = {

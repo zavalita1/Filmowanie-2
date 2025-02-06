@@ -20,7 +20,7 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
         TenantId tenant,
         CancellationToken cancellationToken)
     {
-        var currentVotingSession = await _ctx.VotingResults.SingleOrDefaultAsync(predicate, cancellationToken);
+        var currentVotingSession = await _ctx.VotingResults.AsNoTracking().SingleOrDefaultAsync(predicate, cancellationToken);
         return currentVotingSession;
     }
 
@@ -31,7 +31,7 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
         Func<IQueryable<IReadOnlyVotingResult>, IOrderedQueryable<IReadOnlyVotingResult>> sortFunction = take > 0 ? x => x.OrderBy(sortBy) : x => x.OrderByDescending(sortBy);
         
         var query = _ctx.VotingResults.Where(predicate);
-        var currentVotingSession = await sortFunction.Invoke(query).Take(Math.Abs(take)).ToArrayAsync(cancellationToken);
+        var currentVotingSession = await sortFunction.Invoke(query).Take(Math.Abs(take)).AsNoTracking().ToArrayAsync(cancellationToken);
         return currentVotingSession;
     }
 

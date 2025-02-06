@@ -104,7 +104,7 @@ public sealed class AccountsAdministrationRoutesTests
         _addUserVisitor.VisitAsync(operationResult3, cancellationToken).Returns(operationResult4);
 
         var expectedResult = Substitute.For<IResult>();
-        _routesResultHelper.UnwrapOperationResult(operationResult4).Returns(expectedResult);
+        _routesResultHelper.UnwrapOperationResult(operationResult4, Arg.Any<IResult>()).Returns(expectedResult);
 
         // Act
         var result = await _routes.AddUser(input, cancellationToken);

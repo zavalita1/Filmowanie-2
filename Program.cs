@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.Constants;
 using Filmowanie.Account.Extensions;
 using Filmowanie.Database.Contants;
@@ -62,6 +63,8 @@ builder.Services.RegisterCustomServices(builder.Configuration, environment);
 builder.Services.RegisterDatabaseServices(builder.Configuration, environment);
 builder.Services.RegisterNotificationDomain();
 
+builder.Services.Configure<PushNotificationOptions>(builder.Configuration.GetSection("Vapid"));
+
 ConfigureMassTransit(builder);
 
 var app = builder.Build();
@@ -101,7 +104,7 @@ void ConfigureEndpoints(WebApplication webApplication, Environment appEnvironmen
     apiGroup.RegisterNotificationRoutes();
 
     webApplication.UseWhen(
-        context => !context.Request.Path.StartsWithSegments("/api") && !context.Request.Path.StartsWithSegments(Filmowanie.Notification.Extensions.RouteGroupBuilderExtensions.VotesHubPath),
+        context => !context.Request.Path.StartsWithSegments("/api"),
         then => then.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";

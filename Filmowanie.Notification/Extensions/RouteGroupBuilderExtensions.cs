@@ -1,5 +1,7 @@
-﻿using Filmowanie.Notification.DTOs.Incoming;
+﻿using Filmowanie.Abstractions.Constants;
+using Filmowanie.Notification.DTOs.Incoming;
 using Filmowanie.Notification.Interfaces;
+using Filmowanie.Notification.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -12,9 +14,11 @@ public static class RouteGroupBuilderExtensions
 
     public static RouteGroupBuilder RegisterNotificationRoutes(this RouteGroupBuilder builder)
     {
-        var accountRoutesBuilder = builder.MapGroup("pushNotification/").RequireAuthorization();
+        var accountRoutesBuilder = builder.MapGroup("pushNotification/");
 
-        accountRoutesBuilder.MapPost("add", ([FromServices] IPushNotificationRoutes routes, [FromBody] PushSubscriptionDTO dto, CancellationToken ct) => routes.Add(dto, ct));
+        accountRoutesBuilder.MapGet("vapid", ([FromServices] IPushNotificationRoutes routes, CancellationToken ct) => routes.GetVapidPublicKey(ct));
+        accountRoutesBuilder.MapPost("add", ([FromServices] IPushNotificationRoutes routes, [FromBody] PushSubscriptionDTO dto, CancellationToken ct) => routes.Add(dto, ct)).RequireAuthorization();
+        accountRoutesBuilder.MapPost("notify", ([FromServices] IPushNotificationRoutes routes, [FromBody] NotifyDTO dto, CancellationToken ct) => routes.Notify(dto, ct)).RequireAuthorization(Schemes.Admin);
 
         builder.MapHub<VotingStateHub>(VotesHubPath);
 
