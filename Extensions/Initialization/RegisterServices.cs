@@ -2,7 +2,6 @@
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Wrappers;
 using Filmowanie.Account.Extensions;
-using Filmowanie.Account.Helpers;
 using Filmowanie.Infrastructure;
 using Filmowanie.Interfaces;
 using Filmowanie.Nomination.Extensions;
@@ -12,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Filmowanie.Extensions;
+namespace Filmowanie.Extensions.Initialization;
 
 public static class RegisterServices
 {

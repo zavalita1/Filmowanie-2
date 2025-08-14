@@ -1,24 +1,29 @@
-import * as React from 'react';
-import { Route } from 'react-router';
-import Layout from './components/Layout';
-import Home from './components/Pages/Home';
-import MoviesList from './components/Pages/MoviesList';
-import Results from './components/Pages/Results';
-import Admin from './components/Pages/Admin';
-import Nominate from './components/Pages/Nominate';
-import History from './components/Pages/History';
+import React from 'react'
+import { Provider as ReduxStoreProvider } from 'react-redux'
+import { BrowserRouter, Routes, Route } from 'react-router'
 
-import './components/css/custom.css'
+import './features/Counter/index.module.css'
+import Counter from './features/Counter/index'
+import Home from './pages/Home/Home'
+import { store } from './store/store'
 
-export default () => {
-    return (
-    <Layout>
-        <Route exact path='/' component={Home} />
-        <Route path='/movies-list' component={MoviesList} />
-        <Route path='/results' component={Results} />
-        <Route path='/admin' component={Admin} />
-        <Route path='/nominate' component={Nominate} />
-        <Route path='/history' component={History} />
-    </Layout>
-    )
-};
+const App: React.FC = () => {
+  return (
+    <ReduxStoreProvider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/test" element={<Counter />} />
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </BrowserRouter>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" />
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@300;400;500;600;700&display=swap"
+      />
+    </ReduxStoreProvider>
+  )
+}
+
+export default App

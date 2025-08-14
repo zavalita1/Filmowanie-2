@@ -1,12 +1,12 @@
 {
   "profiles": {
-    "SampleWeb": {
+    "Filmowanie": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:60577;http://localhost:60578"
+      "applicationUrl": "https://localhost:60571;http://localhost:60578"
     }
   }
 }

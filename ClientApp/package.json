@@ -1,65 +1,82 @@
 {
-  "name": "filmowanie",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@microsoft/signalr": "^7.0.12",
-    "@mui/icons-material": "^5.14.14",
-    "@mui/material": "^5.14.14",
-    "bootstrap": "~4.6.1",
-    "chart.js": "^4.4.0",
-    "connected-react-router": "6.5.2",
-    "history": "4.10.1",
-    "jquery": "~3.6.0",
-    "merge": "2.1.1",
-    "popper.js": "^1.16.1",
-    "react": "~16.14.0",
-    "react-canvas-confetti": "^1.4.0",
-    "react-chartjs-2": "^5.2.0",
-    "react-dom": "~16.14.0",
-    "react-redux": "~7.2.6",
-    "react-router": "~5.2.1",
-    "react-router-dom": "~5.3.0",
-    "reactstrap": "~8.10.1",
-    "redux": "4.1.2",
-    "redux-thunk": "2.4.1"
+  "name": "filmowanie-frontend",
+  "license": "MIT",
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   },
-  "devDependencies": {
-    "@types/history": "4.7.10",
-    "@types/jest": "24.0.19",
-    "@types/node": "^20.4.5",
-    "@types/react": "~16.9.14",
-    "@types/react-dom": "~16.9.14",
-    "@types/react-redux": "~7.1.22",
-    "@types/react-router": "~5.1.17",
-    "@types/react-router-dom": "~5.3.0",
-    "@types/reactstrap": "~8.7.2",
-    "cross-env": "6.0.3",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "nan": "^2.15.0",
-    "react-scripts": "^5.0.0",
-    "typescript": "^4.9.0"
+  "lint-staged": {
+    "*": "prettier --ignore-unknown --write"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "cross-env CI=true react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "lint": "eslint ./src/**/*.ts ./src/**/*.tsx"
+    "start": "vite",
+    "dev": "vite",
+    "dev-mocked": "vite -m mockedBackend",
+    "build": "vite build",
+    "serve": "serve dist",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts,.tsx,.js,jsx.cjs",
+    "lint:fix": "eslint src --ext .ts,.tsx,.js,jsx,cjs --fix",
+    "typecheck": "tsc --noEmit",
+    "prettier": "prettier --ignore-unknown --write .",
+    "clean": "rimraf node_modules pnpm-lock.yaml dist"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "dependencies": {
+    "@reduxjs/toolkit": "2.8.2",
+    "@tailwindcss/vite": "^4.1.12",
+    "clsx": "^2.1.1",
+    "ky": "^1.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.2.0",
+    "react-router": "^7.6.2",
+    "redux": "5.0.1"
   },
-  "resolutions": {
-    "url-parse": ">=1.5.0",
-    "lodash": ">=4.17.21"
+  "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/line-clamp": "^0.4.4",
+    "@tailwindcss/postcss": "^4.1.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/eslint": "^8.56.7",
+    "@types/node": "^24.0.4",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@typescript-eslint/eslint-plugin": "^8.35.0",
+    "@typescript-eslint/parser": "^8.35.0",
+    "@vitejs/plugin-react": "^4.6.0",
+    "@vitejs/plugin-react-swc": "^3.10.2",
+    "all-contributors-cli": "^6.26.1",
+    "concurrently": "^9.2.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-config-ts-prefixer": "^1.14.2",
+    "eslint-config-typescript": "^3.0.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
+    "lint-staged": "^16.1.2",
+    "msw": "^2.10.2",
+    "node-fetch": "^3.3.2",
+    "postcss": "^8.5.6",
+    "postcss-nesting": "^13.0.2",
+    "prettier": "^3.6.1",
+    "serve": "^14.2.4",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.0",
+    "vitest": "^3.2.4"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "volta": {
+    "node": "22.16.0"
+  }
 }

@@ -1,48 +1,26 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
+﻿using System.Threading.Tasks;
 using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.Constants;
-using Filmowanie.Account.Extensions;
-using Filmowanie.Database.Contants;
-using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
-using Filmowanie.Filters;
-using Filmowanie.Nomination.Extensions;
-using Filmowanie.Notification.Consumers;
-using Filmowanie.Notification.Extensions;
-using Filmowanie.Voting.Extensions;
-using Filmowanie.Voting.Sagas;
-using MassTransit;
+using Filmowanie.Extensions.Initialization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using ZLogger;
 using Environment = Filmowanie.Abstractions.Enums.Environment;
 
 var builder = WebApplication.CreateBuilder(args);
 var environment = builder.Environment.IsDevelopment() ? Environment.Development : Environment.Production;
 
-ConfigureLogging(builder);
+builder.ConfigureLogging();
 
-builder.Services.AddSpaStaticFiles(so => so.RootPath = "ClientApp/build");
 builder.Services.AddSignalR();
 
+if (environment == Environment.Development)
+    builder.Services.AddCors(o => o.AddPolicy("ViteLocalDevServer", p => p.WithOrigins(builder.Configuration["FrontendDevServer"]!)));
+
 builder.Services
-    .AddAuthentication(o =>
-    {
-        o.DefaultScheme = Schemes.Cookie;
-    })
+    .AddAuthentication(o => { o.DefaultScheme = Schemes.Cookie; })
     .AddCookie(Schemes.Cookie, o =>
     {
         o.Events.OnRedirectToLogin = context =>
@@ -53,112 +31,23 @@ builder.Services
     });
 
 if (environment == Environment.Production)
-{
-    await SetupKeyVaultAsync(builder);
-}
+    await builder.SetupKeyVaultAsync();
 
 builder.Services.AddMemoryCache();
 builder.Services.RegisterPolicies();
 builder.Services.RegisterCustomServices(builder.Configuration, environment);
 builder.Services.RegisterDatabaseServices(builder.Configuration, environment);
-builder.Services.RegisterNotificationDomain();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<PushNotificationOptions>(builder.Configuration.GetSection("Vapid"));
-
-ConfigureMassTransit(builder);
+builder.Services.ConfigureMassTransit(builder.Configuration);
 
 var app = builder.Build();
-if (environment != Environment.Development)
-{
-    app.UseSpaStaticFiles();
-}
 
-ConfigureEndpoints(app, environment);
+app.ConfigureEndpoints(environment);
 
-app.Run();
-return;
+if (environment == Environment.Development)
+    app.UseCors("ViteLocalDevServer");
 
-async Task SetupKeyVaultAsync(WebApplicationBuilder webApplicationBuilder)
-{
-    var keyVaultName = webApplicationBuilder.Configuration["KeyVaultName"];
-    var kvUri = $"https://{keyVaultName}.vault.azure.net";
-
-    var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
-    var keyVaultConfigurationProvider = new ConcurrentDictionary<string, string>();
-    var keys = client.GetPropertiesOfSecrets().AsPages().ToArray().SelectMany(x => x.Values);
-    await Parallel.ForEachAsync(keys, async (k, cancel) =>
-    {
-        var secret = await client.GetSecretAsync(k.Name, cancellationToken: cancel);
-        keyVaultConfigurationProvider.AddOrUpdate(k.Name, secret.Value.Value, (_, _) => throw new NotSupportedException("Secret names must be unique!"));
-    });
-    webApplicationBuilder.Configuration.AddInMemoryCollection(keyVaultConfigurationProvider);
-}
-
-void ConfigureEndpoints(WebApplication webApplication, Environment appEnvironment)
-{
-    var apiGroup = webApplication.MapGroup("api");
-    apiGroup.AddEndpointFilter<LoggingActionFilter>();
-    apiGroup.RegisterAccountRoutes();
-    apiGroup.RegisterVotingRoutes();
-    apiGroup.RegisterNominationRoutes();
-    apiGroup.RegisterNotificationRoutes();
-
-    webApplication.UseWhen(
-        context => !context.Request.Path.StartsWithSegments("/api"),
-        then => then.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (appEnvironment != Environment.Production)
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
-            }
-        ));
-}
-
-void ConfigureLogging(WebApplicationBuilder appBuilder)
-{
-    appBuilder.Logging.ClearProviders();
-    appBuilder.Logging.AddZLoggerConsole();
-    var currentDll = Assembly.GetExecutingAssembly().Location;
-    var currentDir = Path.GetDirectoryName(currentDll);
-    var logPath = $"{currentDir}\\AppLog.txt";
-    appBuilder.Logging.AddZLoggerFile(logPath);
-}
-
-void ConfigureMassTransit(WebApplicationBuilder appBuilder)
-{
-    appBuilder.Services.AddMassTransit(x =>
-    {
-        x.AddConfigureEndpointsCallback((context, name, cfg) =>
-        {
-            cfg.UseMessageRetry(r => r.Incremental(5, TimeSpan.Zero, TimeSpan.FromMilliseconds(250)));
-        });
-
-        x.SetKebabCaseEndpointNameFormatter();
-        var dbConnectionString = appBuilder.Configuration["dbConnectionString"]!;
-        x.SetCosmosSagaRepositoryProvider(dbConnectionString, cosmosConfig =>
-        {
-            cosmosConfig.DatabaseId = "db-filmowanie2";
-            cosmosConfig.CollectionId = DbContainerNames.Events;
-        });
-
-        var entryAssembly = new []
-        {
-            Assembly.GetEntryAssembly()!, 
-            typeof(VotingStateInstance).Assembly, 
-            typeof(Filmowanie.Nomination.Consumers.VotingConcludedConsumer).Assembly,
-            typeof(ConcludeVotingEventConsumer).Assembly,
-        }; // TODO
-
-        x.AddConsumers(entryAssembly);
-        x.AddSagaStateMachine<VotingStateMachine, VotingStateInstance>();
-        x.AddActivities(entryAssembly);
-
-        x.UsingInMemory((context, cfg) =>
-        {
-            cfg.ConfigureEndpoints(context);
-        });
-    });
-}
+await app.RunAsync();

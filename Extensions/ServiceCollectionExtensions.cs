@@ -13,8 +13,7 @@ public static class ServiceCollectionExtensions
                 policy
                     .AddAuthenticationSchemes(Schemes.Cookie)
                     .RequireClaim(ClaimsTypes.IsAdmin, "True")
-            )
-            ;
+            );
 
         return serviceCollection;
     }
