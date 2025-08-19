@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Penguin</title>
+  <desc id="desc">Filmowanie icon?</desc>
+
+  <!-- Background (optional) -->
+  <rect width="256" height="256" fill="none"/>
+
+  <!-- Shadow -->
+  <ellipse cx="128" cy="236" rx="78" ry="10" fill="#000" opacity="0.08"/>
+
+  <!-- Body -->
+  <ellipse cx="128" cy="140" rx="74" ry="92" fill="#2f3a44"/>
+  <!-- Head (slightly separate for shape clarity) -->
+  <circle cx="128" cy="80" r="46" fill="#2f3a44"/>
+
+  <!-- Belly -->
+  <ellipse cx="128" cy="148" rx="54" ry="72" fill="#ffffff"/>
+
+  <!-- Feet -->
+  <ellipse cx="100" cy="230" rx="24" ry="8" fill="#f5a623"/>
+  <ellipse cx="156" cy="230" rx="24" ry="8" fill="#f5a623"/>
+
+  <!-- Sunglasses -->
+  <g fill="#0e0e0e">
+    <rect x="88" y="66" width="40" height="25" rx="5"/>
+    <rect x="129" y="66" width="42" height="25" rx="5"/>
+    <rect x="122" y="74" width="8" height="6"/>
+    <!-- Arms of the glasses -->
+    <path d="M88 76 H70" stroke="#0e0e0e" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M168 76 H186" stroke="#0e0e0e" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Beak -->
+  <polygon points="118,100 138,100 128,114" fill="#f5a623"/>
+
+  <!-- Flippers -->
+  <path d="M68 132 Q88 150 80 182 Q70 164 68 132 Z" fill="#2b333c"/>
+  <!-- Right flipper wrapping around the popcorn -->
+  <path d="M190 140 Q170 158 178 184 Q200 168 198 150 Z" fill="#2b333c"/>
+
+  <!-- Popcorn bag (slight perspective) -->
+  <g>
+    <!-- Bag shape -->
+    <polygon points="182,160 230,160 220,212 192,212" fill="#e53737"/>
+    <!-- White stripes -->
+    <polygon points="186,160 194,160 186,212" fill="#ffffff" opacity="0.9"/>
+    <polygon points="200,160 208,160 202,212 194,212" fill="#ffffff" opacity="0.9"/>
+    <polygon points="214,160 222,160 218,212 210,212" fill="#ffffff" opacity="0.9"/>
+    <!-- Popcorn kernels peeking out -->
+    <g fill="#ffd76b">
+      <circle cx="188" cy="154" r="6"/>
+      <circle cx="198" cy="152" r="5"/>
+      <circle cx="208" cy="154" r="6"/>
+      <circle cx="220" cy="156" r="5"/>
+    </g>
+  </g>
+
+  <!-- Subtle highlight on head for polish -->
+  <path d="M106 52 q-20 20 0 36" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="4" stroke-linecap="round"/>
+</svg>

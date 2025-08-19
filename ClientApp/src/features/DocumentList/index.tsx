@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 
-import Spinner from '../../components/Spinner'
+import Spinner from '../../components/ui/Spinner'
 import { useGetDocsListQuery } from '../../services/docs'
 
 import styles from './index.module.css'

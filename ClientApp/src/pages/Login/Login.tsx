@@ -1,15 +1,9 @@
-import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
-import { AppComponentProps, Layout } from '../Layout';
 
-const Home: React.FC<AppComponentProps> = (props) => {
-  return (
-  <div> {props.userData === null ? "Witaj anonimowy użytkowniku. Zapraszam do logowania." : "TODO"}</div>
-  );
-}
+import { AppComponentProps, Layout } from '../Layout';
 
 const Login: React.FC = () => {
   return (
@@ -50,6 +44,6 @@ const BasicLogin: React.FC = () => {
     </div>);
 };
 
-const wrappedHome: React.FC = () => { return <Layout><Home/></Layout>}
+const wrappedLogin: React.FC = () => { return <Layout><Login/></Layout>}
 
-export default wrappedHome;
+export default wrappedLogin;

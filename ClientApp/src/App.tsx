@@ -3,9 +3,10 @@ import { Provider as ReduxStoreProvider } from 'react-redux'
 import { BrowserRouter, Routes, Route } from 'react-router'
 
 import './features/Counter/index.module.css'
-import Counter from './features/Counter/index'
-import Home from './pages/Home/Home'
-import { store } from './store/store'
+import Counter from './features/Counter/index';
+import Home from './pages/Home/Home';
+import Login from './pages/Login/Login';
+import { store } from './store/store';
 
 const App: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/test" element={<Counter />} />
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
