@@ -24,14 +24,21 @@
     "clean": "rimraf node_modules pnpm-lock.yaml dist"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-tabs": "^1.1.13",
     "@reduxjs/toolkit": "2.8.2",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "ky": "^1.8.1",
+    "lucide-react": "^0.540.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "react-router": "^7.6.2",
-    "redux": "5.0.1"
+    "redux": "5.0.1",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.2",
@@ -73,6 +80,7 @@
     "prettier-plugin-tailwindcss": "^0.6.13",
     "serve": "^14.2.4",
     "tailwindcss": "^4.1.10",
+    "tw-animate-css": "^1.3.7",
     "typescript": "^5.8.3",
     "vite": "^7.0.0",
     "vitest": "^3.2.4"
