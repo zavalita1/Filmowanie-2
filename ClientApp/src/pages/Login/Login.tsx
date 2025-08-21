@@ -2,11 +2,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
+import { useLoginWithCodeMutation, useGetUserQuery } from "../../store/apis/User/userApi";
+import { LoginWithCodeOutgoingDTO } from "../../store/apis/User/types";
+import { useNavigate } from "react-router";
 
 import { AppComponentProps, Layout } from '../Layout';
+import { useEffect, useState } from "react";
 
 const Login: React.FC = () => {
-  return (
+    const {data, error, isLoading } = useGetUserQuery();
+    const navigate = useNavigate();
+    useEffect(() => {
+        // what are you doing here, you're already logged
+        if (!error && !isLoading && !!data?.username)
+            navigate('/');
+    }, [data, error, isLoading])
+
+    return (
     <div className="flex min-h-svh flex-col items-center justify-center">
       <Tabs defaultValue="account" className="w-full max-w-3xl">
         <TabsList className="w-full">
@@ -27,11 +39,19 @@ const Login: React.FC = () => {
 };
 
 const CodeLogin: React.FC = () => {
+  const [useLogin, result] = useLoginWithCodeMutation({ fixedCacheKey: 'looo'});
+  const [inputValue, setInputValue] = useState('');
+  
   return (<div className="grid w-full max-w-3xl items-center gap-3">
       <Label htmlFor="email">Wpisuj kod</Label>
-      <Input type="email" id="email" placeholder="Kod, masa znaczków" />
-      <Button className="mt-4" type="submit">Zaloguj</Button>
+      <Input type="email" id="email" placeholder="Kod, masa znaczków" value={inputValue} onInput={e => setInputValue(e.target.value)} />
+      <Button className="mt-4" type="submit" onClick={() => login(inputValue)}>Zaloguj</Button>
     </div>);
+
+    function login(code: string) {
+        const dto : LoginWithCodeOutgoingDTO = { code };
+        useLogin(dto);
+    }
 };
 
 const BasicLogin: React.FC = () => {

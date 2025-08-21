@@ -1,10 +1,12 @@
 import React, { createContext, ReactElement, ReactNode } from 'react';
-import { LuLogIn, LuMenu } from 'react-icons/lu';
+import { LuLogIn, LuMenu, LuLogOut } from 'react-icons/lu';
 import { NavLink } from 'react-router';
 import penguinSvg from '../components/ui/footerIcon.svg';
-import { useGetUserQuery } from '../store/apis/User/userApi';
+import { useGetUserQuery, useLogoutMutation } from '../store/apis/User/userApi';
 import Spinner from '../components/ui/Spinner';
 import { UserState } from '@/store/apis/User/types';
+import { useAppSelector } from '../hooks/redux';
+import clsx from 'clsx';
 
 export type LayoutProps = {
   children?: ReactElement<AppComponentProps>;
@@ -18,7 +20,9 @@ export const LayoutContext = createContext<string>("TODO");
 
 export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const [isNavMenuVisible, setIsNavMenuVisible] = React.useState(false);
-  const { data, error, isLoading } = useGetUserQuery();
+  const isLoading = useAppSelector(s => s.global.isLoading);
+  const { data, error } = useGetUserQuery();
+  const [useLogout, result] = useLogoutMutation();
 
   const handleClick = () => setIsNavMenuVisible(!isNavMenuVisible);
   const handleClose = () => setIsNavMenuVisible(false);
@@ -26,7 +30,8 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   return (
     <LayoutContext.Provider value="TODO">
       <Header />
-      { isLoading ? <Spinner /> : RenderBody() }
+      <div id="container" className="flex flex-row min-h-screen justify-center items-center -z-10 fixed w-full"><Spinner isLoading={isLoading}></Spinner></div>
+      { RenderBody(isLoading) }
       <Footer />
     </LayoutContext.Provider>
   );
@@ -50,23 +55,38 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
           </ul>
         </div>
         <div className='hidden md:flex pr-4'>
+          { data === undefined || data === null ? 
           <NavLink to="/login">
-          <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600" type="submit">
+          <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600">
             <LuLogIn className='lg:w-5 lg:h-5 mx-2' />
             <span className="text-sm font-medium">
               Login
             </span>
           </div>
           </NavLink>
+          : 
+          <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600" onClick={logout}>
+            <LuLogOut className='lg:w-5 lg:h-5 mx-2' />
+            <span className="text-sm font-medium">
+              Logout
+            </span>
+          </div>
+          }
         </div>
         <div className='md:hidden mr-4' onClick={handleClick}>
           {!isNavMenuVisible ? <LuMenu className='w-5 text-black' /> : <div className='flex'>
-            <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600" type="submit">
+            { data === undefined || data === null ? <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600">
               <LuLogIn className='lg:w-5 lg:h-5 mx-2' />
               <span className="text-sm font-medium">
                 Login
               </span>
-            </div>
+            </div> : 
+            <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600" onClick={logout}>
+              <LuLogOut className='lg:w-5 lg:h-5 mx-2' />
+              <span className="text-sm font-medium">
+                Logout
+              </span>
+            </div>}
             <div className="block cursor-pointer shrink-0 rounded-lg bg-white mr-4 p-2.5 border border-gray-100 shadow-sm hover:bg-transparent hover:text-green-600 hover:border hover:border-green-600">
               <span className="sr-only">Account</span>
               <LuMenu className='lg:w-5 lg:h-5' />
@@ -82,20 +102,23 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
         <li onClick={handleClose} className='border-b-2 border-zinc-300 w-full'>
           About Us
         </li>
-        <li onClick={handleClose} className='border-b-2 border-zinc-300 w-full'>
-          Contact Us
-        </li>
-        <li onClick={handleClose} className='border-b-2 border-zinc-300 w-full'>
-          Services
-        </li>
       </ul>
     </div>
   }
 
-  function RenderBody() {
+  function RenderBody(addOpacity: boolean) {
+    const containerClassName = clsx(
+      'flex',
+      'flex-row',
+      'min-h-screen',
+      'justify-center',
+      'items-center',
+      addOpacity ? 'opacity-15' : ''
+    )
+
     return  (props.children === undefined ? 
     <></>
-    : (error !== undefined ? DisplayFatalError() : <div id="container" className="flex flex-row min-h-screen justify-center items-center">{React.cloneElement(props.children, { userData: data, test:"TODO"} as any)}</div>));
+    : (error !== undefined ? DisplayFatalError() : <div id="container" className={containerClassName}>{React.cloneElement(props.children, { userData: data, test:"TODO"} as any)}</div>));
   }
 
   function DisplayFatalError() {
@@ -119,6 +142,10 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
         </div>
       </footer>
     </section>
+  }
+
+  function logout() {
+    useLogout();
   }
 };
 

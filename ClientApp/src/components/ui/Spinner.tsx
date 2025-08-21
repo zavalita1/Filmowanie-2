@@ -1,5 +1,5 @@
-import clsx from 'clsx'
-import React, { memo } from 'react'
+import clsx from 'clsx';
+import React from 'react';
 
 const sizes = {
   lg: 'h-16 w-16',
@@ -17,10 +17,11 @@ export type SpinnerProps = {
   className?: string
   size?: keyof typeof sizes
   variant?: keyof typeof variants
+  isLoading: boolean
 }
 
-const Spinner: React.FC<React.PropsWithChildren<SpinnerProps>> = memo(
-  ({ className = '', size = 'md', variant = 'primary' }: SpinnerProps) => {
+const Spinner: React.FC<React.PropsWithChildren<SpinnerProps>> = 
+  ({ className = '', size = 'md', variant = 'primary', isLoading }: SpinnerProps) => {
     return (
       <>
         <svg
@@ -28,6 +29,7 @@ const Spinner: React.FC<React.PropsWithChildren<SpinnerProps>> = memo(
             'animate-spin',
             sizes[size],
             variants[variant],
+            isLoading ? '': 'invisible',
             className,
           )}
           xmlns="http://www.w3.org/2000/svg"
@@ -39,9 +41,9 @@ const Spinner: React.FC<React.PropsWithChildren<SpinnerProps>> = memo(
             className="opacity-25"
             cx="12"
             cy="12"
-            r="10"
+            r="20"
             stroke="currentColor"
-            strokeWidth="4"
+            strokeWidth="5"
           ></circle>
           <path
             className="opacity-75"
@@ -52,9 +54,7 @@ const Spinner: React.FC<React.PropsWithChildren<SpinnerProps>> = memo(
         <span className="sr-only">Loading</span>
       </>
     )
-  },
-  () => true,
-)
+  };
 Spinner.displayName = 'Spinner'
 
 export default Spinner
