@@ -13,3 +13,8 @@ export type UserState = {
 export type LoginWithCodeOutgoingDTO = {
     code: string;
 }
+
+export type LoginWithBasicAuthOutgoingDTO = {
+    email: string;
+    password: string;
+}

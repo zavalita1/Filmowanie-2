@@ -5,7 +5,7 @@ import { StatusCode } from '../../../consts/httpStatusCodes';
 import ky from 'ky';
 
 
-import type { UserIncomingDTO, UserState, LoginWithCodeOutgoingDTO } from './types';
+import type { UserIncomingDTO, UserState, LoginWithCodeOutgoingDTO, LoginWithBasicAuthOutgoingDTO } from './types';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export const userApi = apiSlice.injectEndpoints({
@@ -36,16 +36,38 @@ export const userApi = apiSlice.injectEndpoints({
     }),
     loginWithCode: builder.mutation<UserState, LoginWithCodeOutgoingDTO, UserState>({
       query: dto => ({ url: '/account/login/code', method: 'POST', body: dto}),
-      transformResponse: (response: UserIncomingDTO, meta, arg) => {
-        return response as UserState;
-      },
+      transformResponse: (response: UserIncomingDTO, meta, arg) => response as UserState,
       transformErrorResponse: (response, meta, arg) => {
+        // TODO
         debugger;
       },
       async onQueryStarted(params, { dispatch, queryFulfilled }) {
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
       },
       invalidatesTags: ['UserData']
+    }),
+    loginWithBasicAuth: builder.mutation<UserState, LoginWithBasicAuthOutgoingDTO, UserState>({
+      query: dto => ({ url: '/account/login/basic', method: 'POST', body: dto}),
+      transformResponse: (response: UserIncomingDTO, meta, arg) => response as UserState,
+      transformErrorResponse: (response, meta, arg) => {
+        // TODO
+        debugger;
+      },
+      async onQueryStarted(params, { dispatch, queryFulfilled }) {
+        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
+      },
+      invalidatesTags: ['UserData']
+    }),
+    signUp: builder.mutation<UserState, LoginWithBasicAuthOutgoingDTO, UserState>({
+      query: dto => ({ url: '/account/signup', method: 'POST', body: dto}),
+      transformResponse: (response: UserIncomingDTO, meta, arg) => response as UserState,
+      transformErrorResponse: (response, meta, arg) => {
+        // TODO
+        debugger;
+      },
+      async onQueryStarted(params, { dispatch, queryFulfilled }) {
+        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
+      }
     }),
     logout: builder.mutation<any, void>({
       query: () => ({ url: '/account/logout', method: 'POST'}),
@@ -57,4 +79,4 @@ export const userApi = apiSlice.injectEndpoints({
   })
 });
 
-export const { useGetUserQuery, useLoginWithCodeMutation, useLogoutMutation } = userApi;
+export const { useGetUserQuery, useLoginWithCodeMutation, useLoginWithBasicAuthMutation, useLogoutMutation, useSignUpMutation } = userApi;
