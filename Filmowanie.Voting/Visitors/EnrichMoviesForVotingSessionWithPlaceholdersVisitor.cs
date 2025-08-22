@@ -42,9 +42,9 @@ internal sealed class EnrichMoviesForVotingSessionWithPlaceholdersVisitor : IEnr
             Decade._1970s => "siedemdziesiątych \ud83c\udfb8 \ud83d\udcfa \ud83c\udfb8",
             Decade._1980s => "osiemdziesiątych  \ud83c\udfb8 \ud83d\udd7a \ud83d\udc7e \ud83c\udfae",
             Decade._1990s => "dziewięćdziesiątych \ud83d\udd7a \ud83d\udcbe \ud83d\udcdf \ud83d\udcb2",
-            Decade._2000s => "dwutysięcznych \ud83d\udcf1 \ud83d\udcbb \u2708\ufe0f \ud83c\udfe2\ud83c\udfe2 \ud83d\ude31",
-            Decade._2010s => "dwutysięcznych-dziesiątych \ud83d\udc4d \ud83d\ude02 \ud83c\udf0e",
-            Decade._2020s => "dwutysięcznychdwudziestych \ud83e\udda0 \ud83d\ude37 \ud83d\udca5 \ud83e\udd1c",
+            Decade._2000s => "2k \ud83d\udcf1 \ud83d\udcbb \u2708\ufe0f \ud83c\udfe2\ud83c\udfe2 \ud83d\ude31",
+            Decade._2010s => "2k-dziesiątych \ud83d\udc4d \ud83d\ude02 \ud83c\udf0e",
+            Decade._2020s => "2k-dwudziestych \ud83e\udda0 \ud83d\ude37 \ud83d\udca5 \ud83e\udd1c",
             _ => ""
         };
 

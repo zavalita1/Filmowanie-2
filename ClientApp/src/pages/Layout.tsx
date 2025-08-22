@@ -133,6 +133,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
     const containerClassName = clsx(
       'flex',
       'flex-row',
+      'flex-wrap',
       'min-h-screen',
       'justify-center',
       'items-center',
