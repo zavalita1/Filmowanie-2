@@ -6,6 +6,7 @@ import './features/Counter/index.module.css'
 import Counter from './features/Counter/index';
 import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
+import MoviesList from './pages/MoviesList/MoviesList';
 import { store } from './store/store';
 
 const App: React.FC = () => {
@@ -16,6 +17,7 @@ const App: React.FC = () => {
           <Route path="/test" element={<Counter />} />
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/movieslist" element={<MoviesList />} />
         </Routes>
       </BrowserRouter>
       <link rel="preconnect" href="https://fonts.googleapis.com" />

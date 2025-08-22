@@ -3,17 +3,20 @@ import { LuLogIn, LuMenu, LuLogOut } from 'react-icons/lu';
 import { NavLink } from 'react-router';
 import penguinSvg from '../components/ui/footerIcon.svg';
 import { useGetUserQuery, useLogoutMutation } from '../store/apis/User/userApi';
+import { useGetStateQuery } from '../store/apis/Voting/votingApi';
 import Spinner from '../components/ui/Spinner';
 import { UserState } from '@/store/apis/User/types';
 import { useAppSelector } from '../hooks/redux';
 import clsx from 'clsx';
+import { VotingStatus } from '@/consts/votingStatus';
 
 export type LayoutProps = {
   children?: ReactElement<AppComponentProps>;
 };
 
 export type AppComponentProps = {
-  userData?: UserState | null;
+  userData: UserState | null;
+  votingStatus: VotingStatus;
 }
 
 export const LayoutContext = createContext<string>("TODO");
@@ -21,7 +24,9 @@ export const LayoutContext = createContext<string>("TODO");
 export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const [isNavMenuVisible, setIsNavMenuVisible] = React.useState(false);
   const isLoading = useAppSelector(s => s.global.isLoading);
-  const { data, error } = useGetUserQuery();
+  const { data: userData, error: userError, isLoading: userDataIsLoading } = useGetUserQuery();
+  const { data: votingState, error: votingStateError, isLoading: votingStateIsLoading } = useGetStateQuery();
+  const isUserLogged = userData !== undefined && userData !== null
   const [useLogout, result] = useLogoutMutation();
 
   const handleClick = () => setIsNavMenuVisible(!isNavMenuVisible);
@@ -37,7 +42,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   );
 
   function Header() {
-    return <div className='w-screen bg-gray-100 h-[70px] z-10 fixed drop-shadow-lg'>
+    return <div className='w-screen bg-gray-100 h-[70px] fixed drop-shadow-lg relative'>
       <div className='px-2 flex justify-between items-center w-full h-full'>
         <div className='flex items-center'>
           <h1 className='text-3xl font-bold text-black mr-4 sm:text-4xl'>Filmowanie.</h1>
@@ -52,10 +57,16 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
               About
             </li>
             </NavLink>
+            {isUserLogged ?
+              <NavLink to="/moviesList">
+                <li className='cursor-pointer px-4 py-2 relative group hover:bg-white hover:text-green-600 hover:rounded-lg transition-colors'>
+                  Lista filmów
+                </li>
+              </NavLink> : <></>}
           </ul>
         </div>
         <div className='hidden md:flex pr-4'>
-          { data === undefined || data === null ? 
+          { !isUserLogged ? 
           <NavLink to="/login">
           <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600">
             <LuLogIn className='lg:w-5 lg:h-5 mx-2' />
@@ -75,7 +86,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
         </div>
         <div className='md:hidden mr-4' onClick={handleClick}>
           {!isNavMenuVisible ? <LuMenu className='w-5 text-black' /> : <div className='flex'>
-            { data === undefined || data === null ? <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600">
+            { !isUserLogged ? <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600">
               <LuLogIn className='lg:w-5 lg:h-5 mx-2' />
               <span className="text-sm font-medium">
                 Login
@@ -102,11 +113,23 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
         <li onClick={handleClose} className='border-b-2 border-zinc-300 w-full'>
           About Us
         </li>
+        { isUserLogged ? <li onClick={handleClose} className='border-b-2 border-zinc-300 w-full'>
+          Movies List
+        </li>: <></>}
       </ul>
     </div>
   }
 
   function RenderBody(addOpacity: boolean) {
+    if (userError !== undefined || votingStateError !== undefined)
+      return DisplayFatalError();
+
+    if (props.children === undefined)
+      return <></>;
+
+    if (userDataIsLoading || votingStateIsLoading)
+      return (<div>Loading...</div>);
+
     const containerClassName = clsx(
       'flex',
       'flex-row',
@@ -116,13 +139,14 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       addOpacity ? 'opacity-15' : ''
     )
 
-    return  (props.children === undefined ? 
-    <></>
-    : (error !== undefined ? DisplayFatalError() : <div id="container" className={containerClassName}>{React.cloneElement(props.children, { userData: data, test:"TODO"} as any)}</div>));
+    return (
+      <div id="container" className={containerClassName}>
+        {React.cloneElement(props.children, { userData: userData === null ? null : userData!, votingStatus: votingState!, test: "TODO" } as any)}
+      </div>);
   }
 
   function DisplayFatalError() {
-    return (<div className="flex flex-row min-h-screen justify-center items-center">Coś się zesrało w fatalny sposób. Strona jest do wyjebania, prosze odświeżyć.</div>);
+    return (<div className="flex flex-row min-h-screen justify-center items-center relative">Coś się zesrało w fatalny sposób. Strona jest do wyjebania, prosze odświeżyć.</div>);
   }
 
   function Footer() {

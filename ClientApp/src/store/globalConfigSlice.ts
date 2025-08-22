@@ -3,11 +3,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface GlobalConfigSlice {
     apiUrl: string;
     isLoading: boolean;
+    ongoingLoadings: number;
 }
 
 const initialState = {
     apiUrl: import.meta.env.VITE_APIURL,
-    isLoading: false
+    isLoading: false,
+    ongoingLoadings: 0
 };
 
 export const globalConfigSlice = createSlice({
@@ -15,7 +17,11 @@ export const globalConfigSlice = createSlice({
     initialState,
     reducers: {
         setLoading: (state, action: PayloadAction<boolean>) => {
-            state.isLoading = action.payload;
+            let newOngoingLoadings = state.ongoingLoadings;
+            if (action.payload) newOngoingLoadings++;
+            else newOngoingLoadings--;
+
+            return {...state, isLoading: newOngoingLoadings !== 0, ongoingLoadings: newOngoingLoadings };
         }
     }
 });

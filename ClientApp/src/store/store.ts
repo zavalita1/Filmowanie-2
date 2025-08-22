@@ -4,16 +4,16 @@ import { combineReducers } from 'redux';
 
 import counterReducer from '../features/Counter/counterSlice';
 import { globalConfigSlice } from './globalConfigSlice';
-import {  userApi } from './apis/User/userApi';
+import { votingApi } from './apis/Voting/votingApi';
 
 export const store = configureStore({
   devTools: process.env.NODE_ENV === 'development',
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([userApi.middleware]),
+    getDefaultMiddleware().concat([votingApi.middleware]),
   reducer: combineReducers({
     global: globalConfigSlice.reducer,
     counter: counterReducer,
-    [userApi.reducerPath]: userApi.reducer,
+    [votingApi.reducerPath]: votingApi.reducer,
   }),
 })
 

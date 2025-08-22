@@ -1,14 +1,14 @@
 import { apiSlice } from '../apiSlice';
-import { commonOnQueryStarted } from '../../utils/base';
+import { commonOnQueryStarted } from '../../utils/queryStoreWrapper';
 import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
 import { StatusCode } from '../../../consts/httpStatusCodes';
-import ky from 'ky';
-
 
 import type { UserIncomingDTO, UserState, LoginWithCodeOutgoingDTO, LoginWithBasicAuthOutgoingDTO } from './types';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-export const userApi = apiSlice.injectEndpoints({
+export const userApi = apiSlice
+.enhanceEndpoints({addTagTypes: ['UserData']})
+.injectEndpoints({
   endpoints: (builder) => ({
     getUser: builder.query<UserState | null, void>({
       async queryFn(arg, queryApi, extraOptions, fetchWithBQ) {

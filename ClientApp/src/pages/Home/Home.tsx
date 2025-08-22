@@ -12,7 +12,7 @@ const Home: React.FC<AppComponentProps> = (props) => {
   }
   
   return (
-  <div> {props.userData === null ? "Witaj anonimowy użytkowniku. Zapraszam do logowania." : <LoggedView {...props} />}</div>
+  <div> {props.userData === null ? <p className="text-3xl">"Witaj anonimowy użytkowniku. Zapraszam do logowania."</p>: <LoggedView {...props} />}</div>
   );
 }
 
@@ -20,7 +20,7 @@ const LoggedView: React.FC<AppComponentProps> = props => {
   const [useSignUp, result] = useSignUpMutation();
 
   return (<>
-    {`Witaj ${props.userData!.username}!`}
+    <p className='text-3xl'>{`Witaj ${props.userData!.username}!`}</p>
 
     {props.userData!.hasBasicAuthSetup === false ? <></> :
       <>
@@ -38,6 +38,6 @@ const LoggedView: React.FC<AppComponentProps> = props => {
   }
 }
 
-const wrappedHome: React.FC = () => { return <Layout><Home/></Layout>}
+const wrappedHome: React.FC<AppComponentProps> = (props) => { return <Layout><Home {...props}/></Layout>}
 
 export default wrappedHome;
