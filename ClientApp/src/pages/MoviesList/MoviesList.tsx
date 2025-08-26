@@ -7,6 +7,7 @@ import { VotingStatus } from "../../consts/votingStatus";
 import { Skeleton } from "../../components/ui/skeleton";
 import { MovieCard } from "../../components/ui/MovieCard";
 import { Button } from "../../components/ui/button";
+import { useVoteMutation } from "../../store/apis/Voting/votingApi";
 
 
 const MoviesList: React.FC<AppComponentProps> = (props) => {
@@ -22,6 +23,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   const [displayMode, setDisplayMode] = useState<'Cards' | 'Carousel'>('Cards');
 
   const { data, error, isLoading } = useGetCurrentVotingQuery();
+  const [vote, result] = useVoteMutation();
 
   if (isLoading)
     return (
@@ -42,7 +44,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   return (
     <>
     <div className="mt-10 ml-auto mr-25">
-    <Button onClick={() => displayMode === 'Carousel' ? setDisplayMode('Cards') : setDisplayMode('Carousel')}>Set to carousel!</Button> 
+    {/*TODO <Button onClick={() => displayMode === 'Carousel' ? setDisplayMode('Cards') : setDisplayMode('Carousel')}>Set to carousel!</Button>  */}
     </div>
     <div className="flex flex-row flex-wrap justify-center mt-10">
       { data!.map(d => <MovieCard {...props} movie={d}></MovieCard>)}

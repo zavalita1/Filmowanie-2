@@ -2,7 +2,7 @@ import { userApi } from '../User/userApi';
 import { commonOnQueryStarted } from '../../utils/queryStoreWrapper';
 import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
 
-import { CurrentVotingIncomingDTO, MovieDTO, VotingSessionStatusIncomingDTO } from './types';
+import { CurrentVotingIncomingDTO, MovieDTO, VoteOutgoingDTO, VotingSessionStatusIncomingDTO } from './types';
 import { VotingStatus } from '../../../consts/votingStatus';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { ConcreteMovie, Movie, PlaceholderMovie } from '../../../models/Movie';
@@ -36,6 +36,12 @@ export const votingApi = userApi
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
       },
       transformResponse: mapVotingStatus
+    }),
+    vote: builder.mutation<void, VoteOutgoingDTO, void>({
+      query: dto => ({ url: '/voting/vote', method: 'POST', body: dto}),
+      async onQueryStarted(params, { dispatch, queryFulfilled }) {
+        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
+      },
     })
   })
 });
@@ -58,4 +64,4 @@ function mapMovie(dto: MovieDTO): Movie {
   return dto;
 }
 
-export const { useGetCurrentVotingQuery, useGetStateQuery } = votingApi;
+export const { useGetCurrentVotingQuery, useGetStateQuery, useVoteMutation } = votingApi;

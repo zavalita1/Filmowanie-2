@@ -1,7 +1,13 @@
+import { useState } from "react";
 import { Movie, PlaceholderMovie, ConcreteMovie } from "../../models/Movie";
 import { AppComponentProps } from "../../pages/Layout";
-import { Card, CardHeader, CardDescription, CardTitle, CardContent, CardFooter } from "./card";
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "./drawer";
+import { Card, CardHeader, CardDescription, CardTitle, CardContent } from "./card";
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "./drawer";
+import { IconButton } from "./shadcn-io/icon-button";
+import { BsEmojiGrin, BsEmojiSmile, BsEmojiLaughing, BsTrashFill } from "react-icons/bs";
+import Spinner from "./Spinner";
+import { IconType } from "react-icons";
+import { useVoteMutation } from "../../store/apis/Voting/votingApi";
 
 export type MovieCardProps = AppComponentProps & {
   movie: Movie;
@@ -21,44 +27,98 @@ export const MovieCard: React.FC<MovieCardProps> = props => {
     );
   }
   
-  const concreteMovie = props.movie as ConcreteMovie;
+  const concreteMovieProps = {...props, movie: props.movie as ConcreteMovie};
+  return <ConcreteMovieCard {...concreteMovieProps} />;
+}
+
+type ConcreteMovieCardProps = {
+  movie: ConcreteMovie;
+} & AppComponentProps;
+
+const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [votes, setVotes] = useState<number>(props.movie.votes);
+  const [vote, result] = useVoteMutation();
+
+  const onVote = async (votes: number) => {
+    const dto = { movieTitle: props.movie.movieName, votes };
+    const r = await vote(dto);
+    if (r.error === undefined) setVotes(votes);
+  }
 
   return (
     <Drawer>
     <DrawerTrigger asChild={true}>
       <Card className="w-3xs m-2 mr-10  hover:bg-blue-200 hover:cursor-pointer">
         <CardHeader>
-          <CardTitle><b className="text-2xl">{concreteMovie.movieName}</b></CardTitle>
-          <CardDescription>{concreteMovie.genres.join(", ")}</CardDescription>
+          <CardTitle><b className="text-2xl">{props.movie.movieName}</b></CardTitle>
+          {true ? <CardDescription>{props.movie.genres.join(", ")}</CardDescription> :<></>}
         </CardHeader>
         <CardContent>
-          <img className="justify-self-center" src={concreteMovie.posterUrl}></img>
+          <img className="justify-self-center" src={props.movie.posterUrl}></img>
         </CardContent>
-        {/* <CardFooter>
-          <p>Card Footer</p>
-        </CardFooter> */}
       </Card>
     </DrawerTrigger>
     <DrawerContent>
       <div className="mx-auto w-full max-w-5/6 min-h-96">
          <DrawerHeader>
             <DrawerTitle>
-              <p className="text-5xl mb-10"><b>{concreteMovie.movieName}</b></p>
+              <p className="text-5xl mb-10"><b>{props.movie.movieName}</b></p>
               </DrawerTitle>
             <DrawerDescription className="text-xl text-justify">
               <div className="flex mb-10">
-                <img className="h-fit mr-10" src="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp"></img>
+                <img className="h-fit mr-10" src="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" onLoad={() => setIsLoading(false)}></img>
+                { isLoading ? <Spinner isLoading></Spinner> :
                 <div className="block">
-                  <p className="mb-10">{concreteMovie.description}</p>
+                  <p className="mb-10">{props.movie.description}</p>
                   <div>
-                    <p><b>Metraż:</b> <i>{concreteMovie.duration}</i></p>
-                    <p><b>Gatunek:</b> {concreteMovie.genres.join(", ")}</p>
-                    <p><b>Reżyseria:</b> {concreteMovie.directors.join(", ")}</p>
-                    <p><b>Scenariusz:</b> {concreteMovie.writers.join(", ")}</p>
-                    <p><b>Występują:</b> {concreteMovie.actors.join(", ")}</p>
-                    <p className="mt-4 text-center text-blue-700"><a href={concreteMovie.filmwebUrl} target="_blank">Link do filmweba.</a></p>
+                    <p><b>Metraż:</b> <i>{props.movie.duration}</i></p>
+                    <p><b>Gatunek:</b> {props.movie.genres.join(", ")}</p>
+                    <p><b>Reżyseria:</b> {props.movie.directors.join(", ")}</p>
+                    <p><b>Scenariusz:</b> {props.movie.writers.join(", ")}</p>
+                    <p><b>Występują:</b> {props.movie.actors.join(", ")}</p>
+                    <p className="mt-4 text-center text-blue-700"><a href={props.movie.filmwebUrl} target="_blank">Link do filmweba.</a></p>
+                  </div>
+                  <div className="mt-20">
+                    <b>Głosowanie:</b>
+                    <br/>
+                    <div>
+                    <VoteButton 
+                    icon={BsEmojiGrin}
+                    index={3}
+                    votes={votes}
+                    onVoteCallback={vote => onVote(vote)}
+                    isFloatingRight={false}
+                    color={[4, 184, 8]}
+                    />
+                    <VoteButton 
+                    icon={BsEmojiLaughing}
+                    index={2}
+                    votes={votes}
+                    onVoteCallback={vote => onVote(vote)}
+                    isFloatingRight={false}
+                    color={[204, 228, 47]}
+                    />
+                    <VoteButton 
+                    icon={BsEmojiSmile}
+                    index={1}
+                    votes={votes}
+                    onVoteCallback={vote => onVote(vote)}
+                    isFloatingRight={false}
+                    color={[251, 191, 36]}
+                    />
+                    <VoteButton 
+                    icon={BsTrashFill}
+                    index={-1}
+                    votes={votes}
+                    onVoteCallback={vote => onVote(vote)}
+                    isFloatingRight={true}
+                    color={[251, 0, 0]}
+                    />
+                    </div>
                   </div>
                 </div>
+                }
               </div>
             </DrawerDescription>
           </DrawerHeader>
@@ -66,4 +126,27 @@ export const MovieCard: React.FC<MovieCardProps> = props => {
     </DrawerContent>
     </Drawer>
   );
+};
+
+type VoteButonProps = {
+  icon: IconType;
+  index: number;
+  votes: number;
+  onVoteCallback: (vote: number) => void;
+  isFloatingRight: boolean;
+  color: [number, number, number];
 }
+
+const VoteButton: React.FC<VoteButonProps> = props => {
+  const visibleClassName = props.isFloatingRight ? "float-right" : "";
+
+  return  <IconButton
+                      icon={props.icon}
+                      active={props.votes === props.index}
+                      color={props.color} 
+                      onClick={() => props.onVoteCallback(props.votes === props.index ? 0 : props.index)}
+                      size="lg"
+                      className={props.votes !== 0 && props.votes !== props.index ? "hidden" : visibleClassName}
+                    />;
+}
+

@@ -20,3 +20,8 @@ export type VotingSessionStatusIncomingDTO = {
 }
 
 export type CurrentVotingIncomingDTO = Array<MovieDTO>;
+
+export type VoteOutgoingDTO = { 
+    movieTitle: string;
+    votes: number;
+}
