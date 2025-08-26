@@ -8,7 +8,7 @@ import { Skeleton } from "../../components/ui/skeleton";
 import { MovieCard } from "../../components/ui/MovieCard";
 import { Button } from "../../components/ui/button";
 import { useVoteMutation } from "../../store/apis/Voting/votingApi";
-
+import { toast } from "sonner";
 
 const MoviesList: React.FC<AppComponentProps> = (props) => {
   const navigate = useNavigate();
@@ -38,19 +38,23 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
 
   if (error)
   {
-    // TODO
+    return (<div>Coś się zesrao. Odśwież stronę.</div>);
   }
 
   return (
     <>
     <div className="mt-10 ml-auto mr-25">
-    {/*TODO <Button onClick={() => displayMode === 'Carousel' ? setDisplayMode('Cards') : setDisplayMode('Carousel')}>Set to carousel!</Button>  */}
+    {/* <Button onClick={onCarouselClick}>Set to carousel!</Button>  */}
     </div>
     <div className="flex flex-row flex-wrap justify-center mt-10">
       { data!.map(d => <MovieCard {...props} movie={d}></MovieCard>)}
     </div>
     </>
   );
+
+  // function onCarouselClick() {
+  //   displayMode === 'Carousel' ? setDisplayMode('Cards') : setDisplayMode('Carousel');
+  // }
 }
 
 

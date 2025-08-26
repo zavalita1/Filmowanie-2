@@ -4,6 +4,7 @@ export const commonOnQueryStarted = async (
     showLoading = false,
     showSuccess = false,
     showError = false,
+    additionalErrorHandlingCallback?: () => Promise<unknown>,
 ) => {
     try {
         if (showLoading) {
@@ -21,6 +22,10 @@ export const commonOnQueryStarted = async (
     } catch (err) {
         if (showLoading) {
             setLoading(false);
+        }
+
+        if (additionalErrorHandlingCallback) {
+            await additionalErrorHandlingCallback();
         }
 
         if (showError) {

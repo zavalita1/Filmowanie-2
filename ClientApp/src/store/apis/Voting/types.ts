@@ -23,5 +23,6 @@ export type CurrentVotingIncomingDTO = Array<MovieDTO>;
 
 export type VoteOutgoingDTO = { 
     movieTitle: string;
+    movieId: string;
     votes: number;
 }

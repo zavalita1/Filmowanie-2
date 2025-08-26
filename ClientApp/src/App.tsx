@@ -15,9 +15,9 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/test" element={<Counter />} />
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home {...({} as any)}/>} />
           <Route path="/login" element={<Login />} />
-          <Route path="/movieslist" element={<MoviesList />} />
+          <Route path="/movieslist" element={<MoviesList {...({} as any)}/>} />
         </Routes>
       </BrowserRouter>
       <link rel="preconnect" href="https://fonts.googleapis.com" />

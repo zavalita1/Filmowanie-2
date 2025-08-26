@@ -9,6 +9,7 @@ import { UserState } from '@/store/apis/User/types';
 import { useAppSelector } from '../hooks/redux';
 import clsx from 'clsx';
 import { VotingStatus } from '@/consts/votingStatus';
+import { Toaster } from '../components/ui/sonner';
 
 export type LayoutProps = {
   children?: ReactElement<AppComponentProps>;
@@ -37,6 +38,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       <Header />
       <div id="container" className="flex flex-row min-h-screen justify-center items-center -z-10 fixed w-full"><Spinner isLoading={isLoading}></Spinner></div>
       { RenderBody(isLoading) }
+      <Toaster />
       <Footer />
     </LayoutContext.Provider>
   );

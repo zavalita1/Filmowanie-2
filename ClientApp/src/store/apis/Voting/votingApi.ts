@@ -40,7 +40,13 @@ export const votingApi = userApi
     vote: builder.mutation<void, VoteOutgoingDTO, void>({
       query: dto => ({ url: '/voting/vote', method: 'POST', body: dto}),
       async onQueryStarted(params, { dispatch, queryFulfilled }) {
-        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
+         const patchResult = dispatch(
+          votingApi.util.updateQueryData('getCurrentVoting', undefined, r => {
+            const movieToPatchIndex = r.findIndex(m => (m as ConcreteMovie)?.movieId === params.movieId);
+            const movieToPatch = {...r[movieToPatchIndex], votes: params.votes};
+            return [...r.slice(0, movieToPatchIndex), movieToPatch,...r.slice(movieToPatchIndex + 1, -1)];
+          }));
+        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, false, false, async () => patchResult.undo());
       },
     })
   })

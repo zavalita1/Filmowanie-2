@@ -8,6 +8,7 @@ import { BsEmojiGrin, BsEmojiSmile, BsEmojiLaughing, BsTrashFill } from "react-i
 import Spinner from "./Spinner";
 import { IconType } from "react-icons";
 import { useVoteMutation } from "../../store/apis/Voting/votingApi";
+import { toast } from "sonner";
 
 export type MovieCardProps = AppComponentProps & {
   movie: Movie;
@@ -37,13 +38,20 @@ type ConcreteMovieCardProps = {
 
 const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
   const [isLoading, setIsLoading] = useState(true);
-  const [votes, setVotes] = useState<number>(props.movie.votes);
   const [vote, result] = useVoteMutation();
 
   const onVote = async (votes: number) => {
-    const dto = { movieTitle: props.movie.movieName, votes };
+    const dto = { movieTitle: props.movie.movieName, votes, movieId: props.movie.movieId };
     const r = await vote(dto);
-    if (r.error === undefined) setVotes(votes);
+    if (r.error !== undefined) {
+       toast.error("Coś poszło nie tak. Spróbuj ponownie.", {
+          classNames: {
+            description: "!text-foreground/80",
+          },
+          className: "text-5xl",
+          richColors: true,
+        });
+    }
   }
 
   return (
@@ -60,14 +68,14 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
       </Card>
     </DrawerTrigger>
     <DrawerContent>
-      <div className="mx-auto w-full max-w-5/6 min-h-96">
+      <div className="mx-auto w-full max-w-5/6 min-h-96 overflow-y-auto max-h-4/5">
          <DrawerHeader>
             <DrawerTitle>
               <p className="text-5xl mb-10"><b>{props.movie.movieName}</b></p>
               </DrawerTitle>
             <DrawerDescription className="text-xl text-justify">
-              <div className="flex mb-10">
-                <img className="h-fit mr-10" src="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" onLoad={() => setIsLoading(false)}></img>
+              <div className="flex">
+                <img className="mr-10 -mt-12" src="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" onLoad={() => setIsLoading(false)}></img>
                 { isLoading ? <Spinner isLoading></Spinner> :
                 <div className="block">
                   <p className="mb-10">{props.movie.description}</p>
@@ -86,7 +94,7 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
                     <VoteButton 
                     icon={BsEmojiGrin}
                     index={3}
-                    votes={votes}
+                    votes={props.movie.votes}
                     onVoteCallback={vote => onVote(vote)}
                     isFloatingRight={false}
                     color={[4, 184, 8]}
@@ -94,7 +102,7 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
                     <VoteButton 
                     icon={BsEmojiLaughing}
                     index={2}
-                    votes={votes}
+                    votes={props.movie.votes}
                     onVoteCallback={vote => onVote(vote)}
                     isFloatingRight={false}
                     color={[204, 228, 47]}
@@ -102,7 +110,7 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
                     <VoteButton 
                     icon={BsEmojiSmile}
                     index={1}
-                    votes={votes}
+                    votes={props.movie.votes}
                     onVoteCallback={vote => onVote(vote)}
                     isFloatingRight={false}
                     color={[251, 191, 36]}
@@ -110,7 +118,7 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
                     <VoteButton 
                     icon={BsTrashFill}
                     index={-1}
-                    votes={votes}
+                    votes={props.movie.votes}
                     onVoteCallback={vote => onVote(vote)}
                     isFloatingRight={true}
                     color={[251, 0, 0]}
