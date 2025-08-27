@@ -9,6 +9,7 @@ import { ConcreteMovie, Movie } from "../../models/Movie";
 import * as Vote from "../../consts/vote";
 import { useVoteMutation } from "../../store/apis/Voting/votingApi";
 import { toast } from "sonner";
+import Confetti from "../../components/Confetti";
 
 const MoviesList: React.FC<AppComponentProps> = (props) => {
   const navigate = useNavigate();
@@ -84,6 +85,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   let counter = 0;
   return (
     <>
+    <Confetti isEnabled={availableVotes.length === 0}></Confetti>
     <div className="mt-10 ml-auto mr-25">
     {/* <Button onClick={onCarouselClick}>Set to carousel!</Button>  */}
     </div>
