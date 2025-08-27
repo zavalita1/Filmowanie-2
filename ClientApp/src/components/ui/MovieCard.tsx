@@ -7,11 +7,14 @@ import { IconButton } from "./shadcn-io/icon-button";
 import { BsEmojiGrin, BsEmojiSmile, BsEmojiLaughing, BsTrashFill } from "react-icons/bs";
 import Spinner from "./Spinner";
 import { IconType } from "react-icons";
-import { useVoteMutation } from "../../store/apis/Voting/votingApi";
-import { toast } from "sonner";
+
+import { Vote, fromNumber } from "../../consts/vote";
 
 export type MovieCardProps = AppComponentProps & {
   movie: Movie;
+  votesAvailable: Vote[];
+  votesActive: Vote[];
+  onVoteCallback: (vote: Vote) => void;
 }
 
 export const MovieCard: React.FC<MovieCardProps> = props => {
@@ -32,27 +35,12 @@ export const MovieCard: React.FC<MovieCardProps> = props => {
   return <ConcreteMovieCard {...concreteMovieProps} />;
 }
 
-type ConcreteMovieCardProps = {
+type ConcreteMovieCardProps = MovieCardProps & {
   movie: ConcreteMovie;
-} & AppComponentProps;
+};
 
 const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
   const [isLoading, setIsLoading] = useState(true);
-  const [vote, result] = useVoteMutation();
-
-  const onVote = async (votes: number) => {
-    const dto = { movieTitle: props.movie.movieName, votes, movieId: props.movie.movieId };
-    const r = await vote(dto);
-    if (r.error !== undefined) {
-       toast.error("Coś poszło nie tak. Spróbuj ponownie.", {
-          classNames: {
-            description: "!text-foreground/80",
-          },
-          className: "text-5xl",
-          richColors: true,
-        });
-    }
-  }
 
   return (
     <Drawer>
@@ -92,34 +80,30 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
                     <br/>
                     <div>
                     <VoteButton 
+                    {...props}
                     icon={BsEmojiGrin}
-                    index={3}
-                    votes={props.movie.votes}
-                    onVoteCallback={vote => onVote(vote)}
+                    voteType={Vote.ThreePoints}
                     isFloatingRight={false}
                     color={[4, 184, 8]}
                     />
                     <VoteButton 
+                    {...props}
                     icon={BsEmojiLaughing}
-                    index={2}
-                    votes={props.movie.votes}
-                    onVoteCallback={vote => onVote(vote)}
+                    voteType={Vote.TwoPoints}
                     isFloatingRight={false}
                     color={[204, 228, 47]}
                     />
                     <VoteButton 
+                    {...props}
                     icon={BsEmojiSmile}
-                    index={1}
-                    votes={props.movie.votes}
-                    onVoteCallback={vote => onVote(vote)}
+                    voteType={Vote.OnePoint}
                     isFloatingRight={false}
                     color={[251, 191, 36]}
                     />
                     <VoteButton 
+                    {...props}
                     icon={BsTrashFill}
-                    index={-1}
-                    votes={props.movie.votes}
-                    onVoteCallback={vote => onVote(vote)}
+                    voteType={Vote.Trash}
                     isFloatingRight={true}
                     color={[251, 0, 0]}
                     />
@@ -136,25 +120,25 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
   );
 };
 
-type VoteButonProps = {
+type VoteButonProps = ConcreteMovieCardProps & {
   icon: IconType;
-  index: number;
-  votes: number;
-  onVoteCallback: (vote: number) => void;
+  voteType: Vote;
   isFloatingRight: boolean;
   color: [number, number, number];
-}
+};
 
 const VoteButton: React.FC<VoteButonProps> = props => {
   const visibleClassName = props.isFloatingRight ? "float-right" : "";
+  const isHidden = !props.votesAvailable.includes(props.voteType);
+  const isActive = props.votesActive.includes(props.voteType);
 
   return  <IconButton
                       icon={props.icon}
-                      active={props.votes === props.index}
+                      active={isActive}
                       color={props.color} 
-                      onClick={() => props.onVoteCallback(props.votes === props.index ? 0 : props.index)}
+                      onClick={() => props.onVoteCallback(props.voteType)}
                       size="lg"
-                      className={props.votes !== 0 && props.votes !== props.index ? "hidden" : visibleClassName}
+                      className={isHidden ? "hidden" : visibleClassName}
                     />;
 }
 

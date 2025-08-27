@@ -44,7 +44,7 @@ export const votingApi = userApi
           votingApi.util.updateQueryData('getCurrentVoting', undefined, r => {
             const movieToPatchIndex = r.findIndex(m => (m as ConcreteMovie)?.movieId === params.movieId);
             const movieToPatch = {...r[movieToPatchIndex], votes: params.votes};
-            return [...r.slice(0, movieToPatchIndex), movieToPatch,...r.slice(movieToPatchIndex + 1, -1)];
+            return [...r.slice(0, movieToPatchIndex), movieToPatch,...r.slice(movieToPatchIndex + 1)];
           }));
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, false, false, async () => patchResult.undo());
       },

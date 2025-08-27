@@ -11,7 +11,7 @@ internal class VoteValidator : AbstractValidator<VoteDTO>, IFluentValidatorAdapt
     public VoteValidator()
     {
         RuleFor(x => x).NotNull().WithMessage("Value cannot be null!");
-        RuleFor(x => x.Votes).GreaterThanOrEqualTo(0).WithMessage("Votes must be nonnegative!");
+        RuleFor(x => x.Votes).GreaterThanOrEqualTo(-1).WithMessage("Votes must be greater than -2!");
         RuleFor(x => x.MovieTitle).NotNull().WithMessage($"{nameof(VoteDTO.MovieTitle)} must not be null!");
         RuleFor(x => x.MovieTitle).NotEmpty().WithMessage($"{nameof(VoteDTO.MovieTitle)} must not be empty!");
         RuleFor(x => x.MovieId).NotNull().WithMessage($"{nameof(VoteDTO.MovieTitle)} must not be null!");
