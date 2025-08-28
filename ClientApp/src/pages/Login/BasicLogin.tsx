@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Input } from "./input";
-import { Label } from "./label";
-import { Button } from "./button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Button } from "../../components/ui/button";
 
 export type BasicLoginProps = {
     submitText: string;
     onSubmit: (mail:string, pwd: string) => void;
     pwdPlaceholderText: string;
-}
+};
 
 export const BasicLogin: React.FC<BasicLoginProps> = (props) => {
     const [mailValue, setMailValue] = useState('');

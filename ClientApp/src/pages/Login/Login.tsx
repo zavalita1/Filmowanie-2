@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
-import { BasicLogin } from "../../components/ui/BasicLogin";
+import { BasicLogin } from "./BasicLogin";
 import { useLoginWithCodeMutation, useLoginWithBasicAuthMutation, useGetUserQuery } from "../../store/apis/User/userApi";
 import { LoginWithBasicAuthOutgoingDTO, LoginWithCodeOutgoingDTO } from "../../store/apis/User/types";
 import { useNavigate } from "react-router";

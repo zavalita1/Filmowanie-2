@@ -7,7 +7,6 @@ import { IconButton } from "../../components/ui/shadcn-io/icon-button";
 import { BsEmojiGrin, BsEmojiSmile, BsEmojiLaughing, BsTrashFill } from "react-icons/bs";
 import Spinner from "../../components/ui/Spinner";
 import { IconType } from "react-icons";
-import rgbToHex from "../../utils/rgbToHex";
 
 import { Vote } from "../../consts/vote";
 import clsx from "clsx";
@@ -51,18 +50,12 @@ type ConcreteMovieCardProps = MovieCardProps & {
 const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => setIsLoading(!isLoading && !props.isMobile), [props.isMobile]);
-
-  let cardBgColor:string;
-
-  if (props.votesActive.length === 0) {
-    cardBgColor = "";
-  }
-  else if (props.votesActive[0] === Vote.Trash) {
-    cardBgColor = "bg-red-100";
-  }
-  else {
-    cardBgColor = "bg-lime-100";
-  }
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const extendedProps = {...props, onVoteCallback: (vote: Vote) => { 
+    props.onVoteCallback(vote); 
+    setIsDrawerOpen(false);
+  }};
+  const [isVotingConfirmationDialogOpen, setIsVotingConfirmationDialogOpen] = useState(false);
 
   const cardClassName = clsx([
     "w-3xs",
@@ -70,11 +63,11 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
     "mr-10", 
     "hover:bg-blue-200 hover:cursor-pointer",
     props.isMobile ? '' : '',
-    cardBgColor
+    getCardBgColor(props.votesActive)
   ]);
 
   return (
-    <Drawer>
+    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
     <DrawerTrigger asChild={true}>
       <Card className={cardClassName}>
         <CardHeader>
@@ -110,22 +103,22 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
                     <br/>
                     <div>
                     <VoteButton 
-                    {...props}
+                    {...extendedProps}
                     voteType={Vote.ThreePoints}
                     isFloatingRight={false}
                     />
                     <VoteButton 
-                    {...props}
+                    {...extendedProps}
                     voteType={Vote.TwoPoints}
                     isFloatingRight={false}
                     />
                     <VoteButton 
-                    {...props}
+                    {...extendedProps}
                     voteType={Vote.OnePoint}
                     isFloatingRight={false}
                     />
                     <VoteButton 
-                    {...props}
+                    {...extendedProps}
                     voteType={Vote.Trash}
                     isFloatingRight={true}
                     />
@@ -163,4 +156,21 @@ const VoteButton: React.FC<VoteButonProps> = props => {
                       className={isHidden ? "hidden" : visibleClassName}
                     />;
 };
+
+function getCardBgColor(votesActive: Vote[]) {
+  if (votesActive.length !== 0) {
+    switch (votesActive[0]) {
+      case Vote.Trash:
+        return "bg-red-100";
+      case Vote.OnePoint:
+        return "bg-amber-100";
+      case Vote.TwoPoints:
+        return "bg-lime-100";
+      case Vote.ThreePoints:
+        return "bg-lime-200";
+    }
+  }
+
+  return '';
+}
 

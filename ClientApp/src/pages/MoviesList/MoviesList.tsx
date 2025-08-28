@@ -9,7 +9,8 @@ import { ConcreteMovie, Movie } from "../../models/Movie";
 import * as Vote from "../../consts/vote";
 import { useVoteMutation } from "../../store/apis/Voting/votingApi";
 import { toast } from "sonner";
-import Confetti from "../../components/Confetti";
+import Confetti from "../../components/ui/Confetti";
+import { VotingConfirmationDialog } from "./VotingConfirmationDialog";
 
 const MoviesList: React.FC<AppComponentProps> = (props) => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   const { data, error, isLoading } = useGetCurrentVotingQuery();
   const [availableVotes, setAvailableVotes] = useState(Vote.allVoteTypes);
   const [vote, result] = useVoteMutation();
+  const [acknowledgedPopup, setAcknowledgedPopup] = useState(false);
 
   useEffect(() => setAvailableVotes(getInitialAvailableVotes(data)), [data]);
 
@@ -64,11 +66,13 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
       const newAvailableVotes = availableVotes.filter(x => x !== vote);
       callVoteRoute(0, movie);
       setAvailableVotes(newAvailableVotes);
+      setAcknowledgedPopup(false);
     }
     else {
       const votesNumber = Vote.toNumber(vote);
       callVoteRoute(votesNumber, movie);
       setAvailableVotes([...availableVotes, vote]);
+      setAcknowledgedPopup(false);
     }
   };
 
@@ -83,9 +87,15 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   }
 
   let counter = 0;
+  const showPopups = availableVotes.length === 0 && !acknowledgedPopup;
   return (
     <>
-    <Confetti isEnabled={availableVotes.length === 0}></Confetti>
+    <Confetti isEnabled={showPopups}></Confetti>
+    <VotingConfirmationDialog isOpen={showPopups} onClose={() => setAcknowledgedPopup(true)} 
+    dialogConfirmationText="Dobra, przestań strzelać" 
+    dialogText="Winszuję, wszystkie głosy zostały przydzielone. Możesz je jeszcze zmienić, dopóki admin nie zakończy głosowania podczas następnego filmowania."
+    dialogTitle="You're simply the best, better than all the rest."
+    />
     <div className="mt-10 ml-auto mr-25">
     {/* <Button onClick={onCarouselClick}>Set to carousel!</Button>  */}
     </div>

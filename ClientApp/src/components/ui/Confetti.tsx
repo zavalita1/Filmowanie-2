@@ -14,7 +14,7 @@ export default function Confetti(props: {isEnabled: boolean}) {
 
     const confettiIndex = Math.floor(Math.random() * confettiMap.length);
     
-    return confettiMap[confettiIndex](3);
+    return confettiMap[confettiIndex](4);
   }
 
 const confettiMap = [

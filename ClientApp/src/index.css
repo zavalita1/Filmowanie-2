@@ -122,3 +122,7 @@
 #root {
   overflow-x: hidden;
 }
+
+div[data-slot="drawer-overlay"] {
+  visibility: hidden;
+}
