@@ -9,7 +9,7 @@ export interface GlobalConfigSlice {
 const initialState = {
     apiUrl: import.meta.env.VITE_APIURL,
     isLoading: false,
-    ongoingLoadings: 0
+    ongoingLoadings: 0,
 };
 
 export const globalConfigSlice = createSlice({

@@ -18,6 +18,7 @@ export type LayoutProps = {
 export type AppComponentProps = {
   userData: UserState | null;
   votingStatus: VotingStatus;
+  isMobile: boolean;
 }
 
 export const LayoutContext = createContext<string>("TODO");
@@ -49,81 +50,44 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
         <div className='flex items-center'>
           <h1 className='text-3xl font-bold text-black mr-4 sm:text-4xl'>Filmowanie.</h1>
           <ul className='hidden text-black md:flex items-center gap-1'>
-            <NavLink to="/">
-            <li className='cursor-pointer px-4 py-2 hover:bg-white hover:text-green-600 hover:rounded-lg transition-colors'>
-              Home
-            </li>
-            </NavLink>
-            <NavLink to="/about">
-            <li className='cursor-pointer px-4 py-2 relative group hover:bg-white hover:text-green-600 hover:rounded-lg transition-colors'>
-              About
-            </li>
-            </NavLink>
-            {isUserLogged ?
-              <NavLink to="/moviesList">
-                <li className='cursor-pointer px-4 py-2 relative group hover:bg-white hover:text-green-600 hover:rounded-lg transition-colors'>
-                  Lista filmów
-                </li>
-              </NavLink> : <></>}
+            <MenuLink text='Home' url='/'/>
+            <MenuLink text='About' url='/about'/>
+            <MenuLink text='Lista filmów' url='/moviesList' isDisabled={!isUserLogged}/>
           </ul>
         </div>
         <div className='hidden md:flex pr-4'>
-          { !isUserLogged ? 
-          <NavLink to="/login">
-          <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600">
-            <LuLogIn className='lg:w-5 lg:h-5 mx-2' />
-            <span className="text-sm font-medium">
-              Login
-            </span>
-          </div>
-          </NavLink>
-          : 
-          <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600" onClick={logout}>
-            <LuLogOut className='lg:w-5 lg:h-5 mx-2' />
-            <span className="text-sm font-medium">
-              Logout
-            </span>
-          </div>
-          }
+          <LoginLogoutLink isUserLogged={isUserLogged} onLogout={logout}/>
         </div>
+      {/* mobile screens */}
         <div className='md:hidden mr-4' onClick={handleClick}>
-          {!isNavMenuVisible ? <LuMenu className='w-5 text-black' /> : <div className='flex'>
-            { !isUserLogged ? <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600">
-              <LuLogIn className='lg:w-5 lg:h-5 mx-2' />
-              <span className="text-sm font-medium">
-                Login
-              </span>
-            </div> : 
-            <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600" onClick={logout}>
-              <LuLogOut className='lg:w-5 lg:h-5 mx-2' />
-              <span className="text-sm font-medium">
-                Logout
-              </span>
-            </div>}
-            <div className="block cursor-pointer shrink-0 rounded-lg bg-white mr-4 p-2.5 border border-gray-100 shadow-sm hover:bg-transparent hover:text-green-600 hover:border hover:border-green-600">
-              <span className="sr-only">Account</span>
-              <LuMenu className='lg:w-5 lg:h-5' />
-            </div>
-          </div>}
+          <LuMenu className='w-5 text-black' />
         </div>
       </div>
-      {/* Navigation on small screens */}
       <ul className={!isNavMenuVisible ? 'hidden' : 'absolute bg-zinc-200 w-full px-8'}>
-        <li onClick={handleClose} className='border-b-2 border-zinc-300 w-full'>
-          Home
-        </li>
-        <li onClick={handleClose} className='border-b-2 border-zinc-300 w-full'>
-          About Us
-        </li>
-        { isUserLogged ? <li onClick={handleClose} className='border-b-2 border-zinc-300 w-full'>
-          Movies List
-        </li>: <></>}
+       <MenuLink isMobile={true} text='Home' url='/'/>
+       <MenuLink isMobile={true} text='About' url='/about'/>
+       <MenuLink isMobile={true} text='Lista filmów' url='/moviesList' isDisabled={!isUserLogged}/>
+       <LoginLogoutLink isMobile={true} isUserLogged={isUserLogged} onLogout={logout}/>
       </ul>
     </div>
   }
 
   function RenderBody(addOpacity: boolean) {
-    if (userError !== undefined || votingStateError !== undefined)
+    const mobileBreakpointPx = 768;
+    const [isMobile, setIsMobile] = React.useState(window.innerWidth < mobileBreakpointPx);
+
+    React.useEffect(() => {
+      const mql = window.matchMedia(`(max-width: ${mobileBreakpointPx - 1}px)`);
+      const onChange = () => {
+        setIsMobile(window.innerWidth < mobileBreakpointPx);
+      };
+      mql.addEventListener("change", onChange);
+      return () => {
+        mql.removeEventListener("change", onChange);
+      };
+    });
+
+    if (userError !== undefined || (votingStateError !== undefined && userData !== null))
       return DisplayFatalError();
 
     if (props.children === undefined)
@@ -139,12 +103,15 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       'min-h-screen',
       'justify-center',
       'items-center',
-      addOpacity ? 'opacity-15' : ''
+      addOpacity ? 'opacity-15' : '',
+      isMobile? 'ml-5 mr-5' :''
     )
+
+    const childProps = { userData: userData === null ? null : userData!, votingStatus: votingState!, isMobile: isMobile } satisfies AppComponentProps;
 
     return (
       <div id="container" className={containerClassName}>
-        {React.cloneElement(props.children, { userData: userData === null ? null : userData!, votingStatus: votingState!, test: "TODO" } as any)}
+        {React.cloneElement(props.children, childProps)}
       </div>);
   }
 
@@ -175,4 +142,76 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
     useLogout();
   }
 };
+
+type MenuLinkProps = {
+  text: string;
+  url: string;
+  isDisabled?: boolean;
+  isMobile?: boolean;
+}
+
+const MenuLink: React.FC<MenuLinkProps> = (props: MenuLinkProps) => {
+  if (props.isDisabled)
+    return <></>;
+
+  if (props.isMobile) {
+    return (
+      <NavLink to={props.url}>
+        <li className='border-b-2 border-zinc-300 w-full min-h-10 text-sm font-medium mt-2'>
+          {props.text}
+        </li>
+      </NavLink>
+    );
+  }
+
+  return (<NavLink to={props.url}>
+    <li className='cursor-pointer px-4 py-2 hover:bg-white hover:text-green-600 hover:rounded-lg transition-colors'>
+      {props.text}
+    </li>
+  </NavLink>
+  );
+}
+
+const LoginLogoutLink: React.FC<{ isUserLogged: boolean, onLogout: () => void, isMobile?: boolean }> = props => {
+  if (props.isMobile) {
+    if (!props.isUserLogged) {
+      return (<NavLink to="/login"><div className='flex items-center text-black'>
+        <li className="text-sm font-medium min-h-10 place-content-center">
+          Login
+        </li>
+        <LuLogIn className='lg:w-5 lg:h-5 mx-2' />
+      </div>
+      </NavLink>);
+    }
+
+    return (
+      <div className='flex items-center text-black' onClick={props.onLogout}>
+        <li className="text-sm font-medium min-h-10 place-content-center">
+          Logout
+        </li>
+          <LuLogOut className='lg:w-5 lg:h-5 mx-2' />
+      </div>
+    );
+  }
+
+  if (!props.isUserLogged) return (
+    <NavLink to="/login">
+      <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600">
+        <LuLogIn className='lg:w-5 lg:h-5 mx-2' />
+        <span className="text-sm font-medium">
+          Login
+        </span>
+      </div>
+    </NavLink>
+  );
+
+  return (
+    <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600" onClick={props.onLogout}>
+      <LuLogOut className='lg:w-5 lg:h-5 mx-2' />
+      <span className="text-sm font-medium">
+        Logout
+      </span>
+    </div>
+  );
+}
 

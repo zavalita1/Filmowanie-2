@@ -23,7 +23,7 @@ export type SpinnerProps = {
 const Spinner: React.FC<React.PropsWithChildren<SpinnerProps>> = 
   ({ className = '', size = 'md', variant = 'primary', isLoading }: SpinnerProps) => {
     return (
-      <>
+      <div className='flex items-center place-self-center'>
         <svg
           className={clsx(
             'animate-spin',
@@ -52,7 +52,7 @@ const Spinner: React.FC<React.PropsWithChildren<SpinnerProps>> =
           ></path>
         </svg>
         <span className="sr-only">Loading</span>
-      </>
+      </div>
     )
   };
 Spinner.displayName = 'Spinner'

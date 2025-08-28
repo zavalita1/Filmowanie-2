@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import React, { useEffect, useState } from "react";
 import { VotingStatus } from "../../consts/votingStatus";
 import { Skeleton } from "../../components/ui/skeleton";
-import { MovieCard } from "../../components/ui/MovieCard";
+import { MovieCard } from "./MovieCard";
 import { ConcreteMovie, Movie } from "../../models/Movie";
 import * as Vote from "../../consts/vote";
 import { useVoteMutation } from "../../store/apis/Voting/votingApi";

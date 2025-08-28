@@ -1,20 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Movie, PlaceholderMovie, ConcreteMovie } from "../../models/Movie";
-import { AppComponentProps } from "../../pages/Layout";
-import { Card, CardHeader, CardDescription, CardTitle, CardContent } from "./card";
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "./drawer";
-import { IconButton } from "./shadcn-io/icon-button";
+import { AppComponentProps } from "../Layout";
+import { Card, CardHeader, CardDescription, CardTitle, CardContent } from "../../components/ui/card";
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "../../components/ui/drawer";
+import { IconButton } from "../../components/ui/shadcn-io/icon-button";
 import { BsEmojiGrin, BsEmojiSmile, BsEmojiLaughing, BsTrashFill } from "react-icons/bs";
-import Spinner from "./Spinner";
+import Spinner from "../../components/ui/Spinner";
 import { IconType } from "react-icons";
+import rgbToHex from "../../utils/rgbToHex";
 
-import { Vote, fromNumber } from "../../consts/vote";
+import { Vote } from "../../consts/vote";
+import clsx from "clsx";
 
 export type MovieCardProps = AppComponentProps & {
   movie: Movie;
   votesAvailable: Vote[];
   votesActive: Vote[];
   onVoteCallback: (vote: Vote) => void;
+}
+
+const voteTypeIconColorMap: {[key in Vote]: {icon: IconType, color: [number, number, number]}} = {
+  [Vote.ThreePoints]: {icon: BsEmojiGrin, color: [4, 184, 8]},
+  [Vote.TwoPoints]: {icon: BsEmojiLaughing, color: [204, 228, 47]},
+  [Vote.OnePoint]: {icon: BsEmojiSmile, color: [251, 191, 36]},
+  [Vote.Trash]: {icon: BsTrashFill, color: [251, 0, 0]},
 }
 
 export const MovieCard: React.FC<MovieCardProps> = props => {
@@ -41,17 +50,39 @@ type ConcreteMovieCardProps = MovieCardProps & {
 
 const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
   const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => setIsLoading(!isLoading && !props.isMobile), [props.isMobile]);
+
+  let cardBgColor:string;
+
+  if (props.votesActive.length === 0) {
+    cardBgColor = "";
+  }
+  else if (props.votesActive[0] === Vote.Trash) {
+    cardBgColor = "bg-red-100";
+  }
+  else {
+    cardBgColor = "bg-lime-100";
+  }
+
+  const cardClassName = clsx([
+    "w-3xs",
+    "m-2",
+    "mr-10", 
+    "hover:bg-blue-200 hover:cursor-pointer",
+    props.isMobile ? '' : '',
+    cardBgColor
+  ]);
 
   return (
     <Drawer>
     <DrawerTrigger asChild={true}>
-      <Card className="w-3xs m-2 mr-10  hover:bg-blue-200 hover:cursor-pointer">
+      <Card className={cardClassName}>
         <CardHeader>
           <CardTitle><b className="text-2xl">{props.movie.movieName}</b></CardTitle>
           {true ? <CardDescription>{props.movie.genres.join(", ")}</CardDescription> :<></>}
         </CardHeader>
         <CardContent>
-          <img className="justify-self-center" src={props.movie.posterUrl}></img>
+          <img className={props.votesActive.length > 0 ? "mask-r-from-blue-200 mask-r-from-70%" : ""} src={props.movie.posterUrl}></img>
         </CardContent>
       </Card>
     </DrawerTrigger>
@@ -61,11 +92,10 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
             <DrawerTitle>
               <p className="text-5xl mb-10"><b>{props.movie.movieName}</b></p>
               </DrawerTitle>
-            <DrawerDescription className="text-xl text-justify">
-              <div className="flex">
-                <img className="mr-10 -mt-12" src="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" onLoad={() => setIsLoading(false)}></img>
-                { isLoading ? <Spinner isLoading></Spinner> :
-                <div className="block">
+            <div className="text-xl text-justify">
+              { isLoading ? <Spinner isLoading></Spinner> : <div className="flex">
+                { props.isMobile ? <></> : <img className="mr-10 -mt-12" src="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" onLoad={() => setIsLoading(false)}></img> }
+                <div className={props.isMobile ? "block text-sm" : "block"}>
                   <p className="mb-10">{props.movie.description}</p>
                   <div>
                     <p><b>Metraż:</b> <i>{props.movie.duration}</i></p>
@@ -81,38 +111,30 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
                     <div>
                     <VoteButton 
                     {...props}
-                    icon={BsEmojiGrin}
                     voteType={Vote.ThreePoints}
                     isFloatingRight={false}
-                    color={[4, 184, 8]}
                     />
                     <VoteButton 
                     {...props}
-                    icon={BsEmojiLaughing}
                     voteType={Vote.TwoPoints}
                     isFloatingRight={false}
-                    color={[204, 228, 47]}
                     />
                     <VoteButton 
                     {...props}
-                    icon={BsEmojiSmile}
                     voteType={Vote.OnePoint}
                     isFloatingRight={false}
-                    color={[251, 191, 36]}
                     />
                     <VoteButton 
                     {...props}
-                    icon={BsTrashFill}
                     voteType={Vote.Trash}
                     isFloatingRight={true}
-                    color={[251, 0, 0]}
                     />
                     </div>
                   </div>
                 </div>
-                }
               </div>
-            </DrawerDescription>
+                }
+            </div>
           </DrawerHeader>
       </div>
     </DrawerContent>
@@ -121,24 +143,24 @@ const ConcreteMovieCard: React.FC<ConcreteMovieCardProps> = props => {
 };
 
 type VoteButonProps = ConcreteMovieCardProps & {
-  icon: IconType;
   voteType: Vote;
   isFloatingRight: boolean;
-  color: [number, number, number];
 };
 
 const VoteButton: React.FC<VoteButonProps> = props => {
   const visibleClassName = props.isFloatingRight ? "float-right" : "";
   const isHidden = !props.votesAvailable.includes(props.voteType);
   const isActive = props.votesActive.includes(props.voteType);
+  const icon = voteTypeIconColorMap[props.voteType].icon;
+  const color = voteTypeIconColorMap[props.voteType].color;
 
   return  <IconButton
-                      icon={props.icon}
+                      icon={icon}
                       active={isActive}
-                      color={props.color} 
+                      color={color} 
                       onClick={() => props.onVoteCallback(props.voteType)}
                       size="lg"
                       className={isHidden ? "hidden" : visibleClassName}
                     />;
-}
+};
 

@@ -2,7 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { combineReducers } from 'redux';
 
-import counterReducer from '../features/Counter/counterSlice';
 import { globalConfigSlice } from './globalConfigSlice';
 import { votingApi } from './apis/Voting/votingApi';
 
@@ -12,7 +11,6 @@ export const store = configureStore({
     getDefaultMiddleware().concat([votingApi.middleware]),
   reducer: combineReducers({
     global: globalConfigSlice.reducer,
-    counter: counterReducer,
     [votingApi.reducerPath]: votingApi.reducer,
   }),
 })

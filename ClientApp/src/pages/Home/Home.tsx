@@ -12,7 +12,11 @@ const Home: React.FC<AppComponentProps> = (props) => {
   }
   
   return (
-  <div> {props.userData === null ? <p className="text-3xl">"Witaj anonimowy użytkowniku. Zapraszam do logowania."</p>: <LoggedView {...props} />}</div>
+    <div className='-mt-30'> {props.userData === null ?
+      (props.isMobile 
+        ? <><p className="text-2xl">Witaj anonimowy użytkowniku.</p><br/> <p className='text-2xl'> Zapraszam do logowania.</p></>
+        : <p className="text-3xl">Witaj anonimowy użytkowniku. Zapraszam do logowania.</p>)
+      : <LoggedView {...props} />}</div>
   );
 }
 

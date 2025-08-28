@@ -2,22 +2,25 @@ import React from 'react'
 import { Provider as ReduxStoreProvider } from 'react-redux'
 import { BrowserRouter, Routes, Route } from 'react-router'
 
-import './features/Counter/index.module.css'
-import Counter from './features/Counter/index';
 import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import MoviesList from './pages/MoviesList/MoviesList';
+import Results from './pages/Results/Results';
+import About from './pages/About/About';
 import { store } from './store/store';
 
 const App: React.FC = () => {
+  const routeProps = {} as any;
+  
   return (
     <ReduxStoreProvider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/test" element={<Counter />} />
-          <Route path="/" element={<Home {...({} as any)}/>} />
+          <Route path="/" element={<Home {...routeProps}/>} />
+          <Route path="/about" element={<About {...routeProps}/>} />
           <Route path="/login" element={<Login />} />
-          <Route path="/movieslist" element={<MoviesList {...({} as any)}/>} />
+          <Route path="/movieslist" element={<MoviesList {...routeProps}/>} />
+          <Route path="/results" element={<Results {...routeProps}/>} />
         </Routes>
       </BrowserRouter>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
