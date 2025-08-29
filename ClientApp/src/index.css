@@ -126,3 +126,8 @@
 div[data-slot="drawer-overlay"] {
   visibility: hidden;
 }
+
+div.large-dialog {
+  width: 150vw;
+  max-width: 150vh;
+}

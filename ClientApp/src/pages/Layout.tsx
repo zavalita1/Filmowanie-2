@@ -4,8 +4,9 @@ import { NavLink } from 'react-router';
 import penguinSvg from '../components/ui/footerIcon.svg';
 import { useGetUserQuery, useLogoutMutation } from '../store/apis/1-User/userApi';
 import { useGetStateQuery } from '../store/apis/2-Voting/votingApi';
-import Spinner from '../components/ui/Spinner';
-import { UserState } from '@/store/apis/1-User/types';
+import { useGetNominationsQuery } from '../store/apis/4-Nomination/api'
+import Spinner from '../components/Spinner';
+import { UserState, UserStateWithNominations } from '@/store/apis/1-User/types';
 import { useAppSelector } from '../hooks/redux';
 import clsx from 'clsx';
 import { VotingStatus } from '../consts/votingStatus';
@@ -22,7 +23,7 @@ type DisableCenterVertically = {
 export type LayoutProps = BaseLayoutProps | (BaseLayoutProps & DisableCenterVertically);
 
 export type AppComponentProps = {
-  userData: UserState | null;
+  userData: UserStateWithNominations | null;
   votingStatus: VotingStatus;
   isMobile: boolean;
 }
@@ -34,6 +35,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const isLoading = useAppSelector(s => s.global.isLoading);
   const { data: userData, error: userError, isLoading: userDataIsLoading } = useGetUserQuery();
   const { data: votingState, error: votingStateError, isLoading: votingStateIsLoading } = useGetStateQuery();
+  const { data: nominationsData, error: nominationsError, isLoading: nominationsIsLoading } = useGetNominationsQuery();
   const isUserLogged = userData !== undefined && userData !== null
   const [useLogout, result] = useLogoutMutation();
 
@@ -42,6 +44,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
 
   const isMovieListEnabled = (isUserLogged && votingState === VotingStatus.Voting) || userData?.isAdmin;
   const isResultsEnabled = (isUserLogged && votingState !== VotingStatus.Voting) || userData?.isAdmin;
+  const isNominateEnabled = (isUserLogged && (nominationsData?.length ?? 0) > 0) || userData?.isAdmin;
 
   const containerClasses = clsx([
     "flex",
@@ -56,16 +59,18 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
 
   return (
     <LayoutContext.Provider value="TODO">
+      <div className='flex flex-col'>
       <Header />
       <div id="container" className={containerClasses}><Spinner isLoading={isLoading}></Spinner></div>
       { RenderBody(isLoading) }
       <Toaster />
       <Footer />
+      </div>
     </LayoutContext.Provider>
   );
 
   function Header() {
-    return <div className='w-screen bg-gray-100 h-[70px] fixed drop-shadow-lg relative'>
+    return <div className='w-screen bg-gradient-to-tr from-emerald-50 to-sky-100 h-[70px] drop-shadow-lg relative'>
       <div className='px-2 flex justify-between items-center w-full h-full'>
         <div className='flex items-center'>
           <h1 className='text-3xl font-bold text-black mr-4 sm:text-4xl'>Filmowanie.</h1>
@@ -75,6 +80,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
             <MenuLink text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
             <MenuLink text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
             <MenuLink text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
+            <MenuLink text='Nominuj' url='/nominate' isDisabled={!isNominateEnabled}/>
           </ul>
         </div>
         <div className='hidden md:flex pr-4'>
@@ -91,6 +97,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
        <MenuLink isMobile={true} text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
        <MenuLink isMobile={true} text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
        <MenuLink isMobile={true} text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
+       <MenuLink isMobile={true} text='Nominuj' url='/nominate' isDisabled={!isNominateEnabled}/>
        <LoginLogoutLink isMobile={true} isUserLogged={isUserLogged} onLogout={logout}/>
       </ul>
     </div>
@@ -111,7 +118,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       };
     });
 
-    if (userError !== undefined || (votingStateError !== undefined && userData !== null))
+    if (userError !== undefined || ((votingStateError !== undefined || nominationsError !== undefined) && userData !== null))
       return DisplayFatalError();
 
     if (props.children === undefined)
@@ -124,14 +131,15 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       'flex',
       'flex-row',
       'flex-wrap',
-      'min-h-screen',
       'justify-center',
+      'min-h-screen',
        (props as DisableCenterVertically)?.disableCenterVertically ? "" : "items-center",
       addOpacity ? 'opacity-15' : '',
       isMobile? 'ml-5 mr-5' :''
     )
 
-    const childProps = { userData: userData === null ? null : userData!, votingStatus: votingState!, isMobile: isMobile } satisfies AppComponentProps;
+    const userDataForProps = userData === null ? null : {...userData!, nominations: nominationsData! };
+    const childProps = { userData: userDataForProps, votingStatus: votingState!, isMobile: isMobile } satisfies AppComponentProps;
 
     return (
       <div id="container" className={containerClassName}>
@@ -140,12 +148,12 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   }
 
   function DisplayFatalError() {
-    return (<div className="flex flex-row min-h-screen justify-center items-center relative">Coś się zesrało w fatalny sposób. Strona jest do wyjebania, prosze odświeżyć.</div>);
+    return (<div className="flex flex-row justify-center items-center relative">Coś się zesrało w fatalny sposób. Strona jest do wyjebania, prosze odświeżyć.</div>);
   }
 
   function Footer() {
-    return <section className="relative bg-white mt-10">
-      <footer className="bg-gray-50">
+    return <section className="bg-gradient-to-tr from-emerald-50 to-sky-100 mt-10 w-full">
+      <footer className="">
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="sm:flex sm:items-center sm:justify-between">
             <div className="flex justify-center text-teal-600 sm:justify-start">

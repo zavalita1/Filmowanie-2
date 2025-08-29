@@ -3,9 +3,9 @@ import { toast } from "sonner";
 export const commonOnQueryStarted = async (
     setLoading: (loading: boolean) => void,
     promise : Promise<unknown>,
-    showLoading = false,
+    showLoading = true,
     showSuccess = false,
-    showError = false,
+    showError = true,
     additionalErrorHandlingCallback?: () => Promise<unknown>,
 ) => {
     try {
@@ -20,6 +20,7 @@ export const commonOnQueryStarted = async (
         }
 
         if (showSuccess) {
+            toast.info("Panie prezesie, melduję wykonanie zadania!")
         }
     } catch (err) {
         if (showLoading) {

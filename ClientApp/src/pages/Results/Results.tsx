@@ -85,7 +85,7 @@ const Results: React.FC<AppComponentProps> = () => {
                                 <TableRow
                                     key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id} className={row.original.isDecorated ? "bg-lime-200" : ""}>
+                                        <TableCell key={cell.id} className={row.original.isDecorated ? "bg-emerald-200 font-bold" : ""}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
@@ -125,7 +125,7 @@ const Results: React.FC<AppComponentProps> = () => {
                                     className={row.original.votesCount === 0 ? "" : "cursor-pointer"}
                                 >
                                             {row.getVisibleCells().map((cell) => (
-                                                    <TableCell key={cell.id} className={row.original.isDecorated ? "bg-rose-300" : ""}>
+                                                    <TableCell key={cell.id} className={row.original.isDecorated ? "bg-rose-300 font-bold" : ""}>
                                                     { 
                                                         cell.column.columnDef.header === "" 
                                                         ? (!expandedRows.includes(row.original.rank) ? <BsChevronDown />: <BsChevronUp />)

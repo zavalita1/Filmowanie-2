@@ -5,7 +5,7 @@ import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
 import { CurrentVotingIncomingDTO, MovieDTO, VoteOutgoingDTO, VotingResultIncomingDTO, VotingSessionStatusIncomingDTO } from './types';
 import { VotingStatus } from '../../../consts/votingStatus';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { ConcreteMovie, Movie, PlaceholderMovie } from '../../../models/Movie';
+import { VoteableMovie, Movie, PlaceholderMovie } from '../../../models/Movie';
 import { ResultRow, Results } from '../../../models/Results';
 
 export const votingApi = userApi
@@ -33,9 +33,6 @@ export const votingApi = userApi
     }),
     getState: builder.query<VotingStatus, void>({
       query: () => 'voting/state',
-      async onQueryStarted(params, { dispatch, queryFulfilled }) {
-        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
-      },
       transformResponse: mapVotingStatus,
       providesTags: ['VotingStatus']
     }),
@@ -44,7 +41,7 @@ export const votingApi = userApi
       async onQueryStarted(params, { dispatch, queryFulfilled }) {
          const patchResult = dispatch(
           votingApi.util.updateQueryData('getCurrentVoting', undefined, r => {
-            const movieToPatchIndex = r.findIndex(m => (m as ConcreteMovie)?.movieId === params.movieId);
+            const movieToPatchIndex = r.findIndex(m => (m as VoteableMovie)?.movieId === params.movieId);
             const movieToPatch = {...r[movieToPatchIndex], votes: params.votes};
             return [...r.slice(0, movieToPatchIndex), movieToPatch,...r.slice(movieToPatchIndex + 1)];
           }));

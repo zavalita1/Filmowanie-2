@@ -29,9 +29,6 @@ export const userApi = apiSlice
           ? result
           : { error: resultWrapped.error as FetchBaseQueryError }
       },
-      async onQueryStarted(params, { dispatch, queryFulfilled }) {
-        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
-      },
       providesTags: ['UserData']
     }),
     loginWithCode: builder.mutation<UserState, LoginWithCodeOutgoingDTO, UserState>({

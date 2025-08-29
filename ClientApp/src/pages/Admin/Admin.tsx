@@ -52,7 +52,7 @@ const Admin: React.FC<AppComponentProps> = props => {
                     {x.name}
                     </TableCell>
                     <TableCell>
-                        <Button onClick={() => navigate(`/api/user/${x.id}`)}>Details</Button>
+                        <Button onClick={() => document.location = `/api/user/${x.id}`}>Details</Button>
                     </TableCell>
                     </TableRow>
                     )}

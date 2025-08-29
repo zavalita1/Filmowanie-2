@@ -7,15 +7,15 @@ import { useSignUpMutation } from "../../store/apis/1-User/userApi";
 import { LoginWithBasicAuthOutgoingDTO } from '../../store/apis/1-User/types';
 
 const Home: React.FC<AppComponentProps> = (props) => {
-  if (props.userData === undefined) {
-    return <div>loading...</div>
-  }
-  
   return (
     <div className='-mt-30'> {props.userData === null ?
       (props.isMobile 
         ? <><p className="text-2xl">Witaj anonimowy użytkowniku.</p><br/> <p className='text-2xl'> Zapraszam do logowania.</p></>
-        : <p className="text-3xl">Witaj anonimowy użytkowniku. Zapraszam do logowania.</p>)
+        :  <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mb-10">
+                שָׁלוֹם 
+                <br/>
+                Zapraszam do logowania.
+            </h1>)
       : <LoggedView {...props} />}</div>
   );
 }

@@ -1,3 +1,5 @@
+import { Decade } from "../../../consts/Decade";
+
 export type UserIncomingDTO = {
     username: string;
     isAdmin: boolean;
@@ -9,6 +11,10 @@ export type UserState = {
     isAdmin: boolean;
     hasBasicAuthSetup: boolean;
 };
+
+export type UserStateWithNominations = UserState & {
+    nominations: Decade[];
+}
 
 export type LoginWithCodeOutgoingDTO = {
     code: string;

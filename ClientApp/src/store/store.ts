@@ -3,15 +3,15 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { combineReducers } from 'redux';
 
 import { globalConfigSlice } from './globalConfigSlice';
-import { adminApi } from './apis/3-Admin/api';
+import { nominationApi as api } from './apis/4-Nomination/api';
 
 export const store = configureStore({
   devTools: process.env.NODE_ENV === 'development',
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([adminApi.middleware]),
+    getDefaultMiddleware().concat([api.middleware]),
   reducer: combineReducers({
     global: globalConfigSlice.reducer,
-    [adminApi.reducerPath]: adminApi.reducer,
+    [api.reducerPath]: api.reducer,
   }),
 })
 

@@ -1,7 +1,6 @@
-export type ConcreteMovie = {
+export type ReadonlyMovie = {
     movieId: string;
     movieName: string;
-    votes: number;
     posterUrl: string;
     description: string;
     filmwebUrl: string;
@@ -14,9 +13,13 @@ export type ConcreteMovie = {
     originalTitle: string;
 }
 
+export type VoteableMovie = ReadonlyMovie & {
+    votes: number;
+}
+
 export type PlaceholderMovie = {
     title: string;
     decade: number;
 }
 
-export type Movie = ConcreteMovie | PlaceholderMovie;
+export type Movie = VoteableMovie | PlaceholderMovie;

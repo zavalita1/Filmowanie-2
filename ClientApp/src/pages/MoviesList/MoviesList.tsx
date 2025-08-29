@@ -4,13 +4,13 @@ import { useNavigate } from "react-router";
 import React, { useEffect, useState } from "react";
 import { VotingStatus } from "../../consts/votingStatus";
 import { Skeleton } from "../../components/ui/skeleton";
-import { MovieCard } from "./MovieCard";
-import { ConcreteMovie, Movie } from "../../models/Movie";
+import { MovieCard, MovieCardProps, PlaceholderMovieCardProps, VoteableMovieCardProps } from "../../components/MovieCard";
+import { VoteableMovie, Movie, PlaceholderMovie } from "../../models/Movie";
 import * as Vote from "../../consts/vote";
 import { useVoteMutation } from "../../store/apis/2-Voting/votingApi";
 import { toast } from "sonner";
-import Confetti from "../../components/ui/Confetti";
-import { VotingConfirmationDialog } from "./VotingConfirmationDialog";
+import Confetti from "../../components/Confetti";
+import { ConfirmationDialog } from "../../components/ConfirmationDialog";
 
 const MoviesList: React.FC<AppComponentProps> = (props) => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
     return (<div>Coś się zesrao. Odśwież stronę.</div>);
   }
 
-  const callVoteRoute = async (votes: number, movie: ConcreteMovie) => {
+  const callVoteRoute = async (votes: number, movie: VoteableMovie) => {
     const dto = { movieTitle: movie.movieName, votes, movieId: movie.movieId };
     const r = await vote(dto);
     if (r.error !== undefined) {
@@ -61,7 +61,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
     }
   }
 
-  const voteCallback = (vote: Vote.Vote, movie: ConcreteMovie) => {
+  const voteCallback = (vote: Vote.Vote, movie: VoteableMovie) => {
     if (!availableVotes.includes(vote)) {
       const newAvailableVotes = availableVotes.filter(x => x !== vote);
       callVoteRoute(0, movie);
@@ -77,13 +77,18 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   };
 
   const getCardProps = (movie: Movie) => {
-    const movieVotes = (movie as ConcreteMovie)?.votes ?? 0;
+    if ((movie as VoteableMovie)?.votes === undefined) {
+      return {...props, movie: movie as PlaceholderMovie, isPlaceholder: true} satisfies PlaceholderMovieCardProps
+    }
+
+    const votableMovie = movie as VoteableMovie;
+    const movieVotes = votableMovie.votes ?? 0;
     const [votesActive, votesAvailable] = movieVotes === 0 
     ? [[], availableVotes] 
     : [[Vote.fromNumber(movieVotes)], [Vote.fromNumber(movieVotes)]];
-    const onVoteCallback = (vote: Vote.Vote) => voteCallback(vote, movie as ConcreteMovie);
+    const onVoteCallback = (vote: Vote.Vote) => voteCallback(vote, votableMovie);
 
-    return {...props, movie, votesAvailable, votesActive, onVoteCallback};
+    return {...props, movie: votableMovie, votesAvailable, votesActive, onVoteCallback} satisfies VoteableMovieCardProps;
   }
 
   let counter = 0;
@@ -91,17 +96,17 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   return (
     <>
     <Confetti isEnabled={showPopups}></Confetti>
-    <VotingConfirmationDialog isOpen={showPopups} onClose={() => setAcknowledgedPopup(true)} 
-    dialogConfirmationText="Dobra, przestań strzelać" 
-    dialogText="Winszuję, wszystkie głosy zostały przydzielone. Możesz je jeszcze zmienić, dopóki admin nie zakończy głosowania podczas następnego filmowania."
-    dialogTitle="You're simply the best, better than all the rest."
-    />
-    <div className="mt-10 ml-auto mr-25">
-    {/* <Button onClick={onCarouselClick}>Set to carousel!</Button>  */}
-    </div>
-    <div className="flex flex-row flex-wrap justify-center mt-10">
-      { data!.map(d => <MovieCard {...getCardProps(d)} key={counter++}></MovieCard>)}
-    </div>
+      <ConfirmationDialog isOpen={showPopups} onClose={() => setAcknowledgedPopup(true)}
+        dialogCancelText="Dobra, przestań strzelać"
+        dialogContent="Winszuję, wszystkie głosy zostały przydzielone. Możesz je jeszcze zmienić, dopóki admin nie zakończy głosowania podczas następnego filmowania."
+        dialogTitle="You're simply the best, better than all the rest."
+      />
+      <div className="mt-10 ml-auto mr-25">
+        {/* <Button onClick={onCarouselClick}>Set to carousel!</Button>  */}
+      </div>
+      <div className="flex flex-row flex-wrap justify-center mt-10">
+        {data!.map(d => <MovieCard {...getCardProps(d)} key={counter++}></MovieCard>)}
+      </div>
     </>
   );
 
@@ -116,7 +121,7 @@ function getInitialAvailableVotes(movies?: Movie[]) {
   }
 
   const usedVotes = movies
-    .map(x => (x as ConcreteMovie)?.votes ?? 0)
+    .map(x => (x as VoteableMovie)?.votes ?? 0)
     .filter(x => x !== 0)
     .map(x => Vote.fromNumber(x));
   const result = Vote.allVoteTypes.filter(x => !usedVotes.includes(x));
