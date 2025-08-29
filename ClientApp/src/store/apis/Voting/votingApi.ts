@@ -2,10 +2,11 @@ import { userApi } from '../User/userApi';
 import { commonOnQueryStarted } from '../../utils/queryStoreWrapper';
 import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
 
-import { CurrentVotingIncomingDTO, MovieDTO, VoteOutgoingDTO, VotingSessionStatusIncomingDTO } from './types';
+import { CurrentVotingIncomingDTO, MovieDTO, VoteOutgoingDTO, VotingResultIncomingDTO, VotingSessionStatusIncomingDTO } from './types';
 import { VotingStatus } from '../../../consts/votingStatus';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { ConcreteMovie, Movie, PlaceholderMovie } from '../../../models/Movie';
+import { ResultRow, Results } from '../../../models/Results';
 
 export const votingApi = userApi
 .enhanceEndpoints({ addTagTypes: ['MoviesList']})
@@ -48,6 +49,13 @@ export const votingApi = userApi
           }));
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, false, false, async () => patchResult.undo());
       },
+    }),
+    getResults: builder.query<Results, string>({
+      query: votingSessionId => ({ url: `voting/results?votingSessionId=${votingSessionId}`, method: 'GET'}),
+      async onQueryStarted(params, { dispatch, queryFulfilled }) {
+        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
+      },
+      transformResponse: mapVotingResults
     })
   })
 });
@@ -70,4 +78,12 @@ function mapMovie(dto: MovieDTO): Movie {
   return dto;
 }
 
-export const { useGetCurrentVotingQuery, useGetStateQuery, useVoteMutation } = votingApi;
+function mapVotingResults(dto: VotingResultIncomingDTO): Results {
+  let rank = 0;
+  const votingResult = dto.votingResults.map(x => ({ rank: ++rank, movieTitle: x.movieName, isDecorated: x.isWinner ?? false, votesCount: x.votersCount } satisfies ResultRow));
+  rank = 0;
+  const trashVotingResult = dto.trashVotingResults.filter(x => x.voters.length !== 0).map(x => ({ rank: ++rank, movieTitle: x.movieName, isDecorated: x.isAwarded ?? false, votesCount: x.voters.length, voters: x.voters} satisfies ResultRow));
+  return { voting: votingResult, trashVoting: trashVotingResult }; 
+}
+
+export const { useGetCurrentVotingQuery, useGetStateQuery, useVoteMutation, useGetResultsQuery } = votingApi;

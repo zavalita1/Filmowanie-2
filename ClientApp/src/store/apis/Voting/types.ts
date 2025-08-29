@@ -25,4 +25,22 @@ export type VoteOutgoingDTO = {
     movieTitle: string;
     movieId: string;
     votes: number;
+};
+
+export type VotingResultIncomingDTO = {
+    votingResults: VotingResultRowDTO[]; 
+    trashVotingResults: TrashVotingResultRowDTO[];
+};
+
+export type VotingResultRowDTO = {
+    movieName: string;
+    votersCount: number;
+    isWinner?: boolean;
 }
+
+export type TrashVotingResultRowDTO = {
+    movieName: string;
+    voters: string[];
+    isAwarded: boolean;
+}
+

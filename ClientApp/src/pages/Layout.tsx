@@ -8,12 +8,18 @@ import Spinner from '../components/ui/Spinner';
 import { UserState } from '@/store/apis/User/types';
 import { useAppSelector } from '../hooks/redux';
 import clsx from 'clsx';
-import { VotingStatus } from '@/consts/votingStatus';
+import { VotingStatus } from '../consts/votingStatus';
 import { Toaster } from '../components/ui/sonner';
 
-export type LayoutProps = {
+export type BaseLayoutProps = {
   children?: ReactElement<AppComponentProps>;
 };
+
+type DisableCenterVertically = {
+  disableCenterVertically: boolean;
+}
+
+export type LayoutProps = BaseLayoutProps | (BaseLayoutProps & DisableCenterVertically);
 
 export type AppComponentProps = {
   userData: UserState | null;
@@ -34,10 +40,24 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const handleClick = () => setIsNavMenuVisible(!isNavMenuVisible);
   const handleClose = () => setIsNavMenuVisible(false);
 
+  const isMovieListEnabled = (isUserLogged && votingState === VotingStatus.Voting) || userData?.isAdmin;
+  const isResultsEnabled = (isUserLogged && votingState !== VotingStatus.Voting) || userData?.isAdmin;
+
+  const containerClasses = clsx([
+    "flex",
+    "flex-row",
+    "min-h-screen",
+    "justify-center",
+    (props as DisableCenterVertically)?.disableCenterVertically ? "" : "items-center",
+    "-z-10",
+    "fixed",
+    "w-full"
+  ])
+
   return (
     <LayoutContext.Provider value="TODO">
       <Header />
-      <div id="container" className="flex flex-row min-h-screen justify-center items-center -z-10 fixed w-full"><Spinner isLoading={isLoading}></Spinner></div>
+      <div id="container" className={containerClasses}><Spinner isLoading={isLoading}></Spinner></div>
       { RenderBody(isLoading) }
       <Toaster />
       <Footer />
@@ -52,7 +72,8 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
           <ul className='hidden text-black md:flex items-center gap-1'>
             <MenuLink text='Home' url='/'/>
             <MenuLink text='About' url='/about'/>
-            <MenuLink text='Lista filmów' url='/moviesList' isDisabled={!isUserLogged}/>
+            <MenuLink text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
+            <MenuLink text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
           </ul>
         </div>
         <div className='hidden md:flex pr-4'>
@@ -66,7 +87,8 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       <ul className={!isNavMenuVisible ? 'hidden' : 'absolute bg-zinc-200 w-full px-8'}>
        <MenuLink isMobile={true} text='Home' url='/'/>
        <MenuLink isMobile={true} text='About' url='/about'/>
-       <MenuLink isMobile={true} text='Lista filmów' url='/moviesList' isDisabled={!isUserLogged}/>
+       <MenuLink isMobile={true} text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
+       <MenuLink isMobile={true} text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
        <LoginLogoutLink isMobile={true} isUserLogged={isUserLogged} onLogout={logout}/>
       </ul>
     </div>
@@ -102,7 +124,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       'flex-wrap',
       'min-h-screen',
       'justify-center',
-      'items-center',
+       (props as DisableCenterVertically)?.disableCenterVertically ? "" : "items-center",
       addOpacity ? 'opacity-15' : '',
       isMobile? 'ml-5 mr-5' :''
     )
