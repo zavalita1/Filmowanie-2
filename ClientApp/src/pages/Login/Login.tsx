@@ -3,8 +3,8 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
 import { BasicLogin } from "./BasicLogin";
-import { useLoginWithCodeMutation, useLoginWithBasicAuthMutation, useGetUserQuery } from "../../store/apis/User/userApi";
-import { LoginWithBasicAuthOutgoingDTO, LoginWithCodeOutgoingDTO } from "../../store/apis/User/types";
+import { useLoginWithCodeMutation, useLoginWithBasicAuthMutation, useGetUserQuery } from "../../store/apis/1-User/userApi";
+import { LoginWithBasicAuthOutgoingDTO, LoginWithCodeOutgoingDTO } from "../../store/apis/1-User/types";
 import { useNavigate } from "react-router";
 
 import { AppComponentProps, Layout } from '../Layout';

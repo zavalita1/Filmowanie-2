@@ -2,10 +2,10 @@ import React, { createContext, ReactElement, ReactNode } from 'react';
 import { LuLogIn, LuMenu, LuLogOut } from 'react-icons/lu';
 import { NavLink } from 'react-router';
 import penguinSvg from '../components/ui/footerIcon.svg';
-import { useGetUserQuery, useLogoutMutation } from '../store/apis/User/userApi';
-import { useGetStateQuery } from '../store/apis/Voting/votingApi';
+import { useGetUserQuery, useLogoutMutation } from '../store/apis/1-User/userApi';
+import { useGetStateQuery } from '../store/apis/2-Voting/votingApi';
 import Spinner from '../components/ui/Spinner';
-import { UserState } from '@/store/apis/User/types';
+import { UserState } from '@/store/apis/1-User/types';
 import { useAppSelector } from '../hooks/redux';
 import clsx from 'clsx';
 import { VotingStatus } from '../consts/votingStatus';
@@ -74,6 +74,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
             <MenuLink text='About' url='/about'/>
             <MenuLink text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
             <MenuLink text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
+            <MenuLink text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
           </ul>
         </div>
         <div className='hidden md:flex pr-4'>
@@ -89,6 +90,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
        <MenuLink isMobile={true} text='About' url='/about'/>
        <MenuLink isMobile={true} text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
        <MenuLink isMobile={true} text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
+       <MenuLink isMobile={true} text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
        <LoginLogoutLink isMobile={true} isUserLogged={isUserLogged} onLogout={logout}/>
       </ul>
     </div>

@@ -3,15 +3,15 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { combineReducers } from 'redux';
 
 import { globalConfigSlice } from './globalConfigSlice';
-import { votingApi } from './apis/Voting/votingApi';
+import { adminApi } from './apis/3-Admin/api';
 
 export const store = configureStore({
   devTools: process.env.NODE_ENV === 'development',
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([votingApi.middleware]),
+    getDefaultMiddleware().concat([adminApi.middleware]),
   reducer: combineReducers({
     global: globalConfigSlice.reducer,
-    [votingApi.reducerPath]: votingApi.reducer,
+    [adminApi.reducerPath]: adminApi.reducer,
   }),
 })
 

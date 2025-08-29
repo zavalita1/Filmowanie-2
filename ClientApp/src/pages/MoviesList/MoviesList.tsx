@@ -1,5 +1,5 @@
 import { Layout, AppComponentProps } from "../Layout";
-import { useGetCurrentVotingQuery } from '../../store/apis/Voting/votingApi';
+import { useGetCurrentVotingQuery } from '../../store/apis/2-Voting/votingApi';
 import { useNavigate } from "react-router";
 import React, { useEffect, useState } from "react";
 import { VotingStatus } from "../../consts/votingStatus";
@@ -7,7 +7,7 @@ import { Skeleton } from "../../components/ui/skeleton";
 import { MovieCard } from "./MovieCard";
 import { ConcreteMovie, Movie } from "../../models/Movie";
 import * as Vote from "../../consts/vote";
-import { useVoteMutation } from "../../store/apis/Voting/votingApi";
+import { useVoteMutation } from "../../store/apis/2-Voting/votingApi";
 import { toast } from "sonner";
 import Confetti from "../../components/ui/Confetti";
 import { VotingConfirmationDialog } from "./VotingConfirmationDialog";

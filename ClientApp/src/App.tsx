@@ -7,6 +7,7 @@ import Login from './pages/Login/Login';
 import MoviesList from './pages/MoviesList/MoviesList';
 import Results from './pages/Results/Results';
 import About from './pages/About/About';
+import Admin from './pages/Admin/Admin';
 import { store } from './store/store';
 
 const App: React.FC = () => {
@@ -21,6 +22,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/movieslist" element={<MoviesList {...routeProps}/>} />
           <Route path="/results" element={<Results {...routeProps}/>} />
+          <Route path="/admin" element={<Admin {...routeProps}/>} />
         </Routes>
       </BrowserRouter>
       <link rel="preconnect" href="https://fonts.googleapis.com" />

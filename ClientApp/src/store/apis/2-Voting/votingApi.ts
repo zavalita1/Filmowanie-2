@@ -1,4 +1,4 @@
-import { userApi } from '../User/userApi';
+import { userApi } from '../1-User/userApi';
 import { commonOnQueryStarted } from '../../utils/queryStoreWrapper';
 import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
 
@@ -9,7 +9,7 @@ import { ConcreteMovie, Movie, PlaceholderMovie } from '../../../models/Movie';
 import { ResultRow, Results } from '../../../models/Results';
 
 export const votingApi = userApi
-.enhanceEndpoints({ addTagTypes: ['MoviesList']})
+.enhanceEndpoints({ addTagTypes: ['MoviesList', 'VotingStatus']})
 .injectEndpoints({
   endpoints: (builder) => ({
     getCurrentVoting: builder.query<Movie[], void>({
@@ -36,7 +36,8 @@ export const votingApi = userApi
       async onQueryStarted(params, { dispatch, queryFulfilled }) {
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
       },
-      transformResponse: mapVotingStatus
+      transformResponse: mapVotingStatus,
+      providesTags: ['VotingStatus']
     }),
     vote: builder.mutation<void, VoteOutgoingDTO, void>({
       query: dto => ({ url: '/voting/vote', method: 'POST', body: dto}),

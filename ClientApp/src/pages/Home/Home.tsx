@@ -3,8 +3,8 @@ import React from 'react';
 import { AppComponentProps, Layout } from '../Layout';
 import { Separator } from '../../components/ui/separator';
 import { BasicLogin } from '../Login/BasicLogin';
-import { useSignUpMutation } from "../../store/apis/User/userApi";
-import { LoginWithBasicAuthOutgoingDTO } from '../../store/apis/User/types';
+import { useSignUpMutation } from "../../store/apis/1-User/userApi";
+import { LoginWithBasicAuthOutgoingDTO } from '../../store/apis/1-User/types';
 
 const Home: React.FC<AppComponentProps> = (props) => {
   if (props.userData === undefined) {

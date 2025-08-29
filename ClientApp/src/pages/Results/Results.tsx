@@ -1,5 +1,5 @@
 import { AppComponentProps, Layout } from "../Layout";
-import { useGetResultsQuery } from "../../store/apis/Voting/votingApi";
+import { useGetResultsQuery } from "../../store/apis/2-Voting/votingApi";
 import { ColumnDef, flexRender, getCoreRowModel, Row, useReactTable } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table"
 import { ResultRow } from "../../models/Results";

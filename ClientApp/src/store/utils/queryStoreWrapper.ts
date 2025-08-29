@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 export const commonOnQueryStarted = async (
     setLoading: (loading: boolean) => void,
     promise : Promise<unknown>,
@@ -29,7 +31,13 @@ export const commonOnQueryStarted = async (
         }
 
         if (showError) {
-            // Do something
+            toast.error("Coś poszło nie tak :(", {
+                classNames: {
+                    description: "!text-foreground/80",
+                },
+                className: "text-5xl",
+                richColors: true
+            });
         }
     }
 };
