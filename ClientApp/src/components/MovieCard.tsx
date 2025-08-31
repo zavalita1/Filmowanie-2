@@ -90,10 +90,14 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
     <DrawerTrigger asChild={true}>
       <Card className={cardClassName}>
         <CardHeader>
-          <CardTitle><b className="text-2xl">{props.movie.movieName}</b></CardTitle>
-          {true ? <CardDescription>{props.movie.genres.join(", ")}</CardDescription> :<></>}
+          <CardTitle className="place-content-center justify-self-center">
+            <b className={getCartTitleTextSize()}>
+            {`${props.movie.movieName} (${props.movie.createdYear})`}
+            </b>
+            </CardTitle>
+          <CardDescription className="min-h-1 place-content-center justify-self-center">{props.movie.genres.join(", ")}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="mt-auto self-center-safe">
           <img className={customizer.getPosterElementClassName()} src={props.movie.posterUrl}></img>
         </CardContent>
         {
@@ -130,6 +134,13 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
     </DrawerContent>
     </Drawer>
   );
+
+  function getCartTitleTextSize() {
+    const length = props.movie.movieName.length;
+    if (length < 10) return "text-2xl";
+    else if (length < 14) return "text-xl";
+    else return "text-3md";
+  }
 
   function getMovieCardCustomizer(props: VoteableMovieCardProps | ReadOnlyMovieCardProps): IMovieCardCustomzer {
     if (isVoteable(props)) {

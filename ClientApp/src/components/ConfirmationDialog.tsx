@@ -9,6 +9,7 @@ type DialogProps = {
   isOpen: boolean;
   dialogContent: string | ReactNode;
   dialogTitle: string;
+  dialogSubtitle?: string;
   dialogCancelText: string;
   dialogActionText?: string;
   className?: string;
@@ -27,13 +28,14 @@ export const ConfirmationDialog: React.FC<DialogProps> = props => {
   return (<div className={className}>
       <AlertDialog open={props.isOpen}>
         <AlertDialogContent className={props.isLarge ? "large-dialog": ""}>
-          <AlertDialogHeader>
+          <AlertDialogHeader className="max-w-inherit">
             <AlertDialogTitle>{props.dialogTitle}</AlertDialogTitle>
-            <AlertDialogDescription>
+            { props.dialogSubtitle === undefined ? <></> : <div>{props.dialogSubtitle}</div> }
+            <AlertDialogDescription className="select-none">
               {props.dialogContent}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className="max-w-inherit">
             <AlertDialogCancel className="cursor-pointer max-w-70 text-balance md:max-w-100 bg-emerald-50" onClick={props.onClose}>
                 { portionButtonText(props.dialogCancelText) }
               </AlertDialogCancel>

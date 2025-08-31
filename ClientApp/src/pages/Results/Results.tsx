@@ -58,7 +58,7 @@ const Results: React.FC<AppComponentProps> = () => {
     }
 
     return (
-        <div className="w-full md:w-4/5 mt-10">
+        <div className="w-full md:w-4/5 mt-10 select-none">
             <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mb-10">
                 Rezultat głosowania
             </h1>

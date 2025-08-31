@@ -131,3 +131,7 @@ div.large-dialog {
   width: 150vw;
   max-width: 150vh;
 }
+
+.max-w-inherit {
+  max-width: inherit;
+}

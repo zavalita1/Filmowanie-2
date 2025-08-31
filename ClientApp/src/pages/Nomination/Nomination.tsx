@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { HtmlHTMLAttributes, useEffect, useRef, useState } from "react";
 import { AppComponentProps, Layout } from "../Layout";
 import { useNavigate } from "react-router";
 import { Button } from "../../components/ui/button";
@@ -10,10 +10,13 @@ import { MovieCard, ReadOnlyMovieCardProps } from "../../components/MovieCard";
 import { ReadonlyMovie } from "../../models/Movie";
 import { ConfirmationDialog } from "../../components/ConfirmationDialog";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
+import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../../components/ui/carousel";
+import { Card, CardContent } from "../../components/ui/card";
 
 const Nomination: React.FC<AppComponentProps> = (props) => {
     const navigate = useNavigate();
     const [manualPosterPick, setManualPosterPick] = useState(false);
+    const [chosenPosterUrl, setChosenPosterUrl] = useState<string | undefined>();
     const [url, setUrl] = useState("");
     const [showDialog, setShowDialog] = useState(false);
     const { data, error, isLoading } = useGetMoviesThatCanBeNominatedAgainQuery();
@@ -38,7 +41,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
             </h4>
             <div className="flex w-full max-w-md gap-2 -mb-4 justify-self-center-safe">
                 <Input type="email" placeholder="Wklej link do filmweba" value={url} onChange={e => setUrl(e.target.value)} onKeyDown={onKeyDown} />
-                <Button type="submit" variant="outline" onClick={() => setShowDialog(true)} disabled={url.length === 0}>
+                <Button type="submit" variant="outline" onClick={() => setShowDialog(true)} disabled={url.length === 0} className="bg-emerald-300 text-black hover:bg-emerald-200">
                     Давай!
                 </Button>
             </div>
@@ -66,8 +69,9 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
                 <ConfirmationDialog isOpen={showDialog} onClose={() => setShowDialog(false)} isLarge={!props.isMobile} onAction={() => nominateMovie()}
                         dialogActionText="Nie pierdol, tylko nominuj."
                         dialogCancelText="Dobra, zmiękła mi pałka, chcę rozważyć inny wariant..."
-                        dialogContent={ manualPosterPick ? <PosterPicker movieUrl={url} /> : "Czy na pewno chcesz nominować podany film? Po zaakceptowaniu nie będzie odwrotu."}
+                        dialogContent={ manualPosterPick ? <PosterPicker movieUrl={url} isMobile={props.isMobile} onPosterPick={e => setChosenPosterUrl(e)}/> : "Czy na pewno chcesz nominować podany film? Po zaakceptowaniu nie będzie odwrotu."}
                         dialogTitle="Czy aby na pewno?"
+                        dialogSubtitle="Pozostaje jeszcze wybór plakatu:"
                       />
                 <div className="flex flex-row flex-wrap justify-center mt-10">
                       { data!.map(d => renderMovieCard(d, counter++))}
@@ -84,7 +88,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
     }
 
     function nominateMovie() {
-        const dto = { filmwebUrl: url, posterUrl: undefined }
+        const dto = { filmwebUrl: url, posterUrl: chosenPosterUrl }
         setUrl("");
         nominate(dto);
     }
@@ -94,31 +98,102 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
         const cardFooter = <div className="self-center" onClick={(e) => {
             setUrl(movie.filmwebUrl);
             e.preventDefault();
+            window.scrollTo({ top: 0});
         }
-        }><Button variant="default" className="cursor-pointer hover:bg-emerald-900">Chcę ten! Przeklej link.</Button></div>;
+        }><Button variant="default" className="cursor-pointer hover:bg-emerald-900 bg-emerald-500">Chcę ten! Przeklej link.</Button></div>;
         return (<MovieCard {...cardProps} key={key} cardFooter={cardFooter}/>)
     }
 }
 
 type PosterPickerProps = {
     movieUrl: string;
+    isMobile: boolean;
+    onPosterPick: (posterUrl: string) => void;
 };
 
 const PosterPicker: React.FC<PosterPickerProps> = props => {
     const {data, error, isLoading} = useGetPostersQuery(props.movieUrl);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    
+    const [chosenIndex, setChosenIndex] = useState<number | null>(null);
+    const [api, setApi] = useState<CarouselApi>();
+    const stateRef = useRef<number | null>();
+
+    const cardsInCarouselForBigScreens = 5;
+    stateRef.current = chosenIndex;
+
+    useEffect(() => {
+        if (!api) { return; }
+
+        api.on("select", e => {
+            if (props.isMobile) {
+                setChosenIndexAndInvokeCallback(e.selectedScrollSnap());
+                return;
+            }
+            
+            if (stateRef.current === null || (stateRef.current! - e.selectedScrollSnap() >= 0 && stateRef.current! - e.selectedScrollSnap() < cardsInCarouselForBigScreens)) {
+                return;
+            }
+            
+            const diff = e.selectedScrollSnap() - e.previousScrollSnap();
+            setChosenIndexAndInvokeCallback((stateRef.current! + diff));
+        });
+    }, [api])
+
     if (error) {
         return <div>Coś się zesrao :(</div>
     } else if (isLoading) {
         return <div>Loading...</div>
     }
-    
-    return (<div className="flex justify-center">
-        <div><BsChevronLeft></BsChevronLeft></div>
-        <img src={data![0]}></img>
-        <div><BsChevronRight></BsChevronRight></div>
-    </div>);
+
+    if (props.isMobile) {
+        return (
+            <div className="flex justify-center">
+                <Carousel className="w-4/6 max-w-xs" setApi={setApi}>
+                    <CarouselContent>
+                        {data!.map((posterUrl, index) => (
+                            <CarouselItem key={index}>
+                                <div className="p-1">
+                                    <Card>
+                                        <CardContent className="flex aspect-square items-center justify-center">
+                                            <img src={posterUrl} />
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="" />
+                    <CarouselNext />
+                </Carousel>
+            </div>
+        )
+    }
+
+    return (
+         <div className="flex justify-center">
+        <Carousel opts={{ align: "start" }} className="w-full max-w-3xl" setApi={setApi}>
+            <CarouselContent>
+                {data!.map((posterUrl, index) => (
+                    <CarouselItem key={index} className={`md:basis-1/3 lg:basis-1/${cardsInCarouselForBigScreens}`}>
+                        <div className="p1">
+                            <Card className="py-0">
+                                <CardContent className={index === chosenIndex ? "flex aspect-square items-center justify-center px-0 border-emerald-300 border-4" : "flex aspect-square items-center justify-center px-0 border-4"}>
+                                    <img src={posterUrl} onClick={() => setChosenIndexAndInvokeCallback(index)}/>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </CarouselItem>
+                ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+        </Carousel>
+        </div>
+    );
+
+    function setChosenIndexAndInvokeCallback(index: number)  {
+        setChosenIndex(index);
+         props.onPosterPick(data![index]);
+    }
 }
 
 const wrappedNomination: React.FC<AppComponentProps> = (props) => { return <Layout disableCenterVertically={true}><Nomination {...props} /></Layout>}
