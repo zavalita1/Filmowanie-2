@@ -1,11 +1,9 @@
-import { useNavigate } from "react-router";
-import { Button } from "../../components/ui/button";
-import { VotingStatus } from "../../consts/votingStatus";
-import { AppComponentProps, Layout } from "../Layout";
 import { useEffect, useState } from "react";
-import { useEndVotingMutation, useStartVotingMutation, useGetAllUsersQuery, useCreateUserMutation } from "../../store/apis/3-Admin/api";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
-import { Input } from "../../components/ui/input";
+import { useNavigate } from "react-router";
+import { Button, Input, Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../components/ui";
+import { VotingStatus } from "../consts/votingStatus";
+import { AppComponentProps, Layout } from "./Layout";
+import { useEndVotingMutation, useStartVotingMutation, useGetAllUsersQuery, useCreateUserMutation } from "../store/apis/3-Admin/api";
 
 const Admin: React.FC<AppComponentProps> = props => {
     const navigate = useNavigate();

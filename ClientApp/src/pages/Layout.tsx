@@ -1,16 +1,16 @@
-import React, { createContext, ReactElement, ReactNode } from 'react';
+import clsx from 'clsx';
+import React, { createContext, ReactElement } from 'react';
 import { LuLogIn, LuMenu, LuLogOut } from 'react-icons/lu';
 import { NavLink } from 'react-router';
 import penguinSvg from '../components/ui/footerIcon.svg';
+import { Toaster } from '../components/ui';
 import { useGetUserQuery, useLogoutMutation } from '../store/apis/1-User/userApi';
 import { useGetStateQuery } from '../store/apis/2-Voting/votingApi';
 import { useGetNominationsQuery } from '../store/apis/4-Nomination/api'
 import Spinner from '../components/Spinner';
-import { UserState, UserStateWithNominations } from '@/store/apis/1-User/types';
+import { UserStateWithNominations } from '@/store/apis/1-User/types';
 import { useAppSelector } from '../hooks/redux';
-import clsx from 'clsx';
 import { VotingStatus } from '../consts/votingStatus';
-import { Toaster } from '../components/ui/sonner';
 
 export type BaseLayoutProps = {
   children?: ReactElement<AppComponentProps>;
@@ -42,6 +42,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const handleClick = () => setIsNavMenuVisible(!isNavMenuVisible);
   const handleClose = () => setIsNavMenuVisible(false);
 
+  const isHistoryEnabled = isUserLogged;
   const isMovieListEnabled = (isUserLogged && votingState === VotingStatus.Voting) || userData?.isAdmin;
   const isResultsEnabled = (isUserLogged && votingState !== VotingStatus.Voting) || userData?.isAdmin;
   const isNominateEnabled = (isUserLogged && (nominationsData?.length ?? 0) > 0) || userData?.isAdmin;
@@ -59,7 +60,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
 
   return (
     <LayoutContext.Provider value="TODO">
-      <div className='flex flex-col'>
+      <div className='flex flex-col select-none'>
       <Header />
       <div id="container" className={containerClasses}><Spinner isLoading={isLoading}></Spinner></div>
       { RenderBody(isLoading) }
@@ -81,6 +82,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
             <MenuLink text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
             <MenuLink text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
             <MenuLink text='Nominuj' url='/nominate' isDisabled={!isNominateEnabled}/>
+            <MenuLink text='Historia' url='/history' isDisabled={!isHistoryEnabled}/>
           </ul>
         </div>
         <div className='hidden md:flex pr-4'>
@@ -98,6 +100,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
        <MenuLink isMobile={true} text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
        <MenuLink isMobile={true} text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
        <MenuLink isMobile={true} text='Nominuj' url='/nominate' isDisabled={!isNominateEnabled}/>
+       <MenuLink isMobile={true} text='Historia' url='/history' isDisabled={!isHistoryEnabled}/>
        <LoginLogoutLink isMobile={true} isUserLogged={isUserLogged} onLogout={logout}/>
       </ul>
     </div>

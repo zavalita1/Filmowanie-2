@@ -1,10 +1,10 @@
 import React from 'react';
+import { Separator } from '../components/ui';
 
-import { AppComponentProps, Layout } from '../Layout';
-import { Separator } from '../../components/ui/separator';
-import { BasicLogin } from '../Login/BasicLogin';
-import { useSignUpMutation } from "../../store/apis/1-User/userApi";
-import { LoginWithBasicAuthOutgoingDTO } from '../../store/apis/1-User/types';
+import { AppComponentProps, Layout } from './Layout';
+import { BasicLogin } from '../components/BasicLogin';
+import { useSignUpMutation } from "../store/apis/1-User/userApi";
+import { LoginWithBasicAuthOutgoingDTO } from '../store/apis/1-User/types';
 
 const Home: React.FC<AppComponentProps> = (props) => {
   return (

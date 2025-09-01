@@ -2,13 +2,8 @@ import React from 'react'
 import { Provider as ReduxStoreProvider } from 'react-redux'
 import { BrowserRouter, Routes, Route } from 'react-router'
 
-import Home from './pages/Home/Home';
-import Login from './pages/Login/Login';
-import MoviesList from './pages/MoviesList/MoviesList';
-import Results from './pages/Results/Results';
-import About from './pages/About/About';
-import Admin from './pages/Admin/Admin';
-import Nomination from './pages/Nomination/Nomination';
+import Home from './pages/Home';
+import {Login, About, Admin, Results, MoviesList, Nomination, History } from './pages';
 import { store } from './store/store';
 
 const App: React.FC = () => {
@@ -25,6 +20,7 @@ const App: React.FC = () => {
           <Route path="/results" element={<Results {...routeProps}/>} />
           <Route path="/admin" element={<Admin {...routeProps}/>} />
           <Route path="/nominate" element={<Nomination {...routeProps}/>} />
+          <Route path="/history" element={<History {...routeProps}/>} />
         </Routes>
       </BrowserRouter>
       <link rel="preconnect" href="https://fonts.googleapis.com" />

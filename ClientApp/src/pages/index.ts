@@ -1,0 +1,9 @@
+export { default as About } from './About';
+export { default as Admin } from './Admin';
+export { default as History } from './History';
+export { default as Home } from './Home';
+export { Layout, type AppComponentProps } from './Layout';
+export { default as Login } from './Login';
+export { default as MoviesList } from './MoviesList';
+export { default as Results } from './Results';
+export { default as Nomination } from './Nomination';

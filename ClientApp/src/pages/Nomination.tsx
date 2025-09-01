@@ -1,17 +1,12 @@
-import { HtmlHTMLAttributes, useEffect, useRef, useState } from "react";
-import { AppComponentProps, Layout } from "../Layout";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Checkbox } from "../../components/ui/checkbox";
-import { useGetMoviesThatCanBeNominatedAgainQuery, useGetPostersQuery, useNominateMutation } from "../../store/apis/4-Nomination/api";
-import { MovieCard, ReadOnlyMovieCardProps } from "../../components/MovieCard";
-import { ReadonlyMovie } from "../../models/Movie";
-import { ConfirmationDialog } from "../../components/ConfirmationDialog";
-import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
-import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../../components/ui/carousel";
-import { Card, CardContent } from "../../components/ui/card";
+import { AppComponentProps, Layout } from "./Layout";
+import { Button, Input, Label, Checkbox, Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../components/ui";
+import { Card, CardContent } from "../components/ui/card";
+import { ConfirmationDialog } from "../components/ConfirmationDialog";
+import { MovieCard, ReadOnlyMovieCardProps } from "../components/MovieCard";
+import { ReadonlyMovie } from "../models/Movie";
+import { useGetMoviesThatCanBeNominatedAgainQuery, useGetPostersQuery, useNominateMutation } from "../store/apis/4-Nomination/api";
 
 const Nomination: React.FC<AppComponentProps> = (props) => {
     const navigate = useNavigate();

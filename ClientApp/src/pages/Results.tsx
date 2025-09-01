@@ -1,10 +1,10 @@
-import { AppComponentProps, Layout } from "../Layout";
-import { useGetResultsQuery } from "../../store/apis/2-Voting/votingApi";
-import { ColumnDef, flexRender, getCoreRowModel, Row, useReactTable } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table"
-import { ResultRow } from "../../models/Results";
 import { useState } from "react";
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
+import { ColumnDef, flexRender, getCoreRowModel, Row, useReactTable } from "@tanstack/react-table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui"
+import { AppComponentProps, Layout } from "./Layout";
+import { useGetResultsQuery } from "../store/apis/2-Voting/votingApi";
+import { ResultRow } from "../models/Results";
 
 // TODO column widths
 

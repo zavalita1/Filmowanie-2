@@ -1,13 +1,10 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Button } from "../../components/ui/button";
-import { BasicLogin } from "./BasicLogin";
-import { useLoginWithCodeMutation, useLoginWithBasicAuthMutation, useGetUserQuery } from "../../store/apis/1-User/userApi";
-import { LoginWithBasicAuthOutgoingDTO, LoginWithCodeOutgoingDTO } from "../../store/apis/1-User/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger, Input, Label, Button } from "../components/ui";
+import { BasicLogin } from "../components/BasicLogin";
+import { useLoginWithCodeMutation, useLoginWithBasicAuthMutation, useGetUserQuery } from "../store/apis/1-User/userApi";
+import { LoginWithBasicAuthOutgoingDTO, LoginWithCodeOutgoingDTO } from "../store/apis/1-User/types";
 import { useNavigate } from "react-router";
 
-import { AppComponentProps, Layout } from '../Layout';
+import { AppComponentProps, Layout } from './Layout';
 import { useEffect, useState } from "react";
 
 const Login: React.FC = () => {

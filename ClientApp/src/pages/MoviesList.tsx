@@ -1,16 +1,15 @@
-import { Layout, AppComponentProps } from "../Layout";
-import { useGetCurrentVotingQuery } from '../../store/apis/2-Voting/votingApi';
-import { useNavigate } from "react-router";
 import React, { useEffect, useState } from "react";
-import { VotingStatus } from "../../consts/votingStatus";
-import { Skeleton } from "../../components/ui/skeleton";
-import { MovieCard, MovieCardProps, PlaceholderMovieCardProps, VoteableMovieCardProps } from "../../components/MovieCard";
-import { VoteableMovie, Movie, PlaceholderMovie } from "../../models/Movie";
-import * as Vote from "../../consts/vote";
-import { useVoteMutation } from "../../store/apis/2-Voting/votingApi";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import Confetti from "../../components/Confetti";
-import { ConfirmationDialog } from "../../components/ConfirmationDialog";
+import { Skeleton } from "../components/ui";
+import { Layout, AppComponentProps } from "./Layout";
+import Confetti from "../components/Confetti";
+import { useVoteMutation, useGetCurrentVotingQuery } from '../store/apis/2-Voting/votingApi';
+import { ConfirmationDialog } from "../components/ConfirmationDialog";
+import { MovieCard, PlaceholderMovieCardProps, VoteableMovieCardProps } from "../components/MovieCard";
+import { VoteableMovie, Movie, PlaceholderMovie } from "../models/Movie";
+import { VotingStatus } from "../consts/votingStatus";
+import * as Vote from "../consts/vote";
 
 const MoviesList: React.FC<AppComponentProps> = (props) => {
   const navigate = useNavigate();
