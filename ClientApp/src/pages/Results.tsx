@@ -1,10 +1,10 @@
-import { useState } from "react";
+import React, { memo, useRef, useState } from "react";
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { ColumnDef, flexRender, getCoreRowModel, Row, useReactTable } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui"
 import { AppComponentProps, Layout } from "./Layout";
 import { useGetResultsQuery } from "../store/apis/2-Voting/votingApi";
-import { ResultRow } from "../models/Results";
+import { ResultRow, Results } from "../models/Results";
 
 // TODO column widths
 
@@ -36,8 +36,16 @@ const trashVotingColumns = [ {
     header: "Głosy",
   }];
 
-const Results: React.FC<AppComponentProps> = () => {
-    const { data, error, isLoading } = useGetResultsQuery("");
+const ResultsPageComponent: React.FC<AppComponentProps> = (props) => {
+    return (<ResultsComponent fn={() => useGetResultsQuery("")}></ResultsComponent>);
+}
+
+export type ResultsComponentProps = {
+    fn: () => {data?: Results, error?: any, isLoading: boolean};
+};
+
+export const ResultsComponent: React.FC<ResultsComponentProps> = props => {
+    const { data, error, isLoading } = props.fn();
     const [expandedRows, setExpandedRows] = useState<number[]>([]);
     const table = useReactTable<ResultRow>({
         data: data?.voting ?? [],
@@ -53,8 +61,8 @@ const Results: React.FC<AppComponentProps> = () => {
 
     if (isLoading) {
         return (<div>Loading..</div>);
-    } else if (error !== undefined || data === undefined || data === null) {
-        return (<></>);
+    } else if (!!error || !data?.voting) {
+        return (<>coś się zjebao :(</>);
     }
 
     return (
@@ -155,9 +163,9 @@ const Results: React.FC<AppComponentProps> = () => {
                     </TableBody>
                 </Table>
             </div>
-        </div>
-    );
-    
+        </div>);
+
+        
 function onTrashResultRowClick(row: Row<ResultRow>) {
     if (row.original.votesCount === 0) {
         return;
@@ -169,6 +177,7 @@ function onTrashResultRowClick(row: Row<ResultRow>) {
 }
 
 
-const module: React.FC<AppComponentProps> = (props) => { return <Layout disableCenterVertically={true}><Results {...props}/></Layout>}
+
+const module: React.FC<AppComponentProps> = (props) => { return <Layout disableCenterVertically={true}><ResultsPageComponent {...props}/></Layout>}
 
 export default module;

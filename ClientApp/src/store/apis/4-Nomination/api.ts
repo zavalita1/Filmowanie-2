@@ -3,7 +3,7 @@ import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
 import { adminApi } from "../3-Admin/api";
 import { MoviesThatCanBeNominatedAgainIncomingDTO, NominationOutgoingDTO, NominationsDataIncomingDTO, PostersIncomingDTO } from "./types";
 import { Decade } from "../../../consts/Decade";
-import { ReadonlyMovie } from "../../../models/Movie";
+import { Movie } from "../../../models/Movie";
 
 export const nominationApi = adminApi
 .enhanceEndpoints({addTagTypes: ['Nominations', 'MoviesToBeNominatedAgain']})
@@ -14,7 +14,7 @@ export const nominationApi = adminApi
             providesTags: ['Nominations'],
             transformResponse: (dto: NominationsDataIncomingDTO) => dto.nominations.map(mapDecade)
         }),
-        getMoviesThatCanBeNominatedAgain: builder.query<ReadonlyMovie[], void>({
+        getMoviesThatCanBeNominatedAgain: builder.query<Movie[], void>({
             query: () => ({ url: 'nominations/fullData', method: 'GET' }),
             providesTags: ['MoviesToBeNominatedAgain'],
             async onQueryStarted(params, { dispatch, queryFulfilled }) {
@@ -38,7 +38,7 @@ export const nominationApi = adminApi
     })
 });
 
-function mapMovieThatCanBeNominatedAgain(x: any): ReadonlyMovie {
+function mapMovieThatCanBeNominatedAgain(x: any): Movie {
     return ({
             movieId: x.movieId,
             description: x.description,

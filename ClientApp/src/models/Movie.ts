@@ -1,4 +1,11 @@
-export type ReadonlyMovie = {
+export type WatchedMovie = {
+    title: string;
+    originalTitle: string;
+    watched: string;
+    nominatedBy: string;
+}
+
+export type Movie = {
     movieId: string;
     movieName: string;
     posterUrl: string;
@@ -11,9 +18,9 @@ export type ReadonlyMovie = {
     directors: string[];
     writers: string[];
     originalTitle: string;
-}
+};
 
-export type VoteableMovie = ReadonlyMovie & {
+export type VoteableMovie = Movie & {
     votes: number;
 }
 
@@ -22,4 +29,4 @@ export type PlaceholderMovie = {
     decade: number;
 }
 
-export type Movie = VoteableMovie | PlaceholderMovie;
+export type VotableOrPlaceholderMovie = VoteableMovie | PlaceholderMovie;

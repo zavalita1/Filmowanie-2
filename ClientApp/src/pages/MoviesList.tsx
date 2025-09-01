@@ -7,7 +7,7 @@ import Confetti from "../components/Confetti";
 import { useVoteMutation, useGetCurrentVotingQuery } from '../store/apis/2-Voting/votingApi';
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { MovieCard, PlaceholderMovieCardProps, VoteableMovieCardProps } from "../components/MovieCard";
-import { VoteableMovie, Movie, PlaceholderMovie } from "../models/Movie";
+import { VoteableMovie, VotableOrPlaceholderMovie, PlaceholderMovie } from "../models/Movie";
 import { VotingStatus } from "../consts/votingStatus";
 import * as Vote from "../consts/vote";
 
@@ -75,7 +75,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
     }
   };
 
-  const getCardProps = (movie: Movie) => {
+  const getCardProps = (movie: VotableOrPlaceholderMovie) => {
     if ((movie as VoteableMovie)?.votes === undefined) {
       return {...props, movie: movie as PlaceholderMovie, isPlaceholder: true} satisfies PlaceholderMovieCardProps
     }
@@ -114,7 +114,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   // }
 }
 
-function getInitialAvailableVotes(movies?: Movie[]) {
+function getInitialAvailableVotes(movies?: VotableOrPlaceholderMovie[]) {
   if (movies === undefined) {
     return Vote.allVoteTypes;
   }

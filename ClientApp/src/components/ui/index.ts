@@ -10,5 +10,6 @@ export * from './label';
 export * from './separator';
 export * from './skeleton';
 export * from './sonner';
+export * from './select';
 export * from './table';
 export * from './tabs';

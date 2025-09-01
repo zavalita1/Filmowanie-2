@@ -5,7 +5,7 @@ import { Button, Input, Label, Checkbox, Carousel, CarouselApi, CarouselContent,
 import { Card, CardContent } from "../components/ui/card";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { MovieCard, ReadOnlyMovieCardProps } from "../components/MovieCard";
-import { ReadonlyMovie } from "../models/Movie";
+import { Movie } from "../models/Movie";
 import { useGetMoviesThatCanBeNominatedAgainQuery, useGetPostersQuery, useNominateMutation } from "../store/apis/4-Nomination/api";
 
 const Nomination: React.FC<AppComponentProps> = (props) => {
@@ -88,7 +88,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
         nominate(dto);
     }
 
-    function renderMovieCard(movie: ReadonlyMovie, key: number) {
+    function renderMovieCard(movie: Movie, key: number) {
         const cardProps = {...props, movie } satisfies ReadOnlyMovieCardProps;
         const cardFooter = <div className="self-center" onClick={(e) => {
             setUrl(movie.filmwebUrl);

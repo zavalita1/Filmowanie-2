@@ -3,7 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { combineReducers } from 'redux';
 
 import { globalConfigSlice } from './globalConfigSlice';
-import { nominationApi as api } from './apis/4-Nomination/api';
+import { historyApi as api } from './apis/5-History/api';
 
 export const store = configureStore({
   devTools: process.env.NODE_ENV === 'development',

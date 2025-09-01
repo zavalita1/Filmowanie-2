@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Movie, PlaceholderMovie, VoteableMovie, ReadonlyMovie } from "../models/Movie";
+import { VotableOrPlaceholderMovie, PlaceholderMovie, VoteableMovie, Movie } from "../models/Movie";
 import { AppComponentProps } from "../pages/Layout";
 import { Card, CardHeader, CardDescription, CardTitle, CardContent } from "../components/ui/card";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "./ui/drawer";
@@ -16,7 +16,7 @@ type BaseCardProps = AppComponentProps & {
 }
 
 export type ReadOnlyMovieCardProps = BaseCardProps & {
-  movie: ReadonlyMovie;
+  movie: Movie;
 }
 
 export type PlaceholderMovieCardProps = BaseCardProps & {

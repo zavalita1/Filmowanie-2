@@ -5,14 +5,15 @@ import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
 import { CurrentVotingIncomingDTO, MovieDTO, VoteOutgoingDTO, VotingResultIncomingDTO, VotingSessionStatusIncomingDTO } from './types';
 import { VotingStatus } from '../../../consts/votingStatus';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { VoteableMovie, Movie, PlaceholderMovie } from '../../../models/Movie';
+import { VoteableMovie, VotableOrPlaceholderMovie, PlaceholderMovie } from '../../../models/Movie';
 import { ResultRow, Results } from '../../../models/Results';
+import { mapVotingResults } from '../../../mappers/mapVotingResults';
 
 export const votingApi = userApi
 .enhanceEndpoints({ addTagTypes: ['MoviesList', 'VotingStatus']})
 .injectEndpoints({
   endpoints: (builder) => ({
-    getCurrentVoting: builder.query<Movie[], void>({
+    getCurrentVoting: builder.query<VotableOrPlaceholderMovie[], void>({
       async queryFn(arg, queryApi, extraOptions, fetchWithBQ) {
         const { getState } = queryApi;
         const state: GlobalConfigSlice = (getState() as any).global;
@@ -69,19 +70,13 @@ function mapVotingStatus(dto: VotingSessionStatusIncomingDTO) {
   }
 }
 
-function mapMovie(dto: MovieDTO): Movie {
+function mapMovie(dto: MovieDTO): VotableOrPlaceholderMovie {
   if (dto.isPlaceholder)
     return ({ title: dto.movieName, decade: dto.createdYear });
 
   return dto;
 }
 
-function mapVotingResults(dto: VotingResultIncomingDTO): Results {
-  let rank = 0;
-  const votingResult = dto.votingResults.map(x => ({ rank: ++rank, movieTitle: x.movieName, isDecorated: x.isWinner ?? false, votesCount: x.votersCount } satisfies ResultRow));
-  rank = 0;
-  const trashVotingResult = dto.trashVotingResults.filter(x => x.voters.length !== 0).map(x => ({ rank: ++rank, movieTitle: x.movieName, isDecorated: x.isAwarded ?? false, votesCount: x.voters.length, voters: x.voters} satisfies ResultRow));
-  return { voting: votingResult, trashVoting: trashVotingResult }; 
-}
+
 
 export const { useGetCurrentVotingQuery, useGetStateQuery, useVoteMutation, useGetResultsQuery } = votingApi;
