@@ -4,7 +4,7 @@ namespace Filmowanie.Abstractions.Interfaces;
 
 public interface IOperationAsyncVisitor<TInput, TOutput> : IVisitor
 {
-    public Task<OperationResult<TOutput>> VisitAsync(OperationResult<TInput> input, CancellationToken cancellationToken);
+    public Task<OperationResult<TOutput>> SignUp(OperationResult<TInput> input, CancellationToken cancellationToken);
 }
 
 public interface IOperationAsyncVisitor<TOutput> : IVisitor

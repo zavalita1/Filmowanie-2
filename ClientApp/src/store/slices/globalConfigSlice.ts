@@ -6,7 +6,7 @@ export interface GlobalConfigSlice {
     ongoingLoadings: number;
 }
 
-const initialState = {
+const initialState: GlobalConfigSlice = {
     apiUrl: import.meta.env.VITE_APIURL,
     isLoading: false,
     ongoingLoadings: 0,

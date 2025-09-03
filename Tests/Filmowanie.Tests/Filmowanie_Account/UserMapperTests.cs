@@ -1,22 +1,22 @@
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Abstractions;
-using Filmowanie.Account.Visitors;
+using Filmowanie.Account.Mappers;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace Filmowanie.Tests.Filmowanie_Account;
 
-public class UserMapperVisitorTests
+public class UserMapperTests
 {
-    private readonly ILogger<UserMapperVisitor> _log;
-    private readonly UserMapperVisitor _visitor;
+    private readonly ILogger<UserMapper> _log;
+    private readonly UserMapper _visitor;
 
-    public UserMapperVisitorTests()
+    public UserMapperTests()
     {
-        _log = Substitute.For<ILogger<UserMapperVisitor>>();
-        _visitor = new UserMapperVisitor(_log);
+        _log = Substitute.For<ILogger<UserMapper>>();
+        _visitor = new UserMapper(_log);
     }
 
     [Fact]

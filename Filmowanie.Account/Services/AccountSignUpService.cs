@@ -1,21 +1,22 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Results;
 using Filmowanie.Database.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace Filmowanie.Account.Visitors;
+namespace Filmowanie.Account.Services;
 
-internal sealed class AccountSignUpVisitor : ISignUpVisitor
+internal sealed class AccountSignUpService : ISignUpService
 {
     private readonly IUsersCommandRepository _commandRepository;
     private readonly IHashHelper _hashHelper;
-    private readonly ILogger<AccountSignUpVisitor> _log;
+    private readonly ILogger<AccountSignUpService> _log;
     private readonly ILoginResultDataExtractor _extractor;
 
-    public AccountSignUpVisitor(IUsersCommandRepository commandRepository, IHashHelper hashHelper, ILogger<AccountSignUpVisitor> log, ILoginResultDataExtractor extractor)
+    public AccountSignUpService(IUsersCommandRepository commandRepository, IHashHelper hashHelper, ILogger<AccountSignUpService> log, ILoginResultDataExtractor extractor)
     {
         _commandRepository = commandRepository;
         _hashHelper = hashHelper;
@@ -23,10 +24,12 @@ internal sealed class AccountSignUpVisitor : ISignUpVisitor
         _extractor = extractor;
     }
 
-    public async Task<OperationResult<LoginResultData>> VisitAsync(OperationResult<(DomainUser, BasicAuth)> data, CancellationToken cancellation)
+    public Task<OperationResult<LoginResultData>> SignUp(OperationResult<(DomainUser, BasicAuth)> data, CancellationToken cancellation) => data.AcceptAsync(SignUp, _log, cancellation);
+
+    public async Task<OperationResult<LoginResultData>> SignUp((DomainUser, BasicAuth) data, CancellationToken cancellation)
     {
-        var incomingBasicAuth = data.Result.Item2;
-        var domainUser = data.Result.Item1;
+        var incomingBasicAuth = data.Item2;
+        var domainUser = data.Item1;
 
         var hash = _hashHelper.GetHash(incomingBasicAuth.Password, domainUser.Id + domainUser.Created.Minute);
         var newAuthData = incomingBasicAuth with { Password = hash };
@@ -39,9 +42,7 @@ internal sealed class AccountSignUpVisitor : ISignUpVisitor
         catch (Exception ex)
         {
             _log.LogError(ex, "Error in trying to sign up");
-            return new OperationResult<LoginResultData>(default, new Error("No user with such id in db", ErrorType.InvalidState));
+            return new Error("No user with such id in db", ErrorType.InvalidState).ToOperationResult<LoginResultData>();
         }
     }
-
-    public ILogger Log => _log;
 }

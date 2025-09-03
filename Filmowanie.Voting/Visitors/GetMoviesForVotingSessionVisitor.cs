@@ -25,7 +25,7 @@ internal sealed class GetMoviesForVotingSessionVisitor : IGetMoviesForVotingSess
         _log = log;
     }
 
-    public async Task<OperationResult<MovieDTO[]>> VisitAsync(OperationResult<(VotingSessionId, DomainUser)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<MovieDTO[]>> SignUp(OperationResult<(VotingSessionId, DomainUser)> input, CancellationToken cancellationToken)
     {
         var correlationId = input.Result.Item1.CorrelationId;
         var embeddedMovies = await _getMoviesListRequestClient.GetResponse<CurrentVotingListResponse>(new MoviesListRequested(correlationId), cancellationToken);

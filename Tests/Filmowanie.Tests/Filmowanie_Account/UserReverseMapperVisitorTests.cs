@@ -3,7 +3,6 @@ using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Abstractions;
 using Filmowanie.Account.DTOs.Incoming;
-using Filmowanie.Account.Visitors;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

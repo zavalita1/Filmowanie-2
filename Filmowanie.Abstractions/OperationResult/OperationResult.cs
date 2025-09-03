@@ -13,3 +13,5 @@ public readonly record struct OperationResult<T>(T? Result, Error? Error)
         return $"Erroneous result ({Error!.Value.Type}).";
     }
 };
+
+public readonly record struct VoidResult;

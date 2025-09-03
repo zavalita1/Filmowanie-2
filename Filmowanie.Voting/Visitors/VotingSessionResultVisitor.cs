@@ -22,7 +22,7 @@ internal sealed class VotingSessionResultVisitor : IGetVotingSessionsMetadataVis
     }
 
   
-    public async Task<OperationResult<VotingMetadata[]>> VisitAsync(OperationResult<TenantId> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<VotingMetadata[]>> SignUp(OperationResult<TenantId> input, CancellationToken cancellationToken)
     {
         var votingSessions = (await _votingSessionQueryRepository.Get(x => x.Concluded != null, x => new { Id = x.id, x.Concluded, MovieId = x.Winner.id }, input.Result, cancellationToken)).ToArray();
         var moviesIds = votingSessions.Select(x => x.MovieId).ToArray();

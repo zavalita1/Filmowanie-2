@@ -17,8 +17,12 @@ internal sealed class HttpContextWrapper : IHttpContextWrapper
     public async Task SignInAsync(string scheme, ClaimsPrincipal claimsPrincipal, AuthenticationProperties properties)
     {
         await _contextAccessor.HttpContext!.SignInAsync(scheme, claimsPrincipal, properties);
-        _contextAccessor.HttpContext.User = claimsPrincipal;
+        _contextAccessor.HttpContext!.User = claimsPrincipal;
     }
 
     public Task SignOutAsync(string scheme) => _contextAccessor.HttpContext!.SignOutAsync(scheme);
+
+    public ClaimsPrincipal? User => _contextAccessor.HttpContext?.User;
+    
+    public HttpRequest? Request => _contextAccessor.HttpContext?.Request;
 }

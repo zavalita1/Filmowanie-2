@@ -26,7 +26,7 @@ internal sealed class GetVotingResultDTOVisitor : IGetVotingResultDTOVisitor
         _log = log;
     }
 
-    public async Task<OperationResult<VotingResultDTO>> VisitAsync(OperationResult<(TenantId Tenant, VotingSessionId? VotingSessionId)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<VotingResultDTO>> SignUp(OperationResult<(TenantId Tenant, VotingSessionId? VotingSessionId)> input, CancellationToken cancellationToken)
     {
         var votingResult = await GetReadonlyVotingResultAsync(input, cancellationToken);
 

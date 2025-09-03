@@ -71,10 +71,10 @@ public sealed class NominationRoutesTests
         var operationResult = new OperationResult<DomainUser>(default, default);
         _userIdentityVisitor.Visit(OperationResultExtensions.Empty).Returns(operationResult);
         var operationResult1 = new OperationResult<VotingSessionId?>(default, default);
-        _currentVotingSessionIdVisitor.VisitAsync(operationResult, cancellationToken).Returns(Task.FromResult(operationResult1));
+        _currentVotingSessionIdVisitor.SignUp(operationResult, cancellationToken).Returns(Task.FromResult(operationResult1));
 
         var operationResult2 = new OperationResult<CurrentNominationsResponse>(default, default);
-        _getNominationsVisitor.VisitAsync(operationResult1, cancellationToken).Returns(Task.FromResult(operationResult2));
+        _getNominationsVisitor.SignUp(operationResult1, cancellationToken).Returns(Task.FromResult(operationResult2));
 
         var operationResult3 = new OperationResult<NominationsDataDTO>(default, default);
         _getNominationsDtoVisitor.Visit(OperationResultHelpers.GetEquivalent(operationResult2, operationResult))
@@ -100,16 +100,16 @@ public sealed class NominationRoutesTests
         _userIdentityVisitor.Visit(OperationResultExtensions.Empty).Returns(operationResult1);
 
         var operationResult2 = new OperationResult<VotingSessionId?>(default);
-        _currentVotingSessionIdVisitor.VisitAsync(operationResult1, cancellationToken).Returns(operationResult2);
+        _currentVotingSessionIdVisitor.SignUp(operationResult1, cancellationToken).Returns(operationResult2);
 
         var operationResult3 = new OperationResult<CurrentNominationsResponse>(default!);
-        _getNominationsVisitor.VisitAsync(operationResult2, cancellationToken).Returns(operationResult3);
+        _getNominationsVisitor.SignUp(operationResult2, cancellationToken).Returns(operationResult3);
 
         var operationResult4 = new OperationResult<NominationsDataDTO>(default!);
         _getNominationsDtoVisitor.Visit(OperationResultHelpers.GetEquivalent(operationResult3, operationResult1)).Returns(operationResult4);
 
         var operationResult5 = new OperationResult<NominationsFullDataDTO>(default!);
-        _movieThatCanBeNominatedAgainEnricherVisitor.VisitAsync(OperationResultHelpers.GetEquivalent(operationResult4, operationResult1), cancellationToken).Returns(operationResult5
+        _movieThatCanBeNominatedAgainEnricherVisitor.SignUp(OperationResultHelpers.GetEquivalent(operationResult4, operationResult1), cancellationToken).Returns(operationResult5
         );
 
         _routesHelper.UnwrapOperationResult(operationResult5).Returns(expectedResult);
@@ -136,7 +136,7 @@ public sealed class NominationRoutesTests
         adapter.Visit(Arg.Is<OperationResult<string>>(x => x.Result == movieUrl)).Returns(operationResult1);
 
         var operationResult2 = new OperationResult<PostersDTO>();
-        _getPostersVisitor.VisitAsync(operationResult1, cancellationToken).Returns(operationResult2);
+        _getPostersVisitor.SignUp(operationResult1, cancellationToken).Returns(operationResult2);
 
         _routesHelper.UnwrapOperationResult(operationResult2).Returns(expectedResult);
 
@@ -162,7 +162,7 @@ public sealed class NominationRoutesTests
         _userIdentityVisitor.Visit(OperationResultExtensions.Empty).Returns(operationResult1);
 
         var operationResult2 = new OperationResult<VotingSessionId?>(default);
-        _currentVotingSessionIdVisitor.VisitAsync(operationResult1, cancellationToken).Returns(operationResult2);
+        _currentVotingSessionIdVisitor.SignUp(operationResult1, cancellationToken).Returns(operationResult2);
 
         var operationResult3 = new OperationResult<VotingSessionId>();
         _requireCurrentVotingSessionIdVisitor.Visit(operationResult2).Returns(operationResult3);
@@ -172,7 +172,7 @@ public sealed class NominationRoutesTests
         );
 
         var operationResult5 = new OperationResult<AknowledgedNominationDTO>(default!);
-        _nominationsResetterVisitor.VisitAsync(OperationResultHelpers.GetEquivalent(operationResult4, operationResult1, operationResult3), cancellationToken).Returns(operationResult5);
+        _nominationsResetterVisitor.SignUp(OperationResultHelpers.GetEquivalent(operationResult4, operationResult1, operationResult3), cancellationToken).Returns(operationResult5);
 
         _routesHelper.UnwrapOperationResult(operationResult5).Returns(expectedResult);
 
@@ -198,16 +198,16 @@ public sealed class NominationRoutesTests
         _userIdentityVisitor.Visit(OperationResultExtensions.Empty).Returns(operationResult1);
 
         var operationResul2 = new OperationResult<VotingSessionId?>(default);
-        _currentVotingSessionIdVisitor.VisitAsync(operationResult1, cancellationToken).Returns(operationResul2);
+        _currentVotingSessionIdVisitor.SignUp(operationResult1, cancellationToken).Returns(operationResul2);
 
         var operationResult3 = new OperationResult<CurrentNominationsResponse>(default!);
-        _getNominationsVisitor.VisitAsync(operationResul2, cancellationToken).Returns(operationResult3);
+        _getNominationsVisitor.SignUp(operationResul2, cancellationToken).Returns(operationResult3);
 
         var operationResult4 = new OperationResult<(NominationDTO, DomainUser, CurrentNominationsResponse)>(default);
         adapter.Visit(Arg.Is<OperationResult<(NominationDTO, DomainUser, CurrentNominationsResponse)>>(x => x.Result.Item1 == dto)).Returns(operationResult4);
 
         var operationResult5 = new OperationResult<AknowledgedNominationDTO>(default!);
-        _nominationsCompleterVisitor.VisitAsync(operationResult4, cancellationToken).Returns(operationResult5);
+        _nominationsCompleterVisitor.SignUp(operationResult4, cancellationToken).Returns(operationResult5);
 
         _routesHelper.UnwrapOperationResult(operationResult5).Returns(expectedResult);
 

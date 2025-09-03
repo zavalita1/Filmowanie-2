@@ -1,6 +1,6 @@
 import { userApi } from '../1-User/userApi';
 import { commonOnQueryStarted } from '../../utils/queryStoreWrapper';
-import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
+import { GlobalConfigSlice, globalConfigSlice } from '../../slices/globalConfigSlice';
 
 import { CurrentVotingIncomingDTO, MovieDTO, VoteOutgoingDTO, VotingResultIncomingDTO, VotingSessionStatusIncomingDTO } from './types';
 import { VotingStatus } from '../../../consts/votingStatus';
@@ -35,7 +35,10 @@ export const votingApi = userApi
     getState: builder.query<VotingStatus, void>({
       query: () => 'voting/state',
       transformResponse: mapVotingStatus,
-      providesTags: ['VotingStatus']
+      providesTags: ['VotingStatus'],
+       async onQueryStarted(params, { dispatch, queryFulfilled }) {
+        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
+      },
     }),
     vote: builder.mutation<void, VoteOutgoingDTO, void>({
       query: dto => ({ url: '/voting/vote', method: 'POST', body: dto}),
@@ -46,7 +49,7 @@ export const votingApi = userApi
             const movieToPatch = {...r[movieToPatchIndex], votes: params.votes};
             return [...r.slice(0, movieToPatchIndex), movieToPatch,...r.slice(movieToPatchIndex + 1)];
           }));
-        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, false, false, async () => patchResult.undo());
+        await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, params?.votes === 0 ? "Głos usunięty" : "Zagłosowane!", true, async () => patchResult.undo());
       },
     }),
     getResults: builder.query<Results, string>({

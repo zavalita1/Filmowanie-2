@@ -26,7 +26,7 @@ internal sealed class SavePushNotificationVisitor : ISavePushNotificationVisitor
         Log = log;
     }
 
-    public async Task<OperationResult<object>> VisitAsync(OperationResult<(PushSubscriptionDTO, DomainUser)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<object>> SignUp(OperationResult<(PushSubscriptionDTO, DomainUser)> input, CancellationToken cancellationToken)
     {
         var id = _guidProvider.NewGuid();
         var user = input.Result.Item2;

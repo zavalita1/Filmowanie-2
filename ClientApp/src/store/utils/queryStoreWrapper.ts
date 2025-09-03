@@ -4,7 +4,7 @@ export const commonOnQueryStarted = async (
     setLoading: (loading: boolean) => void,
     promise : Promise<unknown>,
     showLoading = true,
-    showSuccess = false,
+    showSuccess: boolean | string = false,
     showError = true,
     additionalErrorHandlingCallback?: () => Promise<unknown>,
 ) => {
@@ -19,12 +19,24 @@ export const commonOnQueryStarted = async (
             setLoading(false);
         }
 
-        if (showSuccess) {
-            toast.info("Panie prezesie, melduję wykonanie zadania!")
+        if (!!showSuccess) {
+            const message = showSuccess !== true ? showSuccess : "Panie prezesie, melduję wykonanie zadania!";
+            toast.info(message);
         }
     } catch (err) {
         if (showLoading) {
             setLoading(false);
+        }
+
+        if (err.error?.status === "TIMEOUT_ERROR") {
+            toast.error("Przekroczono czas oczekiwania na odpowiedź serwera. Najpewniej microsoft odpierdala. Albo masz tragiczny net.", {
+                 classNames: {
+                    description: "!text-foreground/80",
+                },
+                className: "text-5xl",
+                richColors: true
+            });
+            return;
         }
 
         if (additionalErrorHandlingCallback) {
@@ -32,7 +44,7 @@ export const commonOnQueryStarted = async (
         }
 
         if (showError) {
-            toast.error("Coś poszło nie tak :(", {
+            toast.error("Coś poszło nie tak :( ", {
                 classNames: {
                     description: "!text-foreground/80",
                 },

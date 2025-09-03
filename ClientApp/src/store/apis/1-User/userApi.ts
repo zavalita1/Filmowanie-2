@@ -1,6 +1,6 @@
 import { apiSlice } from '../apiSlice';
 import { commonOnQueryStarted } from '../../utils/queryStoreWrapper';
-import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
+import { GlobalConfigSlice, globalConfigSlice } from '../../slices/globalConfigSlice';
 import { StatusCode } from '../../../consts/httpStatusCodes';
 
 import type { UserIncomingDTO, UserState, LoginWithCodeOutgoingDTO, LoginWithBasicAuthOutgoingDTO } from './types';
@@ -15,7 +15,9 @@ export const userApi = apiSlice
         const { getState } = queryApi;
         const state: GlobalConfigSlice = (getState() as any).global;
         const baseUrl = `${state.apiUrl}account`;
-        const resultWrapped = await fetchWithBQ(baseUrl);
+        queryApi.dispatch(globalConfigSlice.actions.setLoading(true));
+        const resultWrapped = await fetchWithBQ({url: baseUrl, timeout: 1000 * 60 * 1});
+        queryApi.dispatch(globalConfigSlice.actions.setLoading(false));
         let isError = !resultWrapped.data;
         let result = { data: resultWrapped.data as UserState | null };
 

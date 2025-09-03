@@ -35,7 +35,7 @@ internal sealed class NominationsCommandVisitor : INominationsResetterVisitor, I
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<OperationResult<AknowledgedNominationDTO>> VisitAsync(OperationResult<(NominationDTO Dto, DomainUser User, CurrentNominationsResponse CurrentNominations)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<AknowledgedNominationDTO>> SignUp(OperationResult<(NominationDTO Dto, DomainUser User, CurrentNominationsResponse CurrentNominations)> input, CancellationToken cancellationToken)
     {
         var metadata = _filmwebPathResolver.GetMetadata(input.Result.Dto.MovieFilmwebUrl);
         var user = input.Result.User;
@@ -80,7 +80,7 @@ internal sealed class NominationsCommandVisitor : INominationsResetterVisitor, I
         return new OperationResult<AknowledgedNominationDTO>(dto, null);
     }
 
-    public async Task<OperationResult<AknowledgedNominationDTO>> VisitAsync(OperationResult<(string MovieId, DomainUser User, VotingSessionId VotingSessionId)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<AknowledgedNominationDTO>> SignUp(OperationResult<(string MovieId, DomainUser User, VotingSessionId VotingSessionId)> input, CancellationToken cancellationToken)
     {
         var (movieId, user, votingSessionId) = input.Result;
         var movies = await _movieQueryRepository.GetMoviesAsync(x => x.id == movieId, user.Tenant, cancellationToken);

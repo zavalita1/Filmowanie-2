@@ -24,7 +24,7 @@ internal sealed class WinnersMetadataMapperVisitor : IWinnersMetadataMapperVisit
         _memoryCache = memoryCache;
     }
 
-    public async Task<OperationResult<WinnerMetadata[]>> VisitAsync(OperationResult<(VotingMetadata[], TenantId)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<WinnerMetadata[]>> SignUp(OperationResult<(VotingMetadata[], TenantId)> input, CancellationToken cancellationToken)
     {
         var winnersIds = input.Result.Item1.Select(x => x.Winner.Id).ToHashSet();
         var cacheKey = $"{CacheKeyPrefix}-{winnersIds.GetHashCode()}";

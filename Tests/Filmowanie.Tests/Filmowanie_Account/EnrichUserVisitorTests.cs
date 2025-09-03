@@ -1,6 +1,5 @@
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.OperationResult;
-using Filmowanie.Account.Visitors;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -29,7 +28,7 @@ public sealed class EnrichUserVisitorTests
         var input = new OperationResult<string>("nonexistentUserId", null);
 
         // Act
-        var result = await _visitor.VisitAsync(input, CancellationToken.None);
+        var result = await _visitor.SignUp(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().BeNull();
@@ -45,7 +44,7 @@ public sealed class EnrichUserVisitorTests
         var input = new OperationResult<string>("existingUserId", null);
 
         // Act
-        var result = await _visitor.VisitAsync(input, CancellationToken.None);
+        var result = await _visitor.SignUp(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().NotBeNull();

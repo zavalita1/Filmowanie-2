@@ -2,7 +2,6 @@ using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Abstractions;
-using Filmowanie.Account.Visitors;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using FluentAssertions;
@@ -36,7 +35,7 @@ public class AddUserVisitorTests
         _guidProvider.NewGuid().Returns(guid);
 
         // Act
-        var result = await _visitor.VisitAsync(operationResult, CancellationToken.None);
+        var result = await _visitor.SignUp(operationResult, CancellationToken.None);
 
         // Assert
         await _usersCommandRepository.Received(1).Insert(Arg.Is<IReadOnlyUserEntity>(u =>
@@ -58,7 +57,7 @@ public class AddUserVisitorTests
         var operationResult = new OperationResult<DomainUser>(default, new Error("Domain user is null", ErrorType.IncomingDataIssue));
 
         // Act
-        var result = await _visitor.VisitAsync(operationResult, CancellationToken.None);
+        var result = await _visitor.SignUp(operationResult, CancellationToken.None);
 
         // Assert
         await _usersCommandRepository.DidNotReceive().Insert(Arg.Any<IReadOnlyUserEntity>(), Arg.Any<CancellationToken>());

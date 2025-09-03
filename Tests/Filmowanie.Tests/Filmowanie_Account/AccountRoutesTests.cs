@@ -21,11 +21,11 @@ public sealed class AccountRoutesTests
 {
     private readonly ILogger<AccountRoutes> _log;
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
-    private readonly ICodeLoginVisitor _accountVisitor;
+    private readonly UserService _accountVisitor;
     private readonly IBasicAuthLoginVisitor _basicAuthLoginVisitor;
-    private readonly ISignUpVisitor _signUpVisitor;
+    private readonly ISignUpService _signUpService;
     private readonly IUserIdentityVisitor _userIdentityVisitor;
-    private readonly IUserMapperVisitor _userMapperVisitor;
+    private readonly IUserMapper _userMapper;
     private readonly IHttpContextWrapper _httpContextAccessor;
     private readonly IRoutesResultHelper _routesResultHelper;
     private readonly AccountRoutes _routes;
@@ -35,15 +35,15 @@ public sealed class AccountRoutesTests
     public AccountRoutesTests()
     {
         _log = Substitute.For<ILogger<AccountRoutes>>();
-        _accountVisitor = Substitute.For<ICodeLoginVisitor>();
+        _accountVisitor = Substitute.For<UserService>();
         _basicAuthLoginVisitor = Substitute.For<IBasicAuthLoginVisitor>();
-        _signUpVisitor = Substitute.For<ISignUpVisitor>();
-        _userMapperVisitor = Substitute.For<IUserMapperVisitor>();
+        _signUpService = Substitute.For<ISignUpService>();
+        _userMapper = Substitute.For<IUserMapper>();
         _httpContextAccessor = Substitute.For<IHttpContextWrapper>();
         _userIdentityVisitor = Substitute.For<IUserIdentityVisitor>();
         _validatorAdapterProvider = Substitute.For < IFluentValidatorAdapterProvider>();
         _routesResultHelper = Substitute.For<IRoutesResultHelper>();
-        _routes = new AccountRoutes(_log, _validatorAdapterProvider, _accountVisitor, _basicAuthLoginVisitor, _signUpVisitor, _userIdentityVisitor, _userMapperVisitor,
+        _routes = new AccountRoutes(_log, _validatorAdapterProvider, _accountVisitor, _basicAuthLoginVisitor, _signUpService, _userIdentityVisitor, _userMapper,
             _routesResultHelper, _httpContextAccessor);
     }
 
@@ -69,13 +69,13 @@ public sealed class AccountRoutesTests
         _userIdentityVisitor.Visit(operationResult2).Returns(operationResult3);
 
         var operationResult4 = new OperationResult<Account.DTOs.Outgoing.UserDTO>();
-        _userMapperVisitor.Visit(operationResult3).Returns(operationResult4);
+        _userMapper.Visit(operationResult3).Returns(operationResult4);
 
         var expectedResult = Substitute.For<IResult>();
         _routesResultHelper.UnwrapOperationResult(operationResult4).Returns(expectedResult);
 
         // Act
-        var result = await _routes.Login(input, cancellationToken);
+        var result = await _routes.LoginAsync(input, cancellationToken);
 
         // Assert
         result.Should().Be(expectedResult);
@@ -104,13 +104,13 @@ public sealed class AccountRoutesTests
         _userIdentityVisitor.Visit(operationResult2).Returns(operationResult3);
 
         var operationResult4 = new OperationResult<Account.DTOs.Outgoing.UserDTO>();
-        _userMapperVisitor.Visit(operationResult3).Returns(operationResult4);
+        _userMapper.Visit(operationResult3).Returns(operationResult4);
 
         var expectedResult = Substitute.For<IResult>();
         _routesResultHelper.UnwrapOperationResult(operationResult4).Returns(expectedResult);
 
         // Act
-        var result = await _routes.LoginBasic(input, cancellationToken);
+        var result = await _routes.LoginBasicAsync(input, cancellationToken);
 
         // Assert
         await _httpContextAccessor.Received(1).SignInAsync("cookie", Arg.Is<ClaimsPrincipal>(x => x.Identity == identity), operationResult2.Result!.AuthenticationProperties);
@@ -134,19 +134,19 @@ public sealed class AccountRoutesTests
         _userIdentityVisitor.Visit(Arg.Is<OperationResult<BasicAuth>>(x => x.Result.Email == basicAuth.Email && x.Result.Password == basicAuth.Password)).Returns(operationResult2);
 
         var operationResult3 = new OperationResult<LoginResultData>();
-        _signUpVisitor.VisitAsync(default, cancellationToken).ReturnsForAnyArgs(operationResult3);
+        _signUpService.SignUp(default, cancellationToken).ReturnsForAnyArgs(operationResult3);
 
         var operationResult4 = new OperationResult<DomainUser>(default!);
         _userIdentityVisitor.Visit(operationResult3).Returns(operationResult4);
 
         var operationResult5 = new OperationResult<Account.DTOs.Outgoing.UserDTO>(default!);
-        _userMapperVisitor.Visit(operationResult4).Returns(operationResult5);
+        _userMapper.Visit(operationResult4).Returns(operationResult5);
 
         var expectedResult = Substitute.For<IResult>();
         _routesResultHelper.UnwrapOperationResult(operationResult5).Returns(expectedResult);
 
         // Act
-        var result = await _routes.SignUp(input, cancellationToken);
+        var result = await _routes.SignUpAsync(input, cancellationToken);
 
         // Assert
         result.Should().Be(expectedResult);
@@ -159,7 +159,7 @@ public sealed class AccountRoutesTests
         var cancellationToken = CancellationToken.None;
 
         // Act
-        var result = await _routes.Logout(cancellationToken);
+        var result = await _routes.LogoutAsync(cancellationToken);
 
         // Assert
         await _httpContextAccessor.Received(1).SignOutAsync("cookie");
@@ -176,7 +176,7 @@ public sealed class AccountRoutesTests
         _userIdentityVisitor.Visit(OperationResultExtensions.Empty).Returns(operationResult1);
 
         var operationResult2 = new OperationResult<Account.DTOs.Outgoing.UserDTO>(default!);
-        _userMapperVisitor.Visit(operationResult1).Returns(operationResult2);
+        _userMapper.Visit(operationResult1).Returns(operationResult2);
 
         var expectedResult = Substitute.For<IResult>();
         _routesResultHelper.UnwrapOperationResult(operationResult2).Returns(expectedResult);

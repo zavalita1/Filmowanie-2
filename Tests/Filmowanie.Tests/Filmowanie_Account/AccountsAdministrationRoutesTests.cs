@@ -51,7 +51,7 @@ public sealed class AccountsAdministrationRoutesTests
         _routesResultHelper.UnwrapOperationResult(operationResult1).Returns(expectedResult);
 
         // Act
-        var result = await _routes.GetUsers(cancellationToken);
+        var result = await _routes.GetUsersAsync(cancellationToken);
 
         // Assert
         result.Should().Be(expectedResult);
@@ -70,13 +70,13 @@ public sealed class AccountsAdministrationRoutesTests
         _validatorProvider.GetAdapter<string>("username").Returns(validator);
 
         var operationResult2 = new OperationResult<DetailedUserDTO>(default!);
-        _enrichUserVisitor.VisitAsync(operationResult1, cancellationToken).Returns(operationResult2);
+        _enrichUserVisitor.SignUp(operationResult1, cancellationToken).Returns(operationResult2);
 
         var expectedResult = Substitute.For<IResult>();
         _routesResultHelper.UnwrapOperationResult(operationResult2).Returns(expectedResult);
 
         // Act
-        var result = await _routes.GetUser(input, cancellationToken);
+        var result = await _routes.GetUserAsync(input, cancellationToken);
 
         // Assert
         result.Should().Be(expectedResult);
@@ -101,13 +101,13 @@ public sealed class AccountsAdministrationRoutesTests
         _reverseMapperVisitor.Visit(OperationResultHelpers.GetEquivalent(operationResult1, operationResult2)).Returns(operationResult3);
 
         var operationResult4 = new OperationResult<object>(default!);
-        _addUserVisitor.VisitAsync(operationResult3, cancellationToken).Returns(operationResult4);
+        _addUserVisitor.SignUp(operationResult3, cancellationToken).Returns(operationResult4);
 
         var expectedResult = Substitute.For<IResult>();
         _routesResultHelper.UnwrapOperationResult(operationResult4, Arg.Any<IResult>()).Returns(expectedResult);
 
         // Act
-        var result = await _routes.AddUser(input, cancellationToken);
+        var result = await _routes.AddUserAsync(input, cancellationToken);
 
         // Assert
         result.Should().Be(expectedResult);

@@ -1,5 +1,5 @@
 import { commonOnQueryStarted } from "../../utils/queryStoreWrapper";
-import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
+import { GlobalConfigSlice, globalConfigSlice } from '../../slices/globalConfigSlice';
 import { adminApi } from "../3-Admin/api";
 import { MoviesThatCanBeNominatedAgainIncomingDTO, NominationOutgoingDTO, NominationsDataIncomingDTO, PostersIncomingDTO } from "./types";
 import { Decade } from "../../../consts/Decade";

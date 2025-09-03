@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Account.Constants;
-using Filmowanie.Account.Visitors;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

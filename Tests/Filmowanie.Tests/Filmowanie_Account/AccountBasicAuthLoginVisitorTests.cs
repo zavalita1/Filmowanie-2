@@ -4,7 +4,7 @@ using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Results;
-using Filmowanie.Account.Visitors;
+using Filmowanie.Account.Services;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -26,7 +26,7 @@ public sealed class AccountBasicAuthLoginVisitorTests
     {
         _usersQueryRepository = new UsersRepositoryForTests();
         _hashHelper = Substitute.For<IHashHelper>();
-        var log = Substitute.For<ILogger<AccountSignUpVisitor>>();
+        var log = Substitute.For<ILogger<AccountSignUpService>>();
         _extractor = Substitute.For<ILoginResultDataExtractor>();
         _visitor = new AccountBasicAuthLoginVisitor(_usersQueryRepository, _hashHelper, log, _extractor);
     }

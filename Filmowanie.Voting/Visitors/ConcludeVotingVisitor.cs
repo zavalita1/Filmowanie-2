@@ -19,7 +19,7 @@ internal sealed class ConcludeVotingVisitor : IConcludeVotingVisitor
         _bus = bus;
     }
 
-    public async Task<OperationResult<object>> VisitAsync(OperationResult<(VotingSessionId, DomainUser)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<object>> SignUp(OperationResult<(VotingSessionId, DomainUser)> input, CancellationToken cancellationToken)
     {
         var @event = new ConcludeVotingEvent(input.Result.Item1.CorrelationId, input.Result.Item2.Tenant);
         await _bus.Publish(@event, cancellationToken);

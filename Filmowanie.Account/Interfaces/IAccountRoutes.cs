@@ -6,9 +6,9 @@ namespace Filmowanie.Account.Interfaces;
 
 internal interface IAccountRoutes
 {
-    Task<IResult> Login([FromBody] LoginDto dto, CancellationToken cancel);
-    Task<IResult> LoginBasic([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel);
-    Task<IResult> SignUp([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel);
-    Task<IResult> Logout(CancellationToken cancel);
-    Task<IResult> Get(CancellationToken cancel);
+    Task<IResult> LoginAsync([FromBody] LoginDto dto, CancellationToken cancel);
+    Task<IResult> LoginBasicAsync([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel);
+    Task<IResult> SignUpAsync([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel);
+    Task<IResult> LogoutAsync(CancellationToken cancel);
+    IResult Get(CancellationToken cancel);
 }

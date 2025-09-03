@@ -29,7 +29,7 @@ internal sealed class StartNewVotingVisitor : IStartNewVotingVisitor
         _log = log;
     }
 
-    public async Task<OperationResult<VotingSessionId>> VisitAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<VotingSessionId>> SignUp(OperationResult<DomainUser> input, CancellationToken cancellationToken)
     {
         var votingSessions = await _votingSessionQueryRepository
             .Get(x => x.Concluded != null, input.Result.Tenant, x => x.Concluded!, -1, cancellationToken);

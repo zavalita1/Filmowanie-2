@@ -1,11 +1,12 @@
-import ReactDOM from 'react-dom/client'
+import ReactDOM from 'react-dom/client';
 
-import './index.css'
-import App from './App'
+import './index.css';
+import App from './App';
+import { setupSignalRConnection } from './signalr';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
-mockBackendIfNeeded().then(() => root.render(<App />));
+mockBackendIfNeeded().then(() => root.render(<App />)).then(setupSignalRConnection);
 
 async function mockBackendIfNeeded() {
   if (import.meta.env.MODE !== 'mockedBackend')

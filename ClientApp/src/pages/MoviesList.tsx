@@ -21,7 +21,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
       navigate('/');
 
   }, [props.userData, props.votingStatus]);
-  const [displayMode, setDisplayMode] = useState<'Cards' | 'Carousel'>('Cards');
+  const [displayMode, setDisplayMode] = useState<'Cards' | 'Carousel'>('Cards'); // TODO
   const { data, error, isLoading } = useGetCurrentVotingQuery();
   const [availableVotes, setAvailableVotes] = useState(Vote.allVoteTypes);
   const [vote, result] = useVoteMutation();

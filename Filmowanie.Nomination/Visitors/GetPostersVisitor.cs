@@ -19,7 +19,7 @@ internal sealed class GetPostersVisitor : IGetPostersVisitor
         _filmwebHandler = filmwebHandler;
     }
 
-    public async Task<OperationResult<PostersDTO>> VisitAsync(OperationResult<string> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<PostersDTO>> SignUp(OperationResult<string> input, CancellationToken cancellationToken)
     {
         var metadata = _filmwebPathResolver.GetMetadata(input.Result!);
         var posters = await _filmwebHandler.GetPosterUrlsAsync(metadata, cancellationToken);

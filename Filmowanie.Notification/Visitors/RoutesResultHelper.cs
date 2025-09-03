@@ -23,7 +23,7 @@ internal class NotifyAllPushSubscribersVisitor : INotifyAllPushSubscribersVisito
         Log = log;
     }
 
-    public async Task<OperationResult<object>> VisitAsync(OperationResult<(TenantId, string Message)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<object>> SignUp(OperationResult<(TenantId, string Message)> input, CancellationToken cancellationToken)
     {
         var pushSubscriptions = await _pushSubscriptionQueryRepository.GetAsync(input.Result.Item1, cancellationToken);
         var errors = new ConcurrentStack<Error>();

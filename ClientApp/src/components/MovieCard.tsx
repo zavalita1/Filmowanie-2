@@ -98,7 +98,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
           <CardDescription className="min-h-1 place-content-center justify-self-center">{props.movie.genres.join(", ")}</CardDescription>
         </CardHeader>
         <CardContent className="mt-auto self-center-safe">
-          <img className={customizer.getPosterElementClassName()} src={props.movie.posterUrl}></img>
+          <img className={customizer.getPosterElementClassName()} src={props.movie.posterUrl} ></img>
         </CardContent>
         {
           props.cardFooter !== undefined ? props.cardFooter : <></>

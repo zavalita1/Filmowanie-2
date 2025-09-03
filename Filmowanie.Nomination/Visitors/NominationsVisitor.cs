@@ -20,7 +20,7 @@ internal sealed class NominationsVisitor : IGetNominationsVisitor, IGetNominatio
         _log = log;
     }
 
-    async Task<OperationResult<CurrentNominationsResponse>> IOperationAsyncVisitor<VotingSessionId?, CurrentNominationsResponse>.VisitAsync(OperationResult<VotingSessionId?> input, CancellationToken cancellationToken)
+    async Task<OperationResult<CurrentNominationsResponse>> IOperationAsyncVisitor<VotingSessionId?, CurrentNominationsResponse>.SignUp(OperationResult<VotingSessionId?> input, CancellationToken cancellationToken)
     {
         if (!input.Result.HasValue)
             return new OperationResult<CurrentNominationsResponse>(new CurrentNominationsResponse { CorrelationId = Guid.Empty, Nominations = [] }, null);

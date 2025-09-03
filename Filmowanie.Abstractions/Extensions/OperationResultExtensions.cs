@@ -10,8 +10,11 @@ public static class OperationResultExtensions
     public static OperationResult<T> CancelledOperation<T>() => new(default!, new Error("Operation canceled.", ErrorType.Canceled));
     
     public static OperationResult<object> Empty => new(default!, null);
+    public static OperationResult<VoidResult> Void => new(default!, null);
 
     public static OperationResult<T> ToOperationResult<T>(this T result) => new(result, null);
+    public static OperationResult<T> ToOperationResult<T>(this Error error) => new(default, error);
+    public static OperationResult<VoidResult> AsVoid<T>(this OperationResult<T> operationResult) => new(default, operationResult.Error);
 
     public static OperationResult<TNext> Pluck<TNext, TPrevious>(this OperationResult<TPrevious> operationResult, Func<TPrevious, TNext> selector) =>
         operationResult.Error != null 
@@ -79,8 +82,58 @@ public static class OperationResultExtensions
             return (new OperationResult<TOutput>(default!, operation.Error));
 
         LogOperation(visitor, operation);
-        var result = await visitor.VisitAsync(operation, cancellationToken);
+        var result = await visitor.SignUp(operation, cancellationToken);
         LogResult(visitor, result);
+        return result;
+    }
+
+    public static async Task<OperationResult<TOutput>> AcceptAsync<TInput, TOutput>(this OperationResult<TInput> operation, Func<TInput, CancellationToken, Task<OperationResult<TOutput>>> func, ILogger log, CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+            return (CancelledOperation<TOutput>().Merge(operation).Pluck(x => x.Item1));
+
+        if (operation.Error != null)
+            return (new OperationResult<TOutput>(default!, operation.Error));
+
+        log.LogDebug($"Starting operation. Using result: {operation}.");
+        var result = await func(operation.Result!, cancellationToken);
+        log.LogDebug($"Concluded operation. Using result: {operation}.");
+        return result;
+    }
+
+    public static async Task<OperationResult<TOutput>> AcceptAsync<TOutput>(this OperationResult<VoidResult> operation, Func<CancellationToken, Task<OperationResult<TOutput>>> func, ILogger log, CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+            return (CancelledOperation<TOutput>().Merge(operation).Pluck(x => x.Item1));
+
+        if (operation.Error != null)
+            return (new OperationResult<TOutput>(default!, operation.Error));
+
+        log.LogDebug($"Starting operation. Using result: {operation}.");
+        var result = await func(cancellationToken);
+        log.LogDebug($"Concluded operation. Using result: {operation}.");
+        return result;
+    }
+
+    public static OperationResult<TOutput> Accept<TInput, TOutput>(this OperationResult<TInput> operation, Func<TInput, OperationResult<TOutput>> func, ILogger log)
+    {
+        if (operation.Error != null)
+            return (new OperationResult<TOutput>(default!, operation.Error));
+
+        log.LogDebug($"Starting operation. Using result: {operation}.");
+        var result = func(operation.Result!);
+        log.LogDebug($"Concluded operation. Using result: {operation}.");
+        return result;
+    }
+
+    public static OperationResult<TOutput> Accept<TOutput>(this OperationResult<VoidResult> operation, Func<OperationResult<TOutput>> func, ILogger log)
+    {
+        if (operation.Error != null)
+            return (new OperationResult<TOutput>(default!, operation.Error));
+
+        log.LogDebug($"Starting operation. Using result: {operation}.");
+        var result = func();
+        log.LogDebug($"Concluded operation. Using result: {operation}.");
         return result;
     }
 

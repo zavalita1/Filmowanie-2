@@ -21,7 +21,7 @@ internal sealed class VoteVisitor : IVoteVisitor
         _log = log;
     }
 
-    public async Task<OperationResult<object>> VisitAsync(OperationResult<(DomainUser, VotingSessionId, VoteDTO)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<object>> SignUp(OperationResult<(DomainUser, VotingSessionId, VoteDTO)> input, CancellationToken cancellationToken)
     {
         var (user, votingSessionId, voteDto) = input.Result;
         var movie = new EmbeddedMovie { id = voteDto.MovieId, Name = voteDto.MovieTitle };

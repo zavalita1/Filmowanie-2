@@ -21,7 +21,7 @@ internal sealed class MovieThatCanBeNominatedAgainEnricherVisitor : IMovieThatCa
     }
 
     // TODO add cron job that cleans old events
-    public async Task<OperationResult<NominationsFullDataDTO>> VisitAsync(OperationResult<(NominationsDataDTO, DomainUser)> input, CancellationToken cancellationToken)
+    public async Task<OperationResult<NominationsFullDataDTO>> SignUp(OperationResult<(NominationsDataDTO, DomainUser)> input, CancellationToken cancellationToken)
     {
         var user = input.Result.Item2;
 

@@ -128,7 +128,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       return <></>;
 
     if (userDataIsLoading || votingStateIsLoading)
-      return (<div>Loading...</div>);
+      return (<div className='min-h-screen text-center content-center'>Loading...</div>);
 
     const containerClassName = clsx(
       'flex',
@@ -151,7 +151,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   }
 
   function DisplayFatalError() {
-    return (<div className="flex flex-row justify-center items-center relative">Coś się zesrało w fatalny sposób. Strona jest do wyjebania, prosze odświeżyć.</div>);
+    return (<div className="flex flex-row justify-center items-center relative min-h-screen">Coś się zesrało w fatalny sposób. Strona jest do wyjebania, prosze odświeżyć.</div>);
   }
 
   function Footer() {

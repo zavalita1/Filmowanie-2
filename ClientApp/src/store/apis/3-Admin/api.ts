@@ -1,5 +1,5 @@
 import { commonOnQueryStarted } from "../../utils/queryStoreWrapper";
-import { GlobalConfigSlice, globalConfigSlice } from '../../globalConfigSlice';
+import { GlobalConfigSlice, globalConfigSlice } from '../../slices/globalConfigSlice';
 import { votingApi } from "../2-Voting/votingApi";
 import { UserIncomingDTO } from "./types";
 

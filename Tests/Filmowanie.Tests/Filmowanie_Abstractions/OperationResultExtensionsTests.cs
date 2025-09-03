@@ -325,7 +325,7 @@ public sealed class OperationResultExtensionsTests
         // Arrange
         var operation = new OperationResult<int>(42, null);
         var visitor = Substitute.For<IOperationAsyncVisitor<int, string>>();
-        visitor.VisitAsync(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>("Success", null)));
+        visitor.SignUp(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>("Success", null)));
         var cancellationToken = CancellationToken.None;
 
         // Act
@@ -344,7 +344,7 @@ public sealed class OperationResultExtensionsTests
         var visitor = Substitute.For<IOperationAsyncVisitor<int, string>>();
         var log = new LoggerForTests<IOperationAsyncVisitor<int, string>>();
         visitor.Log.Returns(log);
-        visitor.VisitAsync(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>("Success", null)));
+        visitor.SignUp(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>("Success", null)));
         var cancellationToken = CancellationToken.None;
 
         // Act
@@ -366,7 +366,7 @@ public sealed class OperationResultExtensionsTests
         var log = new LoggerForTests<IOperationAsyncVisitor<int, string>>();
         var visitor = Substitute.For<IOperationAsyncVisitor<int, string>>();
         visitor.Log.Returns(log);
-        visitor.VisitAsync(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>(default, error)));
+        visitor.SignUp(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>(default, error)));
         var cancellationToken = CancellationToken.None;
 
         // Act
@@ -457,7 +457,7 @@ public sealed class OperationResultExtensionsTests
         var visitor = Substitute.For<IOperationAsyncVisitor<int, string>>();
         var log = new LoggerForTests<IOperationAsyncVisitor<string>>();
         visitor.Log.Returns(log);
-        visitor.VisitAsync(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>("Success", null)));
+        visitor.SignUp(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>("Success", null)));
         var cancellationToken = CancellationToken.None;
 
         // Act
@@ -553,7 +553,7 @@ public sealed class OperationResultExtensionsTests
         var log = new LoggerForTests<IOperationAsyncVisitor<int, string>>();
         var visitor = Substitute.For<IOperationAsyncVisitor<int, string>>();
         visitor.Log.Returns(log);
-        visitor.VisitAsync(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>(default, error)));
+        visitor.SignUp(operation, Arg.Any<CancellationToken>()).Returns(Task.FromResult(new OperationResult<string>(default, error)));
         var cancellationToken = CancellationToken.None;
 
         // Act

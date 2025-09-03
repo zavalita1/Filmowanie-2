@@ -20,7 +20,7 @@ internal sealed class EnrichMoviesForVotingSessionWithPlaceholdersVisitor : IEnr
         _log = log;
     }
 
-    public async Task<OperationResult<MovieDTO[]>> VisitAsync(OperationResult<(MovieDTO[], VotingSessionId)> movies, CancellationToken cancellationToken)
+    public async Task<OperationResult<MovieDTO[]>> SignUp(OperationResult<(MovieDTO[], VotingSessionId)> movies, CancellationToken cancellationToken)
     {
         var nominationsRequested = new NominationsRequested(movies.Result.Item2.CorrelationId);
         var nominations = await _getNominationsRequestClient.GetResponse<CurrentNominationsResponse>(nominationsRequested, cancellationToken);

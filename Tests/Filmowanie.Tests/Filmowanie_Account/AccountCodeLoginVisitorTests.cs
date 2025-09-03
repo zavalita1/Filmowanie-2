@@ -2,7 +2,6 @@ using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Results;
-using Filmowanie.Account.Visitors;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -10,22 +9,23 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System.Linq.Expressions;
+using Filmowanie.Account.Services;
 
 namespace Filmowanie.Tests.Filmowanie_Account;
 
-public class AccountCodeLoginVisitorTests
+public class AccountUserServiceTests
 {
     private readonly UsersRepositoryForTests _usersQueryRepository;
     private readonly ILoginResultDataExtractor _extractor;
-    private readonly AccountCodeLoginVisitor _visitor;
+    private readonly AccountUserService _visitor;
 
 
-    public AccountCodeLoginVisitorTests()
+    public AccountUserServiceTests()
     {
         _usersQueryRepository = new UsersRepositoryForTests();
-        var log = Substitute.For<ILogger<AccountSignUpVisitor>>();
+        var log = Substitute.For<ILogger<AccountSignUpService>>();
         _extractor = Substitute.For<ILoginResultDataExtractor>();
-        _visitor = new AccountCodeLoginVisitor(_usersQueryRepository, log, _extractor);
+        _visitor = new AccountUserService(_usersQueryRepository, log, _extractor);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class AccountCodeLoginVisitorTests
         var result = new OperationResult<string>("testCode");
 
         // Act
-        var operationResult = await _visitor.VisitAsync(result, CancellationToken.None);
+        var operationResult = await _visitor.GetAllUsers(result, CancellationToken.None);
 
         // Assert
         operationResult.Result.Should().BeNull();
@@ -53,7 +53,7 @@ public class AccountCodeLoginVisitorTests
         _extractor.GetIdentity(_usersQueryRepository.MockUsers[1]).Returns(new OperationResult<LoginResultData>(loginResultData));
 
         // Act
-        var result = await _visitor.VisitAsync(input, CancellationToken.None);
+        var result = await _visitor.GetAllUsers(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().Be(loginResultData);

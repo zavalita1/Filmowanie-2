@@ -4,7 +4,7 @@ using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Results;
-using Filmowanie.Account.Visitors;
+using Filmowanie.Account.Services;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -15,22 +15,22 @@ using NSubstitute.ExceptionExtensions;
 
 namespace Filmowanie.Tests.Filmowanie_Account;
 
-public class AccountSignUpVisitorTests
+public class AccountSignUpServiceTests
 {
     private readonly IUsersCommandRepository _commandRepository;
     private readonly IHashHelper _hashHelper;
-    private readonly ILogger<AccountSignUpVisitor> _log;
+    private readonly ILogger<AccountSignUpService> _log;
     private readonly ILoginResultDataExtractor _extractor;
-    private readonly AccountSignUpVisitor _visitor;
+    private readonly AccountSignUpService _service;
     private readonly IFixture _fixture = new Fixture();
 
-    public AccountSignUpVisitorTests()
+    public AccountSignUpServiceTests()
     {
         _commandRepository = Substitute.For<IUsersCommandRepository>();
         _hashHelper = Substitute.For<IHashHelper>();
-        _log = Substitute.For<ILogger<AccountSignUpVisitor>>();
+        _log = Substitute.For<ILogger<AccountSignUpService>>();
         _extractor = Substitute.For<ILoginResultDataExtractor>();
-        _visitor = new AccountSignUpVisitor(_commandRepository, _hashHelper, _log, _extractor);
+        _service = new AccountSignUpService(_commandRepository, _hashHelper, _log, _extractor);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class AccountSignUpVisitorTests
             .Throws(new Exception("Database error"));
 
         // Act
-        var operationResult = await _visitor.VisitAsync(data, CancellationToken.None);
+        var operationResult = await _service.SignUp(data, CancellationToken.None);
 
         // Assert
         operationResult.Result.Should().BeNull();
@@ -74,7 +74,7 @@ public class AccountSignUpVisitorTests
         _extractor.GetIdentity(userEntity).Returns(new OperationResult<LoginResultData>(loginResultData));
 
         // Act
-        var operationResult = await _visitor.VisitAsync(data, CancellationToken.None);
+        var operationResult = await _service.SignUp(data, CancellationToken.None);
 
         // Assert
         operationResult.Result.Should().NotBeNull();
