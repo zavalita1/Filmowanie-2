@@ -3,9 +3,10 @@ using FluentValidation;
 
 namespace Filmowanie.Abstractions.Interfaces;
 
-public interface IFluentValidatorAdapter<TInput> : IOperationVisitor<TInput, TInput>
+public interface IFluentValidatorAdapter<TInput>
 {
     public OperationResult<TInput> Validate(TInput input);
+    public OperationResult<TInput> Validate(OperationResult<TInput> input);
 }
 
 public interface IFluentValidatorAdapter

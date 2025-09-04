@@ -20,7 +20,7 @@ public sealed class NominationRoutesTests
     private readonly IUserIdentityVisitor _userIdentityVisitor;
     private readonly IGetNominationsVisitor _getNominationsVisitor;
     private readonly IGetNominationsDTOVisitor _getNominationsDtoVisitor;
-    private readonly IGetPostersVisitor _getPostersVisitor;
+    private readonly IMoviePostersService _moviePostersService;
     private readonly INominationsCompleterVisitor _nominationsCompleterVisitor;
     private readonly INominationsResetterVisitor _nominationsResetterVisitor;
     private readonly IGetCurrentVotingSessionIdVisitor _currentVotingSessionIdVisitor;
@@ -37,7 +37,7 @@ public sealed class NominationRoutesTests
         _userIdentityVisitor = Substitute.For<IUserIdentityVisitor>();
         _getNominationsVisitor = Substitute.For<IGetNominationsVisitor>();
         _getNominationsDtoVisitor = Substitute.For<IGetNominationsDTOVisitor>();
-        _getPostersVisitor = Substitute.For<IGetPostersVisitor>();
+        _moviePostersService = Substitute.For<IMoviePostersService>();
         _nominationsCompleterVisitor = Substitute.For<INominationsCompleterVisitor>();
         _nominationsResetterVisitor = Substitute.For<INominationsResetterVisitor>();
         _currentVotingSessionIdVisitor = Substitute.For<IGetCurrentVotingSessionIdVisitor>();
@@ -53,7 +53,7 @@ public sealed class NominationRoutesTests
             _movieThatCanBeNominatedAgainEnricherVisitor,
             _validatorAdapterProvider,
             _getNominationsDtoVisitor,
-            _getPostersVisitor,
+            _moviePostersService,
             _nominationsCompleterVisitor,
             _nominationsResetterVisitor,
             _requireCurrentVotingSessionIdVisitor,
@@ -136,7 +136,7 @@ public sealed class NominationRoutesTests
         adapter.Visit(Arg.Is<OperationResult<string>>(x => x.Result == movieUrl)).Returns(operationResult1);
 
         var operationResult2 = new OperationResult<PostersDTO>();
-        _getPostersVisitor.SignUp(operationResult1, cancellationToken).Returns(operationResult2);
+        _moviePostersService.SignUp(operationResult1, cancellationToken).Returns(operationResult2);
 
         _routesHelper.UnwrapOperationResult(operationResult2).Returns(expectedResult);
 

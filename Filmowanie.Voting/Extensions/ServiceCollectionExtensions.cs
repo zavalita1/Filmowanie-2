@@ -29,6 +29,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGetVotingSessionsMetadataVisitor, VotingSessionResultVisitor>();
         services.AddScoped<IGetVotingResultDTOVisitor, GetVotingResultDTOVisitor>();
 
+        services.AddScoped<IVotingSessionService, VotingSessionService>();
+        services.AddScoped<ICurrentVotingSessionIdAccessor, VotingSessionService>();
+
         services.AddScoped<IRequireCurrentVotingSessionIdVisitor, VotingSessionIdQueryVisitor>();
         services.AddScoped<IGetCurrentVotingSessionIdVisitor, VotingSessionIdQueryVisitor>();
         services.AddScoped<IGetCurrentVotingSessionStatusVisitor, VotingSessionIdQueryVisitor>();

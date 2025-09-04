@@ -3,11 +3,12 @@ using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Nomination.DTOs.Incoming;
+using Filmowanie.Nomination.Models;
 using FluentValidation;
 
 namespace Filmowanie.Nomination.Validators;
 
-internal class NominationValidator : AbstractValidator<(NominationDTO Dto, DomainUser User, CurrentNominationsResponse CurrentNominations)>, IFluentValidatorAdapter
+internal class NominationValidator : AbstractValidator<(NominationDTO Dto, DomainUser User, CurrentNominationsData CurrentNominations)>, IFluentValidatorAdapter
 {
     public NominationValidator()
     {
@@ -21,11 +22,11 @@ internal class NominationValidator : AbstractValidator<(NominationDTO Dto, Domai
             {
                 var movieYear = NominationMovieUrlValidator.GetGeneratedRegex().Match(x.Dto.MovieFilmwebUrl).Groups[1];
                 var decade = int.Parse(movieYear.Value).ToDecade();
-                return x.CurrentNominations.Nominations.Any(y => y.User.Id == x.User.Id && y.Year == decade);
+                return x.CurrentNominations.NominationData.Any(y => y.User.Id == x.User.Id && y.Year == decade);
             }).WithMessage($"User must have nominations from proper decade to assign!");
         });
 
-        RuleFor(x => x).Must(x => x.CurrentNominations.Nominations.Any(y => y.User.Id == x.User.Id)).WithMessage("User must have nominations to assign!");
+        RuleFor(x => x).Must(x => x.CurrentNominations.NominationData.Any(y => y.User.Id == x.User.Id)).WithMessage("User must have nominations to assign!");
     }
 
     public bool CanHandle<T>(string key, out IValidator<T>? typedValidator)

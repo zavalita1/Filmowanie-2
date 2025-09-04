@@ -50,8 +50,7 @@ public class ErrorData
 }
 
 public record StartVotingEvent(Guid CorrelationId, EmbeddedMovie[] Movies, NominationData[] NominationsData, DateTime Created, TenantId TenantId) : IEvent { }
-public record AddMovieEvent(Guid CorrelationId, EmbeddedMovie Movie, DomainUser User, Decade Decade) : IEvent { }
-public record RemoveMovieEvent(Guid CorrelationId, IReadOnlyEmbeddedMovie Movie, DomainUser User) : IEvent { }
+
 public record RemoveVoteEvent(Guid CorrelationId, EmbeddedMovie Movie, DomainUser User) : IEvent { }
 public record VoteRemovedEvent(Guid CorrelationId, EmbeddedMovie Movie, DomainUser User) : IEvent { }
 public record AddVoteEvent(Guid CorrelationId, EmbeddedMovie Movie, DomainUser User, VoteType VoteType) : IEvent { }
@@ -64,11 +63,6 @@ public record VotingStartingEvent(Guid CorrelationId) : IEvent { }
 public record NominationAddedEvent(Guid CorrelationId, NominationData NominationData) : IEvent { }
 
 public record MoviesListRequested(Guid CorrelationId) : IEvent { }
-public record NominationsRequested(Guid CorrelationId) : IEvent { }
+
 public record ResultsCalculated(Guid CorrelationId) : IEvent { }
 public record ErrorEvent(Guid CorrelationId, string Message, string? CallStack) : IEvent { }
-
-public interface IEvent
-{
-    public Guid CorrelationId { get; init;}
-}

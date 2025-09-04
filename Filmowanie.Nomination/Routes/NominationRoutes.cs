@@ -1,67 +1,58 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.DTOs.Incoming;
 using Filmowanie.Nomination.Interfaces;
+using Filmowanie.Nomination.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Nomination.Routes;
 
 internal sealed class NominationRoutes : INominationRoutes
 {
-    private readonly IUserIdentityVisitor _userIdentityVisitor;
-    private readonly IGetNominationsVisitor _getNominationsVisitor;
-    private readonly IGetNominationsDTOVisitor _getNominationsDtoVisitor;
-    private readonly IGetPostersVisitor _getPostersVisitor;
-    private readonly INominationsCompleterVisitor _nominationsCompleterVisitor;
-    private readonly INominationsResetterVisitor _nominationsResetterVisitor;
-    private readonly IGetCurrentVotingSessionIdVisitor _currentVotingSessionIdVisitor;
-    private readonly IRequireCurrentVotingSessionIdVisitor _requireCurrentVotingSessionIdVisitor;
-    private readonly IMovieThatCanBeNominatedAgainEnricherVisitor _movieThatCanBeNominatedAgainEnricherVisitor;
+    private readonly IDomainUserAccessor _domainUserAccessor;
+    private readonly ICurrentVotingSessionIdAccessor _currentVotingSessionIdAccessor;
+    private readonly INominationsService _nominationsService;
+    private readonly INominationsMapper _nominationsMapper;
+    private readonly IMoviePostersService _moviePostersService;
+
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
     private readonly IRoutesResultHelper _routesResultHelper;
 
-    public NominationRoutes(IUserIdentityVisitor userIdentityVisitor, IGetNominationsVisitor getNominationsVisitor, IGetCurrentVotingSessionIdVisitor currentVotingSessionIdVisitor, IMovieThatCanBeNominatedAgainEnricherVisitor movieThatCanBeNominatedAgainEnricherVisitor, IFluentValidatorAdapterProvider validatorAdapterProvider, IGetNominationsDTOVisitor getNominationsDtoVisitor, IGetPostersVisitor getPostersVisitor, INominationsCompleterVisitor nominationsCompleterVisitor, INominationsResetterVisitor nominationsResetterVisitor, IRequireCurrentVotingSessionIdVisitor requireCurrentVotingSessionIdVisitor, IRoutesResultHelper routesResultHelper)
+    public NominationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IMoviePostersService moviePostersService, IRoutesResultHelper routesResultHelper, IDomainUserAccessor domainUserAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, INominationsService nominationsService, INominationsMapper nominationsMapper)
     {
-        _userIdentityVisitor = userIdentityVisitor;
-        _getNominationsVisitor = getNominationsVisitor;
-        _currentVotingSessionIdVisitor = currentVotingSessionIdVisitor;
-        _movieThatCanBeNominatedAgainEnricherVisitor = movieThatCanBeNominatedAgainEnricherVisitor;
         _validatorAdapterProvider = validatorAdapterProvider;
-        _getNominationsDtoVisitor = getNominationsDtoVisitor;
-        _getPostersVisitor = getPostersVisitor;
-        _nominationsCompleterVisitor = nominationsCompleterVisitor;
-        _nominationsResetterVisitor = nominationsResetterVisitor;
-        _requireCurrentVotingSessionIdVisitor = requireCurrentVotingSessionIdVisitor;
+        _moviePostersService = moviePostersService;
         _routesResultHelper = routesResultHelper;
+        _domainUserAccessor = domainUserAccessor;
+        _currentVotingSessionIdAccessor = currentVotingSessionIdAccessor;
+        _nominationsService = nominationsService;
+        _nominationsMapper = nominationsMapper;
     }
 
     public async Task<IResult> GetNominationsAsync(CancellationToken cancellationToken)
     {
-        var identityResult = OperationResultExtensions.Empty.Accept(_userIdentityVisitor);
-
-        var result = (await (await identityResult
-            .AcceptAsync(_currentVotingSessionIdVisitor, cancellationToken))
-            .AcceptAsync(_getNominationsVisitor, cancellationToken))
-            .Merge(identityResult)
-            .Accept(_getNominationsDtoVisitor);
+        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(OperationResultExtensions.Void);
+        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionId(maybeCurrentUser, cancellationToken);
+        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredCurrentVotingSessionId(maybeNullableCurrentVotingId);
+        var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancellationToken);
+        var merged = maybeNominations.Merge(maybeCurrentUser);
+        var result = _nominationsMapper.Map(merged);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> GetNominationsFullDataAsync(CancellationToken cancellationToken)
     {
-        var identityResult = OperationResultExtensions.Empty.Accept(_userIdentityVisitor);
-
-        var result = await (await (await identityResult
-                        .AcceptAsync(_currentVotingSessionIdVisitor, cancellationToken))
-                        .AcceptAsync(_getNominationsVisitor, cancellationToken))
-                        .Merge(identityResult)
-                        .Accept(_getNominationsDtoVisitor)
-                        .Merge(identityResult)
-                        .AcceptAsync(_movieThatCanBeNominatedAgainEnricherVisitor, cancellationToken);
+        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(OperationResultExtensions.Void);
+        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionId(maybeCurrentUser, cancellationToken);
+        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredCurrentVotingSessionId(maybeNullableCurrentVotingId);
+        var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancellationToken);
+        var merged = maybeNominations.Merge(maybeCurrentUser);
+        var maybeNominationsDto = _nominationsMapper.Map(merged);
+        var merged2 = maybeNominationsDto.Merge(maybeCurrentUser);
+        var result = await _nominationsMapper.EnrichNominationsAsync(merged2, cancellationToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }
@@ -69,10 +60,8 @@ internal sealed class NominationRoutes : INominationRoutes
     public async Task<IResult> GetPostersAsync(string movieUrl, CancellationToken cancellationToken)
     {
         var validator = _validatorAdapterProvider.GetAdapter<string>(KeyedServices.MovieUrl);
-        var result = await movieUrl
-            .ToOperationResult()
-            .Accept(validator)
-            .AcceptAsync(_getPostersVisitor, cancellationToken);
+        var maybeMovieUrl = validator.Validate(movieUrl);
+        var result = await _moviePostersService.GetPosters(maybeMovieUrl, cancellationToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }
@@ -80,37 +69,28 @@ internal sealed class NominationRoutes : INominationRoutes
     public async Task<IResult> DeleteMovieAsync(string movieId, CancellationToken cancellationToken)
     {
         var validator = _validatorAdapterProvider.GetAdapter<string>(KeyedServices.MovieId);
-        var identityResult = OperationResultExtensions.Empty.Accept(_userIdentityVisitor);
-        var votingSessionIdResult = (await identityResult
-                .AcceptAsync(_currentVotingSessionIdVisitor, cancellationToken))
-                .Accept(_requireCurrentVotingSessionIdVisitor);
+        var maybeMovieId = validator.Validate(movieId);
+        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(maybeMovieId.AsVoid());
+        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionId(maybeCurrentUser, cancellationToken);
+        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredCurrentVotingSessionId(maybeNullableCurrentVotingId);
 
-        var result = await movieId
-            .ToOperationResult()
-            .Accept(validator)
-            .Merge(identityResult)
-            .Merge(votingSessionIdResult)
-            .Flatten()
-            .AcceptAsync(_nominationsResetterVisitor, cancellationToken);
+        var merged = maybeMovieId.Merge(maybeCurrentUser).Merge(maybeCurrentVotingId).Flatten();
+        var result = await _nominationsService.RemoveMovieAsync(merged, cancellationToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> NominateAsync(NominationDTO dto, CancellationToken cancellationToken)
     {
-        var validator = _validatorAdapterProvider.GetAdapter<(NominationDTO, DomainUser, CurrentNominationsResponse)>();
-        var identityResult = OperationResultExtensions.Empty.Accept(_userIdentityVisitor);
-        var nominations = await (await identityResult
-            .AcceptAsync(_currentVotingSessionIdVisitor, cancellationToken))
-            .AcceptAsync(_getNominationsVisitor, cancellationToken);
+        var validator = _validatorAdapterProvider.GetAdapter<(NominationDTO, DomainUser, CurrentNominationsData)>();
+        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(OperationResultExtensions.Void);
+        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionId(maybeCurrentUser, cancellationToken);
+        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredCurrentVotingSessionId(maybeNullableCurrentVotingId);
+        var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancellationToken);
 
-        var result = await dto
-            .ToOperationResult()
-            .Merge(identityResult)
-            .Merge(nominations)
-            .Flatten()
-            .Accept(validator)
-            .AcceptAsync(_nominationsCompleterVisitor, cancellationToken);
+        var toValidate = dto.ToOperationResult().Merge(maybeCurrentUser).Merge(maybeNominations).Flatten();
+        var maybeValidationResult = validator.Validate(toValidate);
+        var result = await _nominationsService.NominateAsync(maybeValidationResult, cancellationToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }

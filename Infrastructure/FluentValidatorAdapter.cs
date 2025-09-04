@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.OperationResult;
 using FluentValidation;
@@ -19,6 +19,8 @@ public sealed class FluentValidatorAdapter<TInput> : IFluentValidatorAdapter<TIn
         _log = log;
     }
 
+    public OperationResult<TInput> Validate(OperationResult<TInput> maybeInput) => maybeInput.Accept(Validate, _log);
+
     public OperationResult<TInput> Validate(TInput input)
     {
         var fluentResult = _validator.Validate(input);
@@ -30,8 +32,4 @@ public sealed class FluentValidatorAdapter<TInput> : IFluentValidatorAdapter<TIn
         var error = new Error(errorMessages, ErrorType.ValidationError);
         return new OperationResult<TInput>(input, error);
     }
-
-    public OperationResult<TInput> Visit(OperationResult<TInput> input) => Validate(input.Result);
-
-    public ILogger Log => _log;
 }

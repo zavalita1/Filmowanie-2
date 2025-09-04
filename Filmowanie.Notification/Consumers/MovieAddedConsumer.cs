@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Notification.Services;
 using MassTransit;
 using Microsoft.AspNetCore.SignalR;

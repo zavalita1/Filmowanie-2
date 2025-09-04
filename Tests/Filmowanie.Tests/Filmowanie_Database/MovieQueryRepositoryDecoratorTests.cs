@@ -35,7 +35,7 @@ public sealed class MovieQueryRepositoryDecoratorTests
     {
         // Arrange
         // Act
-        var result = await _decorator.GetMoviesThatCanBeNominatedAgainEntityAsync(x => x.Movie.Name == "Testyy", new TenantId(3), CancellationToken.None);
+        var result = await _decorator.GetMoviesThatCanBeNominatedAgainEventsAsync(x => x.Movie.Name == "Testyy", new TenantId(3), CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(1);
@@ -47,7 +47,7 @@ public sealed class MovieQueryRepositoryDecoratorTests
     {
         // Arrange
         // Act
-        var result = await _decorator.GetMoviesNominatedAgainEntityAsync(x => x.Movie.Name == "Testyy2", new TenantId(3), CancellationToken.None);
+        var result = await _decorator.GetMoviesNominatedAgainEventsAsync(x => x.Movie.Name == "Testyy2", new TenantId(3), CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(1);
@@ -87,14 +87,14 @@ public sealed class MovieQueryRepositoryDecoratorTests
             return Task.FromResult(result);
         }
 
-        public Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEntityAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate, TenantId tenant, CancellationToken cancellationToken)
+        public Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEventsAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate, TenantId tenant, CancellationToken cancellationToken)
         {
             var func = predicate.Compile();
             var result = CanCanNominateMovieAgainEvents.Where(func).ToArray();
             return Task.FromResult(result);
         }
 
-        public Task<IReadOnlyNominatedMovieAgainEvent[]> GetMoviesNominatedAgainEntityAsync(Expression<Func<IReadOnlyNominatedMovieAgainEvent, bool>> predicate, TenantId tenant, CancellationToken cancellationToken)
+        public Task<IReadOnlyNominatedMovieAgainEvent[]> GetMoviesNominatedAgainEventsAsync(Expression<Func<IReadOnlyNominatedMovieAgainEvent, bool>> predicate, TenantId tenant, CancellationToken cancellationToken)
         {
             var func = predicate.Compile();
             var result = NominatedMovieAgainEvents.Where(func).ToArray();

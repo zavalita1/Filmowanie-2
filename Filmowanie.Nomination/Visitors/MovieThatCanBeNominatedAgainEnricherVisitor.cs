@@ -25,8 +25,8 @@ internal sealed class MovieThatCanBeNominatedAgainEnricherVisitor : IMovieThatCa
     {
         var user = input.Result.Item2;
 
-        var moviesThatCanBeNominatedAgainList = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEntityAsync(x => true, user.Tenant, cancellationToken);
-        var moviesNominatedAgainList = await _movieQueryRepository.GetMoviesNominatedAgainEntityAsync(x => true, user.Tenant, cancellationToken);
+        var moviesThatCanBeNominatedAgainList = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEventsAsync(x => true, user.Tenant, cancellationToken);
+        var moviesNominatedAgainList = await _movieQueryRepository.GetMoviesNominatedAgainEventsAsync(x => true, user.Tenant, cancellationToken);
 
         var userNominationsDecades = input.Result.Item1.Nominations.Select(StringExtensions.ToDecade).ToArray();
         var filteredMoviesThatCanBeNominatedAgain = moviesThatCanBeNominatedAgainList

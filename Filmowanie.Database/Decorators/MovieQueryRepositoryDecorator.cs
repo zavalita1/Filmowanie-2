@@ -20,18 +20,18 @@ namespace Filmowanie.Database.Decorators
             return _decorated.GetMoviesAsync(newPredicate, tenant, cancellationToken);
         }
 
-        public Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEntityAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate, TenantId tenant,
+        public Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEventsAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate, TenantId tenant,
             CancellationToken cancellationToken)
         {
             var newPredicate = GetPredicateWithTenantFilter(predicate, tenant);
-            return _decorated.GetMoviesThatCanBeNominatedAgainEntityAsync(newPredicate, tenant, cancellationToken);
+            return _decorated.GetMoviesThatCanBeNominatedAgainEventsAsync(newPredicate, tenant, cancellationToken);
         }
 
-        public Task<IReadOnlyNominatedMovieAgainEvent[]> GetMoviesNominatedAgainEntityAsync(Expression<Func<IReadOnlyNominatedMovieAgainEvent, bool>> predicate, TenantId tenant,
+        public Task<IReadOnlyNominatedMovieAgainEvent[]> GetMoviesNominatedAgainEventsAsync(Expression<Func<IReadOnlyNominatedMovieAgainEvent, bool>> predicate, TenantId tenant,
             CancellationToken cancellationToken)
         {
             var newPredicate = GetPredicateWithTenantFilter(predicate, tenant);
-            return _decorated.GetMoviesNominatedAgainEntityAsync(newPredicate, tenant, cancellationToken);
+            return _decorated.GetMoviesNominatedAgainEventsAsync(newPredicate, tenant, cancellationToken);
         }
 
         private static Expression<Func<T, bool>> GetPredicateWithTenantFilter<T>(Expression<Func<T, bool>> predicate, TenantId user) where T: IReadOnlyEntity

@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IAccountUserService, AccountUserService>();
         services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+        services.AddScoped<IDomainUserAccessor, AuthenticationManager>();
         services.AddScoped<ISignUpService, AccountSignUpService>();
 
         services.AddSingleton<IUserMapper, UserMapper>();
