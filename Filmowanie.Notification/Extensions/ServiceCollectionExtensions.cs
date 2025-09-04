@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IPushNotificationRoutes, PushNotificationRoutes>();
         services.AddScoped<IFluentValidatorAdapter, PushSubscriptionDTOValidator>();
-        services.AddScoped<ISavePushNotificationVisitor, SavePushNotificationVisitor>();
+        services.AddScoped<IPushNotificationService, PushNotificationService>();
         services.AddScoped<INotifyAllPushSubscribersVisitor, NotifyAllPushSubscribersVisitor>();
 
         services.AddSingleton<IRoutesResultHelper, RoutesResultHelper>();

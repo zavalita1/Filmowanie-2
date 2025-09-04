@@ -20,4 +20,8 @@
 	  <ProjectReference Include="..\Filmowanie.Account\Filmowanie.Account.csproj" />
 	  <ProjectReference Include="..\Filmowanie.Database\Filmowanie.Database.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Visitors\" />
+	</ItemGroup>
 </Project>
