@@ -7,7 +7,7 @@ namespace Filmowanie.Voting.Helpers;
 
 internal static class RoutesResultHelper
 {
-    public static IResult UnwrapOperationResult<T>(OperationResult<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null)
+    public static IResult UnwrapOperationResult<T>(Maybe<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null)
     {
         if (result.Error == null)
             return onSuccess ?? TypedResults.Ok(result.Result);

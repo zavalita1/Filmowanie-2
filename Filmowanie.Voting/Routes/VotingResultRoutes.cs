@@ -1,5 +1,6 @@
 ﻿using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Voting.Constants;
 using Filmowanie.Voting.Helpers;
 using Filmowanie.Voting.Interfaces;
@@ -10,77 +11,59 @@ namespace Filmowanie.Voting.Routes;
 internal sealed class VotingResultRoutes : IVotingResultRoutes
 {
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
-    private readonly IUserIdentityVisitor _userIdentityVisitor;
-    private readonly IGetVotingResultDTOVisitor _getVotingSessionResultVisitor;
-    private readonly IVotingSessionIdMapperVisitor _votingSessionIdMapperVisitor;
-    private readonly IGetVotingSessionsMetadataVisitor _getVotingSessionsMetadataVisitor;
-    private readonly IWinnersMetadataMapperVisitor _winnersMetadataMapperVisitor;
-    private readonly IHistoryDTOMapperVisitor _historyDtoMapperVisitor;
-    private readonly IHistoryStandingsDTOMapperVisitor _historyStandingsDtoMapperVisitor;
-    private readonly IVotingSessionsMapperVisitor _mapperVisitor;
+    private readonly IVotingSessionMapper _sessionMapper;
+    private readonly ICurrentVotingSessionIdAccessor _votingSessionIdAccessor;
+    private readonly IMovieVotingSessionService _movieVotingSessionService;
+    private readonly IVotingSessionService _votingSessionService;
+    private readonly IDomainUserAccessor _domainUserAccessor;
 
-    public VotingResultRoutes(IUserIdentityVisitor userIdentityVisitor, IFluentValidatorAdapterProvider validatorAdapterProvider, IGetVotingResultDTOVisitor getVotingSessionResultVisitor, IVotingSessionIdMapperVisitor votingSessionIdMapperVisitor, IGetVotingSessionsMetadataVisitor getVotingSessionsMetadataVisitor, IVotingSessionsMapperVisitor mapperVisitor, IWinnersMetadataMapperVisitor winnersMetadataMapperVisitor, IHistoryDTOMapperVisitor historyDtoMapperVisitor, IHistoryStandingsDTOMapperVisitor historyStandingsDtoMapperVisitor)
+    public VotingResultRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IVotingSessionMapper sessionMapper, ICurrentVotingSessionIdAccessor votingSessionIdAccessor, IMovieVotingSessionService movieVotingSessionService1, IDomainUserAccessor domainUserAccessor, IVotingSessionService votingSessionService)
     {
-        _userIdentityVisitor = userIdentityVisitor;
         _validatorAdapterProvider = validatorAdapterProvider;
-        _getVotingSessionResultVisitor = getVotingSessionResultVisitor;
-        _votingSessionIdMapperVisitor = votingSessionIdMapperVisitor;
-        _getVotingSessionsMetadataVisitor = getVotingSessionsMetadataVisitor;
-        _mapperVisitor = mapperVisitor;
-        _winnersMetadataMapperVisitor = winnersMetadataMapperVisitor;
-        _historyDtoMapperVisitor = historyDtoMapperVisitor;
-        _historyStandingsDtoMapperVisitor = historyStandingsDtoMapperVisitor;
+        _sessionMapper = sessionMapper;
+        _votingSessionIdAccessor = votingSessionIdAccessor;
+        _movieVotingSessionService = movieVotingSessionService1;
+        _domainUserAccessor = domainUserAccessor;
+        _votingSessionService = votingSessionService;
     }
 
     public async Task<IResult> GetResults(string votingSessionId, CancellationToken cancellationToken)
     {
         var validator = _validatorAdapterProvider.GetAdapter<string>(KeyedServices.VotingSessionId);
-        var dtoResult = votingSessionId
-            .ToOperationResult()
-            .Accept(validator)
-            .Accept(_votingSessionIdMapperVisitor);
-
-        var result =  await dtoResult
-            .Accept(_userIdentityVisitor)
-            .Pluck(x => x.Tenant)
-            .Merge(dtoResult)
-            .AcceptAsync(_getVotingSessionResultVisitor, cancellationToken);
+        var maybeDto = validator.Validate(votingSessionId);
+        var maybeNullableVotingSessionId = _sessionMapper.Map(maybeDto);
+        var maybeVotingSessionId = _votingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableVotingSessionId);
+        var maybeTenant = _domainUserAccessor.GetDomainUser(maybeVotingSessionId.AsVoid()).Map(x => x.Tenant);
+        var merged = maybeTenant.Merge(maybeNullableVotingSessionId);
+        var result = await _movieVotingSessionService.GetVotingResultsAsync(merged, cancellationToken);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> GetVotingSessionsList(CancellationToken cancellationToken)
     {
-        var result = (await OperationResultExtensions.Empty
-            .Accept(_userIdentityVisitor)
-            .Pluck(x => x.Tenant)
-            .AcceptAsync(_getVotingSessionsMetadataVisitor, cancellationToken))
-            .Accept(_mapperVisitor);
-
+        var maybeTenant = _domainUserAccessor.GetDomainUser(VoidResult.Void).Map(x => x.Tenant);
+        var maybeVotingMetadata = await _movieVotingSessionService.GetVotingMetadataAsync(maybeTenant, cancellationToken);
+        var result = _sessionMapper.Map(maybeVotingMetadata);
+        
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> GetWinnersList(CancellationToken cancellationToken)
     {
-        var tenantResult = OperationResultExtensions.Empty
-            .Accept(_userIdentityVisitor)
-            .Pluck(x => x.Tenant);
+        var maybeTenant = _domainUserAccessor.GetDomainUser(VoidResult.Void).Map(x => x.Tenant);
+        var maybeVotingMetadata = await _movieVotingSessionService.GetVotingMetadataAsync(maybeTenant, cancellationToken);
+        var merged = maybeVotingMetadata.Merge(maybeTenant);
+        var maybeWinnersMetadata = await _votingSessionService.GetWinnersMetadataAsync(merged, cancellationToken);
+        var result = _sessionMapper.Map(maybeWinnersMetadata);
 
-        var result = (await (await tenantResult
-                .AcceptAsync(_getVotingSessionsMetadataVisitor, cancellationToken))
-            .Merge(tenantResult)
-            .AcceptAsync(_winnersMetadataMapperVisitor, cancellationToken))
-            .Accept(_historyDtoMapperVisitor);
-            
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> GetLast10Standings(CancellationToken cancellationToken)
     {
-        var result = (await OperationResultExtensions.Empty
-            .Accept(_userIdentityVisitor)
-            .Pluck(x => x.Tenant)
-            .AcceptAsync(_historyStandingsDtoMapperVisitor, cancellationToken));
+        var maybeTenant = _domainUserAccessor.GetDomainUser(VoidResult.Void).Map(x => x.Tenant);
+        var result = await _votingSessionService.GetMovieVotingStandingsList(maybeTenant, cancellationToken);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
 }

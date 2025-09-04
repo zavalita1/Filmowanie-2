@@ -1,8 +1,8 @@
 ﻿namespace Filmowanie.Abstractions.OperationResult;
 
-public readonly record struct OperationResult<T>(T? Result, Error? Error)
+public readonly record struct Maybe<T>(T? Result, Error? Error)
 {
-    public OperationResult(T Result) : this(Result, null)
+    public Maybe(T Result) : this(Result, null)
     { }
 
     public override string ToString()
@@ -14,4 +14,7 @@ public readonly record struct OperationResult<T>(T? Result, Error? Error)
     }
 };
 
-public readonly record struct VoidResult;
+public readonly record struct VoidResult
+{
+    public static Maybe<VoidResult> Void => new(new (), null);
+}

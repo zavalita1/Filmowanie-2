@@ -4,5 +4,5 @@ namespace Filmowanie.Abstractions.Interfaces;
 
 public interface IDomainUserAccessor
 {
-    OperationResult<DomainUser> GetDomainUser(OperationResult<VoidResult> maybe);
+    Maybe<DomainUser> GetDomainUser(Maybe<VoidResult> maybe);
 }

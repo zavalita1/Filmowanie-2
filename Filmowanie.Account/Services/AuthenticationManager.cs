@@ -23,13 +23,13 @@ internal sealed class AuthenticationManager : IAuthenticationManager
         _httpContextWrapper = httpContextWrapper;
     }
 
-    public Task<OperationResult<VoidResult>> LogInAsync(OperationResult<LoginResultData> maybeLoginData, CancellationToken cancelToken) => maybeLoginData.AcceptAsync(LogInAsync, _log, cancelToken);
-    public Task<OperationResult<VoidResult>> LogOutAsync(OperationResult<VoidResult> maybe, CancellationToken cancelToken) => maybe.AcceptAsync(LogOutAsync, _log, cancelToken);
+    public Task<Maybe<VoidResult>> LogInAsync(Maybe<LoginResultData> maybeLoginData, CancellationToken cancelToken) => maybeLoginData.AcceptAsync(LogInAsync, _log, cancelToken);
+    public Task<Maybe<VoidResult>> LogOutAsync(Maybe<VoidResult> maybe, CancellationToken cancelToken) => maybe.AcceptAsync(LogOutAsync, _log, cancelToken);
 
-    public OperationResult<DomainUser> GetDomainUser(OperationResult<VoidResult> maybe) => maybe.Accept(GetDomainUser, _log);
+    public Maybe<DomainUser> GetDomainUser(Maybe<VoidResult> maybe) => maybe.Accept(GetDomainUser, _log);
 
 
-    private OperationResult<DomainUser> GetDomainUser()
+    private Maybe<DomainUser> GetDomainUser()
     {
         var user = _httpContextWrapper.User;
 
@@ -39,7 +39,7 @@ internal sealed class AuthenticationManager : IAuthenticationManager
                 ? (string[])[Messages.CookieExpired, Messages.UserNotLoggerIn]
                 : [Messages.UserNotLoggerIn];
 
-            return new Error(errors, ErrorType.AuthenticationIssue).ToOperationResult<DomainUser>();
+            return new Error(errors, ErrorType.AuthenticationIssue).AsMaybe<DomainUser>();
         }
 
         var id = user.Claims.Single(x => x.Type == ClaimsTypes.UserId).Value;
@@ -55,21 +55,21 @@ internal sealed class AuthenticationManager : IAuthenticationManager
         var created = DateTime.Parse(createdLiteral, null, DateTimeStyles.RoundtripKind);
 
         var result = new DomainUser(id, username, isAdmin, hasBasicAuthSetup, tenant, created);
-        return new OperationResult<DomainUser>(result, null);
+        return new Maybe<DomainUser>(result, null);
     }
 
-    private async Task<OperationResult<VoidResult>> LogInAsync(LoginResultData loginData, CancellationToken cancelToken)
+    private async Task<Maybe<VoidResult>> LogInAsync(LoginResultData loginData, CancellationToken cancelToken)
     {
         _log.LogInformation("Logging in...");
         var claimsPrincipal = new ClaimsPrincipal(loginData.Identity);
         await _httpContextWrapper.SignInAsync(Schemes.Cookie, claimsPrincipal, loginData.AuthenticationProperties);
         _log.LogInformation("Logged in!");
-        return OperationResultExtensions.Void;
+        return VoidResult.Void;
     }
 
-    private async Task<OperationResult<VoidResult>> LogOutAsync(CancellationToken cancelToken)
+    private async Task<Maybe<VoidResult>> LogOutAsync(CancellationToken cancelToken)
     {
         await _httpContextWrapper.SignOutAsync(Schemes.Cookie);
-        return OperationResultExtensions.Void;
+        return VoidResult.Void;
     }
 }

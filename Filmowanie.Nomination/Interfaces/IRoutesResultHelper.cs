@@ -6,5 +6,5 @@ namespace Filmowanie.Nomination.Interfaces;
 
 internal interface IRoutesResultHelper
 {
-    IResult UnwrapOperationResult<T>(OperationResult<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null);
+    IResult UnwrapOperationResult<T>(Maybe<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null);
 }

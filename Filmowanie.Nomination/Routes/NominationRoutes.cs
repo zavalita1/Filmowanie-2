@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.DTOs.Incoming;
 using Filmowanie.Nomination.Interfaces;
@@ -33,9 +34,9 @@ internal sealed class NominationRoutes : INominationRoutes
 
     public async Task<IResult> GetNominationsAsync(CancellationToken cancellationToken)
     {
-        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(OperationResultExtensions.Void);
-        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionId(maybeCurrentUser, cancellationToken);
-        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredCurrentVotingSessionId(maybeNullableCurrentVotingId);
+        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(VoidResult.Void);
+        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancellationToken);
+        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancellationToken);
         var merged = maybeNominations.Merge(maybeCurrentUser);
         var result = _nominationsMapper.Map(merged);
@@ -45,9 +46,9 @@ internal sealed class NominationRoutes : INominationRoutes
 
     public async Task<IResult> GetNominationsFullDataAsync(CancellationToken cancellationToken)
     {
-        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(OperationResultExtensions.Void);
-        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionId(maybeCurrentUser, cancellationToken);
-        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredCurrentVotingSessionId(maybeNullableCurrentVotingId);
+        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(VoidResult.Void);
+        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancellationToken);
+        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancellationToken);
         var merged = maybeNominations.Merge(maybeCurrentUser);
         var maybeNominationsDto = _nominationsMapper.Map(merged);
@@ -71,8 +72,8 @@ internal sealed class NominationRoutes : INominationRoutes
         var validator = _validatorAdapterProvider.GetAdapter<string>(KeyedServices.MovieId);
         var maybeMovieId = validator.Validate(movieId);
         var maybeCurrentUser = _domainUserAccessor.GetDomainUser(maybeMovieId.AsVoid());
-        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionId(maybeCurrentUser, cancellationToken);
-        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredCurrentVotingSessionId(maybeNullableCurrentVotingId);
+        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancellationToken);
+        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
 
         var merged = maybeMovieId.Merge(maybeCurrentUser).Merge(maybeCurrentVotingId).Flatten();
         var result = await _nominationsService.RemoveMovieAsync(merged, cancellationToken);
@@ -83,12 +84,12 @@ internal sealed class NominationRoutes : INominationRoutes
     public async Task<IResult> NominateAsync(NominationDTO dto, CancellationToken cancellationToken)
     {
         var validator = _validatorAdapterProvider.GetAdapter<(NominationDTO, DomainUser, CurrentNominationsData)>();
-        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(OperationResultExtensions.Void);
-        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionId(maybeCurrentUser, cancellationToken);
-        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredCurrentVotingSessionId(maybeNullableCurrentVotingId);
+        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(VoidResult.Void);
+        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancellationToken);
+        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancellationToken);
 
-        var toValidate = dto.ToOperationResult().Merge(maybeCurrentUser).Merge(maybeNominations).Flatten();
+        var toValidate = dto.AsMaybe().Merge(maybeCurrentUser).Merge(maybeNominations).Flatten();
         var maybeValidationResult = validator.Validate(toValidate);
         var result = await _nominationsService.NominateAsync(maybeValidationResult, cancellationToken);
 

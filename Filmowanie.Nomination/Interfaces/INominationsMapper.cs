@@ -7,7 +7,7 @@ namespace Filmowanie.Nomination.Interfaces;
 
 internal interface INominationsMapper
 {
-    OperationResult<NominationsDataDTO> Map(OperationResult<(CurrentNominationsData, DomainUser)> maybe);
+    Maybe<NominationsDataDTO> Map(Maybe<(CurrentNominationsData, DomainUser)> maybe);
     
-    Task<OperationResult<NominationsFullDataDTO>> EnrichNominationsAsync(OperationResult<(NominationsDataDTO, DomainUser)> input, CancellationToken cancellationToken);
+    Task<Maybe<NominationsFullDataDTO>> EnrichNominationsAsync(Maybe<(NominationsDataDTO, DomainUser)> input, CancellationToken cancellationToken);
 }

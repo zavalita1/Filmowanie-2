@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Interfaces;
@@ -32,7 +33,7 @@ internal sealed class AccountRoutes : IAccountRoutes
     {
         var validator = _validatorAdapterProvider.GetAdapter<LoginDto>();
 
-        var maybeCode =  validator.Validate(dto).Pluck(x => x.Code);
+        var maybeCode =  validator.Validate(dto).Map(x => x.Code);
         var maybeIdentity = await _userService.GetUserIdentity(maybeCode, cancel);
         var voidResult = await _authenticationManager.LogInAsync(maybeIdentity, cancel);
         var domainUser = _authenticationManager.GetDomainUser(voidResult);
@@ -44,7 +45,7 @@ internal sealed class AccountRoutes : IAccountRoutes
     public async Task<IResult> LoginBasicAsync([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
         var validator = _validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.LoginViaBasicAuthKey);
-        var maybeBasicAuth = validator.Validate(dto).Pluck(x => new BasicAuth(x.Email, x.Password));
+        var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuth(x.Email, x.Password));
         var maybeIdentity = await _userService.GetUserIdentity(maybeBasicAuth, cancel);
         var voidResult = await _authenticationManager.LogInAsync(maybeIdentity, cancel);
         var domainUser = _authenticationManager.GetDomainUser(voidResult);
@@ -56,7 +57,7 @@ internal sealed class AccountRoutes : IAccountRoutes
     public async Task<IResult> SignUpAsync([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
         var validator = _validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.SignUpBasicAuth);
-        var maybeBasicAuth = validator.Validate(dto).Pluck(x => new BasicAuth(x.Email, x.Password));
+        var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuth(x.Email, x.Password));
         var maybeIdentity = await _userService.GetUserIdentity(maybeBasicAuth, cancel);
         var maybeDomainUser = _authenticationManager.GetDomainUser(maybeIdentity.AsVoid());
         var merged = maybeDomainUser.Merge(maybeBasicAuth);
@@ -69,13 +70,13 @@ internal sealed class AccountRoutes : IAccountRoutes
 
     public async Task<IResult> LogoutAsync(CancellationToken cancel)
     {
-        var result = await _authenticationManager.LogOutAsync(OperationResultExtensions.Void, cancel);
+        var result = await _authenticationManager.LogOutAsync(VoidResult.Void, cancel);
         return _routesResultHelper.UnwrapOperationResult(result);
     }
 
     public IResult Get(CancellationToken cancel)
     {
-        var maybeDomainUser = _authenticationManager.GetDomainUser(OperationResultExtensions.Void);
+        var maybeDomainUser = _authenticationManager.GetDomainUser(VoidResult.Void);
         var resultDto = _userMapper.Map(maybeDomainUser);
 
         return _routesResultHelper.UnwrapOperationResult(resultDto);

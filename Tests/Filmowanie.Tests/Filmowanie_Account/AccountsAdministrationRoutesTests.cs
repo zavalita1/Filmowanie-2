@@ -16,11 +16,6 @@ namespace Filmowanie.Tests.Filmowanie_Account;
 
 public sealed class AccountsAdministrationRoutesTests
 {
-    private readonly IEnrichUserVisitor _enrichUserVisitor;
-    private readonly IGetAllUsersVisitor _getAllUsersVisitor;
-    private readonly IUserReverseMapperVisitor _reverseMapperVisitor;
-    private readonly IAddUserVisitor _addUserVisitor;
-    private readonly IUserIdentityVisitor _userIdentityVisitor;
     private readonly IRoutesResultHelper _routesResultHelper;
     private readonly IFluentValidatorAdapterProvider _validatorProvider;
     private readonly AccountsAdministrationRoutes _routes;
@@ -29,11 +24,6 @@ public sealed class AccountsAdministrationRoutesTests
 
     public AccountsAdministrationRoutesTests()
     {
-        _enrichUserVisitor = Substitute.For<IEnrichUserVisitor>();
-        _getAllUsersVisitor = Substitute.For<IGetAllUsersVisitor>();
-        _reverseMapperVisitor = Substitute.For<IUserReverseMapperVisitor>();
-        _addUserVisitor = Substitute.For<IAddUserVisitor>();
-        _userIdentityVisitor = Substitute.For<IUserIdentityVisitor>();
         _validatorProvider = Substitute.For < IFluentValidatorAdapterProvider>();
         _routesResultHelper = Substitute.For<IRoutesResultHelper>();
         _routes = new AccountsAdministrationRoutes(_validatorProvider, _enrichUserVisitor, _getAllUsersVisitor, _reverseMapperVisitor, _addUserVisitor, _userIdentityVisitor, _routesResultHelper);

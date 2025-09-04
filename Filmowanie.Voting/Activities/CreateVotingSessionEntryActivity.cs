@@ -1,5 +1,6 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Voting.Sagas;
 using MassTransit;

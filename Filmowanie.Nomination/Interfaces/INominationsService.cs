@@ -8,11 +8,11 @@ namespace Filmowanie.Nomination.Interfaces;
 
 internal interface INominationsService
 {
-    Task<OperationResult<CurrentNominationsData>> GetNominationsAsync(OperationResult<VotingSessionId> maybeId, CancellationToken cancelToken);
+    Task<Maybe<CurrentNominationsData>> GetNominationsAsync(Maybe<VotingSessionId> maybeId, CancellationToken cancelToken);
 
-    Task<OperationResult<AknowledgedNominationDTO>> RemoveMovieAsync(OperationResult<(string MovieId, DomainUser User, VotingSessionId VotingSessionId)> input,
+    Task<Maybe<AknowledgedNominationDTO>> RemoveMovieAsync(Maybe<(string MovieId, DomainUser User, VotingSessionId VotingSessionId)> input,
         CancellationToken cancellationToken);
 
-    Task<OperationResult<AknowledgedNominationDTO>> NominateAsync(OperationResult<(NominationDTO Dto, DomainUser User, CurrentNominationsData CurrentNominations)> input,
+    Task<Maybe<AknowledgedNominationDTO>> NominateAsync(Maybe<(NominationDTO Dto, DomainUser User, CurrentNominationsData CurrentNominations)> input,
         CancellationToken cancellationToken);
 }

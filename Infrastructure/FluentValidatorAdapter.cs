@@ -19,17 +19,17 @@ public sealed class FluentValidatorAdapter<TInput> : IFluentValidatorAdapter<TIn
         _log = log;
     }
 
-    public OperationResult<TInput> Validate(OperationResult<TInput> maybeInput) => maybeInput.Accept(Validate, _log);
+    public Maybe<TInput> Validate(Maybe<TInput> maybeInput) => maybeInput.Accept(Validate, _log);
 
-    public OperationResult<TInput> Validate(TInput input)
+    public Maybe<TInput> Validate(TInput input)
     {
         var fluentResult = _validator.Validate(input);
 
         if (fluentResult.IsValid)
-            return new OperationResult<TInput>(input, null);
+            return new Maybe<TInput>(input, null);
 
         var errorMessages = fluentResult.Errors.Select(x => x.ErrorMessage);
         var error = new Error(errorMessages, ErrorType.ValidationError);
-        return new OperationResult<TInput>(input, error);
+        return new Maybe<TInput>(input, error);
     }
 }

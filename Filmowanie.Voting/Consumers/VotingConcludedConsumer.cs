@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
-using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Voting.Interfaces;
@@ -36,7 +36,7 @@ internal sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>,
     {
         var message = string.Join(",", context.Message.Exceptions.Select(x => x.Message));
         var callStacks = string.Join(";;;;;;;;;;;;", context.Message.Exceptions.Select(x => x.StackTrace));
-        return context.Publish(new ErrorEvent(context.Message.Message.CorrelationId, message, callStacks));
+        return context.Publish(new ErrorEvent(context.Message.Message.VotingSessionId, message, callStacks));
     }
 
     public async Task Consume(ConsumeContext<VotingConcludedEvent> context)
@@ -55,7 +55,7 @@ internal sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>,
         var nominations = _nominationsRetriever.GetNominations(assignNominationsUserContexts, message, votingResults);
 
         await _votingSessionCommandRepository.UpdateAsync(readonlyCurrentVotingResult.id, votingResults.Movies, nominations, now, moviesAdded, votingResults.Winner, context.CancellationToken);
-        await context.Publish(new ResultsCalculated(message.CorrelationId));
+        await context.Publish(new ResultsCalculatedEvent(message.VotingSessionId));
 
         _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
     }

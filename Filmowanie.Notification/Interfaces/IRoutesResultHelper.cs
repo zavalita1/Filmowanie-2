@@ -5,5 +5,5 @@ namespace Filmowanie.Notification.Interfaces;
 
 internal interface IRoutesResultHelper
 {
-    IResult UnwrapOperationResult<T>(OperationResult<T> result);
+    IResult UnwrapOperationResult<T>(Maybe<T> result);
 }

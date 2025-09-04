@@ -12,7 +12,7 @@ namespace Filmowanie.Account.Helpers;
 
 internal sealed class LoginResultDataExtractor : ILoginResultDataExtractor
 {
-    public OperationResult<LoginResultData> GetIdentity(IReadOnlyUserEntity user)
+    public Maybe<LoginResultData> GetIdentity(IReadOnlyUserEntity user)
     {
         var hasBasicAuth = !string.IsNullOrEmpty(user.PasswordHash);
         var claims = new[]
@@ -34,6 +34,6 @@ internal sealed class LoginResultDataExtractor : ILoginResultDataExtractor
             IssuedUtc = DateTimeOffset.UtcNow,
         };
 
-        return new OperationResult<LoginResultData>(new LoginResultData(claimsIdentity, authProps), null);
+        return new Maybe<LoginResultData>(new LoginResultData(claimsIdentity, authProps), null);
     }
 }

@@ -35,12 +35,12 @@ internal sealed class PushNotificationService : IPushNotificationService
         _options = options.Value;
     }
 
-    public Task<OperationResult<VoidResult>> SavePushNotification(OperationResult<(PushSubscriptionDTO, DomainUser)> input, CancellationToken cancelToken) =>
+    public Task<Maybe<VoidResult>> SavePushNotification(Maybe<(PushSubscriptionDTO, DomainUser)> input, CancellationToken cancelToken) =>
         input.AcceptAsync(SavePushNotification, _log, cancelToken);
 
-    public Task<OperationResult<object>> SendAllPushNotificationsAsync(OperationResult<(TenantId, string Message)> input, CancellationToken cancelToken) => input.AcceptAsync(SendAllPushNotificationsAsync, _log, cancelToken);
+    public Task<Maybe<object>> SendAllPushNotificationsAsync(Maybe<(TenantId, string Message)> input, CancellationToken cancelToken) => input.AcceptAsync(SendAllPushNotificationsAsync, _log, cancelToken);
 
-    private async Task<OperationResult<VoidResult>> SavePushNotification((PushSubscriptionDTO, DomainUser) input, CancellationToken cancelToken)
+    private async Task<Maybe<VoidResult>> SavePushNotification((PushSubscriptionDTO, DomainUser) input, CancellationToken cancelToken)
     {
         var id = _guidProvider.NewGuid();
         var user = input.Item2;
@@ -49,10 +49,10 @@ internal sealed class PushNotificationService : IPushNotificationService
         var entity = new IReadOnlyPushNotificationData(id.ToString(), _dateTimeProvider.Now, tenant.Id, input.Item1.P256DH, input.Item1.Auth, input.Item1.Endpoint, embeddedUser);
 
         await _pushSubscriptionCommandRepository.InsertAsync(entity, cancelToken);
-        return OperationResultExtensions.Void;
+        return VoidResult.Void;
     }
 
-    public async Task<OperationResult<object>> SendAllPushNotificationsAsync((TenantId, string Message) input, CancellationToken cancelToken)
+    public async Task<Maybe<object>> SendAllPushNotificationsAsync((TenantId, string Message) input, CancellationToken cancelToken)
     {
         var pushSubscriptions = await _pushSubscriptionQueryRepository.GetAsync(input.Item1, cancelToken);
         var errors = new ConcurrentStack<Error>();
@@ -77,7 +77,7 @@ internal sealed class PushNotificationService : IPushNotificationService
             }
         });
 
-        return new OperationResult<object>(errors);
+        return new Maybe<object>(errors);
     }
 
 

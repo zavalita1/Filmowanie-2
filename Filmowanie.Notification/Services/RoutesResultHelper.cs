@@ -7,7 +7,7 @@ namespace Filmowanie.Notification.Services;
 
 internal sealed class RoutesResultHelper : IRoutesResultHelper
 {
-    public IResult UnwrapOperationResult<T>(OperationResult<T> result)
+    public IResult UnwrapOperationResult<T>(Maybe<T> result)
     {
         if (result.Error == null)
             return TypedResults.Ok(result.Result);

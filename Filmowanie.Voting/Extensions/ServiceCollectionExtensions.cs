@@ -2,10 +2,11 @@
 using Filmowanie.Voting.Deciders;
 using Filmowanie.Voting.Deciders.PickUserNomination;
 using Filmowanie.Voting.Interfaces;
+using Filmowanie.Voting.Mappers;
 using Filmowanie.Voting.Retrievers;
 using Filmowanie.Voting.Routes;
+using Filmowanie.Voting.Services;
 using Filmowanie.Voting.Validators;
-using Filmowanie.Voting.Visitors;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Filmowanie.Voting.Extensions;
@@ -21,29 +22,17 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAdminVotingSessionRoutes, AdminVotingSessionRoutes>();
         services.AddScoped<IVotingResultRoutes, VotingResultRoutes>();
         
-        services.AddScoped<IWinnersMetadataMapperVisitor, WinnersMetadataMapperVisitor>();
-        services.AddScoped<IHistoryDTOMapperVisitor, HistoryDTOMapperVisitor>();
-        services.AddScoped<IHistoryStandingsDTOMapperVisitor, HistoryStandingsDTOMapper>();
-        services.AddScoped<IGetMoviesForVotingSessionVisitor, GetMoviesForVotingSessionVisitor>();
-        services.AddScoped<IEnrichMoviesForVotingSessionWithPlaceholdersVisitor, EnrichMoviesForVotingSessionWithPlaceholdersVisitor>();
-        services.AddScoped<IGetVotingSessionsMetadataVisitor, VotingSessionResultVisitor>();
-        services.AddScoped<IGetVotingResultDTOVisitor, GetVotingResultDTOVisitor>();
+        services.AddScoped<IMovieVotingSessionService, MovieVotingSessionService>();
+
+        services.AddScoped<IMoviesForVotingSessionEnricher, MoviesForVotingSessionEnricher>();
 
         services.AddScoped<IVotingSessionService, VotingSessionService>();
         services.AddScoped<ICurrentVotingSessionIdAccessor, VotingSessionService>();
+        services.AddSingleton<IVotingSessionMapper, VotingSessionMapper>();
 
-        services.AddScoped<IRequireCurrentVotingSessionIdVisitor, VotingSessionIdQueryVisitor>();
-        services.AddScoped<IGetCurrentVotingSessionIdVisitor, VotingSessionIdQueryVisitor>();
-        services.AddScoped<IGetCurrentVotingSessionStatusVisitor, VotingSessionIdQueryVisitor>();
-        services.AddScoped<IStartNewVotingVisitor, StartNewVotingVisitor>();
-        services.AddScoped<IConcludeVotingVisitor, ConcludeVotingVisitor>();
+        services.AddScoped<IVotingStateManager, VotingSessionStateManager>();
 
-        services.AddScoped<IVotingSessionStatusMapperVisitor, VotingMapperVisitor>();
-        services.AddScoped<IVotingSessionIdMapperVisitor, VotingMapperVisitor>();
-        services.AddScoped<IVotingSessionsMapperVisitor, VotingMapperVisitor>();
-        services.AddScoped<IAknowledgedMapperVisitor, VotingMapperVisitor>();
-
-        services.AddScoped<IVoteVisitor, VoteVisitor>();
+        services.AddScoped<IVoteService, VoteService>();
         services.AddScoped<IVotingResultsRetriever, VotingResultsRetriever>();
         services.AddScoped<INominationsRetriever, NominationsRetriever>();
 

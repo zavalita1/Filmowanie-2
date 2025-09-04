@@ -1,5 +1,6 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Entities.Voting.Events;
@@ -8,28 +9,30 @@ using Filmowanie.Voting.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace Filmowanie.Voting.Visitors;
+namespace Filmowanie.Voting.Services;
 
-internal sealed class EnrichMoviesForVotingSessionWithPlaceholdersVisitor : IEnrichMoviesForVotingSessionWithPlaceholdersVisitor
+internal sealed class MoviesForVotingSessionEnricher : IMoviesForVotingSessionEnricher
 {
-    private readonly IRequestClient<NominationsRequested> _getNominationsRequestClient;
-    private readonly ILogger<EnrichMoviesForVotingSessionWithPlaceholdersVisitor> _log;
+    private readonly IRequestClient<NominationsRequestedEvent> _getNominationsRequestClient;
+    private readonly ILogger<MoviesForVotingSessionEnricher> _log;
 
-    public EnrichMoviesForVotingSessionWithPlaceholdersVisitor(IRequestClient<NominationsRequested> getNominationsRequestClient, ILogger<EnrichMoviesForVotingSessionWithPlaceholdersVisitor> log)
+    public MoviesForVotingSessionEnricher(IRequestClient<NominationsRequestedEvent> getNominationsRequestClient, ILogger<MoviesForVotingSessionEnricher> log)
     {
         _getNominationsRequestClient = getNominationsRequestClient;
         _log = log;
     }
 
-    public async Task<OperationResult<MovieDTO[]>> SignUp(OperationResult<(MovieDTO[], VotingSessionId)> movies, CancellationToken cancellationToken)
+    public Task<Maybe<MovieDTO[]>> EnrichWithPlaceholdersAsync(Maybe<(MovieDTO[], VotingSessionId)> movies, CancellationToken cancellationToken) => movies.AcceptAsync(EnrichWithPlaceholders, _log, cancellationToken);
+
+    public async Task<Maybe<MovieDTO[]>> EnrichWithPlaceholders((MovieDTO[], VotingSessionId) movies, CancellationToken cancellationToken)
     {
-        var nominationsRequested = new NominationsRequested(movies.Result.Item2.CorrelationId);
+        var nominationsRequested = new NominationsRequestedEvent(movies.Item2);
         var nominations = await _getNominationsRequestClient.GetResponse<CurrentNominationsResponse>(nominationsRequested, cancellationToken);
 
         var placeHolders = nominations.Message.Nominations.Where(x => x.Concluded == null).Select(GetPlaceholderDTO);
-        var result = movies.Result.Item1.Concat(placeHolders).ToArray();
+        var result = movies.Item1.Concat(placeHolders).ToArray();
 
-        return new OperationResult<MovieDTO[]>(result, null);
+        return new Maybe<MovieDTO[]>(result, null);
     }
 
   
@@ -52,6 +55,4 @@ internal sealed class EnrichMoviesForVotingSessionWithPlaceholdersVisitor : IEnr
         var placeholderTitle = $"{nominationData.User.DisplayName} wybierze tutaj film z lat: {decadeTranslation}.";
         return new MovieDTO(placeholderTitle, (int)nominationData.Year);
     }
-
-    public ILogger Log => _log;
 }

@@ -21,23 +21,23 @@ internal sealed class NominationsMapper : INominationsMapper
         _movieQueryRepository = movieQueryRepository;
     }
 
-    public OperationResult<NominationsDataDTO> Map(OperationResult<(CurrentNominationsData, DomainUser)> maybe) => maybe.Accept(Map, _log);
+    public Maybe<NominationsDataDTO> Map(Maybe<(CurrentNominationsData, DomainUser)> maybe) => maybe.Accept(Map, _log);
 
-    public OperationResult<NominationsDataDTO> Map((CurrentNominationsData, DomainUser) input)
+    public Maybe<NominationsDataDTO> Map((CurrentNominationsData, DomainUser) input)
     {
         var user = input.Item2;
         var nominationDecades = input.Item1.NominationData.Where(x => x.User.Id == user.Id).Select(x => x.Year.ToString()[1..]).ToArray();
 
         var result = new NominationsDataDTO { Nominations = nominationDecades };
 
-        return new OperationResult<NominationsDataDTO>(result, null);
+        return new Maybe<NominationsDataDTO>(result, null);
     }
 
-    public Task<OperationResult<NominationsFullDataDTO>> EnrichNominationsAsync(OperationResult<(NominationsDataDTO, DomainUser)> input, CancellationToken cancellationToken) =>
+    public Task<Maybe<NominationsFullDataDTO>> EnrichNominationsAsync(Maybe<(NominationsDataDTO, DomainUser)> input, CancellationToken cancellationToken) =>
         input.AcceptAsync(EnrichNominationsAsync, _log, cancellationToken);
 
     // TODO add cron job that cleans old events
-    public async Task<OperationResult<NominationsFullDataDTO>> EnrichNominationsAsync((NominationsDataDTO, DomainUser) input, CancellationToken cancellationToken)
+    public async Task<Maybe<NominationsFullDataDTO>> EnrichNominationsAsync((NominationsDataDTO, DomainUser) input, CancellationToken cancellationToken)
     {
         var user = input.Item2;
 
@@ -67,6 +67,6 @@ internal sealed class NominationsMapper : INominationsMapper
             .ToArray();
 
         var result = new NominationsFullDataDTO { Nominations = input.Item1.Nominations, MoviesThatCanBeNominatedAgain = moviesThatCanBeNominatedAgainDTOs };
-        return result.ToOperationResult();
+        return result.AsMaybe();
     }
 }

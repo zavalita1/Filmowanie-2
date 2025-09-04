@@ -5,8 +5,8 @@ namespace Filmowanie.Abstractions.Interfaces;
 
 public interface IFluentValidatorAdapter<TInput>
 {
-    public OperationResult<TInput> Validate(TInput input);
-    public OperationResult<TInput> Validate(OperationResult<TInput> input);
+    public Maybe<TInput> Validate(TInput input);
+    public Maybe<TInput> Validate(Maybe<TInput> input);
 }
 
 public interface IFluentValidatorAdapter

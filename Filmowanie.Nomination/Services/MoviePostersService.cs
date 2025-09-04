@@ -19,13 +19,13 @@ internal sealed class MoviePostersService : IMoviePostersService
         _filmwebHandler = filmwebHandler;
     }
 
-    public Task<OperationResult<PostersDTO>> GetPosters(OperationResult<string> input, CancellationToken cancellationToken) => input.AcceptAsync(GetPosters, _log, cancellationToken);
+    public Task<Maybe<PostersDTO>> GetPosters(Maybe<string> input, CancellationToken cancellationToken) => input.AcceptAsync(GetPosters, _log, cancellationToken);
 
-    private async Task<OperationResult<PostersDTO>> GetPosters(string movieUrl, CancellationToken cancellationToken)
+    private async Task<Maybe<PostersDTO>> GetPosters(string movieUrl, CancellationToken cancellationToken)
     {
         var metadata = _filmwebPathResolver.GetMetadata(movieUrl);
         var posters = await _filmwebHandler.GetPosterUrlsAsync(metadata, cancellationToken);
         var result = new PostersDTO { PosterUrls = posters };
-        return new OperationResult<PostersDTO>(result, null);
+        return new Maybe<PostersDTO>(result, null);
     }
 }

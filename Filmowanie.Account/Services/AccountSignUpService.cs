@@ -24,9 +24,9 @@ internal sealed class AccountSignUpService : ISignUpService
         _extractor = extractor;
     }
 
-    public Task<OperationResult<LoginResultData>> SignUp(OperationResult<(DomainUser, BasicAuth)> data, CancellationToken cancellation) => data.AcceptAsync(SignUp, _log, cancellation);
+    public Task<Maybe<LoginResultData>> SignUp(Maybe<(DomainUser, BasicAuth)> data, CancellationToken cancellation) => data.AcceptAsync(SignUp, _log, cancellation);
 
-    public async Task<OperationResult<LoginResultData>> SignUp((DomainUser, BasicAuth) data, CancellationToken cancellation)
+    public async Task<Maybe<LoginResultData>> SignUp((DomainUser, BasicAuth) data, CancellationToken cancellation)
     {
         var incomingBasicAuth = data.Item2;
         var domainUser = data.Item1;
@@ -42,7 +42,7 @@ internal sealed class AccountSignUpService : ISignUpService
         catch (Exception ex)
         {
             _log.LogError(ex, "Error in trying to sign up");
-            return new Error("No user with such id in db", ErrorType.InvalidState).ToOperationResult<LoginResultData>();
+            return new Error("No user with such id in db", ErrorType.InvalidState).AsMaybe<LoginResultData>();
         }
     }
 }

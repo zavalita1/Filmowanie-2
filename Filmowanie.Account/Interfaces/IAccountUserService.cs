@@ -7,12 +7,12 @@ namespace Filmowanie.Account.Interfaces;
 
 internal interface IAccountUserService
 {
-    Task<OperationResult<LoginResultData>> GetUserIdentity(OperationResult<string> maybeCode, CancellationToken cancelToken);
-    Task<OperationResult<LoginResultData>> GetUserIdentity(OperationResult<BasicAuth> maybeBasicAuthData, CancellationToken cancelToken);
+    Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<string> maybeCode, CancellationToken cancelToken);
+    Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<BasicAuth> maybeBasicAuthData, CancellationToken cancelToken);
 
-    Task<OperationResult<IEnumerable<DomainUser>>> GetAllUsers(OperationResult<VoidResult> maybe, CancellationToken cancelToken);
+    Task<Maybe<IEnumerable<DomainUser>>> GetAllUsers(Maybe<VoidResult> maybe, CancellationToken cancelToken);
 
-    Task<OperationResult<DetailedUserDTO>> GetByIdAsync(OperationResult<string> maybeId, CancellationToken cancellationToken);
+    Task<Maybe<DetailedUserDTO>> GetByIdAsync(Maybe<string> maybeId, CancellationToken cancellationToken);
 
-    Task<OperationResult<VoidResult>> AddUserAsync(OperationResult<DomainUser> input, CancellationToken cancellationToken);
+    Task<Maybe<VoidResult>> AddUserAsync(Maybe<DomainUser> input, CancellationToken cancellationToken);
 }

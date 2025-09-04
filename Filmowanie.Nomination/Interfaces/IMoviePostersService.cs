@@ -5,5 +5,5 @@ namespace Filmowanie.Nomination.Interfaces;
 
 internal interface IMoviePostersService
 {
-    Task<OperationResult<PostersDTO>> GetPosters(OperationResult<string> input, CancellationToken cancellationToken);
+    Task<Maybe<PostersDTO>> GetPosters(Maybe<string> input, CancellationToken cancellationToken);
 }

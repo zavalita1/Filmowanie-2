@@ -7,5 +7,5 @@ namespace Filmowanie.Account.Interfaces;
 
 internal interface ILoginResultDataExtractor
 {
-    OperationResult<LoginResultData> GetIdentity(IReadOnlyUserEntity user);
+    Maybe<LoginResultData> GetIdentity(IReadOnlyUserEntity user);
 }

@@ -7,7 +7,7 @@ namespace Filmowanie.Nomination.Helpers;
 
 internal class RoutesResultHelper : IRoutesResultHelper
 {
-    public IResult UnwrapOperationResult<T>(OperationResult<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null)
+    public IResult UnwrapOperationResult<T>(Maybe<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null)
     {
         if (result.Error == null)
             return onSuccess ?? TypedResults.Ok(result.Result);

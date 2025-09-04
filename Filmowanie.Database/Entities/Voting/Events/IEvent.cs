@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions;
 
-namespace Filmowanie.Database.Entities.Voting;
+namespace Filmowanie.Database.Entities.Voting.Events;
 
 public interface IEvent
 {

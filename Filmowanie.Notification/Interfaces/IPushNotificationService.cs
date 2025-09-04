@@ -6,7 +6,7 @@ namespace Filmowanie.Notification.Interfaces;
 
 internal interface IPushNotificationService
 {
-    Task<OperationResult<VoidResult>> SavePushNotification(OperationResult<(PushSubscriptionDTO, DomainUser)> input, CancellationToken cancelToken);
+    Task<Maybe<VoidResult>> SavePushNotification(Maybe<(PushSubscriptionDTO, DomainUser)> input, CancellationToken cancelToken);
     
-    Task<OperationResult<object>> SendAllPushNotificationsAsync(OperationResult<(TenantId, string Message)> input, CancellationToken cancelToken);
+    Task<Maybe<object>> SendAllPushNotificationsAsync(Maybe<(TenantId, string Message)> input, CancellationToken cancelToken);
 }

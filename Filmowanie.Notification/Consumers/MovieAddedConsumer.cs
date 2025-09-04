@@ -22,7 +22,7 @@ public sealed class MovieAddedConsumer : IConsumer<AddMovieEvent>, IConsumer<Fau
     {
         var message = string.Join(",", context.Message.Exceptions.Select(x => x.Message));
         var callStacks = string.Join(";;;;;;;;;;;;", context.Message.Exceptions.Select(x => x.StackTrace));
-        return context.Publish(new ErrorEvent(context.Message.Message.CorrelationId, message, callStacks));
+        return context.Publish(new ErrorEvent(context.Message.Message.VotingSessionId, message, callStacks));
     }
 
     public async Task Consume(ConsumeContext<AddMovieEvent> context)

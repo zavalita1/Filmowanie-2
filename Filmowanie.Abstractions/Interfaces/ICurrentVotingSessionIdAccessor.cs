@@ -4,7 +4,7 @@ namespace Filmowanie.Abstractions.Interfaces;
 
 public interface ICurrentVotingSessionIdAccessor
 {
-    Task<OperationResult<VotingSessionId?>> GetCurrentVotingSessionId(OperationResult<DomainUser> maybeCurrentUser, CancellationToken cancellationToken);
-    OperationResult<VotingSessionId> GetRequiredCurrentVotingSessionId(OperationResult<VotingSessionId?> maybeCurrentVotingSessionId);
+    Task<Maybe<VotingSessionId?>> GetCurrentVotingSessionIdAsync(Maybe<DomainUser> maybeCurrentUser, CancellationToken cancellationToken);
+    Maybe<VotingSessionId> GetRequiredVotingSessionId(Maybe<VotingSessionId?> maybeCurrentVotingSessionId);
 
 }

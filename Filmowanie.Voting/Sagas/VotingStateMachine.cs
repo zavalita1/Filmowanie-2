@@ -1,4 +1,5 @@
-﻿using Filmowanie.Abstractions.Extensions;
+﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
@@ -13,7 +14,9 @@ namespace Filmowanie.Voting.Sagas;
 
 public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInstance>
 {
+    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly ILogger<VotingStateMachine> _logger;
+    // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
     private readonly IDateTimeProvider _dateTimeProvider;
 
     public VotingStateMachine(ILogger<VotingStateMachine> logger, IDateTimeProvider dateTimeProvider)
@@ -23,12 +26,12 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         InstanceState(x => x.CurrentState);
 
-        Event(() => StartVotingEvent, x => x.CorrelateById(y => y.Message.CorrelationId));
-        Event(() => InitNominationsEvent, x => x.CorrelateById(y => y.Message.CorrelationId));
-        Event(() => AddMovieEvent, x => x.CorrelateById(y => y.Message.CorrelationId));
-        Event(() => RemoveMovieEvent, x => x.CorrelateById(y => y.Message.CorrelationId));
-        Event(() => ConcludeVoting, x => x.CorrelateById(y => y.Message.CorrelationId));
-        Event(() => GetMovieListEvent, x => x.CorrelateById(y => y.Message.CorrelationId));
+        Event(() => StartVotingEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => InitNominationsEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => AddMovieEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => RemoveMovieEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => ConcludeVoting, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => GetMovieListEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
 
         Initially(
             When(StartVotingEvent)
@@ -36,7 +39,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 .Then(ctx =>
                 {
                     _logger.LogInformation("Voting is starting...");
-                    var movies = ctx.Message.Movies.Select(x => new EmbeddedMovieWithVotes { Movie = x, Votes = Array.Empty<Vote>() }).ToArray();
+                    var movies = ctx.Message.Movies.Select(x => new EmbeddedMovieWithVotes { Movie = x, Votes = [] }).ToArray();
                     ctx.Saga.Movies = movies;
                     ctx.Saga.Nominations = ctx.Message.NominationsData;
                     ctx.Saga.TenantId = ctx.Message.TenantId.Id;
@@ -45,10 +48,10 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 {
                     foreach (var nominationData in ctx.Message.NominationsData)
                     {
-                        await ctx.Publish(new NominationAddedEvent(ctx.Message.CorrelationId, nominationData), ctx.CancellationToken);
+                        await ctx.Publish(new NominationAddedEvent(ctx.Message.VotingSessionId, nominationData), ctx.CancellationToken);
                     }
                 })
-                .Publish(ctx => new VotingStartingEvent(ctx.Saga.CorrelationId))
+                .Publish(ctx => new VotingStartingEvent(new VotingSessionId(ctx.Saga.CorrelationId)))
                 .TransitionTo(WaitingForNominations));
 
         During(WaitingForNominations,
@@ -62,7 +65,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     var nominationToConclude = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
                     nominationToConclude.Concluded = _dateTimeProvider.Now;
                     nominationToConclude.MovieId = ctx.Message.Movie.id;
-                    return ctx.Saga.Nominations.All(x => x.Concluded == null) ? Task.CompletedTask : ctx.TransitionToState(NominationsConcluded);
+                    return ctx.Saga.Nominations.Any(x => x.Concluded != null) ? Task.CompletedTask : ctx.TransitionToState(NominationsConcluded);
                 }));
 
         During([WaitingForNominations, NominationsConcluded],
@@ -76,7 +79,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     var nominationData = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Movie.MovieCreationYear.ToDecade());
                     nominationData.Concluded = null;
                     nominationData.MovieId = null;
-                    await ctx.Publish(new NominationAddedEvent(ctx.Message.CorrelationId, nominationData), ctx.CancellationToken);
+                    await ctx.Publish(new NominationAddedEvent(ctx.Message.VotingSessionId, nominationData), ctx.CancellationToken);
                     ctx.Saga.Movies = ctx.Saga.Movies.Where(x => x.Movie.id != ctx.Message.Movie.id).ToArray();
 
                     var currentState = await Accessor.Get(ctx);
@@ -99,7 +102,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     movie.Votes = movie.Votes.Concat([new Vote { User = user, VoteType = ctx.Message.VoteType }]);
                     movie.VotingScore += ctx.Message.VoteType.GetVoteCount();
                 })
-                .Publish(ctx => new VoteAddedEvent(ctx.Message.CorrelationId, ctx.Message.Movie, ctx.Message.User)));
+                .Publish(ctx => new VoteAddedEvent(ctx.Message.VotingSessionId, ctx.Message.Movie, ctx.Message.User)));
 
         During([WaitingForNominations, NominationsConcluded],
             When(RemoveVoteEvent)
@@ -115,7 +118,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     movie.Votes = movie.Votes.Except([voteToRemove]).ToArray();
                     movie.VotingScore -= voteToRemove.VoteType.GetVoteCount();
                 })
-                .Publish(ctx => new VoteAddedEvent(ctx.Message.CorrelationId, ctx.Message.Movie, ctx.Message.User)));
+                .Publish(ctx => new VoteAddedEvent(ctx.Message.VotingSessionId, ctx.Message.Movie, ctx.Message.User)));
 
         During(NominationsConcluded,
             When(ConcludeVoting)
@@ -124,7 +127,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 {
                     var movies = ctx.Saga.Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
                     var nominations = ctx.Saga.Nominations.ToArray();
-                    return new VotingConcludedEvent(ctx.Message.CorrelationId, ctx.Message.Tenant, movies, nominations, ctx.Saga.Created);
+                    return new VotingConcludedEvent(ctx.Message.VotingSessionId, ctx.Message.Tenant, movies, nominations, ctx.Saga.Created);
                 })
                 .TransitionTo(CalculatingResults)
         );
@@ -159,9 +162,9 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
     public Event<ConcludeVotingEvent> ConcludeVoting { get; private set; } = null!;
 
     // Events
-    public Event<MoviesListRequested> GetMovieListEvent { get; private set; } = null!;
-    public Event<NominationsRequested> GetNominationsEvent { get; private set; } = null!;
-    public Event<ResultsCalculated> ResultsCalculatedEvent { get; private set; } = null!;
+    public Event<MoviesListRequestedEvent> GetMovieListEvent { get; private set; } = null!;
+    public Event<NominationsRequestedEvent> GetNominationsEvent { get; private set; } = null!;
+    public Event<ResultsCalculatedEvent> ResultsCalculatedEvent { get; private set; } = null!;
     public Event<ErrorEvent> Error { get; private set; } = null!;
 
 

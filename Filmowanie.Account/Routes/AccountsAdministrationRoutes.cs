@@ -1,5 +1,6 @@
 ﻿using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Interfaces;
@@ -29,7 +30,7 @@ internal class AccountsAdministrationRoutes : IAccountsAdministrationRoutes
 
     public async Task<IResult> GetUsersAsync(CancellationToken cancel)
     {
-        var maybeUsers = await _userService.GetAllUsers(OperationResultExtensions.Void, cancel);
+        var maybeUsers = await _userService.GetAllUsers(VoidResult.Void, cancel);
         return _routesResultHelper.UnwrapOperationResult(maybeUsers);
     }
 

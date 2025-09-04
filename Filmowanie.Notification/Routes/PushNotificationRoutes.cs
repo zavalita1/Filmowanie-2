@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Notification.DTOs.Incoming;
 using Filmowanie.Notification.DTOs.Outcoming;
 using Filmowanie.Notification.Interfaces;
@@ -32,15 +33,15 @@ internal sealed class PushNotificationRoutes : IPushNotificationRoutes
         var currentUser = _userAccessor.GetDomainUser(maybeDto.AsVoid());
         var merged = maybeDto.Merge(currentUser);
         var result = await _pushNotificationService.SavePushNotification(merged, cancellationToken);
-        var resultDto = result.Pluck(_ => new AwknowledgedDTO());
+        var resultDto = result.Map(_ => new AwknowledgedDTO());
 
         return _routesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> Notify(NotifyDTO dto, CancellationToken cancellationToken)
     {
-        var maybeTenant = _userAccessor.GetDomainUser(OperationResultExtensions.Void).Pluck(x => x.Tenant);
-        var merge = maybeTenant.Merge(dto.Message.ToOperationResult()); // TODO dto validation
+        var maybeTenant = _userAccessor.GetDomainUser(VoidResult.Void).Map(x => x.Tenant);
+        var merge = maybeTenant.Merge(dto.Message.AsMaybe()); // TODO dto validation
         var result = await _pushNotificationService.SendAllPushNotificationsAsync(merge, cancellationToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);

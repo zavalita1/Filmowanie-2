@@ -1,4 +1,4 @@
-﻿using Filmowanie.Database.Entities.Voting;
+﻿using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Notification.Services;
 using MassTransit;
 using Microsoft.AspNetCore.SignalR;
@@ -21,7 +21,7 @@ public sealed class RemoveVoteEventConsumer : IConsumer<RemoveVoteEvent>, IConsu
     {
         var message = string.Join(",", context.Message.Exceptions.Select(x => x.Message));
         var callStacks = string.Join(";;;;;;;;;;;;", context.Message.Exceptions.Select(x => x.StackTrace));
-        return context.Publish(new ErrorEvent(context.Message.Message.CorrelationId, message, callStacks));
+        return context.Publish(new ErrorEvent(context.Message.Message.VotingSessionId, message, callStacks));
     }
 
     public async Task Consume(ConsumeContext<RemoveVoteEvent> context)

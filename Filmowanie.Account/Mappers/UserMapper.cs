@@ -21,22 +21,22 @@ internal sealed class UserMapper : IUserMapper
         _guidProvider = guidProvider;
     }
 
-    public OperationResult<UserDTO> Map(OperationResult<DomainUser> maybeUser) => maybeUser.Accept(UserMapper.Map, _log);
+    public Maybe<UserDTO> Map(Maybe<DomainUser> maybeUser) => maybeUser.Accept(UserMapper.Map, _log);
 
-    public OperationResult<DomainUser> Map(OperationResult<(DTOs.Incoming.UserDTO, DomainUser CurrentUser)> maybe) => maybe.Accept(Map, _log);
+    public Maybe<DomainUser> Map(Maybe<(DTOs.Incoming.UserDTO, DomainUser CurrentUser)> maybe) => maybe.Accept(Map, _log);
 
-    private OperationResult<DomainUser> Map((DTOs.Incoming.UserDTO, DomainUser CurrentUser) input)
+    private Maybe<DomainUser> Map((DTOs.Incoming.UserDTO, DomainUser CurrentUser) input)
     {
         var now = _dateTimeProvider.Now;
         var guid = _guidProvider.NewGuid();
         var userId = $"user-{guid}";
         var domainUser = new DomainUser(userId, input.Item1.Id, false, false, input.CurrentUser.Tenant, now);
-        return new OperationResult<DomainUser>(domainUser, null);
+        return new Maybe<DomainUser>(domainUser, null);
     }
 
-    private static OperationResult<UserDTO> Map(DomainUser user)
+    private static Maybe<UserDTO> Map(DomainUser user)
     {
         var userDto = new UserDTO(user.Name, user.IsAdmin, user.HasBasicAuthSetup);
-        return new OperationResult<UserDTO>(userDto, null);
+        return new Maybe<UserDTO>(userDto, null);
     }
 }
