@@ -1,7 +1,6 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Nomination.DTOs.Incoming;
 using Filmowanie.Nomination.Models;
 using FluentValidation;
@@ -32,7 +31,7 @@ internal class NominationValidator : AbstractValidator<(NominationDTO Dto, Domai
     public bool CanHandle<T>(string key, out IValidator<T>? typedValidator)
     {
         typedValidator = null;
-        if (typeof(T) == typeof((NominationDTO, DomainUser, CurrentNominationsResponse)))
+        if (typeof(T) == typeof((NominationDTO, DomainUser, CurrentNominationsData)))
         {
             typedValidator = (IValidator<T>)this;
             return true;

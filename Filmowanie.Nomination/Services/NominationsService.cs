@@ -111,8 +111,8 @@ internal sealed class NominationsService : INominationsService
         }
         else
         {
-            await _movieCommandRepository.InsertMovieAsync(movie, cancelToken);
             var nominatedEvent = new NominatedEventRecord(embeddedMovie, "nominated-event-" + movie.id, _dateTimeProvider.Now, user.Tenant.Id, user.Id);
+            await _movieCommandRepository.InsertMovieAsync(movie, cancelToken);
             await _movieCommandRepository.InsertNominatedAsync(nominatedEvent, cancelToken);
         }
 

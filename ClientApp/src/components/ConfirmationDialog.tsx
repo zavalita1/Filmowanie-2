@@ -22,6 +22,7 @@ export const ConfirmationDialog: React.FC<DialogProps> = props => {
     "p-6",
     "flex",
     "justify-center",
+    "text-amber-200",
     props.className ?? ""
   ])
 
@@ -36,11 +37,11 @@ export const ConfirmationDialog: React.FC<DialogProps> = props => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="max-w-inherit">
-            <AlertDialogCancel className="cursor-pointer max-w-70 text-balance md:max-w-100 bg-emerald-50" onClick={props.onClose}>
+            <AlertDialogCancel className="cursor-pointer max-w-70 text-balance md:max-w-100 bg-emerald-50 dark:bg-pink-800" onClick={props.onClose}>
                 { portionButtonText(props.dialogCancelText) }
               </AlertDialogCancel>
             { props.dialogActionText 
-              ? <AlertDialogAction className="cursor-pointer bg-emerald-700" onClick={props.onAction}> {props.dialogActionText} </AlertDialogAction>
+              ? <AlertDialogAction className="cursor-pointer bg-emerald-700 dark:bg-pink-900" onClick={props.onAction}> {props.dialogActionText} </AlertDialogAction>
               : <></>
             }
           </AlertDialogFooter>

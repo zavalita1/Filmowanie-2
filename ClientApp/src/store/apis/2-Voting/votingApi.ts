@@ -75,7 +75,7 @@ function mapVotingStatus(dto: VotingSessionStatusIncomingDTO) {
 
 function mapMovie(dto: MovieDTO): VotableOrPlaceholderMovie {
   if (dto.isPlaceholder)
-    return ({ title: dto.movieName, decade: dto.createdYear });
+    return ({ title: dto.movieName, decade: dto.createdYear, bigPosterUrl: dto.bigPosterUrl ?? "https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" });
 
   return dto;
 }

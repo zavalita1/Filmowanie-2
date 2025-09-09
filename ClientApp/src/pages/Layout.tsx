@@ -1,9 +1,11 @@
 import clsx from 'clsx';
 import React, { createContext, ReactElement } from 'react';
 import { LuLogIn, LuMenu, LuLogOut } from 'react-icons/lu';
+import { Moon, Sun } from "lucide-react"
 import { NavLink } from 'react-router';
 import penguinSvg from '../components/ui/footerIcon.svg';
-import { Toaster } from '../components/ui';
+import { Toaster, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Button } from '../components/ui';
+import { ThemeProvider, useTheme } from '../components/ThemeProvider';
 import { useGetUserQuery, useLogoutMutation } from '../store/apis/1-User/userApi';
 import { useGetStateQuery } from '../store/apis/2-Voting/votingApi';
 import { useGetNominationsQuery } from '../store/apis/4-Nomination/api'
@@ -27,8 +29,6 @@ export type AppComponentProps = {
   votingStatus: VotingStatus;
   isMobile: boolean;
 }
-
-export const LayoutContext = createContext<string>("TODO");
 
 export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const [isNavMenuVisible, setIsNavMenuVisible] = React.useState(false);
@@ -59,7 +59,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   ])
 
   return (
-    <LayoutContext.Provider value="TODO">
+    <ThemeProvider>
       <div className='flex flex-col select-none'>
       <Header />
       <div id="container" className={containerClasses}><Spinner isLoading={isLoading}></Spinner></div>
@@ -67,15 +67,15 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       <Toaster />
       <Footer />
       </div>
-    </LayoutContext.Provider>
+    </ThemeProvider>
   );
 
   function Header() {
-    return <div className='w-screen bg-gradient-to-tr from-emerald-50 to-sky-100 h-[70px] drop-shadow-lg relative'>
+    return <div className='w-screen bg-gradient-to-tr from-emerald-50 to-sky-100 dark:from-pink-900 dark:to-black h-[70px] drop-shadow-lg relative'>
       <div className='px-2 flex justify-between items-center w-full h-full'>
         <div className='flex items-center'>
-          <h1 className='text-3xl font-bold text-black mr-4 sm:text-4xl'>Filmowanie.</h1>
-          <ul className='hidden text-black md:flex items-center gap-1'>
+          <h1 className='text-3xl font-bold text-black dark:text-white mr-4 sm:text-4xl'>Filmowanie.</h1>
+          <ul className='hidden md:flex items-center gap-1'>
             <MenuLink text='Home' url='/'/>
             <MenuLink text='About' url='/about'/>
             <MenuLink text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
@@ -83,14 +83,16 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
             <MenuLink text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
             <MenuLink text='Nominuj' url='/nominate' isDisabled={!isNominateEnabled}/>
             <MenuLink text='Historia' url='/history' isDisabled={!isHistoryEnabled}/>
+            <ModeToggle />
           </ul>
+          <div className='md:hidden'><ModeToggle /></div>
         </div>
         <div className='hidden md:flex pr-4'>
           <LoginLogoutLink isUserLogged={isUserLogged} onLogout={logout}/>
         </div>
       {/* mobile screens */}
         <div className='md:hidden mr-4' onClick={handleClick}>
-          <LuMenu className='w-5 text-black' />
+          <LuMenu className='w-5 text-black dark:text-white' />
         </div>
       </div>
       <ul className={!isNavMenuVisible ? 'hidden' : 'absolute bg-zinc-200 w-full px-8'}>
@@ -155,15 +157,15 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   }
 
   function Footer() {
-    return <section className="bg-gradient-to-tr from-emerald-50 to-sky-100 mt-10 w-full">
+    return <section className="bg-gradient-to-tr from-emerald-50 to-sky-100 dark:from-black dark:to-pink-900 mt-10 w-full">
       <footer className="">
         <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="sm:flex sm:items-center sm:justify-between">
-            <div className="flex justify-center text-teal-600 sm:justify-start">
+            <div className="flex justify-center sm:justify-start">
               <img src={penguinSvg} className='h-full w-full' />
             </div>
 
-            <p className="mt-4 text-center text-sm text-gray-500 lg:mt-0 lg:text-right">
+            <p className="mt-4 text-center text-sm text-gray-500 dark:text-amber-300 lg:mt-0 lg:text-right">
               Copyright &copy; 2025. <br />
               W istocie nie ma tu żadnego kopirajta, proszę się zgłosić po nagrodę za uważne czytanie niepotrzebnych stopek.
             </p>
@@ -177,6 +179,17 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
     useLogout();
   }
 };
+
+export function ModeToggle() {
+  const { setTheme, theme } = useTheme()
+ 
+  return (
+        <Button variant="outline" size="icon" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+          <Sun  className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+          <Moon onClick={() => setTheme("light")} className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+        </Button>
+  )
+}
 
 type MenuLinkProps = {
   text: string;
@@ -200,7 +213,7 @@ const MenuLink: React.FC<MenuLinkProps> = (props: MenuLinkProps) => {
   }
 
   return (<NavLink to={props.url}>
-    <li className='cursor-pointer px-4 py-2 hover:bg-white hover:text-green-600 hover:rounded-lg transition-colors'>
+    <li className='cursor-pointer px-4 py-2 hover:bg-white dark:hover:bg-none dark:hover:text-amber-300 hover:text-green-600 hover:rounded-lg transition-colors'>
       {props.text}
     </li>
   </NavLink>
@@ -210,7 +223,7 @@ const MenuLink: React.FC<MenuLinkProps> = (props: MenuLinkProps) => {
 const LoginLogoutLink: React.FC<{ isUserLogged: boolean, onLogout: () => void, isMobile?: boolean }> = props => {
   if (props.isMobile) {
     if (!props.isUserLogged) {
-      return (<NavLink to="/login"><div className='flex items-center text-black'>
+      return (<NavLink to="/login"><div className='flex items-center text-black dark:text-white'>
         <li className="text-sm font-medium min-h-10 place-content-center">
           Login
         </li>
@@ -220,7 +233,7 @@ const LoginLogoutLink: React.FC<{ isUserLogged: boolean, onLogout: () => void, i
     }
 
     return (
-      <div className='flex items-center text-black' onClick={props.onLogout}>
+      <div className='flex items-center text-black dark:text-white' onClick={props.onLogout}>
         <li className="text-sm font-medium min-h-10 place-content-center">
           Logout
         </li>
@@ -231,7 +244,7 @@ const LoginLogoutLink: React.FC<{ isUserLogged: boolean, onLogout: () => void, i
 
   if (!props.isUserLogged) return (
     <NavLink to="/login">
-      <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600">
+      <div className="flex text-center cursor-pointer items-center mx-4 text-black dark:text-white hover:text-green-600 dark:hover:text-amber-300">
         <LuLogIn className='lg:w-5 lg:h-5 mx-2' />
         <span className="text-sm font-medium">
           Login
@@ -241,7 +254,7 @@ const LoginLogoutLink: React.FC<{ isUserLogged: boolean, onLogout: () => void, i
   );
 
   return (
-    <div className="flex text-center cursor-pointer items-center mx-4 text-black hover:text-green-600" onClick={props.onLogout}>
+    <div className="flex text-center cursor-pointer items-center mx-4 text-black dark:text-white hover:text-green-600 dark:hover:text-amber-300" onClick={props.onLogout}>
       <LuLogOut className='lg:w-5 lg:h-5 mx-2' />
       <span className="text-sm font-medium">
         Logout

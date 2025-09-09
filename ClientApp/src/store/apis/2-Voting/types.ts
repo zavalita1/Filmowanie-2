@@ -3,6 +3,7 @@ export type MovieDTO = {
     movieName: string;
     votes: number;
     posterUrl: string;
+    bigPosterUrl: string;
     description: string;
     filmwebUrl: string;
     createdYear: number;

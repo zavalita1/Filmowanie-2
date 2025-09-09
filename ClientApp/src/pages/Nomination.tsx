@@ -36,20 +36,19 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
             </h4>
             <div className="flex w-full max-w-md gap-2 -mb-4 justify-self-center-safe">
                 <Input type="email" placeholder="Wklej link do filmweba" value={url} onChange={e => setUrl(e.target.value)} onKeyDown={onKeyDown} />
-                <Button type="submit" variant="outline" onClick={() => setShowDialog(true)} disabled={url.length === 0} className="bg-emerald-300 text-black hover:bg-emerald-200">
+                <Button type="submit" variant="outline" onClick={() => setShowDialog(true)} disabled={url.length === 0} className="bg-emerald-300 text-black hover:bg-emerald-200 dark:text-amber-300 hover:dark:bg-amber-200">
                     Давай!
                 </Button>
             </div>
-            <div className="justify-self-center-safe">
-                <Checkbox id="toggle" disabled />
+            <div className="justify-self-center-safe mb-7">
             </div>
-            <Label className="justify-self-center-safe max-w-md hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-emerald-600 has-[[aria-checked=true]]:bg-emerald-50 dark:has-[[aria-checked=true]]:border-emerald-900 dark:has-[[aria-checked=true]]:bg-emerald-950">
+            <Label className="justify-self-center-safe max-w-md hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-emerald-600 has-[[aria-checked=true]]:bg-emerald-50 dark:has-[[aria-checked=true]]:border-emerald-900 dark:has-[[aria-checked=true]]:bg-pink-950">
                 <Checkbox
                     id="toggle-2"
                     defaultChecked={false}
                     checked={manualPosterPick}
                     onCheckedChange={() => setManualPosterPick(!manualPosterPick)}
-                    className="data-[state=checked]:border-emerald-400 data-[state=checked]:bg-emerald-400 data-[state=checked]:text-white dark:data-[state=checked]:border-emerald-700 dark:data-[state=checked]:bg-emerald-700"
+                    className="data-[state=checked]:border-emerald-400 data-[state=checked]:bg-emerald-400 data-[state=checked]:text-white dark:data-[state=checked]:border-pink-900 dark:data-[state=checked]:bg-pink-900"
                 />
                 <div className="grid gap-1.5 font-normal">
                     <p className="text-sm leading-none font-medium">
@@ -83,7 +82,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
     }
 
     function nominateMovie() {
-        const dto = { filmwebUrl: url, posterUrl: chosenPosterUrl }
+        const dto = { movieFilmwebUrl: url, posterUrl: chosenPosterUrl }
         setUrl("");
         nominate(dto);
     }
@@ -95,7 +94,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
             e.preventDefault();
             window.scrollTo({ top: 0});
         }
-        }><Button variant="default" className="cursor-pointer hover:bg-emerald-900 bg-emerald-500">Chcę ten! Przeklej link.</Button></div>;
+        }><Button variant="default" className="cursor-pointer hover:bg-emerald-900 bg-emerald-500 dark:bg-amber-200 hover:dark:bg-amber-400">Chcę ten! Przeklej link.</Button></div>;
         return (<MovieCard {...cardProps} key={key} cardFooter={cardFooter}/>)
     }
 }

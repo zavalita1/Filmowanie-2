@@ -7,7 +7,7 @@ export type MoviesThatCanBeNominatedAgainIncomingDTO = {
 }
 
 export type NominationOutgoingDTO = {
-    filmwebUrl: string;
+    movieFilmwebUrl: string;
     posterUrl?: string;
 }
 

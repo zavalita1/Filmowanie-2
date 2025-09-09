@@ -93,7 +93,7 @@ export const ResultsComponent: React.FC<ResultsComponentProps> = props => {
                                 <TableRow
                                     key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id} className={row.original.isDecorated ? "bg-emerald-200 font-bold" : ""}>
+                                        <TableCell key={cell.id} className={row.original.isDecorated ? "bg-emerald-200 dark:bg-amber-400 font-bold" : ""}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
@@ -133,7 +133,7 @@ export const ResultsComponent: React.FC<ResultsComponentProps> = props => {
                                     className={row.original.votesCount === 0 ? "" : "cursor-pointer"}
                                 >
                                             {row.getVisibleCells().map((cell) => (
-                                                    <TableCell key={cell.id} className={row.original.isDecorated ? "bg-rose-300 font-bold" : ""}>
+                                                    <TableCell key={cell.id} className={row.original.isDecorated ? "bg-rose-300 dark:bg-rose-500 font-bold" : ""}>
                                                     { 
                                                         cell.column.columnDef.header === "" 
                                                         ? (!expandedRows.includes(row.original.rank) ? <BsChevronDown />: <BsChevronUp />)

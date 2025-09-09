@@ -11,6 +11,7 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
     public virtual string Description { get; set; }
 
     public virtual string PosterUrl { get; set; }
+    public virtual string BigPosterUrl { get; set; }
 
     public virtual string FilmwebUrl { get; set; }
     public virtual string[] Actors { get; set; }
@@ -31,6 +32,7 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
         OriginalTitle = other.OriginalTitle;
         Description = other.Description;
         PosterUrl = other.PosterUrl;
+        BigPosterUrl = other.BigPosterUrl;
         FilmwebUrl = other.FilmwebUrl;
         Actors = other.Actors;
         Writers = other.Writers;

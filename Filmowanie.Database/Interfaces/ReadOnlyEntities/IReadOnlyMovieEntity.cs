@@ -6,6 +6,7 @@ public interface IReadOnlyMovieEntity : IReadOnlyEntity
     string OriginalTitle { get;  }
     string Description { get;  }
     string PosterUrl { get;  }
+    string BigPosterUrl { get;  }
     string FilmwebUrl { get;  }
     string[] Actors { get;  }
     string[] Writers { get;  }

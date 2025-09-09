@@ -8,7 +8,7 @@ const History: React.FC<AppComponentProps> = props => {
     return (
          <div className="flex w-full flex-col items-center mb-auto mt-10">
             <Tabs defaultValue="moviesWatched" className="w-full max-w-4/5">
-                <TabsList className="w-full ml-10 bg-emerald-100">
+                <TabsList className="w-full ml-10 bg-emerald-100 dark:bg-pink-900">
                     <TabsTrigger value="votingResults">Wyniki ostatnich głosowań</TabsTrigger>
                     <TabsTrigger value="moviesWatched">Lista obejrzanych filmów</TabsTrigger>
                     <TabsTrigger value="charts">Wykresy</TabsTrigger>

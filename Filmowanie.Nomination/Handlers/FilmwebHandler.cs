@@ -99,7 +99,10 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
             movieBuilder.WithCreationYear(responseContent2.Year.ToString());
 
         if (!string.IsNullOrEmpty(posterUrl))
+        {
             movieBuilder.WithPosterUrl(posterUrl);
+            movieBuilder.WithBigPosterUrl(GetPosterUrl(posterUrl, true));
+        }
         else
             ExtractDataImage(responseContent, metadata, ref movieBuilder);
 
@@ -116,10 +119,19 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
         if (match.Success)
         {
             var posterUrl = match.Groups[1].Value;
-            var extensionIndex = posterUrl.LastIndexOf(".");
-            posterUrl = posterUrl[..(extensionIndex - 1)] + "10" + posterUrl[extensionIndex..];
+            posterUrl = GetPosterUrl(posterUrl, false);
+            var bigPoster = GetPosterUrl(posterUrl, true);
             movieBuilder.WithPosterUrl(posterUrl);
+            movieBuilder.WithBigPosterUrl(bigPoster);
         }
+    }
+
+    private static string GetPosterUrl(string posterUrl, bool isBigPoster)
+    {
+        var extensionIndex = posterUrl.LastIndexOf(".");
+        var size = isBigPoster ? "8" : "10";
+        posterUrl = posterUrl[..(extensionIndex - 1)] + size + posterUrl[extensionIndex..];
+        return posterUrl;
     }
 
     private void ExtractDataFromMetaElements(string responseContent, ref MovieBuilder movieBuilder)

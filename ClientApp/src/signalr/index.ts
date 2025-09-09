@@ -3,6 +3,7 @@ import { store } from "../store/store";
 import { notificationsSlice } from "../store/slices/notificationsSlice";
 import { votingSlice } from "../store/slices/votingSlice";
 import { UserState } from "../store/apis/1-User/types";
+import { toast } from "sonner";
 
 export function setupSignalRConnection() {
     const connection = new signalR.HubConnectionBuilder().withUrl("/api/votesHub").withAutomaticReconnect().build();
@@ -37,7 +38,9 @@ export function setupSignalRConnection() {
         if (userData?.username !== user) {
             const gender = user.endsWith('a'); // TODO 
             const nominated = gender ? 'zagłosowała' : 'zagłosował';
-            store.dispatch(notificationsSlice.actions.addNotification(`${user} właśnie ${nominated} na jeden z filmów.`));
+            const message = `${user} właśnie ${nominated} na jeden z filmów.`;
+            toast.info(message);
+            store.dispatch(notificationsSlice.actions.addNotification(message));
         }
     });
 

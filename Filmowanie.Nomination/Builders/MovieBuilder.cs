@@ -8,6 +8,7 @@ public sealed class MovieBuilder
 {
     private string? _movieName;
     private string? _posterUrl;
+    private string? _bigPosterUrl;
     private string? _description;
     private string? _filmwebUrl;
     private int _year;
@@ -41,6 +42,12 @@ public sealed class MovieBuilder
     public MovieBuilder WithPosterUrl(string posterUrl)
     {
         _posterUrl = posterUrl;
+        return this;
+    }
+
+    public MovieBuilder WithBigPosterUrl(string posterUrl)
+    {
+        _bigPosterUrl = posterUrl;
         return this;
     }
 
@@ -95,7 +102,7 @@ public sealed class MovieBuilder
 
     public IReadOnlyMovieEntity Build(IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider)
     {
-        if (string.IsNullOrEmpty(_posterUrl) || string.IsNullOrEmpty(_description) || string.IsNullOrEmpty(_description) || string.IsNullOrEmpty(_movieName) || _duration == default || _year == default || string.IsNullOrEmpty(_filmwebUrl) || _tenant == default)
+        if (string.IsNullOrEmpty(_posterUrl) || string.IsNullOrEmpty(_bigPosterUrl) || string.IsNullOrEmpty(_description) || string.IsNullOrEmpty(_description) || string.IsNullOrEmpty(_movieName) || _duration == default || _year == default || string.IsNullOrEmpty(_filmwebUrl) || _tenant == default)
         {
             throw new ArgumentException("Cannot construct this!");
         }
@@ -108,8 +115,8 @@ public sealed class MovieBuilder
         var movieId = "movie-" + guidProvider.NewGuid();
         var now = dateTimeProvider.Now;
 
-        return new Movie(movieId, now, _movieName, originalTitle, description, _posterUrl, _filmwebUrl, _actors.ToArray(), _writers.ToArray(), _directors.ToArray(), _genres.ToArray(), _year, (int)_duration.TotalMinutes, _tenant.Id, "");
+        return new Movie(movieId, now, _movieName, originalTitle, description, _posterUrl, _bigPosterUrl, _filmwebUrl, _actors.ToArray(), _writers.ToArray(), _directors.ToArray(), _genres.ToArray(), _year, (int)_duration.TotalMinutes, _tenant.Id, "");
     }
 
-    private readonly record struct Movie(string id, DateTime Created, string Name, string OriginalTitle, string Description, string PosterUrl, string FilmwebUrl, string[] Actors, string[] Writers, string[] Directors, string[] Genres, int CreationYear, int DurationInMinutes, int TenantId, string Type) : IReadOnlyMovieEntity;
+    private readonly record struct Movie(string id, DateTime Created, string Name, string OriginalTitle, string Description, string PosterUrl, string BigPosterUrl, string FilmwebUrl, string[] Actors, string[] Writers, string[] Directors, string[] Genres, int CreationYear, int DurationInMinutes, int TenantId, string Type) : IReadOnlyMovieEntity;
 }

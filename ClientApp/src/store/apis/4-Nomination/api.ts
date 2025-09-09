@@ -43,6 +43,7 @@ function mapMovieThatCanBeNominatedAgain(x: any): Movie {
             movieId: x.movieId,
             description: x.description,
             posterUrl: x.posterUrl,
+            bigPosterUrl: x.bigPosterUrl,
             movieName: x.movieName,
             filmwebUrl: x.filmwebUrl,
             createdYear: x.createdYear,
