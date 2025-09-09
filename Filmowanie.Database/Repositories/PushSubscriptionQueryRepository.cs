@@ -18,11 +18,11 @@ internal sealed class PushSubscriptionQueryRepository : IPushSubscriptionQueryRe
 
     public async Task<IReadOnlyPushSubscriptionEntity[]> GetAsync(TenantId tenant, CancellationToken cancelToken)
     {
-        return await _ctx.Subscriptions.AsNoTracking().ToArrayAsync(cancellationToken: cancelToken);
+        return await _ctx.Subscriptions.AsNoTracking().ToArrayAsync(cancelToken);
     }
 
     public async Task<IReadOnlyPushSubscriptionEntity[]> GetAsync(Expression<Func<IReadOnlyPushSubscriptionEntity, bool>> predicate, TenantId tenant, CancellationToken cancelToken)
     {
-        return await _ctx.Subscriptions.Where(predicate).AsNoTracking().ToArrayAsync(cancellationToken: cancelToken);
+        return await _ctx.Subscriptions.Where(predicate).AsNoTracking().ToArrayAsync(cancelToken);
     }
 }

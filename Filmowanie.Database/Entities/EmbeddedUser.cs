@@ -18,4 +18,11 @@ public class EmbeddedUser : IReadOnlyEmbeddedUser
         Name = user.Name;
         TenantId = user.TenantId;
     }
+
+    public EmbeddedUser(IReadOnlyUserEntity user) : this()
+    {
+        id = user.id;
+        Name = user.DisplayName;
+        TenantId = user.TenantId;
+    }
 }

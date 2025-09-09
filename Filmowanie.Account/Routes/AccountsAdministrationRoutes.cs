@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Interfaces;
@@ -45,7 +45,7 @@ internal class AccountsAdministrationRoutes : IAccountsAdministrationRoutes
     public async Task<IResult> AddUserAsync(UserDTO dto, CancellationToken cancel)
     {
         var maybeDto = _validator.Validate(dto);
-        var maybeCurrentUser = _authenticationManager.GetDomainUser(maybeDto.AsVoid());
+        var maybeCurrentUser = _authenticationManager.GetDomainUser(maybeDto);
         var merged = maybeDto.Merge(maybeCurrentUser);
         var maybeUser = _mapper.Map(merged);
         var result = await _userService.AddUserAsync(maybeUser, cancel);

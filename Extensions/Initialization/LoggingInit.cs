@@ -11,7 +11,10 @@ internal static class LoggingInit
     public static void ConfigureLogging(this WebApplicationBuilder appBuilder)
     {
         appBuilder.Logging.ClearProviders();
-        appBuilder.Logging.AddZLoggerConsole();
+        appBuilder.Logging.AddZLoggerConsole(o => o.UsePlainTextFormatter(formatter =>
+        {
+            formatter.SetPrefixFormatter($"{0} | {1} | {2} ", (in MessageTemplate template, in LogInfo info) => template.Format(info.Timestamp, info.LogLevel, info.Category));
+        }));
         var currentDll = Assembly.GetExecutingAssembly().Location;
         var currentDir = Path.GetDirectoryName(currentDll);
         var logPath = $"{currentDir}\\AppLog.txt";

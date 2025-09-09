@@ -1,7 +1,6 @@
 ﻿using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using System.Linq.Expressions;
-using Filmowanie.Abstractions;
 using Filmowanie.Database.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,20 +15,20 @@ internal sealed class MovieQueryRepository : IMovieQueryRepository
         _ctx = ctx;
     }
 
-    public async Task<IReadOnlyMovieEntity[]> GetMoviesAsync(Expression<Func<IReadOnlyMovieEntity, bool>> predicate, TenantId tenant, CancellationToken cancellationToken)
+    public async Task<IReadOnlyMovieEntity[]> GetMoviesAsync(Expression<Func<IReadOnlyMovieEntity, bool>> predicate, CancellationToken cancelToken)
     {
-        return await _ctx.Movies.Where(predicate).ToArrayAsync(cancellationToken);
+        return await _ctx.Movies.Where(predicate).ToArrayAsync(cancelToken);
     }
 
-    public async Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEventsAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate, TenantId tenant,
-        CancellationToken cancellationToken)
+    public async Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEventsAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate,
+        CancellationToken cancelToken)
     {
-        return await _ctx.CanNominateMovieAgainEvents.Where(predicate).ToArrayAsync(cancellationToken);
+        return await _ctx.CanNominateMovieAgainEvents.Where(predicate).ToArrayAsync(cancelToken);
     }
 
-    public async Task<IReadOnlyNominatedMovieAgainEvent[]> GetMoviesNominatedAgainEventsAsync(Expression<Func<IReadOnlyNominatedMovieAgainEvent, bool>> predicate, TenantId tenant,
-        CancellationToken cancellationToken)
+    public async Task<IReadOnlyNominatedMovieEvent[]> GetMoviesNominatedAgainEventsAsync(Expression<Func<IReadOnlyNominatedMovieEvent, bool>> predicate,
+        CancellationToken cancelToken)
     {
-        return await _ctx.NominatedMovieAgainEvents.Where(predicate).ToArrayAsync(cancellationToken);
+        return await _ctx.NominatedMovieAgainEvents.Where(predicate).ToArrayAsync(cancelToken);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Helpers;
-using Filmowanie.Abstractions.OperationResult;
-using Filmowanie.Database.Interfaces;
+using Filmowanie.Abstractions.Maybe;
+using Filmowanie.Database.Repositories;
 using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
 using Filmowanie.Nomination.Models;
@@ -13,9 +13,9 @@ namespace Filmowanie.Nomination.Mappers;
 internal sealed class NominationsMapper : INominationsMapper
 {
     private readonly ILogger<NominationsMapper> _log;
-    private readonly IMovieQueryRepository _movieQueryRepository;
+    private readonly IMovieDomainRepository _movieQueryRepository;
 
-    public NominationsMapper(ILogger<NominationsMapper> log, IMovieQueryRepository movieQueryRepository)
+    public NominationsMapper(ILogger<NominationsMapper> log, IMovieDomainRepository movieQueryRepository)
     {
         _log = log;
         _movieQueryRepository = movieQueryRepository;
@@ -33,18 +33,16 @@ internal sealed class NominationsMapper : INominationsMapper
         return new Maybe<NominationsDataDTO>(result, null);
     }
 
-    public Task<Maybe<NominationsFullDataDTO>> EnrichNominationsAsync(Maybe<(NominationsDataDTO, DomainUser)> input, CancellationToken cancellationToken) =>
-        input.AcceptAsync(EnrichNominationsAsync, _log, cancellationToken);
+    public Task<Maybe<NominationsFullDataDTO>> EnrichNominationsAsync(Maybe<NominationsDataDTO> input, CancellationToken cancelToken) =>
+        input.AcceptAsync(EnrichNominationsAsync, _log, cancelToken);
 
     // TODO add cron job that cleans old events
-    public async Task<Maybe<NominationsFullDataDTO>> EnrichNominationsAsync((NominationsDataDTO, DomainUser) input, CancellationToken cancellationToken)
+    public async Task<Maybe<NominationsFullDataDTO>> EnrichNominationsAsync(NominationsDataDTO input, CancellationToken cancelToken)
     {
-        var user = input.Item2;
+        var movieCanBeNominatedAgainEvents = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEventsAsync(cancelToken);
+        var movieNominatedAgainEvents = await _movieQueryRepository.GetMovieNominatedEventsAsync(cancelToken);
 
-        var movieCanBeNominatedAgainEvents = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEventsAsync(x => true, user.Tenant, cancellationToken);
-        var movieNominatedAgainEvents = await _movieQueryRepository.GetMoviesNominatedAgainEventsAsync(x => true, user.Tenant, cancellationToken);
-
-        var userNominationsDecades = input.Item1.Nominations.Select(StringExtensions.ToDecade).ToArray();
+        var userNominationsDecades = input.Nominations.Select(StringExtensions.ToDecade).ToArray();
         var filteredMoviesThatCanBeNominatedAgainEvents = movieCanBeNominatedAgainEvents
             .Where(x => userNominationsDecades.Contains(x.Movie.MovieCreationYear.ToDecade()))
             .GroupBy(x => x.Movie.id, x => x.Created)
@@ -59,14 +57,14 @@ internal sealed class NominationsMapper : INominationsMapper
             .Where(x => !filteredMovieNominatedAgainEvents.ContainsKey(x.Key) || filteredMovieNominatedAgainEvents[x.Key] < x.Value)
             .Select(x => x.Key);
 
-        var moviesThatCanBeNominatedAgain = await _movieQueryRepository.GetMoviesAsync(x => moviesThatCanBeNominatedAgainIds.Contains(x.id), user.Tenant, cancellationToken);
+        var moviesThatCanBeNominatedAgain = await _movieQueryRepository.GetManyByIdAsync(moviesThatCanBeNominatedAgainIds, cancelToken, false);
 
-        var moviesThatCanBeNominatedAgainDTOs = moviesThatCanBeNominatedAgain
+        var moviesThatCanBeNominatedAgainDTOs = moviesThatCanBeNominatedAgain.Result
             .OrderBy(x => x.CreationYear)
             .Select(x => new MovieDTO(x.id, x.Name, x.PosterUrl, x.Description, x.FilmwebUrl, x.CreationYear, StringHelper.GetDurationString(x.DurationInMinutes), x.Genres, x.Actors, x.Directors, x.Writers, x.OriginalTitle))
             .ToArray();
 
-        var result = new NominationsFullDataDTO { Nominations = input.Item1.Nominations, MoviesThatCanBeNominatedAgain = moviesThatCanBeNominatedAgainDTOs };
+        var result = new NominationsFullDataDTO { Nominations = input.Nominations, MoviesThatCanBeNominatedAgain = moviesThatCanBeNominatedAgainDTOs };
         return result.AsMaybe();
     }
 }

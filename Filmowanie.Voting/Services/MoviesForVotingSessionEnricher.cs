@@ -1,7 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Voting.DTOs.Outgoing;
@@ -22,12 +22,12 @@ internal sealed class MoviesForVotingSessionEnricher : IMoviesForVotingSessionEn
         _log = log;
     }
 
-    public Task<Maybe<MovieDTO[]>> EnrichWithPlaceholdersAsync(Maybe<(MovieDTO[], VotingSessionId)> movies, CancellationToken cancellationToken) => movies.AcceptAsync(EnrichWithPlaceholders, _log, cancellationToken);
+    public Task<Maybe<MovieDTO[]>> EnrichWithPlaceholdersAsync(Maybe<(MovieDTO[], VotingSessionId)> movies, CancellationToken cancelToken) => movies.AcceptAsync(EnrichWithPlaceholders, _log, cancelToken);
 
-    public async Task<Maybe<MovieDTO[]>> EnrichWithPlaceholders((MovieDTO[], VotingSessionId) movies, CancellationToken cancellationToken)
+    public async Task<Maybe<MovieDTO[]>> EnrichWithPlaceholders((MovieDTO[], VotingSessionId) movies, CancellationToken cancelToken)
     {
         var nominationsRequested = new NominationsRequestedEvent(movies.Item2);
-        var nominations = await _getNominationsRequestClient.GetResponse<CurrentNominationsResponse>(nominationsRequested, cancellationToken);
+        var nominations = await _getNominationsRequestClient.GetResponse<CurrentNominationsResponse>(nominationsRequested, cancelToken);
 
         var placeHolders = nominations.Message.Nominations.Where(x => x.Concluded == null).Select(GetPlaceholderDTO);
         var result = movies.Item1.Concat(placeHolders).ToArray();
@@ -52,7 +52,7 @@ internal sealed class MoviesForVotingSessionEnricher : IMoviesForVotingSessionEn
             _ => ""
         };
 
-        var placeholderTitle = $"{nominationData.User.DisplayName} wybierze tutaj film z lat: {decadeTranslation}.";
+        var placeholderTitle = $"{nominationData.User!.DisplayName} wybierze tutaj film z lat: {decadeTranslation}.";
         return new MovieDTO(placeholderTitle, (int)nominationData.Year);
     }
 }

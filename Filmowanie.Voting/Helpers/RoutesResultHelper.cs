@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Voting.Helpers;

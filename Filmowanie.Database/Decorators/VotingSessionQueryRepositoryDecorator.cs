@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
@@ -8,30 +10,34 @@ namespace Filmowanie.Database.Decorators
     internal sealed class VotingSessionQueryRepositoryDecorator : IVotingSessionQueryRepository
     {
         private readonly IVotingSessionQueryRepository _decorated;
+        private readonly ICurrentUserAccessor _currentUserAccessor;
 
-        public VotingSessionQueryRepositoryDecorator(IVotingSessionQueryRepository decorated)
+        public VotingSessionQueryRepositoryDecorator(IVotingSessionQueryRepository decorated, ICurrentUserAccessor currentUserAccessor)
         {
             _decorated = decorated;
+            _currentUserAccessor = currentUserAccessor;
         }
 
-        public Task<IReadOnlyVotingResult?> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, TenantId tenant, CancellationToken cancellationToken)
+        public Task<IReadOnlyVotingResult?> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, CancellationToken cancelToken)
         {
-            var newPredicate = GetPredicateWithTenantFilter(predicate, tenant);
-            return _decorated.Get(newPredicate, tenant, cancellationToken);
+            var currentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
+            var newPredicate = GetPredicateWithTenantFilter(predicate, currentUser.Tenant);
+            return _decorated.Get(newPredicate, cancelToken);
         }
 
-        public Task<IEnumerable<IReadOnlyVotingResult>> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, TenantId tenant, Expression<Func<IReadOnlyVotingResult, object>> sortBy, int take,
-            CancellationToken cancellationToken)
+        public Task<IEnumerable<IReadOnlyVotingResult>> GetAll(Expression<Func<IReadOnlyVotingResult, bool>> predicate, CancellationToken cancelToken)
         {
-            var newPredicate = GetPredicateWithTenantFilter(predicate, tenant);
-            return _decorated.Get(newPredicate, tenant, sortBy, take, cancellationToken);
+            var currentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
+            var newPredicate = GetPredicateWithTenantFilter(predicate, currentUser.Tenant);
+            return _decorated.GetAll(newPredicate, cancelToken);
         }
 
-        public Task<IEnumerable<T>> Get<T>(Expression<Func<IReadOnlyVotingResult, bool>> predicate, Expression<Func<IReadOnlyVotingResult, T>> selector, TenantId tenant,
-            CancellationToken cancellationToken) where T : class
+        public Task<IEnumerable<IReadOnlyVotingResult>> GetVotingResultAsync(Expression<Func<IReadOnlyVotingResult, bool>> predicate, Expression<Func<IReadOnlyVotingResult, object>> sortBy, int take,
+            CancellationToken cancelToken)
         {
-            var newPredicate = GetPredicateWithTenantFilter(predicate, tenant);
-            return _decorated.Get(newPredicate, selector, tenant, cancellationToken);
+            var currentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
+            var newPredicate = GetPredicateWithTenantFilter(predicate, currentUser.Tenant);
+            return _decorated.GetVotingResultAsync(newPredicate, sortBy, take, cancelToken);
         }
 
         private static Expression<Func<T, bool>> GetPredicateWithTenantFilter<T>(Expression<Func<T, bool>> predicate, TenantId user) where T: IReadOnlyEntity

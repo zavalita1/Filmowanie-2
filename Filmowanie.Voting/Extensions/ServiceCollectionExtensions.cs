@@ -18,17 +18,18 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFluentValidatorAdapter, VoteValidator>();
         services.AddScoped<IFluentValidatorAdapter, VotingSessionIdValidator>();
 
-        services.AddScoped<IVotingSessionRoutes, VotingSessionRoutes>();
+        services.AddScoped<IVotingSessionRoutes, CurrentVotingRoutes>();
         services.AddScoped<IAdminVotingSessionRoutes, AdminVotingSessionRoutes>();
         services.AddScoped<IVotingResultRoutes, VotingResultRoutes>();
         
-        services.AddScoped<IMovieVotingSessionService, MovieVotingSessionService>();
+        services.AddScoped<IMovieVotingResultService, MovieVotingResultService>();
+        services.AddScoped<ICurrentVotingService, CurrentVotingService>();
 
         services.AddScoped<IMoviesForVotingSessionEnricher, MoviesForVotingSessionEnricher>();
 
         services.AddScoped<IVotingSessionService, VotingSessionService>();
         services.AddScoped<ICurrentVotingSessionIdAccessor, VotingSessionService>();
-        services.AddSingleton<IVotingSessionMapper, VotingSessionMapper>();
+        services.AddScoped<IVotingSessionMapper, VotingSessionMapper>();
 
         services.AddScoped<IVotingStateManager, VotingSessionStateManager>();
 

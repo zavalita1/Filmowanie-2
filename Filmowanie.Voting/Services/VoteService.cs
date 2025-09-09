@@ -1,7 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Voting.DTOs.Incoming;
@@ -22,10 +22,10 @@ internal sealed class VoteService : IVoteService
         _log = log;
     }
 
-    public Task<Maybe<VoidResult>> VoteAsync(Maybe<(DomainUser, VotingSessionId, VoteDTO)> input, CancellationToken cancellationToken) =>
-        input.AcceptAsync(VoteAsync, _log, cancellationToken);
+    public Task<Maybe<VoidResult>> VoteAsync(Maybe<(DomainUser, VotingSessionId, VoteDTO)> input, CancellationToken cancelToken) =>
+        input.AcceptAsync(VoteAsync, _log, cancelToken);
 
-    public async Task<Maybe<VoidResult>> VoteAsync((DomainUser, VotingSessionId, VoteDTO) input, CancellationToken cancellationToken)
+    public async Task<Maybe<VoidResult>> VoteAsync((DomainUser, VotingSessionId, VoteDTO) input, CancellationToken cancelToken)
     {
         var (user, votingSessionId, voteDto) = input;
         var movie = new EmbeddedMovie { id = voteDto.MovieId, Name = voteDto.MovieTitle };
@@ -33,12 +33,12 @@ internal sealed class VoteService : IVoteService
         if (voteDto.Votes == 0)
         {
             var removeVoteEvent = new RemoveVoteEvent(votingSessionId, movie, user);
-            await _bus.Publish(removeVoteEvent, cancellationToken);
+            await _bus.Publish(removeVoteEvent, cancelToken);
         }
         else
         {
             var @event = new AddVoteEvent(votingSessionId, movie, user, (VoteType)voteDto.Votes);
-            await _bus.Publish(@event, cancellationToken);
+            await _bus.Publish(@event, cancelToken);
         }
 
         return VoidResult.Void;

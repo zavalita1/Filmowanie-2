@@ -1,6 +1,4 @@
-﻿using Filmowanie.Database.Entities;
-
-namespace Filmowanie.Database.Interfaces.ReadOnlyEntities;
+﻿namespace Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 public interface IReadOnlyVotingResult : IReadOnlyEntity
 {
@@ -13,5 +11,5 @@ public interface IReadOnlyVotingResult : IReadOnlyEntity
 
     public IReadOnlyEmbeddedMovieWithNominationContext[] MoviesAdded { get; }
 
-    IReadOnlyEmbeddedMovie Winner { get; }
+    IReadOnlyEmbeddedMovieWithNominatedBy Winner { get; }
 }

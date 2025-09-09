@@ -3,6 +3,7 @@ using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.Handlers;
 using Filmowanie.Nomination.Helpers;
 using Filmowanie.Nomination.Interfaces;
+using Filmowanie.Nomination.Mappers;
 using Filmowanie.Nomination.Routes;
 using Filmowanie.Nomination.Services;
 using Filmowanie.Nomination.Validators;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<INominationRoutes, NominationRoutes>();
 
         services.AddScoped<INominationsService, NominationsService>();
+        services.AddScoped<INominationsMapper, NominationsMapper>();
 
         services.AddScoped<IMoviePostersService, MoviePostersService>();
         

@@ -1,8 +1,8 @@
-﻿using Filmowanie.Abstractions.OperationResult;
+﻿using Filmowanie.Abstractions.Maybe;
 
 namespace Filmowanie.Abstractions.Interfaces;
 
-public interface IDomainUserAccessor
+public interface ICurrentUserAccessor
 {
     Maybe<DomainUser> GetDomainUser(Maybe<VoidResult> maybe);
 }

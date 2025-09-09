@@ -4,13 +4,11 @@ public interface IReadOnlyUserEntity : IReadOnlyEntity
 {
     public string Email { get; }
 
-    public string PasswordHash { get; set; }
+    public string PasswordHash { get; }
 
-    public string Code { get; set; }
+    public string Code { get; }
 
-    public string DisplayName { get; set; }
+    public string DisplayName { get; }
 
-    public int TenantId { get; set; }
-
-    public bool IsAdmin { get; set; }
+    public bool IsAdmin { get; }
 }

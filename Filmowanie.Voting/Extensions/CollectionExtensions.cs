@@ -2,7 +2,7 @@
 
 internal static class CollectionExtensions
 {
-    public static IDictionary<TSelect, int> GetExAeuquoRankings<T, TSortBy, TSelect>(this IEnumerable<T> collection, Func<T, TSortBy> sortByFunc, Func<T, TSelect> selectFunc)
+    public static IDictionary<TSelect, int> GetExAeuquoRankings<T, TSortBy, TSelect>(this IEnumerable<T> collection, Func<T, TSortBy> sortByFunc, Func<T, TSelect> selectFunc) where TSelect : notnull
     {
         var result = GetExAeuquoRankingsInner(collection, sortByFunc, selectFunc);
         return result.ToDictionary(x => x.Element, x => x.Place);

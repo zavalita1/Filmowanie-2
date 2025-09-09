@@ -1,7 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.DTOs.Outgoing;
 using Filmowanie.Account.Interfaces;
 using Microsoft.Extensions.Logging;

@@ -1,7 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.DomainModels;
@@ -14,61 +14,51 @@ namespace Filmowanie.Voting.Services;
 
 internal sealed class VotingSessionService : IVotingSessionService
 {
-    private readonly IVotingSessionQueryRepository _votingSessionQueryRepository;
+    private readonly IVotingResultsRepository _votingSessionQueryRepository;
     private readonly ILogger<VotingSessionService> _log;
     private readonly IMemoryCache _memoryCache;
 
     private const string CacheKeyPrefix = "Winners-list";
 
-    public VotingSessionService(IVotingSessionQueryRepository votingSessionQueryRepository, ILogger<VotingSessionService> log, IMemoryCache memoryCache)
+    public VotingSessionService(IVotingResultsRepository votingSessionQueryRepository, ILogger<VotingSessionService> log, IMemoryCache memoryCache)
     {
         _votingSessionQueryRepository = votingSessionQueryRepository;
         _log = log;
         _memoryCache = memoryCache;
     }
 
-    public Task<Maybe<IReadOnlyVotingResult?>> GetCurrentVotingSession(Maybe<DomainUser> maybeCurrentUser, CancellationToken cancellationToken) =>
-        maybeCurrentUser.AcceptAsync(GetCurrentVotingSession, _log, cancellationToken);
-
-    public Task<Maybe<VotingSessionId?>> GetCurrentVotingSessionIdAsync(Maybe<DomainUser> maybeCurrentUser, CancellationToken cancellationToken) =>
-        maybeCurrentUser.AcceptAsync(GetCurrentVotingSessionId, _log, cancellationToken);
+    public Task<Maybe<VotingSessionId?>> GetCurrentVotingSessionIdAsync(Maybe<DomainUser> maybeCurrentUser, CancellationToken cancelToken) =>
+        maybeCurrentUser.AcceptAsync(GetCurrentVotingSessionId, _log, cancelToken);
 
     public Maybe<VotingSessionId> GetRequiredVotingSessionId(Maybe<VotingSessionId?> maybeCurrentVotingSessionId) =>
         maybeCurrentVotingSessionId.Accept(GetRequiredCurrentVotingSessionId, _log);
 
-    public async Task<Maybe<IReadOnlyVotingResult?>> GetCurrentVotingSession(DomainUser currentUser, CancellationToken cancellationToken)
-    {
-        var currentVotingResults = await _votingSessionQueryRepository.Get(x => x.Concluded == null, currentUser.Tenant, cancellationToken);
-        return currentVotingResults.AsMaybe();
-    }
+    public Task<Maybe<MovieVotingStandingsListDTO>> GetMovieVotingStandingsList(Maybe<TenantId> input, CancellationToken cancelToken) =>
+        input.AcceptAsync(GetMovieVotingStandingsList, _log, cancelToken);
 
-    public Task<Maybe<MovieVotingStandingsListDTO>> GetMovieVotingStandingsList(Maybe<TenantId> input, CancellationToken cancellationToken) =>
-        input.AcceptAsync(GetMovieVotingStandingsList, _log, cancellationToken);
+    public Task<Maybe<WinnerMetadata[]>> GetWinnersMetadataAsync(Maybe<(VotingMetadata[], TenantId)> input, CancellationToken cancelToken) =>
+        input.AcceptAsync(GetWinnersMetadataAsync, _log, cancelToken);
 
-    public Task<Maybe<WinnerMetadata[]>> GetWinnersMetadataAsync(Maybe<(VotingMetadata[], TenantId)> input, CancellationToken cancellationToken) =>
-        input.AcceptAsync(GetWinnersMetadataAsync, _log, cancellationToken);
-
-    public async Task<Maybe<WinnerMetadata[]>> GetWinnersMetadataAsync((VotingMetadata[], TenantId) input, CancellationToken cancellationToken)
+    public async Task<Maybe<WinnerMetadata[]>> GetWinnersMetadataAsync((VotingMetadata[], TenantId) input, CancellationToken cancelToken)
     {
         var winnersIds = input.Item1.Select(x => x.Winner.Id).ToHashSet();
         var cacheKey = $"{CacheKeyPrefix}-{winnersIds.GetHashCode()}";
         if (!_memoryCache.TryGetValue(cacheKey, out var cached))
         {
-            var results = await _votingSessionQueryRepository.Get(
-                x => true,
-                x => x, input.Item2,
-                cancellationToken);
-            var toCache = results
-                .SelectMany(x => x.MoviesAdded.Where(y => winnersIds.Contains(y.Movie.id)))
-                .GroupBy(x => x.Movie.id)
-                .ToDictionary(x => x.Key, x => x.MaxBy(y => y.NominationConcluded)!.NominatedBy.Name);
+            var results = await _votingSessionQueryRepository.GetAllVotingResultsMetadataAsync(cancelToken);
+
+            if (results.Error.HasValue)
+                return new Error<WinnerMetadata[]>("Error during fetching voting results from db.", ErrorType.Unknown);
+
+            var toCache = results.Result
+                .ToDictionary(x => x.WinnerMovieId.Id, x => x.WinnerNominatedBy.Name);
 
             _memoryCache.Set(cacheKey, toCache);
             cached = toCache;
         }
 
         if (cached is not Dictionary<string, string> typedValue)
-            return new Error("Invalid cache object!", ErrorType.InvalidState).AsMaybe<WinnerMetadata[]>();
+            return new Error<WinnerMetadata[]>("Invalid cache object!", ErrorType.InvalidState);
 
         var result = input.Item1.Join(typedValue, x => x.Winner.Id, x => x.Key, (x, y) =>
                 new WinnerMetadata(x.Winner.Id, x.Winner.Name, x.Winner.OriginalTitle, x.Winner.CreationYear, y.Value, x.Concluded))
@@ -77,9 +67,9 @@ internal sealed class VotingSessionService : IVotingSessionService
         return result.AsMaybe();
     }
 
-    public async Task<Maybe<VotingSessionId?>> GetCurrentVotingSessionId(DomainUser currentUser, CancellationToken cancellationToken)
+    public async Task<Maybe<VotingSessionId?>> GetCurrentVotingSessionId(DomainUser currentUser, CancellationToken cancelToken)
     {
-        var votingSession = await GetCurrentVotingSession(currentUser, cancellationToken);
+        var votingSession = await _votingSessionQueryRepository.GetUnconcludedResultAsync(cancelToken);
 
         if (votingSession.Result == null)
             return default(VotingSessionId?).AsMaybe(); // no current voting = voting has not been started yet.
@@ -90,16 +80,19 @@ internal sealed class VotingSessionService : IVotingSessionService
     private static Maybe<VotingSessionId> GetRequiredCurrentVotingSessionId(VotingSessionId? input)
     {
         if (!input.HasValue)
-            return new Maybe<VotingSessionId>(default, new Error("Voting has not started yet!", ErrorType.IncomingDataIssue));
+            return new Error<VotingSessionId>("Voting has not started yet!", ErrorType.IncomingDataIssue);
 
         return input.Value.AsMaybe();
     }
 
-    private async Task<Maybe<MovieVotingStandingsListDTO>> GetMovieVotingStandingsList(TenantId input, CancellationToken cancellationToken)
+    private async Task<Maybe<MovieVotingStandingsListDTO>> GetMovieVotingStandingsList(TenantId input, CancellationToken cancelToken)
     {
-        var votingSessions = (await _votingSessionQueryRepository.Get(x => x.Concluded != null, x => x, input, cancellationToken))
-            .Reverse()
-            .Take(10)
+        var maybeVotingSession = await _votingSessionQueryRepository.GetLastNVotingResultsAsync(10, cancelToken);
+
+        if (maybeVotingSession.Error.HasValue)
+            return maybeVotingSession.Error.Value.ChangeResultType<IEnumerable<IReadOnlyVotingResult>, MovieVotingStandingsListDTO>();
+
+        var votingSessions = maybeVotingSession.Result!
             .Select(x => new VotingSessionData(x, GetPlaces(x).ToArray()))
             .ToArray();
 

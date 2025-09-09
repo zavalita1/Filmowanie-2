@@ -1,14 +1,12 @@
 ﻿using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using System.Linq.Expressions;
-using Filmowanie.Abstractions;
 
 namespace Filmowanie.Database.Interfaces;
 
-public interface IVotingSessionQueryRepository
+internal interface IVotingSessionQueryRepository
 {
-    public Task<IReadOnlyVotingResult?> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, TenantId tenant, CancellationToken cancellationToken);
-    public Task<IEnumerable<IReadOnlyVotingResult>> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, TenantId tenant, Expression<Func<IReadOnlyVotingResult, object>> sortBy, int take,
-        CancellationToken cancellationToken);
-    public Task<IEnumerable<T>> Get<T>(Expression<Func<IReadOnlyVotingResult, bool>> predicate, Expression<Func<IReadOnlyVotingResult, T>> selector, TenantId tenant,
-        CancellationToken cancellationToken) where T : class;
+    Task<IReadOnlyVotingResult?> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate, CancellationToken cancelToken);
+    Task<IEnumerable<IReadOnlyVotingResult>> GetAll(Expression<Func<IReadOnlyVotingResult, bool>> query, CancellationToken cancelToken);
+    Task<IEnumerable<IReadOnlyVotingResult>> GetVotingResultAsync(Expression<Func<IReadOnlyVotingResult, bool>> predicate, Expression<Func<IReadOnlyVotingResult, object>> sortBy, int take,
+        CancellationToken cancelToken);
 }

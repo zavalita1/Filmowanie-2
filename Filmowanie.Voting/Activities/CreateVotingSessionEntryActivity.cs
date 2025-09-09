@@ -11,10 +11,10 @@ namespace Filmowanie.Voting.Activities;
 public class CreateVotingSessionEntryActivity : IStateMachineActivity<VotingStateInstance, StartVotingEvent>
 {
     private readonly ILogger<VotingStateMachine> _logger;
-    private readonly IVotingSessionCommandRepository _votingSessionCommandRepository;
+    private readonly IVotingResultsCommandRepository _votingSessionCommandRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public CreateVotingSessionEntryActivity(ILogger<VotingStateMachine> logger, IVotingSessionCommandRepository votingSessionCommandRepository, IDateTimeProvider dateTimeProvider)
+    public CreateVotingSessionEntryActivity(ILogger<VotingStateMachine> logger, IVotingResultsCommandRepository votingSessionCommandRepository, IDateTimeProvider dateTimeProvider)
     {
         _logger = logger;
         _votingSessionCommandRepository = votingSessionCommandRepository;

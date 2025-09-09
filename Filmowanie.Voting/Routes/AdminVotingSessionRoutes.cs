@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Voting.Helpers;
 using Filmowanie.Voting.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -10,19 +10,19 @@ namespace Filmowanie.Voting.Routes;
 internal sealed class AdminVotingSessionRoutes : IAdminVotingSessionRoutes
 {
     private readonly IVotingStateManager _votingStateManager;
-    private readonly IDomainUserAccessor _domainUserAccessor;
+    private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly ICurrentVotingSessionIdAccessor _votingSessionIdAccessor;
 
-    public AdminVotingSessionRoutes(IVotingStateManager votingStateManager, IDomainUserAccessor domainUserAccessor, ICurrentVotingSessionIdAccessor votingSessionIdAccessor)
+    public AdminVotingSessionRoutes(IVotingStateManager votingStateManager, ICurrentUserAccessor currentUserAccessor, ICurrentVotingSessionIdAccessor votingSessionIdAccessor)
     {
         _votingStateManager = votingStateManager;
-        _domainUserAccessor = domainUserAccessor;
+        _currentUserAccessor = currentUserAccessor;
         _votingSessionIdAccessor = votingSessionIdAccessor;
     }
 
     public async Task<IResult> NewVoting(CancellationToken cancel)
     {
-        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(VoidResult.Void);
+        var maybeCurrentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void);
         var result = await _votingStateManager.StartNewVotingAsync(maybeCurrentUser, cancel);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
@@ -30,7 +30,7 @@ internal sealed class AdminVotingSessionRoutes : IAdminVotingSessionRoutes
 
     public async Task<IResult> ConcludeVoting(CancellationToken cancel)
     {
-        var maybeCurrentUser = _domainUserAccessor.GetDomainUser(VoidResult.Void);
+        var maybeCurrentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void);
         var maybeNullableVotingSessionId = await _votingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
         var maybeVotingSessionId = _votingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableVotingSessionId);
         var merged = maybeVotingSessionId.Merge(maybeCurrentUser);

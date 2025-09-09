@@ -3,7 +3,6 @@ using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Abstractions.OperationResult;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -11,6 +10,7 @@ using Filmowanie.Notification.DTOs.Incoming;
 using Filmowanie.Notification.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using Filmowanie.Abstractions.Maybe;
 using Microsoft.Extensions.Options;
 using WebPush;
 
@@ -38,7 +38,7 @@ internal sealed class PushNotificationService : IPushNotificationService
     public Task<Maybe<VoidResult>> SavePushNotification(Maybe<(PushSubscriptionDTO, DomainUser)> input, CancellationToken cancelToken) =>
         input.AcceptAsync(SavePushNotification, _log, cancelToken);
 
-    public Task<Maybe<object>> SendAllPushNotificationsAsync(Maybe<(TenantId, string Message)> input, CancellationToken cancelToken) => input.AcceptAsync(SendAllPushNotificationsAsync, _log, cancelToken);
+    public Task<Maybe<VoidResult>> SendAllPushNotificationsAsync(Maybe<(TenantId, string Message)> input, CancellationToken cancelToken) => input.AcceptAsync(SendAllPushNotificationsAsync, _log, cancelToken);
 
     private async Task<Maybe<VoidResult>> SavePushNotification((PushSubscriptionDTO, DomainUser) input, CancellationToken cancelToken)
     {
@@ -52,10 +52,10 @@ internal sealed class PushNotificationService : IPushNotificationService
         return VoidResult.Void;
     }
 
-    public async Task<Maybe<object>> SendAllPushNotificationsAsync((TenantId, string Message) input, CancellationToken cancelToken)
+    public async Task<Maybe<VoidResult>> SendAllPushNotificationsAsync((TenantId, string Message) input, CancellationToken cancelToken)
     {
         var pushSubscriptions = await _pushSubscriptionQueryRepository.GetAsync(input.Item1, cancelToken);
-        var errors = new ConcurrentStack<Error>();
+        var errors = new ConcurrentStack<Maybe<VoidResult>>();
 
         await Parallel.ForEachAsync(pushSubscriptions, cancelToken, async (pushNotificationSubscription, ct) =>
         {
@@ -72,12 +72,13 @@ internal sealed class PushNotificationService : IPushNotificationService
                 {
                     var message = $"Error when trying to push notification to: {pushNotificationSubscription.User.Name}.";
                     _log.LogError(ex, message);
-                    errors.Push(new Error(message, ErrorType.Network));
+                    errors.Push(new Error<VoidResult>(message, ErrorType.Network));
                 }
             }
         });
 
-        return new Maybe<object>(errors);
+        var result = errors.Aggregate(VoidResult.Void, (curr, agg) => agg.Merge(curr));
+        return result;
     }
 
 

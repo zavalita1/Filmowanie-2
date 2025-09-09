@@ -1,5 +1,5 @@
 ﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.DTOs.Outgoing;
 
 namespace Filmowanie.Account.Interfaces;

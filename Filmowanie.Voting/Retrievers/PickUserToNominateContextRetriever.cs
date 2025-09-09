@@ -1,6 +1,4 @@
-﻿using Filmowanie.Database.Entities;
-using Filmowanie.Database.Entities.Voting;
-using Filmowanie.Database.Entities.Voting.Events;
+﻿using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.Helpers;
 using Filmowanie.Voting.Interfaces;
@@ -9,7 +7,7 @@ namespace Filmowanie.Voting.Retrievers;
 
 internal sealed class PickUserToNominateContextRetriever : IPickUserToNominateContextRetriever
 {
-    public Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> GetPickUserToNominateContexts(IReadOnlyVotingResult[] lastVotingResults, EmbeddedMovieWithNominationContext[] moviesAdded, VotingConcludedEvent message)
+    public Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> GetPickUserToNominateContexts(IReadOnlyVotingResult[] lastVotingResults, IReadOnlyEmbeddedMovieWithNominationContext[] moviesAdded, VotingConcludedEvent message)
     {
         var groups = lastVotingResults
             .SelectMany(x => x.MoviesAdded)

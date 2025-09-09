@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Voting.DTOs.Incoming;
 using Filmowanie.Voting.DTOs.Outgoing;
 using Filmowanie.Voting.Helpers;
@@ -9,25 +9,25 @@ using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Voting.Routes;
 
-internal sealed class VotingSessionRoutes : IVotingSessionRoutes
+internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
 {
-    private readonly IDomainUserAccessor _userAccessor;
+    private readonly ICurrentUserAccessor _userAccessor;
     private readonly ICurrentVotingSessionIdAccessor _currentVotingSessionIdAccessor;
-    private readonly IMovieVotingSessionService _movieVotingSessionService;
+    private readonly ICurrentVotingService _currentVotingService;
     private readonly IVotingSessionMapper _movieVotingSessionMapper;
 
     private readonly IMoviesForVotingSessionEnricher _moviesForVotingSessionEnricher;
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
     private readonly IVoteService _voteService;
 
-    public VotingSessionRoutes(IMoviesForVotingSessionEnricher moviesForVotingSessionEnricher, IFluentValidatorAdapterProvider validatorAdapterProvider, IVoteService voteService,IDomainUserAccessor userAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, IMovieVotingSessionService movieVotingSessionService, IVotingSessionMapper movieVotingSessionMapper)
+    public CurrentVotingRoutes(IMoviesForVotingSessionEnricher moviesForVotingSessionEnricher, IFluentValidatorAdapterProvider validatorAdapterProvider, IVoteService voteService,ICurrentUserAccessor userAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, ICurrentVotingService currentVotingService, IVotingSessionMapper movieVotingSessionMapper)
     {
         _moviesForVotingSessionEnricher = moviesForVotingSessionEnricher;
         _validatorAdapterProvider = validatorAdapterProvider;
         _voteService = voteService;
         _userAccessor = userAccessor;
         _currentVotingSessionIdAccessor = currentVotingSessionIdAccessor;
-        _movieVotingSessionService = movieVotingSessionService;
+        _currentVotingService = currentVotingService;
         _movieVotingSessionMapper = movieVotingSessionMapper;
     }
 
@@ -36,9 +36,11 @@ internal sealed class VotingSessionRoutes : IVotingSessionRoutes
         var maybeCurrentUser = _userAccessor.GetDomainUser(VoidResult.Void);
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
-        var merged = maybeCurrentVotingId.Merge(maybeCurrentUser);
-        var maybeCurrentlyVotedMovies = await _movieVotingSessionService.GetCurrentlyVotedMoviesAsync(merged, cancel);
-        var merged2 = maybeCurrentlyVotedMovies.Merge(maybeCurrentVotingId);
+        var maybeCurrentlyVotedMovies = await _currentVotingService.GetCurrentlyVotedMoviesAsync(maybeCurrentVotingId, cancel);
+        var maybeCurrentlyVotedMoviesWithVotes = await _currentVotingService.GetCurrentlyVotedMoviesWithVotesAsync(maybeCurrentVotingId, cancel);
+        var merged = maybeCurrentlyVotedMovies.Merge(maybeCurrentlyVotedMoviesWithVotes).Merge(maybeCurrentUser).Flatten();
+        var maybeDto = _movieVotingSessionMapper.Map(merged);
+        var merged2 = maybeDto.Merge(maybeCurrentVotingId);
         var result = await _moviesForVotingSessionEnricher.EnrichWithPlaceholdersAsync(merged2, cancel);
      
         return RoutesResultHelper.UnwrapOperationResult(result);
@@ -48,7 +50,7 @@ internal sealed class VotingSessionRoutes : IVotingSessionRoutes
     {
         var validator = _validatorAdapterProvider.GetAdapter<VoteDTO>();
         var maybeDto = validator.Validate(dto);
-        var maybeCurrentUser = _userAccessor.GetDomainUser(maybeDto.AsVoid());
+        var maybeCurrentUser = _userAccessor.GetDomainUser(maybeDto);
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var merged = maybeCurrentUser.Merge(maybeCurrentVotingId).Merge(maybeDto).Flatten();
@@ -62,7 +64,10 @@ internal sealed class VotingSessionRoutes : IVotingSessionRoutes
     {
         var maybeCurrentUser = _userAccessor.GetDomainUser(VoidResult.Void);
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
-        var result = _movieVotingSessionMapper.Map(maybeNullableCurrentVotingId);
+        var result = _movieVotingSessionMapper
+            .Map(maybeNullableCurrentVotingId)
+            .Merge(maybeNullableCurrentVotingId)
+            .Map(x => new VotingSessionStatusDto(x.Item1.ToString(), x.Item2?.CorrelationId.ToString()));
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }

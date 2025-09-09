@@ -6,7 +6,7 @@ namespace Filmowanie.Database.Interfaces;
 
 public interface IUsersCommandRepository
 {
-    public Task<IReadOnlyUserEntity> UpdatePasswordAndMail(string id, BasicAuth newData, CancellationToken cancellationToken);
+    public Task<IReadOnlyUserEntity> UpdatePasswordAndMail(string id, BasicAuth newData, CancellationToken cancelToken);
 
     public Task Insert(IReadOnlyUserEntity entity, CancellationToken cancellation);
 }

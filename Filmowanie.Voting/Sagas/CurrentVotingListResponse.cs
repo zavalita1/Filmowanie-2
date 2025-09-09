@@ -4,5 +4,5 @@ namespace Filmowanie.Voting.Sagas;
 
 public class CurrentVotingListResponse
 {
-    public IReadOnlyEmbeddedMovieWithVotes[] Movies { get; set; }
+    public IReadOnlyEmbeddedMovieWithVotes[]? Movies { get; set; }
 }

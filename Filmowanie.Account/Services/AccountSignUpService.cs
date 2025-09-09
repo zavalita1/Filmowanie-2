@@ -1,7 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Results;
 using Filmowanie.Database.Interfaces;
@@ -42,7 +42,7 @@ internal sealed class AccountSignUpService : ISignUpService
         catch (Exception ex)
         {
             _log.LogError(ex, "Error in trying to sign up");
-            return new Error("No user with such id in db", ErrorType.InvalidState).AsMaybe<LoginResultData>();
+            return new Error<LoginResultData>("No user with such id in db", ErrorType.InvalidState);
         }
     }
 }

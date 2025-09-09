@@ -1,7 +1,4 @@
 ﻿using Filmowanie.Abstractions.Enums;
-using Filmowanie.Database.Entities;
-using Filmowanie.Database.Entities.Voting;
-using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.Interfaces;
 
@@ -30,10 +27,12 @@ public sealed class TrashVotingDecider : IVotingDecider
                 yield break;
 
             previousPair = (movie.CurrentVotes, movie.PreviousVotes);
-            var result = new EmbeddedMovieWithVotes { Movie = movie.MovieContainer.Movie.AsMutable(), VotingScore = movie.CurrentVotes};
+            var result = new ReadOnlyEmbeddedMovieWithVotes(movie.MovieContainer.Movie, [], movie.CurrentVotes);
             yield return (result, true);
         }
     }
 
     private static int GetTrashVotesCount(IEnumerable<IReadOnlyVote> votes) => votes.Count(x => x.VoteType == VoteType.Thrash);
+    
+    private readonly record struct ReadOnlyEmbeddedMovieWithVotes(IReadOnlyEmbeddedMovie Movie, IEnumerable<IReadOnlyVote> Votes, int VotingScore) : IReadOnlyEmbeddedMovieWithVotes;
 }

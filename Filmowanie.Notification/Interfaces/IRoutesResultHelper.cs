@@ -1,4 +1,4 @@
-﻿using Filmowanie.Abstractions.OperationResult;
+﻿using Filmowanie.Abstractions.Maybe;
 using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Notification.Interfaces;

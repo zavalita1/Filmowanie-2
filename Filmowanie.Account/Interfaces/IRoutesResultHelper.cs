@@ -1,9 +1,9 @@
-﻿using Filmowanie.Abstractions.OperationResult;
+﻿using Filmowanie.Abstractions.Maybe;
 using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Account.Interfaces;
 
 internal interface IRoutesResultHelper
 {
-    IResult UnwrapOperationResult<T>(Maybe<T> result, IResult? onSuccess = null, Func<Error, IResult?>? overrideDefault = null);
+    IResult UnwrapOperationResult<T>(Maybe<T> result, IResult? onSuccess = null, Func<Error<T>, IResult?>? overrideDefault = null);
 }

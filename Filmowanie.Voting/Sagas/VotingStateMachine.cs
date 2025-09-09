@@ -30,8 +30,13 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
         Event(() => InitNominationsEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => AddMovieEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => RemoveMovieEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => AddVoteEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => RemoveVoteEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => ConcludeVoting, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => GetMovieListEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => GetNominationsEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => ResultsCalculatedEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => Error, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
 
         Initially(
             When(StartVotingEvent)
@@ -166,7 +171,6 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
     public Event<NominationsRequestedEvent> GetNominationsEvent { get; private set; } = null!;
     public Event<ResultsCalculatedEvent> ResultsCalculatedEvent { get; private set; } = null!;
     public Event<ErrorEvent> Error { get; private set; } = null!;
-
 
     // States
     public State WaitingForNominations { get; private set; } = null!;

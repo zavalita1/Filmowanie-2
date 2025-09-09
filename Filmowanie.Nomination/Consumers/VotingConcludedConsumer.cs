@@ -1,6 +1,6 @@
-﻿using Filmowanie.Abstractions.Interfaces;
+﻿using Filmowanie.Abstractions.Extensions;
+using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
-using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -12,16 +12,16 @@ namespace Filmowanie.Nomination.Consumers;
 public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, IConsumer<Fault<VotingConcludedEvent>>
 {
     private readonly ILogger<VotingConcludedConsumer> _logger;
-    private readonly IVotingSessionQueryRepository _votesRepository;
+    private readonly IVotingResultsRepository _repository;
     private readonly IMovieCommandRepository _movieCommandRepository;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
     private const int TimeWindow = 10;
 
-    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingSessionQueryRepository votesRepository, IMovieCommandRepository movieCommandRepository, IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider)
+    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingResultsRepository repository, IMovieCommandRepository movieCommandRepository, IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider)
     {
         _logger = logger;
-        _votesRepository = votesRepository;
+        _repository = repository;
         _movieCommandRepository = movieCommandRepository;
         _guidProvider = guidProvider;
         _dateTimeProvider = dateTimeProvider;
@@ -39,15 +39,21 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         _logger.LogInformation($"Consuming {nameof(VotingConcludedEvent)}...");
         
         var message = context.Message;
-        var readOnlyVotingResults = await _votesRepository.Get(x => x.Concluded != null, message.Tenant, x => x.Concluded!, -1 * TimeWindow, context.CancellationToken);
-        var votingResultOfInterest = readOnlyVotingResults.Last();
+        var readOnlyVotingResults = await _repository.GetLastNVotingResultsAsync(TimeWindow, context.CancellationToken);
+        var lastVotingResult = readOnlyVotingResults.RequireResult().Last();
 
-        var newMoviesToAdd = votingResultOfInterest.MoviesGoingByeBye.Select(x => GetReadOnlyCanNominateMovieAgainEvent(x, message));
+        var newMoviesToAdd = lastVotingResult.MoviesGoingByeBye.Select(x => GetReadOnlyCanNominateMovieAgainEvent(x, message));
         await _movieCommandRepository.InsertCanBeNominatedAgainAsync(newMoviesToAdd, context.CancellationToken);
 
         _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
     }
 
-    private IReadOnlyCanNominateMovieAgainEvent GetReadOnlyCanNominateMovieAgainEvent(IReadOnlyEmbeddedMovie x, VotingConcludedEvent message) 
-        => new CanNominateMovieAgainEventRecord(x, $"nominate-again-event-{_guidProvider.NewGuid()}", _dateTimeProvider.Now, message.Tenant.Id);
+    private IReadOnlyCanNominateMovieAgainEvent GetReadOnlyCanNominateMovieAgainEvent(IReadOnlyEmbeddedMovie x, VotingConcludedEvent message)
+    {
+        var tenantId = message.Tenant.Id;
+        var now = _dateTimeProvider.Now;
+        var guid = _guidProvider.NewGuid();
+        var id = $"nominate-again-event-{guid}";
+        return new CanNominateMovieAgainEventRecord(x, id, now, tenantId);
+    }
 }

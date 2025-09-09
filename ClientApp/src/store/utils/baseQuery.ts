@@ -13,6 +13,6 @@ export const baseQuery = (baseQueryArgs: FetchBaseQueryArgs = {}) => async (
   return fetchBaseQuery({
     ...baseQueryArgs,
     baseUrl,
-    timeout: 1000 * 10
+    timeout: state.defaultApiTimeout,
   })(fetchArgs, api, extraOptions);
 };

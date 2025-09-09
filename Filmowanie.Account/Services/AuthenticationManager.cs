@@ -4,7 +4,7 @@ using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Results;
@@ -39,8 +39,8 @@ internal sealed class AuthenticationManager : IAuthenticationManager
                 ? (string[])[Messages.CookieExpired, Messages.UserNotLoggerIn]
                 : [Messages.UserNotLoggerIn];
 
-            return new Error(errors, ErrorType.AuthenticationIssue).AsMaybe<DomainUser>();
-        }
+            return new Error<DomainUser>(errors, ErrorType.AuthenticationIssue);
+        }   
 
         var id = user.Claims.Single(x => x.Type == ClaimsTypes.UserId).Value;
         var username = user.Claims.Single(x => x.Type == ClaimsTypes.UserName).Value;

@@ -21,4 +21,8 @@
 		<InternalsVisibleTo Include="Filmowanie.Tests" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Retrievers\" />
+	</ItemGroup>
+
 </Project>

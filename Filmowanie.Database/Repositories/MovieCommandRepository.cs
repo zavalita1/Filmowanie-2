@@ -17,31 +17,31 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
         _ctx = ctx;
     }
 
-    public async Task InsertCanBeNominatedAgainAsync(IEnumerable<IReadOnlyCanNominateMovieAgainEvent> canNominateMovieAgainEvents, CancellationToken cancellationToken)
+    public async Task InsertCanBeNominatedAgainAsync(IEnumerable<IReadOnlyCanNominateMovieAgainEvent> canNominateMovieAgainEvents, CancellationToken cancelToken)
     {
         var entity = canNominateMovieAgainEvents.Select(x => new CanNominateMovieAgainEvent(x));
-        await _ctx.CanNominateMovieAgainEvents.AddRangeAsync(entity, cancellationToken);
-        await _ctx.SaveChangesAsync(cancellationToken);
+        await _ctx.CanNominateMovieAgainEvents.AddRangeAsync(entity, cancelToken);
+        await _ctx.SaveChangesAsync(cancelToken);
     }
 
-    public async Task InsertNominatedAgainAsync(IReadOnlyNominatedMovieAgainEvent nominatedAgainEvent, CancellationToken cancellationToken)
+    public async Task InsertNominatedAsync(IReadOnlyNominatedMovieEvent nominatedEvent, CancellationToken cancelToken)
     {
-        var entity = nominatedAgainEvent.AsMutable();
-        await _ctx.NominatedMovieAgainEvents.AddAsync(entity, cancellationToken);
-        await _ctx.SaveChangesAsync(cancellationToken);
+        var entity = nominatedEvent.AsMutable();
+        await _ctx.NominatedMovieAgainEvents.AddAsync(entity, cancelToken);
+        await _ctx.SaveChangesAsync(cancelToken);
     }
 
-    public Task InsertMovieAsync(IReadOnlyMovieEntity movieEntity, CancellationToken cancellationToken)
+    public Task InsertMovieAsync(IReadOnlyMovieEntity movieEntity, CancellationToken cancelToken)
     {
         var entity = movieEntity.AsMutable();
         _ctx.Movies.Add(entity);
-        return _ctx.SaveChangesAsync(cancellationToken);
+        return _ctx.SaveChangesAsync(cancelToken);
     }
 
-    public async Task UpdateMovieAsync(string entityId, string posterUrl, CancellationToken cancellationToken)
+    public async Task UpdateMovieAsync(string entityId, string posterUrl, CancellationToken cancelToken)
     {
-        var movie = await _ctx.Movies.SingleAsync(x => x.id == entityId, cancellationToken: cancellationToken);
+        var movie = await _ctx.Movies.SingleAsync(x => x.id == entityId, cancelToken);
         movie.PosterUrl = posterUrl;
-        await _ctx.SaveChangesAsync(cancellationToken);
+        await _ctx.SaveChangesAsync(cancelToken);
     }
 }

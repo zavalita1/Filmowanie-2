@@ -8,10 +8,10 @@ namespace Filmowanie.Notification.Consumers;
 
 public sealed class StartVotingEventConsumer : IConsumer<StartVotingEvent>, IConsumer<Fault<StartVotingEvent>>
 {
-    private readonly ILogger<ConcludeVotingEventConsumer> _logger;
+    private readonly ILogger<StartVotingEventConsumer> _logger;
     private readonly IHubContext<VotingStateHub> _votingHubContext;
 
-    public StartVotingEventConsumer(ILogger<ConcludeVotingEventConsumer> logger, IHubContext<VotingStateHub> votingHubContext)
+    public StartVotingEventConsumer(ILogger<StartVotingEventConsumer> logger, IHubContext<VotingStateHub> votingHubContext)
     {
         _logger = logger;
         _votingHubContext = votingHubContext;

@@ -1,5 +1,5 @@
 ﻿using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -19,12 +19,12 @@ internal sealed class MoviePostersService : IMoviePostersService
         _filmwebHandler = filmwebHandler;
     }
 
-    public Task<Maybe<PostersDTO>> GetPosters(Maybe<string> input, CancellationToken cancellationToken) => input.AcceptAsync(GetPosters, _log, cancellationToken);
+    public Task<Maybe<PostersDTO>> GetPosters(Maybe<string> input, CancellationToken cancelToken) => input.AcceptAsync(GetPosters, _log, cancelToken);
 
-    private async Task<Maybe<PostersDTO>> GetPosters(string movieUrl, CancellationToken cancellationToken)
+    private async Task<Maybe<PostersDTO>> GetPosters(string movieUrl, CancellationToken cancelToken)
     {
         var metadata = _filmwebPathResolver.GetMetadata(movieUrl);
-        var posters = await _filmwebHandler.GetPosterUrlsAsync(metadata, cancellationToken);
+        var posters = await _filmwebHandler.GetPosterUrlsAsync(metadata, cancelToken);
         var result = new PostersDTO { PosterUrls = posters };
         return new Maybe<PostersDTO>(result, null);
     }

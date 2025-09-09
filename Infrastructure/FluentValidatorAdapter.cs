@@ -2,7 +2,7 @@
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
@@ -29,7 +29,7 @@ public sealed class FluentValidatorAdapter<TInput> : IFluentValidatorAdapter<TIn
             return new Maybe<TInput>(input, null);
 
         var errorMessages = fluentResult.Errors.Select(x => x.ErrorMessage);
-        var error = new Error(errorMessages, ErrorType.ValidationError);
+        var error = new Error<TInput>(errorMessages, ErrorType.ValidationError);
         return new Maybe<TInput>(input, error);
     }
 }

@@ -1,7 +1,6 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.Enums;
+﻿using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +9,7 @@ namespace Filmowanie.Account.Helpers;
 
 internal class RoutesResultHelper : IRoutesResultHelper
 {
-    public IResult UnwrapOperationResult<T>(Maybe<T> result, IResult? onSuccess = null, Func<Error, IResult?>? overrideDefault = null)
+    public IResult UnwrapOperationResult<T>(Maybe<T> result, IResult? onSuccess = null, Func<Error<T>, IResult?>? overrideDefault = null)
     {
         if (result.Error == null)
             return onSuccess ?? TypedResults.Ok(result.Result);

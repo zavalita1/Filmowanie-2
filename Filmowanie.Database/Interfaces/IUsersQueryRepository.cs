@@ -8,7 +8,7 @@ namespace Filmowanie.Database.Interfaces;
 
 public interface IUsersQueryRepository
 {
-    public Task<IReadOnlyUserEntity?> GetUserAsync(Expression<Func<IReadOnlyUserEntity, bool>> predicate, CancellationToken cancellationToken);
+    public Task<IReadOnlyUserEntity?> GetUserAsync(Expression<Func<IReadOnlyUserEntity, bool>> predicate, CancellationToken cancelToken);
 
-    public Task<IReadOnlyUserEntity[]> GetAllAsync(CancellationToken cancellationToken);
+    public Task<IReadOnlyUserEntity[]> GetAllAsync(CancellationToken cancelToken);
 }

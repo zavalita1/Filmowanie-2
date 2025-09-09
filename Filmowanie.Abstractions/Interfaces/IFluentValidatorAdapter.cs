@@ -1,4 +1,4 @@
-﻿using Filmowanie.Abstractions.OperationResult;
+﻿using Filmowanie.Abstractions.Maybe;
 using FluentValidation;
 
 namespace Filmowanie.Abstractions.Interfaces;

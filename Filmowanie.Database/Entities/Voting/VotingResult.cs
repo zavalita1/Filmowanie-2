@@ -10,14 +10,13 @@ public class VotingResult : Entity, IReadOnlyVotingResult
     public IEnumerable<EmbeddedMovie> MoviesGoingByeBye { get; set; } = new List<EmbeddedMovie>();
     public IEnumerable<EmbeddedMovieWithNominationContext> MoviesAdded { get; set; } = new List<EmbeddedMovieWithNominationContext>();
     public virtual DateTime? Concluded { get; set; }
-    public virtual EmbeddedMovie Winner { get; set; }
-
+    public virtual EmbeddedMovieWithNominatedBy Winner { get; set; }
 
     IReadOnlyEmbeddedMovieWithVotes[] IReadOnlyVotingResult.Movies => Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
     IReadOnlyEmbeddedUserWithNominationAward[] IReadOnlyVotingResult.UsersAwardedWithNominations => UsersAwardedWithNominations.Cast<IReadOnlyEmbeddedUserWithNominationAward>().ToArray();
     IReadOnlyEmbeddedMovie[] IReadOnlyVotingResult.MoviesGoingByeBye => MoviesGoingByeBye.Cast<IReadOnlyEmbeddedMovie>().ToArray();
     IReadOnlyEmbeddedMovieWithNominationContext[] IReadOnlyVotingResult.MoviesAdded => MoviesAdded.Cast<IReadOnlyEmbeddedMovieWithNominationContext>().ToArray();
-    IReadOnlyEmbeddedMovie IReadOnlyVotingResult.Winner => Winner;
+    IReadOnlyEmbeddedMovieWithNominatedBy IReadOnlyVotingResult.Winner => Winner;
 
     public VotingResult()
     { }
@@ -29,7 +28,7 @@ public class VotingResult : Entity, IReadOnlyVotingResult
         MoviesGoingByeBye = other.MoviesGoingByeBye.Select(x => x.AsMutable());
         MoviesAdded = other.MoviesAdded.Select(x => x.AsMutable());
         Concluded = other.Concluded;
-        Winner = other.Winner.AsMutable();
+        Winner = other.Winner?.AsMutable();
         Created = other.Created;
         TenantId = other.TenantId;
         id = other.id;

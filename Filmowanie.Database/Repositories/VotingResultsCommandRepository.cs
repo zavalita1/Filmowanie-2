@@ -1,0 +1,47 @@
+﻿using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Maybe;
+using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Database.Extensions;
+using Filmowanie.Database.Interfaces;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+using Microsoft.Extensions.Logging;
+
+namespace Filmowanie.Database.Repositories;
+
+internal sealed class VotingResultsCommandRepository : IVotingResultsCommandRepository
+{
+    private readonly IVotingSessionCommandRepository _repository;
+    private readonly ILogger<VotingResultsCommandRepository> _logger;
+
+    public VotingResultsCommandRepository(IVotingSessionCommandRepository repository, ILogger<VotingResultsCommandRepository> logger)
+    {
+        _repository = repository;
+        _logger = logger;
+    }
+
+    public async Task<Maybe<VoidResult>> UpdateAsync(string id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards, DateTime concluded,
+        IEnumerable<IReadOnlyEmbeddedMovieWithNominationContext> moviesAdded, IReadOnlyEmbeddedMovieWithNominatedBy winner, CancellationToken cancelToken)
+    {
+        var updateFunc = (VotingResult votingResultEntity) =>
+        {
+            votingResultEntity.Movies = movies.Select(IReadOnlyEntitiesExtensions.AsMutable).ToArray();
+            votingResultEntity.Concluded = concluded;
+            votingResultEntity.UsersAwardedWithNominations = usersAwards.Select(IReadOnlyEntitiesExtensions.AsMutable).ToArray();
+            votingResultEntity.MoviesAdded = moviesAdded.Select(IReadOnlyEntitiesExtensions.AsMutable).ToArray();
+            votingResultEntity.Winner = winner.AsMutable();
+        };
+
+        try
+        {
+            await _repository.UpdateAsync(id, updateFunc, cancelToken);
+            return VoidResult.Void;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error when updating voting result entity!");
+            return new Error<VoidResult>(e.Message, ErrorType.Unknown);
+        }
+    }
+
+    public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancelToken) => _repository.InsertAsync(votingResult, cancelToken);
+}

@@ -1,5 +1,5 @@
 ﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.DTOs.Outgoing;
 using Filmowanie.Account.Results;
 
@@ -12,7 +12,7 @@ internal interface IAccountUserService
 
     Task<Maybe<IEnumerable<DomainUser>>> GetAllUsers(Maybe<VoidResult> maybe, CancellationToken cancelToken);
 
-    Task<Maybe<DetailedUserDTO>> GetByIdAsync(Maybe<string> maybeId, CancellationToken cancellationToken);
+    Task<Maybe<DetailedUserDTO>> GetByIdAsync(Maybe<string> maybeId, CancellationToken cancelToken);
 
-    Task<Maybe<VoidResult>> AddUserAsync(Maybe<DomainUser> input, CancellationToken cancellationToken);
+    Task<Maybe<VoidResult>> AddUserAsync(Maybe<DomainUser> input, CancellationToken cancelToken);
 }

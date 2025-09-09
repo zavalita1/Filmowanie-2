@@ -1,14 +1,11 @@
-﻿using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+﻿using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Interfaces;
 
-public interface IVotingSessionCommandRepository
+internal interface IVotingSessionCommandRepository
 {
-    public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancellationToken);
+    public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancelToken);
 
-    public Task UpdateAsync(string id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards,
-        DateTime concluded,
-        IEnumerable<IReadOnlyEmbeddedMovieWithNominationContext> moviesAdded,
-        IReadOnlyEmbeddedMovie winner,
-        CancellationToken cancellationToken);
+    Task UpdateAsync(string id, Action<VotingResult> updateAction, CancellationToken cancelToken);
 }

@@ -1,6 +1,4 @@
-﻿using Filmowanie.Database.Entities;
-using Filmowanie.Database.Entities.Voting;
-
+﻿
 namespace Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 public interface IReadOnlyEmbeddedUser
@@ -18,11 +16,14 @@ public interface IReadOnlyEmbeddedMovie
     public int MovieCreationYear { get; }
 }
 
-public interface IReadOnlyEmbeddedMovieWithNominationContext
+public interface IReadOnlyEmbeddedMovieWithNominatedBy
 {
     public IReadOnlyEmbeddedMovie Movie { get; }
     public IReadOnlyEmbeddedUser NominatedBy { get; }
+}
 
+public interface IReadOnlyEmbeddedMovieWithNominationContext : IReadOnlyEmbeddedMovieWithNominatedBy
+{
     public DateTime NominationConcluded { get; }
     public DateTime NominationStarted { get; }
 }
