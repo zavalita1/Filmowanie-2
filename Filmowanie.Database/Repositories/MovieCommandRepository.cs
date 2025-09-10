@@ -44,4 +44,12 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
         movie.PosterUrl = posterUrl;
         await _ctx.SaveChangesAsync(cancelToken);
     }
+
+    public async Task<IReadOnlyMovieEntity> MarkMovieAsRejectedAsync(string entityId, CancellationToken cancelToken)
+    {
+        var movie = await _ctx.Movies.AsNoTracking().SingleAsync(x => x.id == entityId, cancelToken);
+        movie.IsRejected = true;
+        await _ctx.SaveChangesAsync(cancelToken);
+        return movie;
+    }
 }

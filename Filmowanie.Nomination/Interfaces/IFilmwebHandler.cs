@@ -1,10 +1,11 @@
 ﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Filmowanie.Nomination.Handlers;
+using Filmowanie.Nomination.DTOs.Incoming;
 
 namespace Filmowanie.Nomination.Interfaces;
 
 internal interface IFilmwebHandler
 {
-    Task<IReadOnlyMovieEntity> GetMovie(FilmwebUriMetadata metadata, TenantId tenant, string? posterUrl, CancellationToken cancel);
+    Task<Maybe<IReadOnlyMovieEntity>> GetMovieAsync(Maybe<(NominationDTO NominationDto, DomainUser CurrentUser)> input, CancellationToken cancel);
 }

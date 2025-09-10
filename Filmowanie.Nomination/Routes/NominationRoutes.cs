@@ -2,6 +2,7 @@
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.DTOs.Incoming;
 using Filmowanie.Nomination.Interfaces;
@@ -17,11 +18,12 @@ internal sealed class NominationRoutes : INominationRoutes
     private readonly INominationsService _nominationsService;
     private readonly INominationsMapper _nominationsMapper;
     private readonly IMoviePostersService _moviePostersService;
+    private readonly IFilmwebHandler _filmwebHandler;
 
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
     private readonly IRoutesResultHelper _routesResultHelper;
 
-    public NominationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IMoviePostersService moviePostersService, IRoutesResultHelper routesResultHelper, ICurrentUserAccessor currentUserAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, INominationsService nominationsService, INominationsMapper nominationsMapper)
+    public NominationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IMoviePostersService moviePostersService, IRoutesResultHelper routesResultHelper, ICurrentUserAccessor currentUserAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, INominationsService nominationsService, INominationsMapper nominationsMapper, IFilmwebHandler filmwebHandler)
     {
         _validatorAdapterProvider = validatorAdapterProvider;
         _moviePostersService = moviePostersService;
@@ -30,6 +32,7 @@ internal sealed class NominationRoutes : INominationRoutes
         _currentVotingSessionIdAccessor = currentVotingSessionIdAccessor;
         _nominationsService = nominationsService;
         _nominationsMapper = nominationsMapper;
+        _filmwebHandler = filmwebHandler;
     }
 
     public async Task<IResult> GetNominationsAsync(CancellationToken cancelToken)
@@ -66,7 +69,7 @@ internal sealed class NominationRoutes : INominationRoutes
         return _routesResultHelper.UnwrapOperationResult(result);
     }
 
-    public async Task<IResult> DeleteMovieAsync(string movieId, CancellationToken cancelToken)
+    public async Task<IResult> ResetNominationAsync(string movieId, CancellationToken cancelToken)
     {
         var validator = _validatorAdapterProvider.GetAdapter<string>(KeyedServices.MovieId);
         var maybeMovieId = validator.Validate(movieId);
@@ -75,7 +78,7 @@ internal sealed class NominationRoutes : INominationRoutes
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
 
         var merged = maybeMovieId.Merge(maybeCurrentUser).Merge(maybeCurrentVotingId).Flatten();
-        var result = await _nominationsService.RemoveMovieAsync(merged, cancelToken);
+        var result = await _nominationsService.ResetNominationAsync(merged, cancelToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }
@@ -83,14 +86,20 @@ internal sealed class NominationRoutes : INominationRoutes
     public async Task<IResult> NominateAsync(NominationDTO dto, CancellationToken cancelToken)
     {
         var validator = _validatorAdapterProvider.GetAdapter<(NominationDTO, DomainUser, CurrentNominationsData)>();
+        var movieValidator = _validatorAdapterProvider.GetAdapter<(IReadOnlyMovieEntity, DomainUser, CurrentNominationsData)>();
         var maybeCurrentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void);
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancelToken);
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancelToken);
 
-        var toValidate = dto.AsMaybe().Merge(maybeCurrentUser).Merge(maybeNominations).Flatten();
-        var maybeValidationResult = validator.Validate(toValidate);
-        var result = await _nominationsService.NominateAsync(maybeValidationResult, cancelToken);
+        var maybeDto = dto.AsMaybe();
+        var toValidate = maybeDto.Merge(maybeCurrentUser, maybeNominations);
+        var maybeValidationResult = validator.Validate(toValidate).Map(x => (x.Item1, x.Item2));
+        var maybeMovie = await _filmwebHandler.GetMovieAsync(maybeValidationResult, cancelToken);
+        var movieToValidate = maybeMovie.Merge(maybeCurrentUser, maybeNominations);
+        var maybeMoviePostValidation = movieValidator.Validate(movieToValidate).Map(x => (x.Item1, x.Item2)).Merge(maybeCurrentVotingId).Flatten();
+
+        var result = await _nominationsService.NominateAsync(maybeMoviePostValidation, cancelToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }

@@ -1,6 +1,5 @@
 import { BaseQueryApi, FetchArgs, fetchBaseQuery, FetchBaseQueryArgs } from '@reduxjs/toolkit/query/react';
 import { GlobalConfigSlice } from '../slices/globalConfigSlice';
-import ky from 'ky';
 
 export const baseQuery = (baseQueryArgs: FetchBaseQueryArgs = {}) => async (
   fetchArgs : string | FetchArgs = '',

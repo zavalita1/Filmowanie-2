@@ -81,10 +81,15 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
         }
     }
 
-    function nominateMovie() {
+    async function nominateMovie() {
         const dto = { movieFilmwebUrl: url, posterUrl: chosenPosterUrl }
         setUrl("");
-        nominate(dto);
+        setShowDialog(false);
+        const nominateResult = await nominate(dto);
+        
+        if (!nominateResult.error) {
+            navigate("");
+        }
     }
 
     function renderMovieCard(movie: Movie, key: number) {

@@ -12,6 +12,8 @@ public sealed class ReadOnlyPushSubscriptionEntity : Entity, IReadOnlyPushSubscr
 
     IReadOnlyEmbeddedUser IReadOnlyPushSubscriptionEntity.User => User;
 
+    private ReadOnlyPushSubscriptionEntity() { }
+
     public ReadOnlyPushSubscriptionEntity(IReadOnlyPushSubscriptionEntity other)
     {
         P256DH = other.P256DH;

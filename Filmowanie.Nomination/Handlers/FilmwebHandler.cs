@@ -1,14 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using System.Web;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Nomination.Builders;
 using Filmowanie.Nomination.Consts;
+using Filmowanie.Nomination.DTOs.Incoming;
 using Filmowanie.Nomination.Interfaces;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Nomination.Handlers;
 
@@ -18,6 +22,8 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
     private readonly IHttpClientFactory _clientFactory;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IFilmwebPathResolver _filmwebPathResolver;
+    private ILogger<FilmwebHandler> _log;
 
     // TODO move away from regexes
     // TODO add validation against movie being in cinemas
@@ -45,16 +51,22 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
     private static string GetDataImagePattern(int movieId) => $@"data-image=""([^""]*?\/{movieId}\/.*?)""";
 
 
-    public FilmwebHandler(IHttpClientFactory clientFactory, IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider)
+    public FilmwebHandler(IHttpClientFactory clientFactory, IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider, IFilmwebPathResolver filmwebPathResolver, ILogger<FilmwebHandler> log)
     {
         _clientFactory = clientFactory;
         _guidProvider = guidProvider;
         _dateTimeProvider = dateTimeProvider;
+        _filmwebPathResolver = filmwebPathResolver;
+        _log = log;
     }
-   
 
-    public async Task<IReadOnlyMovieEntity> GetMovie(FilmwebUriMetadata metadata, TenantId tenant, string? posterUrl, CancellationToken cancel)
+    public Task<Maybe<IReadOnlyMovieEntity>> GetMovieAsync(Maybe<(NominationDTO NominationDto, DomainUser CurrentUser)> input, CancellationToken cancel) =>
+        input.AcceptAsync(GetMovieAsync, _log, cancel);
+
+
+    public async Task<Maybe<IReadOnlyMovieEntity>> GetMovieAsync((NominationDTO NominationDto, DomainUser CurrentUser) input, CancellationToken cancel)
     {
+        var metadata = _filmwebPathResolver.GetMetadata(input.NominationDto.MovieFilmwebUrl);
         var client = _clientFactory.CreateClient(HttpClientNames.Filmweb);
         var metadataRoute = $"{Urls.FilmwebApiUrl}{metadata.MovieId}/info";
         using var apiRequest = new HttpRequestMessage(HttpMethod.Get, metadataRoute);
@@ -67,8 +79,7 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
         var responses = await Task.WhenAll(tasks);
 
         if (!responses[0].IsSuccessStatusCode || !responses[1].IsSuccessStatusCode)
-            throw new ValidationException(
-                "Cannot access filmweb. Check if the link provided is correct. If it is, try again. If this issue persists, contact admin.");
+            return new Error<IReadOnlyMovieEntity>("Cannot access filmweb. Check if the link provided is correct. If it is, try again. If this issue persists, contact admin.", ErrorType.Network);
 
         var responsesContentTask = responses[0].Content.ReadAsStringAsync(cancel);
         var responsesContent2Task = responses[1].Content.ReadFromJsonAsync<FilmwebInfoDTO>(cancellationToken: cancel);
@@ -98,17 +109,17 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
         if (responseContent2.Year != default)
             movieBuilder.WithCreationYear(responseContent2.Year.ToString());
 
-        if (!string.IsNullOrEmpty(posterUrl))
+        if (!string.IsNullOrEmpty(input.NominationDto.PosterUrl))
         {
-            movieBuilder.WithPosterUrl(posterUrl);
-            movieBuilder.WithBigPosterUrl(GetPosterUrl(posterUrl, true));
+            movieBuilder.WithPosterUrl(input.NominationDto.PosterUrl);
+            movieBuilder.WithBigPosterUrl(GetPosterUrl(input.NominationDto.PosterUrl, true));
         }
         else
             ExtractDataImage(responseContent, metadata, ref movieBuilder);
 
-        movieBuilder = movieBuilder.WithTenant(tenant);
+        movieBuilder = movieBuilder.WithTenant(input.CurrentUser.Tenant);
 
-        return movieBuilder.Build(_guidProvider, _dateTimeProvider);
+        return movieBuilder.Build(_guidProvider, _dateTimeProvider).AsMaybe();
     }
 
     private static void ExtractDataImage(string responseContent, FilmwebUriMetadata metadata, ref MovieBuilder movieBuilder)

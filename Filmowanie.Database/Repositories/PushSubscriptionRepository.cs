@@ -20,4 +20,11 @@ internal sealed class PushSubscriptionCommandRepository : IPushSubscriptionComma
         await _ctx.Subscriptions.AddAsync(dbEntity, cancelToken);
         await _ctx.SaveChangesAsync(cancelToken);
     }
+
+    public async Task DeleteAsync(IEnumerable<IReadOnlyPushSubscriptionEntity> entities, CancellationToken cancelToken)
+    {
+        var dbEntities = entities.Select(x => new ReadOnlyPushSubscriptionEntity(x));
+        _ctx.Subscriptions.RemoveRange(dbEntities);
+        await _ctx.SaveChangesAsync(cancelToken);
+    }
 }

@@ -9,7 +9,6 @@ using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Database.Repositories;
-using Filmowanie.Nomination.DTOs.Incoming;
 using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
 using Filmowanie.Nomination.Models;
@@ -21,20 +20,16 @@ namespace Filmowanie.Nomination.Services;
 internal sealed class NominationsService : INominationsService
 {
     private readonly IRequestClient<NominationsRequestedEvent> _getNominationsRequestClient;
-    private readonly IFilmwebPathResolver _filmwebPathResolver;
-    private readonly IFilmwebHandler _filmwebHandler;
     private readonly IMovieCommandRepository _movieCommandRepository;
     private readonly IMovieDomainRepository _movieQueryRepository;
     private readonly IBus _bus;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly ILogger<NominationsService> _log;
 
-    public NominationsService(IRequestClient<NominationsRequestedEvent> getNominationsRequestClient, ILogger<NominationsService> log, IFilmwebPathResolver filmwebPathResolver, IFilmwebHandler filmwebHandler, IMovieCommandRepository movieCommandRepository, IMovieDomainRepository movieQueryRepository, IBus bus, IDateTimeProvider dateTimeProvider)
+    public NominationsService(IRequestClient<NominationsRequestedEvent> getNominationsRequestClient, ILogger<NominationsService> log, IMovieCommandRepository movieCommandRepository, IMovieDomainRepository movieQueryRepository, IBus bus, IDateTimeProvider dateTimeProvider)
     {
         _getNominationsRequestClient = getNominationsRequestClient;
         _log = log;
-        _filmwebPathResolver = filmwebPathResolver;
-        _filmwebHandler = filmwebHandler;
         _movieCommandRepository = movieCommandRepository;
         _movieQueryRepository = movieQueryRepository;
         _bus = bus;
@@ -43,11 +38,11 @@ internal sealed class NominationsService : INominationsService
 
     public Task<Maybe<CurrentNominationsData>> GetNominationsAsync(Maybe<VotingSessionId> maybeId, CancellationToken cancelToken) => maybeId.AcceptAsync(GetNominations, _log, cancelToken);
 
-    public Task<Maybe<AknowledgedNominationDTO>> NominateAsync(Maybe<(NominationDTO Dto, DomainUser User, CurrentNominationsData CurrentNominations)> input,
+    public Task<Maybe<AknowledgedNominationDTO>> NominateAsync(Maybe<(IReadOnlyMovieEntity Movie, DomainUser User, VotingSessionId VotingSessionId)> input,
         CancellationToken cancelToken) => input.AcceptAsync(NominateAsync, _log, cancelToken);
 
-    public Task<Maybe<AknowledgedNominationDTO>> RemoveMovieAsync(Maybe<(string MovieId, DomainUser User, VotingSessionId VotingSessionId)> input,
-        CancellationToken cancelToken) => input.AcceptAsync(RemoveMovieAsync, _log, cancelToken);
+    public Task<Maybe<AknowledgedNominationDTO>> ResetNominationAsync(Maybe<(string MovieId, DomainUser User, VotingSessionId VotingSessionId)> input,
+        CancellationToken cancelToken) => input.AcceptAsync(ResetNominationAsync, _log, cancelToken);
 
     private async Task<Maybe<CurrentNominationsData>> GetNominations(VotingSessionId id, CancellationToken cancelToken)
     {
@@ -58,40 +53,37 @@ internal sealed class NominationsService : INominationsService
         return result.AsMaybe();
     }
 
-    private async Task<Maybe<AknowledgedNominationDTO>> RemoveMovieAsync((string MovieId, DomainUser User, VotingSessionId VotingSessionId) input, CancellationToken cancelToken)
+    private async Task<Maybe<AknowledgedNominationDTO>> ResetNominationAsync((string MovieId, DomainUser User, VotingSessionId VotingSessionId) input, CancellationToken cancelToken)
     {
         var (movieId, user, votingSessionId) = input;
-        var movieResult = await _movieQueryRepository.GetByIdAsync(movieId, cancelToken);
+        try
+        {
+            var movieResult = await _movieCommandRepository.MarkMovieAsRejectedAsync(movieId, cancelToken);
+            var movie = new EmbeddedMovie { id = movieResult.id, MovieCreationYear = movieResult.CreationYear, Name = movieResult.Name };
 
-        if (movieResult.Error.HasValue)
-            return movieResult.Error.Value.ChangeResultType<IReadOnlyMovieEntity, AknowledgedNominationDTO>();
-
-        var movie = new EmbeddedMovie { id = movieResult.Result!.id, MovieCreationYear = movieResult.Result!.CreationYear, Name = movieResult.Result!.Name };
-
-        await _bus.Publish(new RemoveMovieEvent(votingSessionId, movie, user), cancelToken);
-        return new AknowledgedNominationDTO { Message = "OK" }.AsMaybe();
+            await _bus.Publish(new RemoveMovieEvent(votingSessionId, movie, user), cancelToken);
+            return new AknowledgedNominationDTO { Message = "OK" }.AsMaybe();
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "Error during soft-deleting movie");
+            return new Error<AknowledgedNominationDTO>("Error during soft-deleting movie", ErrorType.InvalidState);
+        }
     }
 
-    public async Task<Maybe<AknowledgedNominationDTO>> NominateAsync((NominationDTO Dto, DomainUser User, CurrentNominationsData CurrentNominations) input, CancellationToken cancelToken)
+    public async Task<Maybe<AknowledgedNominationDTO>> NominateAsync((IReadOnlyMovieEntity Movie, DomainUser User, VotingSessionId VotingSessionId) input, CancellationToken cancelToken)
     {
-        var metadata = _filmwebPathResolver.GetMetadata(input.Dto.MovieFilmwebUrl);
-        var user = input.User;
-        var movie = await _filmwebHandler.GetMovie(metadata, user.Tenant, input.Dto.PosterUrl, cancelToken);
+        var (movie, user, votingSessionId) = input;
         var embeddedMovie = new EmbeddedMovie { id = movie.id, MovieCreationYear = movie.CreationYear, Name = movie.Name };
-
-        if (movie.Genres.Contains("horror", StringComparer.OrdinalIgnoreCase))
-            return new Error<AknowledgedNominationDTO>("Horrors are not allowed. Nice try motherfucker.", ErrorType.IncomingDataIssue);
-
-        var allowedDecades = input.CurrentNominations.NominationData.Where(x => x.User.Id == user.Id).Select(x => x.Year).ToArray();
-        if (allowedDecades.All(x => x != movie.CreationYear.ToDecade()))
-            return new Error<AknowledgedNominationDTO>($"This movie is not from decades: {string.Join(',', allowedDecades)}!", ErrorType.IncomingDataIssue);
-
         var existingMovie = await _movieQueryRepository.GetByNameAsync(movie.Name, movie.CreationYear, cancelToken);
         if (existingMovie.Error.HasValue)
             return existingMovie.Error.Value.ChangeResultType<IReadOnlyMovieEntity?, AknowledgedNominationDTO>();
 
         if (existingMovie.Result != null)
         {
+            if (existingMovie.Result.IsRejected == true)
+                return new Error<AknowledgedNominationDTO>("This movie had already been nominated and was rejected.", ErrorType.IncomingDataIssue);
+
             var canBeNominatedAgainEvents = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEventsAsync(cancelToken);
             var canBeNominatedAgainEventForMovie = canBeNominatedAgainEvents.Where(x => x.Movie.Name == movie.Name && x.Movie.MovieCreationYear == movie.CreationYear).ToArray();
             var nominatedAgainEvents = await _movieQueryRepository.GetMovieNominatedEventsAsync(movie.Name, movie.CreationYear, cancelToken);
@@ -104,7 +96,7 @@ internal sealed class NominationsService : INominationsService
                 return new Error<AknowledgedNominationDTO>("This movie had already been watched or is still waiting until it can be nominated again!", ErrorType.IncomingDataIssue);
 
             var movieId = canBeNominatedAgainEventForMovie[0].Movie.id;
-            embeddedMovie = new EmbeddedMovie { id = movieId, MovieCreationYear = movie.CreationYear, Name = movie.Name };
+            embeddedMovie.id = movieId;
             var nominatedEvent = new NominatedEventRecord(embeddedMovie, "nominated-event-" + movieId, _dateTimeProvider.Now, user.Tenant.Id, user.Id);
             await _movieCommandRepository.InsertNominatedAsync(nominatedEvent, cancelToken);
             await _movieCommandRepository.UpdateMovieAsync(movieId, movie.PosterUrl, cancelToken);
@@ -116,7 +108,7 @@ internal sealed class NominationsService : INominationsService
             await _movieCommandRepository.InsertNominatedAsync(nominatedEvent, cancelToken);
         }
 
-        var addMovieEvent = new AddMovieEvent(input.CurrentNominations.VotingSessionId, embeddedMovie, user, movie.CreationYear.ToDecade());
+        var addMovieEvent = new AddMovieEvent(votingSessionId, embeddedMovie, user, movie.CreationYear.ToDecade());
         await _bus.Publish(addMovieEvent, cancelToken);
 
         var dto = new AknowledgedNominationDTO { Decade = movie.CreationYear.ToDecade().ToString()[1..], Message = "OK" };

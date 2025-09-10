@@ -46,7 +46,7 @@ internal sealed class PushNotificationService : IPushNotificationService
         var user = input.Item2;
         var tenant = user.Tenant;
         var embeddedUser = new EmbeddedUser { id = user.Id, Name = user.Name, TenantId = tenant.Id };
-        var entity = new IReadOnlyPushNotificationData(id.ToString(), _dateTimeProvider.Now, tenant.Id, input.Item1.P256DH, input.Item1.Auth, input.Item1.Endpoint, embeddedUser);
+        var entity = new IReadOnlyPushNotificationData(id.ToString(), _dateTimeProvider.Now, tenant.Id, input.Item1.p256dh, input.Item1.Auth, input.Item1.Endpoint, embeddedUser);
 
         await _pushSubscriptionCommandRepository.InsertAsync(entity, cancelToken);
         return VoidResult.Void;
@@ -56,6 +56,7 @@ internal sealed class PushNotificationService : IPushNotificationService
     {
         var pushSubscriptions = await _pushSubscriptionQueryRepository.GetAsync(input.Item1, cancelToken);
         var errors = new ConcurrentStack<Maybe<VoidResult>>();
+        var corruptSubscriptions = new ConcurrentBag<IReadOnlyPushSubscriptionEntity>();
 
         await Parallel.ForEachAsync(pushSubscriptions, cancelToken, async (pushNotificationSubscription, ct) =>
         {
@@ -68,6 +69,13 @@ internal sealed class PushNotificationService : IPushNotificationService
                 {
                     await client.SendNotificationAsync(pushNotification, input.Item2, vapidDetails, ct);
                 }
+                catch (WebPushException ex)
+                {
+                    var message = "Error when trying to push notification..";
+                    _log.LogError(ex, message);
+                    errors.Push(new Error<VoidResult>(message, ErrorType.Network));
+                    corruptSubscriptions.Add(pushNotificationSubscription);
+                }
                 catch (Exception ex)
                 {
                     var message = $"Error when trying to push notification to: {pushNotificationSubscription.User.Name}.";
@@ -76,6 +84,8 @@ internal sealed class PushNotificationService : IPushNotificationService
                 }
             }
         });
+
+        await _pushSubscriptionCommandRepository.DeleteAsync(corruptSubscriptions, cancelToken);
 
         var result = errors.Aggregate(VoidResult.Void, (curr, agg) => agg.Merge(curr));
         return result;

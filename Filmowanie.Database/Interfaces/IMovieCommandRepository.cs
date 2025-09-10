@@ -9,4 +9,5 @@ public interface IMovieCommandRepository
     public Task InsertMovieAsync(IReadOnlyMovieEntity movieEntity, CancellationToken cancelToken);
 
     public Task UpdateMovieAsync(string entityId, string posterUrl, CancellationToken cancelToken);
+    public Task<IReadOnlyMovieEntity> MarkMovieAsRejectedAsync(string entityId, CancellationToken cancelToken);
 }

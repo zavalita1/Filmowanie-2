@@ -7,9 +7,9 @@ using FluentValidation;
 
 namespace Filmowanie.Nomination.Validators;
 
-internal class NominationValidator : AbstractValidator<(NominationDTO Dto, DomainUser User, CurrentNominationsData CurrentNominations)>, IFluentValidatorAdapter
+internal class NominationDtoValidator : AbstractValidator<(NominationDTO Dto, DomainUser User, CurrentNominationsData CurrentNominations)>, IFluentValidatorAdapter
 {
-    public NominationValidator()
+    public NominationDtoValidator()
     {
         RuleFor(x => x.Dto).NotNull().WithMessage("Value cannot be null!");
         RuleFor(x => x.Dto).NotNull().WithMessage($"{nameof(NominationDTO.PosterUrl)} cannot be null!");

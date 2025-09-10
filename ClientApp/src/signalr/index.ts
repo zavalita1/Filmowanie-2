@@ -34,7 +34,7 @@ export function setupSignalRConnection() {
 
     connection.on("voted", (user: string) => {
         const state = store.getState();
-        const userData: UserState | undefined = state.api.queries.getUser?.data as any;
+        const userData: UserState | undefined = state.api.queries["getUser(undefined)"]?.data as any;
         if (userData?.username !== user) {
             const gender = user.endsWith('a'); // TODO 
             const nominated = gender ? 'zagłosowała' : 'zagłosował';

@@ -7,8 +7,8 @@ import penguinSvg from '../components/ui/footerIcon.svg';
 import { Toaster, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Button } from '../components/ui';
 import { ThemeProvider, useTheme } from '../components/ThemeProvider';
 import { useGetUserQuery, useLogoutMutation } from '../store/apis/1-User/userApi';
-import { useGetStateQuery } from '../store/apis/2-Voting/votingApi';
-import { useGetNominationsQuery } from '../store/apis/4-Nomination/api'
+import { useLazyGetStateQuery } from '../store/apis/2-Voting/votingApi';
+import { useLazyGetNominationsQuery } from '../store/apis/4-Nomination/api'
 import Spinner from '../components/Spinner';
 import { UserStateWithNominations } from '@/store/apis/1-User/types';
 import { useAppSelector } from '../hooks/redux';
@@ -34,18 +34,25 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const [isNavMenuVisible, setIsNavMenuVisible] = React.useState(false);
   const isLoading = useAppSelector(s => s.global.isLoading);
   const { data: userData, error: userError, isLoading: userDataIsLoading } = useGetUserQuery();
-  const { data: votingState, error: votingStateError, isLoading: votingStateIsLoading } = useGetStateQuery();
-  const { data: nominationsData, error: nominationsError, isLoading: nominationsIsLoading } = useGetNominationsQuery();
+  const [votingStateQueryTrigger, votingState] = useLazyGetStateQuery();
+  const [nominationQueryTrigger, nominations] = useLazyGetNominationsQuery();
   const isUserLogged = userData !== undefined && userData !== null
   const [useLogout, result] = useLogoutMutation();
+
+  if (isUserLogged && !votingState.isLoading && !votingState.isError && !votingState.isSuccess) {
+    votingStateQueryTrigger();
+  }
+  if (isUserLogged && !nominations.isLoading && !nominations.isError && !nominations.isSuccess) {
+    nominationQueryTrigger();
+  }
 
   const handleClick = () => setIsNavMenuVisible(!isNavMenuVisible);
   const handleClose = () => setIsNavMenuVisible(false);
 
   const isHistoryEnabled = isUserLogged;
-  const isMovieListEnabled = (isUserLogged && votingState === VotingStatus.Voting) || userData?.isAdmin;
-  const isResultsEnabled = (isUserLogged && votingState !== VotingStatus.Voting) || userData?.isAdmin;
-  const isNominateEnabled = (isUserLogged && (nominationsData?.length ?? 0) > 0) || userData?.isAdmin;
+  const isMovieListEnabled = (isUserLogged && votingState?.currentData === VotingStatus.Voting) || userData?.isAdmin;
+  const isResultsEnabled = (isUserLogged && votingState?.currentData === VotingStatus.Results) || userData?.isAdmin;
+  const isNominateEnabled = (isUserLogged && (nominations.currentData?.length ?? 0) > 0) || userData?.isAdmin;
 
   const containerClasses = clsx([
     "flex",
@@ -123,13 +130,13 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       };
     });
 
-    if (userError !== undefined || ((votingStateError !== undefined || nominationsError !== undefined) && userData !== null))
+    if (userError !== undefined || ((votingState.isError || nominations.isError) && userData !== null))
       return DisplayFatalError();
 
     if (props.children === undefined)
       return <></>;
 
-    if (userDataIsLoading || votingStateIsLoading)
+    if (userDataIsLoading || votingState.isLoading || nominations.isLoading)
       return (<div className='min-h-screen text-center content-center'>Loading...</div>);
 
     const containerClassName = clsx(
@@ -143,8 +150,8 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       isMobile? 'ml-5' :''
     )
 
-    const userDataForProps = userData === null ? null : {...userData!, nominations: nominationsData! };
-    const childProps = { userData: userDataForProps, votingStatus: votingState!, isMobile: isMobile } satisfies AppComponentProps;
+    const userDataForProps = userData === null ? null : {...userData!, nominations: nominations.currentData! };
+    const childProps = { userData: userDataForProps, votingStatus: votingState!.currentData!, isMobile: isMobile } satisfies AppComponentProps;
 
     return (
       <div id="container" className={containerClassName}>

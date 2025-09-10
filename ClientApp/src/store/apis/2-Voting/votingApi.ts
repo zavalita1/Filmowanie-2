@@ -82,4 +82,4 @@ function mapMovie(dto: MovieDTO): VotableOrPlaceholderMovie {
 
 
 
-export const { useGetCurrentVotingQuery, useGetStateQuery, useVoteMutation, useGetResultsQuery } = votingApi;
+export const { useGetCurrentVotingQuery, useLazyGetStateQuery, useVoteMutation, useGetResultsQuery } = votingApi;

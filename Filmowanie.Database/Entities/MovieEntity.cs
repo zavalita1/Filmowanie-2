@@ -21,6 +21,7 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
     public virtual int CreationYear { get; set; }
 
     public virtual int DurationInMinutes { get; set; }
+    public virtual bool? IsRejected { get; set; }
 
     public MovieEntity()
     {
@@ -43,5 +44,6 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
         id = ((IReadOnlyEntity)other).id;
         Created = other.Created;
         TenantId = other.TenantId;
+        IsRejected = other.IsRejected;
     }
 }

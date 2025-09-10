@@ -16,5 +16,10 @@ public interface IReadOnlyMovieEntity : IReadOnlyEntity
     int DurationInMinutes { get;  }
     string Type { get; }
 
+    /// <summary>
+    /// Movie has been nominated and then rejected for some reason. Most likely, cause someone already watched it, or it's said to contain sensitive triggers.
+    /// </summary>
+    bool? IsRejected { get; }
+
     string id { get;  }
 }

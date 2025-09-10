@@ -27,9 +27,13 @@ export const userApi = apiSlice
           isError = false;
         }
 
-        return !isError
-          ? result
-          : { error: resultWrapped.error as FetchBaseQueryError }
+        if (isError) {
+          return ({ error: resultWrapped.error as FetchBaseQueryError });
+        }
+
+        window.localStorage.setItem('isLogged', 'True');
+        window.dispatchEvent(new Event('userLogsIn'));
+        return result;
       },
       providesTags: ['UserData']
     }),
@@ -71,6 +75,7 @@ export const userApi = apiSlice
     logout: builder.mutation<any, void>({
       query: () => ({ url: '/account/logout', method: 'POST'}),
       async onQueryStarted(params, { dispatch, queryFulfilled }) {
+        window.localStorage.setItem('isLogged', 'False');
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
       },
       invalidatesTags: ['UserData']

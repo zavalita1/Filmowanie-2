@@ -4,6 +4,7 @@ import { Button, Input, Table, TableBody, TableCaption, TableCell, TableHead, Ta
 import { VotingStatus } from "../consts/votingStatus";
 import { AppComponentProps, Layout } from "./Layout";
 import { useEndVotingMutation, useStartVotingMutation, useGetAllUsersQuery, useCreateUserMutation } from "../store/apis/3-Admin/api";
+import ky from 'ky';
 
 const Admin: React.FC<AppComponentProps> = props => {
     const navigate = useNavigate();
@@ -16,6 +17,7 @@ const Admin: React.FC<AppComponentProps> = props => {
             navigate('/');
     }, [props.userData]);
     const [draftUserName, setDraftUserName] = useState("");
+    const [pushNotification, setPushNotification] = useState("");
     const {data, isLoading, error} = useGetAllUsersQuery();
 
     if (isLoading) {
@@ -62,6 +64,12 @@ const Admin: React.FC<AppComponentProps> = props => {
         </h1>
          <Input id="standard-basic" onChange={e => setDraftUserName(e.target.value)}/>
             <Button onClick={() => createUser(draftUserName)}>Create user!</Button>
+
+            <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mb-20">
+                Notify with push:
+        </h1>
+         <Input id="standard-basic" onChange={e => setPushNotification(e.target.value)}/>
+            <Button onClick={() => ky('api/pushNotification/notify', {json: { message: pushNotification }, method: 'post'})}>Push!</Button>
         </div>
 );
 }

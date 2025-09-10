@@ -1,4 +1,4 @@
-import * as repository from './repositories/pushNotificationRepository';
+import * as repository from './repository';
 
 export async function registerServiceWorker() {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -27,9 +27,9 @@ function notificationRequestPermissionCallback(serviceWorkerRegistration: Servic
 
     if (isLogged === "True") {
         afterLoginOrPushNotificationGrant();
+    } else {
+        window.addEventListener("userLogsIn", afterLoginOrPushNotificationGrant);
     }
-
-    window.addEventListener("userLogsIn", afterLoginOrPushNotificationGrant);
 
     async function afterLoginOrPushNotificationGrant() {
         const sub = await serviceWorkerRegistration.pushManager.getSubscription();
@@ -40,9 +40,10 @@ function notificationRequestPermissionCallback(serviceWorkerRegistration: Servic
         }
 
         const vapid = await repository.get();
-        
+        let innerSub: PushSubscription | null = null;
+
         try {
-            const innerSub = await serviceWorkerRegistration.pushManager.subscribe({
+            innerSub = await serviceWorkerRegistration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: vapid.key
             });
@@ -51,6 +52,7 @@ function notificationRequestPermissionCallback(serviceWorkerRegistration: Servic
         }
         catch (e) {
             console.error("Unable to subscribe to push", e);
+            innerSub?.unsubscribe();
         }
     }
 }

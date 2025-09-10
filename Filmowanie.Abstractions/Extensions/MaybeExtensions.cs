@@ -23,6 +23,8 @@ public static class MaybeExtensions
             ? new (default!, maybe.Error?.ChangeResultType<TPrevious, TNext>()) 
             : new(selector.Invoke(maybe.Result!), null);
 
+    public static Maybe<(T1, T2, T3)> Merge<T1, T2, T3>(this Maybe<T1> first, Maybe<T2> second, Maybe<T3> third) => first.Merge(second).Merge(third).Flatten();
+
     public static Maybe<(T1, T2)> Merge<T1, T2>(this Maybe<T1> first, Maybe<T2> second)
     {
         var error = (Error<(T1, T2)>?)null;

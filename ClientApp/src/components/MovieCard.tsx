@@ -7,9 +7,11 @@ import { IconButton } from "./ui/shadcn-io/icon-button";
 import { BsEmojiGrin, BsEmojiSmile, BsEmojiLaughing, BsTrashFill } from "react-icons/bs";
 import Spinner from "./Spinner";
 import { IconType } from "react-icons";
+import { useResetNominationMutation } from '../store/apis/4-Nomination/api';
 
 import { Vote } from "../consts/vote";
 import clsx from "clsx";
+import { Button } from "./ui";
 
 type BaseCardProps = AppComponentProps & {
   cardFooter?: ReactNode
@@ -71,6 +73,7 @@ interface IMovieCardCustomzer {
 
 const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCardProps> = props => {
   const [isLoading, setIsLoading] = useState(true);
+  const [ resetNomination ] = useResetNominationMutation();
   useEffect(() => setIsLoading(!isLoading && !props.isMobile), [props.isMobile]);
   useEffect(() => {
     if (isLoading)
@@ -129,6 +132,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
                     <p className="mt-4 text-center text-blue-700 dark:text-amber-100"><a href={props.movie.filmwebUrl} target="_blank">Link do filmweba.</a></p>
                   </div>
                   { customizer.renderVotingSection()}
+                  { !props.userData?.isAdmin ? <></> : <Button className="mt-20" onClick={() => resetNomination(props.movie.movieId)}>Delete movie</Button>} 
                 </div>
               </div>
                 }

@@ -22,7 +22,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IMoviePostersService, MoviePostersService>();
         
-        services.AddScoped<IFluentValidatorAdapter, NominationValidator>();
+        services.AddScoped<IFluentValidatorAdapter, NominationDtoValidator>();
+        services.AddScoped<IFluentValidatorAdapter, NominationMovieValidator>();
         services.AddScoped<IFluentValidatorAdapter, NominationMovieUrlValidator>();
         services.AddScoped<IFluentValidatorAdapter, NominationMovieIdValidator>();
 
@@ -34,7 +35,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IFilmwebPathResolver, FilmwebPathResolver>();
         services.AddSingleton<IFilmwebPostersUrlsRetriever, FilmwebPostersUrlsRetriever>();
-        services.AddSingleton<IFilmwebHandler, FilmwebHandler>();
+        services.AddScoped<IFilmwebHandler, FilmwebHandler>();
         services.AddSingleton<IRoutesResultHelper, RoutesResultHelper>();
 
         return services;

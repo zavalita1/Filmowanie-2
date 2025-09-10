@@ -5,6 +5,7 @@ using Filmowanie.Account.Extensions;
 using Filmowanie.Infrastructure;
 using Filmowanie.Interfaces;
 using Filmowanie.Nomination.Extensions;
+using Filmowanie.Notification.Extensions;
 using Filmowanie.Voting.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -26,5 +27,6 @@ public static class RegisterServices
         services.RegisterAccountDomain();
         services.RegisterVotingDomain();
         services.RegisterNominationDomain();
+        services.RegisterNotificationDomain();
     }
 }

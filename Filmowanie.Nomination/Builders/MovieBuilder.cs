@@ -118,5 +118,8 @@ public sealed class MovieBuilder
         return new Movie(movieId, now, _movieName, originalTitle, description, _posterUrl, _bigPosterUrl, _filmwebUrl, _actors.ToArray(), _writers.ToArray(), _directors.ToArray(), _genres.ToArray(), _year, (int)_duration.TotalMinutes, _tenant.Id, "");
     }
 
-    private readonly record struct Movie(string id, DateTime Created, string Name, string OriginalTitle, string Description, string PosterUrl, string BigPosterUrl, string FilmwebUrl, string[] Actors, string[] Writers, string[] Directors, string[] Genres, int CreationYear, int DurationInMinutes, int TenantId, string Type) : IReadOnlyMovieEntity;
+    private readonly record struct Movie(string id, DateTime Created, string Name, string OriginalTitle, string Description, string PosterUrl, string BigPosterUrl, string FilmwebUrl, string[] Actors, string[] Writers, string[] Directors, string[] Genres, int CreationYear, int DurationInMinutes, int TenantId, string Type) : IReadOnlyMovieEntity
+    {
+        public bool? IsRejected => null;
+    }
 }

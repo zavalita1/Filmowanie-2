@@ -34,6 +34,12 @@ export const nominationApi = adminApi
                 await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, false, true);
             },
             transformResponse: (dto: PostersIncomingDTO) => dto.posterUrls
+        }),
+        resetNomination: builder.mutation<void, string, void>({
+            query: movieId => ({url: 'nominations', method: 'DELETE', params: { movieId }}),
+            async onQueryStarted(params, { dispatch, queryFulfilled }) {
+                await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, true, true);
+            },
         })
     })
 });
@@ -81,4 +87,4 @@ function mapDecade(decadeStr: string) {
     throw new Error("Cannot parse provided argument: " + decadeStr);
 }
 
-export const { useGetNominationsQuery, useGetMoviesThatCanBeNominatedAgainQuery, useNominateMutation, useGetPostersQuery } = nominationApi;
+export const { useLazyGetNominationsQuery, useGetMoviesThatCanBeNominatedAgainQuery, useNominateMutation, useGetPostersQuery, useResetNominationMutation } = nominationApi;
