@@ -14,13 +14,14 @@ internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
     private readonly ICurrentUserAccessor _userAccessor;
     private readonly ICurrentVotingSessionIdAccessor _currentVotingSessionIdAccessor;
     private readonly ICurrentVotingService _currentVotingService;
-    private readonly IVotingSessionMapper _movieVotingSessionMapper;
+    private readonly IVotingMappersComposite _movieVotingMappersComposite;
+    private readonly IVotingStateMapper _votingStateMapper;
 
     private readonly IMoviesForVotingSessionEnricher _moviesForVotingSessionEnricher;
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
     private readonly IVoteService _voteService;
 
-    public CurrentVotingRoutes(IMoviesForVotingSessionEnricher moviesForVotingSessionEnricher, IFluentValidatorAdapterProvider validatorAdapterProvider, IVoteService voteService,ICurrentUserAccessor userAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, ICurrentVotingService currentVotingService, IVotingSessionMapper movieVotingSessionMapper)
+    public CurrentVotingRoutes(IMoviesForVotingSessionEnricher moviesForVotingSessionEnricher, IFluentValidatorAdapterProvider validatorAdapterProvider, IVoteService voteService,ICurrentUserAccessor userAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, ICurrentVotingService currentVotingService, IVotingMappersComposite movieVotingMappersComposite, IVotingStateMapper votingStateMapper)
     {
         _moviesForVotingSessionEnricher = moviesForVotingSessionEnricher;
         _validatorAdapterProvider = validatorAdapterProvider;
@@ -28,7 +29,8 @@ internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
         _userAccessor = userAccessor;
         _currentVotingSessionIdAccessor = currentVotingSessionIdAccessor;
         _currentVotingService = currentVotingService;
-        _movieVotingSessionMapper = movieVotingSessionMapper;
+        _movieVotingMappersComposite = movieVotingMappersComposite;
+        _votingStateMapper = votingStateMapper;
     }
 
     public async Task<IResult> GetCurrentVotingSessionMoviesAsync(CancellationToken cancel)
@@ -39,7 +41,7 @@ internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
         var maybeCurrentlyVotedMovies = await _currentVotingService.GetCurrentlyVotedMoviesAsync(maybeCurrentVotingId, cancel);
         var maybeCurrentlyVotedMoviesWithVotes = await _currentVotingService.GetCurrentlyVotedMoviesWithVotesAsync(maybeCurrentVotingId, cancel);
         var merged = maybeCurrentlyVotedMovies.Merge(maybeCurrentlyVotedMoviesWithVotes).Merge(maybeCurrentUser).Flatten();
-        var maybeDto = _movieVotingSessionMapper.Map(merged);
+        var maybeDto = _movieVotingMappersComposite.Map(merged);
         var merged2 = maybeDto.Merge(maybeCurrentVotingId);
         var result = await _moviesForVotingSessionEnricher.EnrichWithPlaceholdersAsync(merged2, cancel);
      
@@ -64,10 +66,7 @@ internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
     {
         var maybeCurrentUser = _userAccessor.GetDomainUser(VoidResult.Void);
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
-        var result = _movieVotingSessionMapper
-            .Map(maybeNullableCurrentVotingId)
-            .Merge(maybeNullableCurrentVotingId)
-            .Map(x => new VotingSessionStatusDto(x.Item1.ToString(), x.Item2?.CorrelationId.ToString()));
+        var result = _votingStateMapper.Map(maybeNullableCurrentVotingId);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }

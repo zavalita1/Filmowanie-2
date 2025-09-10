@@ -18,7 +18,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<INominationRoutes, NominationRoutes>();
 
         services.AddScoped<INominationsService, NominationsService>();
-        services.AddScoped<INominationsMapper, NominationsMapper>();
+        services.AddScoped<INominationsEnricher, NominationsEnricher>();
+        services.AddSingleton<INominationsMapper, NominationsMapper>();
 
         services.AddScoped<IMoviePostersService, MoviePostersService>();
         

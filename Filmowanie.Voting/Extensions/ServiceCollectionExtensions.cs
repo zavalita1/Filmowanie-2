@@ -29,7 +29,11 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IVotingSessionService, VotingSessionService>();
         services.AddScoped<ICurrentVotingSessionIdAccessor, VotingSessionService>();
-        services.AddScoped<IVotingSessionMapper, VotingSessionMapper>();
+        services.AddScoped<IVotingMappersComposite, VotingMappersComposite>();
+        services.AddScoped<IVotingSessionIdMapper, VotingSessionIdMapper>();
+        services.AddSingleton<IVotingStateMapper, VotingStateMapper>();
+        services.AddSingleton<IHistoryDtoMapper, HistoryDtoMapper>();
+        services.AddSingleton<IMovieDtoMapper, MovieDtoMapper>();
 
         services.AddScoped<IVotingStateManager, VotingSessionStateManager>();
 

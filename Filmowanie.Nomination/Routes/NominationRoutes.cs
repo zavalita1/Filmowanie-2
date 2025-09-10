@@ -16,6 +16,7 @@ internal sealed class NominationRoutes : INominationRoutes
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly ICurrentVotingSessionIdAccessor _currentVotingSessionIdAccessor;
     private readonly INominationsService _nominationsService;
+    private readonly INominationsEnricher _nominationsEnricher;
     private readonly INominationsMapper _nominationsMapper;
     private readonly IMoviePostersService _moviePostersService;
     private readonly IFilmwebHandler _filmwebHandler;
@@ -23,7 +24,7 @@ internal sealed class NominationRoutes : INominationRoutes
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
     private readonly IRoutesResultHelper _routesResultHelper;
 
-    public NominationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IMoviePostersService moviePostersService, IRoutesResultHelper routesResultHelper, ICurrentUserAccessor currentUserAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, INominationsService nominationsService, INominationsMapper nominationsMapper, IFilmwebHandler filmwebHandler)
+    public NominationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IMoviePostersService moviePostersService, IRoutesResultHelper routesResultHelper, ICurrentUserAccessor currentUserAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, INominationsService nominationsService, INominationsEnricher nominationsEnricher, IFilmwebHandler filmwebHandler, INominationsMapper nominationsMapper)
     {
         _validatorAdapterProvider = validatorAdapterProvider;
         _moviePostersService = moviePostersService;
@@ -31,8 +32,9 @@ internal sealed class NominationRoutes : INominationRoutes
         _currentUserAccessor = currentUserAccessor;
         _currentVotingSessionIdAccessor = currentVotingSessionIdAccessor;
         _nominationsService = nominationsService;
-        _nominationsMapper = nominationsMapper;
+        _nominationsEnricher = nominationsEnricher;
         _filmwebHandler = filmwebHandler;
+        _nominationsMapper = nominationsMapper;
     }
 
     public async Task<IResult> GetNominationsAsync(CancellationToken cancelToken)
@@ -55,7 +57,7 @@ internal sealed class NominationRoutes : INominationRoutes
         var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancelToken);
         var merged = maybeNominations.Merge(maybeCurrentUser);
         var maybeNominationsDto = _nominationsMapper.Map(merged);
-        var result = await _nominationsMapper.EnrichNominationsAsync(maybeNominationsDto, cancelToken);
+        var result = await _nominationsEnricher.EnrichNominationsAsync(maybeNominationsDto, cancelToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }
