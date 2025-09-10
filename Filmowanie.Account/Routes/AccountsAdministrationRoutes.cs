@@ -12,13 +12,13 @@ internal class AccountsAdministrationRoutes : IAccountsAdministrationRoutes
 {
     private readonly IAccountUserService _userService;
     private readonly IAuthenticationManager _authenticationManager;
-    private readonly IUserMapper _mapper;
+    private readonly IDomainUserMapper _mapper;
 
     private readonly IFluentValidatorAdapter<UserDTO> _validator;
     private readonly IFluentValidatorAdapter<string> _userIdValidator;
     private readonly IRoutesResultHelper _routesResultHelper;
 
-    public AccountsAdministrationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IRoutesResultHelper routesResultHelper, IAccountUserService userService, IAuthenticationManager authenticationManager, IUserMapper mapper)
+    public AccountsAdministrationRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IRoutesResultHelper routesResultHelper, IAccountUserService userService, IAuthenticationManager authenticationManager, IDomainUserMapper mapper)
     {
         _routesResultHelper = routesResultHelper;
         _userService = userService;

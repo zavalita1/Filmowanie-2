@@ -15,11 +15,11 @@ internal sealed class AccountRoutes : IAccountRoutes
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
     private readonly IAccountUserService _userService;
     private readonly IAuthenticationManager _authenticationManager;
-    private readonly IUserMapper _userMapper;
+    private readonly IUserDtoMapper _userMapper;
     private readonly ISignUpService _signUpService;
     private readonly IRoutesResultHelper _routesResultHelper;
 
-    public AccountRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IAccountUserService userService, ISignUpService signUpService, IUserMapper userMapper, IRoutesResultHelper routesResultHelper, IAuthenticationManager authenticationManager)
+    public AccountRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IAccountUserService userService, ISignUpService signUpService, IUserDtoMapper userMapper, IRoutesResultHelper routesResultHelper, IAuthenticationManager authenticationManager)
     {
         _validatorAdapterProvider = validatorAdapterProvider;
         _userService = userService;
