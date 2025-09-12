@@ -23,4 +23,18 @@ public static class IntExtensions
 
         return result;
     }
+
+    public static string GetDurationString(this int durationInMinutes)
+    {
+        if (durationInMinutes <= 0)
+            throw new ArgumentException($"Duration must be positive! Provided: {durationInMinutes}!");
+
+        var duration = TimeSpan.FromMinutes(durationInMinutes);
+        var durationHours = (int)duration.TotalHours;
+        var hoursPart = durationHours == 0 ? string.Empty : $"{durationHours} godz.";
+        var minutes = duration.Minutes;
+        var minutesPart = minutes == 0 ? string.Empty : $"{minutes} min.";
+        var result = $"{hoursPart} {minutesPart}";
+        return result.Trim();
+    }
 }

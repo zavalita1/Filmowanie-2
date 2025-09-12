@@ -1,7 +1,9 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Database.Interfaces;
@@ -12,13 +14,14 @@ using Filmowanie.Nomination.Consumers;
 using FluentAssertions;
 using MassTransit.Events;
 using Filmowanie.Database.Entities;
+using Filmowanie.Database.Entities.Voting.Events;
 
 namespace Filmowanie.Tests.Filmowanie_Nomination;
 
 public class VotingConcludedConsumerTests
 {
     private readonly ILogger<VotingConcludedConsumer> _logger;
-    private readonly IVotingSessionQueryRepository _votesRepository;
+    private readonly IVotingResultsRepository _votesRepository;
     private readonly IMovieCommandRepository _movieCommandRepository;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -29,7 +32,7 @@ public class VotingConcludedConsumerTests
     public VotingConcludedConsumerTests()
     {
         _logger = Substitute.For<ILogger<VotingConcludedConsumer>>();
-        _votesRepository = Substitute.For<IVotingSessionQueryRepository>();
+        _votesRepository = Substitute.For<IVotingResultsRepository>();
         _movieCommandRepository = Substitute.For<IMovieCommandRepository>();
         _guidProvider = Substitute.For<IGuidProvider>();
         _dateTimeProvider = Substitute.For<IDateTimeProvider>();
@@ -67,8 +70,8 @@ public class VotingConcludedConsumerTests
         var context = Substitute.For<ConsumeContext<VotingConcludedEvent>>();
         var @event = _fixture.Build<VotingConcludedEvent>().With(x => x.Tenant, new TenantId(2137)).Create();
         context.Message.Returns(@event);
-        _votesRepository.Get(default, default, default, default, default)
-            .ReturnsForAnyArgs(Task.FromResult<IEnumerable<IReadOnlyVotingResult>>([ votingResult1, votingResult2 ]));
+        _votesRepository.GetLastNVotingResultsAsync(default, default)
+            .ReturnsForAnyArgs(Task.FromResult(new Maybe<IEnumerable<IReadOnlyVotingResult>>([votingResult1, votingResult2], null)));
 
         var guid1 = Guid.NewGuid();
         var guid2 = Guid.NewGuid();

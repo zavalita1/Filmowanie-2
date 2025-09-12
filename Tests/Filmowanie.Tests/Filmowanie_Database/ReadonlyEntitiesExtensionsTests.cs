@@ -113,7 +113,7 @@ public class ReadonlyEntitiesExtensionsTests
     public void NominatedMovieAgainEvent_ShouldBeEquivalent()
     {
         // Arrange
-        var entity = _fixture.Create<NominatedMovieAgainEvent>();
+        var entity = _fixture.Create<NominatedMovieEvent>();
 
         // Act
         var result = entity.AsMutable();

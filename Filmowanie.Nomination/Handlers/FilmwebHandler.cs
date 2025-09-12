@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Web;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;

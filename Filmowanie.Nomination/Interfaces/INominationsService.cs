@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Nomination.DTOs.Outgoing;

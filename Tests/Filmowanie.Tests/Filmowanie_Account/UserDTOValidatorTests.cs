@@ -3,7 +3,6 @@ using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Validators;
 using FluentAssertions;
 using FluentValidation;
-using FluentValidation.Results;
 using NSubstitute;
 
 namespace Filmowanie.Tests.Filmowanie_Account;

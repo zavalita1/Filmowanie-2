@@ -1,5 +1,4 @@
 ﻿using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.Helpers;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Repositories;
 using Filmowanie.Nomination.DTOs.Outgoing;
@@ -47,7 +46,7 @@ internal sealed class NominationsEnricher : INominationsEnricher
 
         var moviesThatCanBeNominatedAgainDTOs = moviesThatCanBeNominatedAgain.Result
             .OrderBy(x => x.CreationYear)
-            .Select(x => new MovieDTO(x.id, x.Name, x.PosterUrl, x.BigPosterUrl, x.Description, x.FilmwebUrl, x.CreationYear, StringHelper.GetDurationString(x.DurationInMinutes), x.Genres, x.Actors, x.Directors, x.Writers, x.OriginalTitle))
+            .Select(x => new MovieDTO(x.id, x.Name, x.PosterUrl, x.BigPosterUrl, x.Description, x.FilmwebUrl, x.CreationYear, x.DurationInMinutes.GetDurationString(), x.Genres, x.Actors, x.Directors, x.Writers, x.OriginalTitle))
             .ToArray();
 
         var result = new NominationsFullDataDTO { Nominations = input.Nominations, MoviesThatCanBeNominatedAgain = moviesThatCanBeNominatedAgainDTOs };

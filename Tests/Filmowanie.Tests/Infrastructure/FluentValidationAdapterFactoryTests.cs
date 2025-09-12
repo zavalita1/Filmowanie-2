@@ -1,7 +1,6 @@
 using Filmowanie.Infrastructure;
 using FluentAssertions;
 using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -32,7 +31,6 @@ public sealed class FluentValidationAdapterFactoryTests
         // Assert
         adapter.Should().NotBeNull();
         adapter.Should().BeOfType<FluentValidatorAdapter<TestInput>>();
-        adapter.Log.Should().Be(logger);
     }
 
     [Fact]

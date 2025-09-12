@@ -1,6 +1,5 @@
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.OperationResult;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Infrastructure;
 using FluentAssertions;
 using FluentValidation.Results;
@@ -79,12 +78,12 @@ public sealed class FluentValidatorAdapterTests
     public void Visit_ShouldCallValidateWithResult()
     {
         // Arrange
-        var input = new OperationResult<TestInput>(new TestInput(), null);
+        var input = new Maybe<TestInput>(new TestInput(), null);
         var validationResult = new ValidationResult();
         _validator.Validate(input.Result!).Returns(validationResult);
 
         // Act
-        var result = _adapter.Visit(input);
+        var result = _adapter.Validate(input);
 
         // Assert
         result.Error.Should().BeNull();

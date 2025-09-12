@@ -10,6 +10,8 @@ using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.DTOs.Outgoing;
 using Filmowanie.Voting.Interfaces;
 using Microsoft.Extensions.Logging;
+using DomainUser = Filmowanie.Abstractions.DomainModels.DomainUser;
+using TenantId = Filmowanie.Abstractions.DomainModels.TenantId;
 
 namespace Filmowanie.Voting.Services;
 
@@ -28,7 +30,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
         _currentVotingService = currentVotingService;
     }
    
-    public Task<Maybe<VotingResultDTO>> GetVotingResultsAsync(Maybe<(DomainUser CurrentUser, VotingSessionId? VotingSessionId)> input, CancellationToken cancelToken) =>
+    public Task<Maybe<VotingResultDTO>> GetVotingResultsAsync(Maybe<(DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId? VotingSessionId)> input, CancellationToken cancelToken) =>
         input.AcceptAsync(GetVotingResultsAsync, _log, cancelToken);
 
     public Task<Maybe<VotingMetadata[]>> GetVotingMetadataAsync(Maybe<TenantId> input, CancellationToken cancelToken) =>
@@ -62,7 +64,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
         return new VotingMetadata(votingSessionId, x.Concluded, votingMetadataWinnerData);
     }
 
-    private async Task<Maybe<VotingResultDTO>> GetVotingResultsAsync((DomainUser CurrentUser, VotingSessionId? VotingSessionId) input, CancellationToken cancelToken)
+    private async Task<Maybe<VotingResultDTO>> GetVotingResultsAsync((DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId? VotingSessionId) input, CancellationToken cancelToken)
     {
         var votingResult = await GetReadonlyVotingResultAsync(input, cancelToken);
 
@@ -93,7 +95,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
         return new Maybe<VotingResultDTO>(result, null);
     }
 
-    private async Task<Maybe<IReadOnlyVotingResult>> GetReadonlyVotingResultAsync((DomainUser CurrentUser, VotingSessionId? VotingSessionId) input, CancellationToken cancelToken)
+    private async Task<Maybe<IReadOnlyVotingResult>> GetReadonlyVotingResultAsync((DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId? VotingSessionId) input, CancellationToken cancelToken)
     {
         var result = await _votingResultsRepository.GetByIdAsync(input.VotingSessionId!.Value, cancelToken);
 

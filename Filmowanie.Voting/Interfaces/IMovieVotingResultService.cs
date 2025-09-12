@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.DTOs.Outgoing;

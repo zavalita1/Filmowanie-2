@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces;

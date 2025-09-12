@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Constants;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;

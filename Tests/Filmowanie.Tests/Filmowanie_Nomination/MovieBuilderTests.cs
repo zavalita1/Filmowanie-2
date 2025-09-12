@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Nomination.Builders;
 using FluentAssertions;
 using NSubstitute;

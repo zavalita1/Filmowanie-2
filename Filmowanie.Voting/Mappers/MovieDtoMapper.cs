@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.Helpers;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.DTOs.Outgoing;
@@ -30,7 +30,7 @@ internal sealed class MovieDtoMapper : IMovieDtoMapper
         {
             _log.LogInformation($"Mapping movie: {movie.Movie.Name}");
             var votes = (int?)movie.Votes.SingleOrDefault(x => x.User.id == input.CurrentUser.Id)?.VoteType ?? 0;
-            var duration = StringHelper.GetDurationString(movie.Movie.DurationInMinutes);
+            var duration = movie.Movie.DurationInMinutes.GetDurationString();
             var movieDto = new MovieDTO(movie.Movie.id, movie.Movie.Name, votes, movie.Movie.PosterUrl, movie.Movie.Description, movie.Movie.FilmwebUrl, movie.Movie.CreationYear, duration, movie.Movie.Genres, movie.Movie.Actors,
                 movie.Movie.Directors, movie.Movie.Writers, movie.Movie.OriginalTitle);
 

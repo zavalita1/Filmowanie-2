@@ -1,4 +1,5 @@
-﻿using Filmowanie.Abstractions.Maybe;
+﻿using Filmowanie.Abstractions.DomainModels;
+using Filmowanie.Abstractions.Maybe;
 
 namespace Filmowanie.Abstractions.Interfaces;
 

@@ -10,6 +10,7 @@ using Filmowanie.Notification.DTOs.Incoming;
 using Filmowanie.Notification.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Maybe;
 using Microsoft.Extensions.Options;
 using WebPush;
