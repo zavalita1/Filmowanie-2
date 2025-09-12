@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
 {
     private const string DatabaseName = "db-filmowanie2";
 
-    public static void RegisterDatabaseServices(this IServiceCollection services, IConfiguration configuration, Abstractions.Enums.Environment environment)
+    public static void RegisterDatabaseServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IVotingResultsRepository, VotingResultsRepository>();
         services.AddScoped<IVotingResultsCommandRepository, VotingResultsCommandRepository>();

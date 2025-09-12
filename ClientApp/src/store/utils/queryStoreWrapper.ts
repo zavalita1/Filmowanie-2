@@ -44,7 +44,8 @@ export const commonOnQueryStarted = async (
         }
 
         if (showError) {
-            toast.error("Coś poszło nie tak :( ", {
+            const errorMessage = !!err.data ? err.data : "Coś poszło nie tak :( ";
+            toast.error(errorMessage, {
                 classNames: {
                     description: "!text-foreground/80",
                 },

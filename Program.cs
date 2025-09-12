@@ -1,23 +1,27 @@
 ﻿using System.Threading.Tasks;
+using Filmowanie;
 using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.Constants;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Extensions.Initialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Environment = Filmowanie.Abstractions.Enums.Environment;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
-var environment = builder.Environment.IsDevelopment() ? Environment.Development : Environment.Production;
+
+builder.SetStartupMode();
 
 builder.ConfigureLogging();
 
 builder.Services.AddSignalR();
 
-if (environment == Environment.Development)
-    builder.Services.AddCors(o => o.AddPolicy("ViteLocalDevServer", p => p.WithOrigins(builder.Configuration["FrontendDevServer"]!)));
+EnvironmentDependent.Invoke(new ()
+{
+    [StartupMode.LocalWithFrontendDevServer] = () => builder.Services.AddCors(o => o.AddPolicy("ViteLocalDevServer", p => p.WithOrigins(builder.Configuration["FrontendDevServer"]!)))
+});
 
 builder.Services
     .AddAuthentication(o => { o.DefaultScheme = Schemes.Cookie; })
@@ -30,13 +34,15 @@ builder.Services
         };
     });
 
-if (environment == Environment.Production)
-    await builder.SetupKeyVaultAsync();
+await EnvironmentDependent.InvokeAsync(new()
+{
+    [StartupMode.Production] = () => builder.SetupKeyVaultAsync()
+});
 
 builder.Services.AddMemoryCache();
 builder.Services.RegisterPolicies();
-builder.Services.RegisterCustomServices(builder.Configuration, environment);
-builder.Services.RegisterDatabaseServices(builder.Configuration, environment);
+builder.Services.RegisterCustomServices(builder.Configuration);
+builder.Services.RegisterDatabaseServices(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -44,10 +50,15 @@ builder.Services.Configure<PushNotificationOptions>(builder.Configuration.GetSec
 builder.Services.ConfigureMassTransit(builder.Configuration);
 
 var app = builder.Build();
+var log = app.Services.GetRequiredService<ILogger>();
+log.LogInformation($"Starting the app in mode: {Environment.Mode}...");
 
-app.ConfigureEndpoints(environment);
+EnvironmentDependent.Invoke(new ()
+{
+    [StartupMode.LocalWithFrontendDevServer] = () => app.UseCors("ViteLocalDevServer"),
+    [StartupMode.Production | StartupMode.LocalWithCompiledFrontend] = () => app.UseStaticFiles() 
+});
 
-if (environment == Environment.Development)
-    app.UseCors("ViteLocalDevServer");
+app.ConfigureEndpoints();
 
 await app.RunAsync();

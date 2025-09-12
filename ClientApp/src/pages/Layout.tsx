@@ -147,7 +147,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       'min-h-screen',
        (props as DisableCenterVertically)?.disableCenterVertically ? "" : "items-center",
       addOpacity ? 'opacity-15' : '',
-      isMobile? 'ml-5' :''
+      isMobile? 'ml-5 mr-5' :''
     )
 
     const userDataForProps = userData === null ? null : {...userData!, nominations: nominations.currentData! };

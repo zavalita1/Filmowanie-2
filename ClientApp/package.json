@@ -11,9 +11,9 @@
   },
   "scripts": {
     "start": "vite",
-    "dev": "vite",
+    "dev": "vite --config vite.config.devServer.ts",
     "dev-mocked": "vite -m mockedBackend",
-    "build": "vite build",
+    "build": "vite build --emptyOutDir",
     "serve": "serve dist",
     "test": "vitest --run",
     "test:watch": "vitest",

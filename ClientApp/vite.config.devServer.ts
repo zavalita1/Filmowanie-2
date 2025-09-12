@@ -4,14 +4,14 @@ import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  build: {
-    outDir: "../wwwroot",
-    sourcemap: true,
+  plugins: [react()],
+  server: {
+    host: true,
+    port: 3001,
   },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url))
     }
-  },
-  plugins: [react()],
+  }
 })

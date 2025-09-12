@@ -14,34 +14,53 @@ type DialogProps = {
   dialogActionText?: string;
   className?: string;
   isLarge?: boolean;
+  isMobile: boolean;
 };
 
 export const ConfirmationDialog: React.FC<DialogProps> = props => {
   const className = clsx([
     "w-full",
-    "p-6",
+    props.isMobile ? "p-1" : "p-6",
     "flex",
+    "text-justify",
     "justify-center",
     "text-amber-200",
     props.className ?? ""
-  ])
+  ]);
+
+  const alertDialogActionClassname = clsx([
+    "cursor-pointer",
+    "bg-emerald-700",
+    "dark:bg-pink-900",
+    props.isMobile ? "self-center w-4/5" : ""
+  ]);
+
+  const alertCancelDialogClassname = clsx([
+    "cursor-pointer",
+    "max-w-4/5",
+    "text-balance",
+    "md:max-w-100",
+    "bg-emerald-50",
+    "dark:bg-pink-800",
+    props.isMobile ? "self-center w-4/5" : ""
+  ]);
 
   return (<div className={className}>
       <AlertDialog open={props.isOpen}>
-        <AlertDialogContent className={props.isLarge ? "large-dialog": ""}>
-          <AlertDialogHeader className="max-w-inherit">
+        <AlertDialogContent className={props.isLarge ? "large-dialog": "p-3"}>
+          <AlertDialogHeader className="">
             <AlertDialogTitle>{props.dialogTitle}</AlertDialogTitle>
             { props.dialogSubtitle === undefined ? <></> : <div>{props.dialogSubtitle}</div> }
             <AlertDialogDescription className="select-none">
               {props.dialogContent}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="max-w-inherit">
-            <AlertDialogCancel className="cursor-pointer max-w-70 text-balance md:max-w-100 bg-emerald-50 dark:bg-pink-800" onClick={props.onClose}>
+          <AlertDialogFooter className="justify-center">
+            <AlertDialogCancel className={alertCancelDialogClassname} onClick={props.onClose}>
                 { portionButtonText(props.dialogCancelText) }
               </AlertDialogCancel>
             { props.dialogActionText 
-              ? <AlertDialogAction className="cursor-pointer bg-emerald-700 dark:bg-pink-900" onClick={props.onAction}> {props.dialogActionText} </AlertDialogAction>
+              ? <AlertDialogAction className={alertDialogActionClassname} onClick={props.onAction}> {props.dialogActionText} </AlertDialogAction>
               : <></>
             }
           </AlertDialogFooter>

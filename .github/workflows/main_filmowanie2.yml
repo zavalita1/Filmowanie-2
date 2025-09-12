@@ -30,8 +30,11 @@ jobs:
         with:
           node-version: 24
           cache: "pnpm"
+          cache-dependency-path: "./ClientApp/pnpm-lock.yaml"
       - name: Install dependencies
-        run: pnpm install
+        run: |
+          cd ClientApp
+          pnpm install
 
       - name: Build with dotnet
         run: dotnet build --configuration Release 

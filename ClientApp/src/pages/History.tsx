@@ -7,10 +7,11 @@ import { ResultsComponent } from './Results';
 const History: React.FC<AppComponentProps> = props => {
     return (
          <div className="flex w-full flex-col items-center mb-auto mt-10">
-            <Tabs defaultValue="moviesWatched" className="w-full max-w-4/5">
-                <TabsList className="w-full ml-10 bg-emerald-100 dark:bg-pink-900">
+            <Tabs defaultValue="moviesWatched" className="max-w-full md:max-w-4/5">
+                <TabsList className="w-full md:ml-10 bg-emerald-100 dark:bg-pink-900 flex flex-wrap h-fit">
                     <TabsTrigger value="votingResults">Wyniki ostatnich głosowań</TabsTrigger>
                     <TabsTrigger value="moviesWatched">Lista obejrzanych filmów</TabsTrigger>
+                    { props.isMobile ? <div className='basis-full h-0'></div> : <></>} 
                     <TabsTrigger value="charts">Wykresy</TabsTrigger>
                 </TabsList>
                 <div className="min-h-[300px] relative mt-4">
@@ -50,9 +51,9 @@ const VotingResults: React.FC = () => {
     
     return (
         <div className="">
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-1 md:grid-cols-3">
         <Select onValueChange={e => setEndedYear(parseInt(e))} value={endedYear?.toString()}>
-            <SelectTrigger className="w-3/5">
+            <SelectTrigger className="w-full md:w-3/5 mb-1">
                 <SelectValue placeholder="Głosowanie z roku" />
             </SelectTrigger>
             <SelectContent>
@@ -62,7 +63,7 @@ const VotingResults: React.FC = () => {
             </SelectContent>
         </Select>
         <Select onValueChange={e => setEndedMonth(parseInt(e))} value={endedMonth?.toString()} disabled={endedYear === undefined}>
-            <SelectTrigger className="w-3/5">
+            <SelectTrigger className="w-full md:w-3/5 mb-1">
                 <SelectValue placeholder="Głosowanie z miesiąca" />
             </SelectTrigger>
             <SelectContent>
@@ -72,7 +73,7 @@ const VotingResults: React.FC = () => {
             </SelectContent>
         </Select>
         <Select onValueChange={handleDateChange} value={endedDate} disabled={endedMonth === undefined}>
-            <SelectTrigger className="w-3/5">
+            <SelectTrigger className="w-full md:w-3/5 mb-1">
                 <SelectValue placeholder="Głosowanie z dnia" />
             </SelectTrigger>
             <SelectContent>
@@ -112,8 +113,8 @@ const WatchedMovies: React.FC = () => {
             </h1></TableCaption>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-2/5">Tytuł</TableHead>
-                    <TableHead className="w-2/5">Tytuł oryginalny</TableHead>
+                    <TableHead className="md:w-2/5">Tytuł</TableHead>
+                    <TableHead className="md:w-2/5">Tytuł oryginalny</TableHead>
                     <TableHead>Obejrzany</TableHead>
                     <TableHead className="text-right">Nominowany przez</TableHead>
                 </TableRow>

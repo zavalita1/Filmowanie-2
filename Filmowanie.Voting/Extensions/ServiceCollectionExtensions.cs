@@ -34,6 +34,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IVotingStateMapper, VotingStateMapper>();
         services.AddSingleton<IHistoryDtoMapper, HistoryDtoMapper>();
         services.AddSingleton<IMovieDtoMapper, MovieDtoMapper>();
+        services.AddSingleton<IVotingSessionsDTOMapper, VotingSessionsDTOMapper>();
 
         services.AddScoped<IVotingStateManager, VotingSessionStateManager>();
 

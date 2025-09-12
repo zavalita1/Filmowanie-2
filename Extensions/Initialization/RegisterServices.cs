@@ -16,7 +16,7 @@ namespace Filmowanie.Extensions.Initialization;
 
 public static class RegisterServices
 {
-    public static void RegisterCustomServices(this IServiceCollection services, IConfiguration configuration, Environment environment)
+    public static void RegisterCustomServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IFluentValidatorAdapterProvider, FluentValidatorAdapterProvider>();

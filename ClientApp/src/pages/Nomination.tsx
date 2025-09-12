@@ -60,7 +60,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
                 </div>
             </Label>
             <div>
-                <ConfirmationDialog isOpen={showDialog} onClose={() => setShowDialog(false)} isLarge={!props.isMobile} onAction={() => nominateMovie()}
+                <ConfirmationDialog isMobile={props.isMobile} isOpen={showDialog} onClose={() => setShowDialog(false)} isLarge={!props.isMobile} onAction={() => nominateMovie()}
                         dialogActionText="Nie pierdol, tylko nominuj."
                         dialogCancelText="Dobra, zmiękła mi pałka, chcę rozważyć inny wariant..."
                         dialogContent={ manualPosterPick ? <PosterPicker movieUrl={url} isMobile={props.isMobile} onPosterPick={e => setChosenPosterUrl(e)}/> : "Czy na pewno chcesz nominować podany film? Po zaakceptowaniu nie będzie odwrotu."}
@@ -82,9 +82,9 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
     }
 
     async function nominateMovie() {
-        const dto = { movieFilmwebUrl: url, posterUrl: chosenPosterUrl }
-        setUrl("");
         setShowDialog(false);
+        setUrl("");
+        const dto = { movieFilmwebUrl: url, posterUrl: chosenPosterUrl }
         const nominateResult = await nominate(dto);
         
         if (!nominateResult.error) {
@@ -99,7 +99,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
             e.preventDefault();
             window.scrollTo({ top: 0});
         }
-        }><Button variant="default" className="cursor-pointer hover:bg-emerald-900 bg-emerald-500 dark:bg-amber-200 hover:dark:bg-amber-400">Chcę ten! Przeklej link.</Button></div>;
+        }><Button variant="default" className="cursor-pointer hover:bg-emerald-900 bg-emerald-500 dark:bg-amber-300 hover:dark:bg-amber-400">Chcę ten! Przeklej link.</Button></div>;
         return (<MovieCard {...cardProps} key={key} cardFooter={cardFooter}/>)
     }
 }
@@ -111,6 +111,8 @@ type PosterPickerProps = {
 };
 
 const PosterPicker: React.FC<PosterPickerProps> = props => {
+    if (!props.movieUrl) return <></>;
+
     const {data, error, isLoading} = useGetPostersQuery(props.movieUrl);
     const [chosenIndex, setChosenIndex] = useState<number | null>(null);
     const [api, setApi] = useState<CarouselApi>();
@@ -191,7 +193,7 @@ const PosterPicker: React.FC<PosterPickerProps> = props => {
 
     function setChosenIndexAndInvokeCallback(index: number)  {
         setChosenIndex(index);
-         props.onPosterPick(data![index]);
+        props.onPosterPick(data![index]);
     }
 }
 

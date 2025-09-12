@@ -11,7 +11,7 @@ namespace Filmowanie.Extensions.Initialization;
 
 internal static class Endpoints
 {
-    public static void ConfigureEndpoints(this WebApplication webApplication, Environment appEnvironment)
+    public static void ConfigureEndpoints(this WebApplication webApplication)
     {
         var apiGroup = webApplication.MapGroup("api");
         apiGroup.AddEndpointFilter<LoggingActionFilter>();
@@ -20,24 +20,27 @@ internal static class Endpoints
         apiGroup.RegisterNominationRoutes();
         apiGroup.RegisterNotificationRoutes();
 
+        EnvironmentDependent.Invoke(new ()
+        {
+            [StartupMode.LocalWithFrontendDevServer] = () =>
+            {
+                webApplication.UseSwagger();
+                webApplication.UseSwaggerUI();
+            }
+        });
+
         webApplication.UseWhen(
             context => !context.Request.Path.StartsWithSegments("/api"),
             c =>
             {
                 c.UseSpa(spa =>
                 {
-                    if (appEnvironment == Environment.Development)
+                    EnvironmentDependent.Invoke(new()
                     {
-                        var devServerUrl = webApplication.Configuration["FrontendDevServer"];
-                        spa.UseProxyToSpaDevelopmentServer(devServerUrl);
-                    }
+                        [StartupMode.LocalWithFrontendDevServer] = () => spa.UseProxyToSpaDevelopmentServer(webApplication.Configuration["FrontendDevServer"]),
+                        [StartupMode.Production | StartupMode.LocalWithFrontendDevServer] = () => spa.Options.SourcePath = "wwwroot"
+                    });
                 });
             });
-
-        if (appEnvironment == Environment.Development)
-        {
-            webApplication.UseSwagger();
-            webApplication.UseSwaggerUI();
-        }
     }
 }

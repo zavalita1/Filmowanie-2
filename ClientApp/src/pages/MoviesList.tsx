@@ -95,7 +95,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   return (
     <>
     <Confetti isEnabled={showPopups}></Confetti>
-      <ConfirmationDialog isOpen={showPopups} onClose={() => setAcknowledgedPopup(true)}
+      <ConfirmationDialog isMobile={props.isMobile} isOpen={showPopups} onClose={() => setAcknowledgedPopup(true)}
         dialogCancelText="Dobra, przestań strzelać"
         dialogContent="Winszuję, wszystkie głosy zostały przydzielone. Możesz je jeszcze zmienić, dopóki admin nie zakończy głosowania podczas następnego filmowania."
         dialogTitle="You're simply the best, better than all the rest."

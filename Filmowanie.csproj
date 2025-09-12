@@ -108,7 +108,7 @@
 	<Target Name="PublishRunVite" AfterTargets="ComputeFilesToPublish">
 		<Message Importance="High" Text="Building frontend with vite..." />
 		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-		<Exec WorkingDirectory="$(SpaRoot)" Command="cmd /c pnpm run dev" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="cmd /c pnpm build" />
 		<!-- Include the newly-built files in the publish output -->
 		<ItemGroup>
 			<DistFiles Include="$(SpaRoot)build\**; $(SpaRoot)build-ssr\**" />

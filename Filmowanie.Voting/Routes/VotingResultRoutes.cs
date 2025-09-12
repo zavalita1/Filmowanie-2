@@ -11,15 +11,15 @@ namespace Filmowanie.Voting.Routes;
 internal sealed class VotingResultRoutes : IVotingResultRoutes
 {
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
-    private readonly IVotingSessionMapper _sessionMapper;
+    private readonly IVotingMappersComposite _mappersComposite;
     private readonly IMovieVotingResultService _movieVotingResultService;
     private readonly IVotingSessionService _votingSessionService;
     private readonly ICurrentUserAccessor _currentUserAccessor;
 
-    public VotingResultRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IVotingSessionMapper sessionMapper, IMovieVotingResultService movieVotingResultService1, ICurrentUserAccessor currentUserAccessor, IVotingSessionService votingSessionService)
+    public VotingResultRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IVotingMappersComposite mappersComposite, IMovieVotingResultService movieVotingResultService1, ICurrentUserAccessor currentUserAccessor, IVotingSessionService votingSessionService)
     {
         _validatorAdapterProvider = validatorAdapterProvider;
-        _sessionMapper = sessionMapper;
+        _mappersComposite = mappersComposite;
         _movieVotingResultService = movieVotingResultService1;
         _currentUserAccessor = currentUserAccessor;
         _votingSessionService = votingSessionService;
@@ -31,7 +31,7 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
         var maybeDto = validator.Validate(votingSessionId);
         var maybeCurrentUser = _currentUserAccessor.GetDomainUser(maybeDto);
         var merge = maybeDto.Merge(maybeCurrentUser);
-        var maybeNullableVotingSessionId = await _sessionMapper.MapAsync(merge, cancelToken);
+        var maybeNullableVotingSessionId = await _mappersComposite.MapAsync(merge, cancelToken);
         var merged = maybeCurrentUser.Merge(maybeNullableVotingSessionId);
         var result = await _movieVotingResultService.GetVotingResultsAsync(merged, cancelToken);
 
@@ -42,7 +42,7 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
     {
         var maybeTenant = _currentUserAccessor.GetDomainUser(VoidResult.Void).Map(x => x.Tenant);
         var maybeVotingMetadata = await _movieVotingResultService.GetVotingMetadataAsync(maybeTenant, cancelToken);
-        var result = _sessionMapper.Map(maybeVotingMetadata);
+        var result = _mappersComposite.Map(maybeVotingMetadata);
         
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
@@ -53,7 +53,7 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
         var maybeVotingMetadata = await _movieVotingResultService.GetVotingMetadataAsync(maybeTenant, cancelToken);
         var merged = maybeVotingMetadata.Merge(maybeTenant);
         var maybeWinnersMetadata = await _votingSessionService.GetWinnersMetadataAsync(merged, cancelToken);
-        var result = _sessionMapper.Map(maybeWinnersMetadata);
+        var result = _mappersComposite.Map(maybeWinnersMetadata);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }

@@ -53,10 +53,20 @@ export const MovieCard: React.FC<MovieCardProps> = props => {
   if (isPlaceholderCardProps(props)) {
     let message = `${props.movie.title} ${props.movie.decade}`;
     message = message.slice(0, -1) + 'X';
+
+    const cardClassName = clsx([
+      "w-3xs",
+      "m-2",
+      "justify-center",
+      "bg-gray-100",
+      "dark:bg-gray-600",
+      props.isMobile ? "" : "mr-10",
+    ]);
+
     return (
-      <Card className="w-3xs m-2 mr-10 justify-center bg-gray-100 dark:bg-gray-600">
+      <Card className={cardClassName}>
         <CardHeader>
-          <CardDescription className="text-2xl dark:text-amber-200 text-neutral-950 text-center"><b>{props.movie.title}</b></CardDescription>
+          <CardDescription className="text-2xl dark:text-amber-300 text-neutral-950 text-center"><b>{props.movie.title}</b></CardDescription>
         </CardHeader>
       </Card>
     );
@@ -86,10 +96,17 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
   const cardClassName = clsx([
     "w-3xs",
     "m-2",
-    "mr-10", 
     "hover:bg-emerald-100 hover:cursor-pointer dark:hover:bg-pink-950",
-    props.isMobile ? '' : '',
+    "dark:bg-linear-to-tl/increasing dark:from-black dark:to-pink-900",
+    "bg-linear-to-tl/hsl  from-emerald-100 to-sky-100",
+    props.isMobile ? '' : 'mr-10',
     ...customizer.getAdditionalCardClassNames()
+  ]);
+
+  const drawerTitleClassName = clsx([
+    "mb-10",
+    "dark:text-amber-300",
+    props.isMobile ? "text-2xl": "text-5xl"
   ]);
 
   return (
@@ -97,12 +114,12 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
     <DrawerTrigger asChild={true}>
       <Card className={cardClassName}>
         <CardHeader>
-          <CardTitle className="place-content-center justify-self-center dark:text-amber-200">
+          <CardTitle className="place-content-center justify-self-center dark:text-amber-300">
             <b className={getCartTitleTextSize()}>
             {`${props.movie.movieName} (${props.movie.createdYear})`}
             </b>
             </CardTitle>
-          <CardDescription className="min-h-1 place-content-center justify-self-center dark:text-amber-200">{props.movie.genres.join(", ")}</CardDescription>
+          <CardDescription className="min-h-1 place-content-center justify-self-center dark:text-amber-300">{props.movie.genres.join(", ")}</CardDescription>
         </CardHeader>
         <CardContent className="mt-auto self-center-safe">
           <img className={customizer.getPosterElementClassName()} src={props.movie.posterUrl} ></img>
@@ -112,13 +129,13 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
         }
       </Card>
     </DrawerTrigger>
-    <DrawerContent className=" mb-0 bg-gradient-to-tr from-emerald-100 to-sky-100 dark:from-black dark:to-pink-900">
+    <DrawerContent className="mb-0 bg-gradient-to-tr from-emerald-100 to-sky-100 dark:from-black dark:to-pink-900">
       <div className="mx-auto w-full max-w-5/6 min-h-96 overflow-y-auto max-h-4/5">
          <DrawerHeader>
             <DrawerTitle>
-              <p className="text-5xl mb-10"><b>{props.movie.movieName}</b></p>
+              <p className={drawerTitleClassName}><b>{props.movie.movieName}</b></p>
               </DrawerTitle>
-            <div className="text-xl text-justify dark:text-amber-200">
+            <div className="text-xl text-justify dark:text-amber-300">
               { isLoading ? <Spinner isLoading></Spinner> : <div className="flex overflow-hidden">
                 { props.isMobile ? <></> : <img className="mr-10 -mt-12" src={props.movie.bigPosterUrl} alt="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" onLoad={() => setIsLoading(false)}></img> }
                 <div className={props.isMobile ? "block text-sm" : "block"}>
@@ -129,7 +146,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
                     <p><b>Reżyseria:</b> {props.movie.directors.join(", ")}</p>
                     <p><b>Scenariusz:</b> {props.movie.writers.join(", ")}</p>
                     <p><b>Występują:</b> {props.movie.actors.join(", ")}</p>
-                    <p className="mt-4 text-center text-blue-700 dark:text-amber-100"><a href={props.movie.filmwebUrl} target="_blank">Link do filmweba.</a></p>
+                    <p className="mt-4 text-center text-blue-700 dark:text-pink-300 hover:cursor-pointer"><a href={props.movie.filmwebUrl} target="_blank">Link do filmweba.</a></p>
                   </div>
                   { customizer.renderVotingSection()}
                   { !props.userData?.isAdmin ? <></> : <Button className="mt-20" onClick={() => resetNomination(props.movie.movieId)}>Delete movie</Button>} 

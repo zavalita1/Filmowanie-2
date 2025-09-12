@@ -8,7 +8,10 @@ export const baseQuery = (baseQueryArgs: FetchBaseQueryArgs = {}) => async (
 ) => {
   const { getState } = api;
   const state : GlobalConfigSlice = (getState() as any).global; 
-  const baseUrl = `${state.apiUrl}`;
+
+  const fetchUrl = typeof (fetchArgs) === "string" ? fetchArgs : fetchArgs.url;
+  const baseUrl = fetchUrl.startsWith(state.apiUrl) ? "" : state.apiUrl;
+
   return fetchBaseQuery({
     ...baseQueryArgs,
     baseUrl,
