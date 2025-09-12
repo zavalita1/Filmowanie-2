@@ -1,7 +1,7 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Maybe;
-using Filmowanie.Account.Results;
+using Filmowanie.Account.Models;
 
 namespace Filmowanie.Account.Interfaces;
 

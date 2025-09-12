@@ -1,10 +1,9 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Interfaces;
-using Filmowanie.Account.Results;
+using Filmowanie.Account.Models;
 using Filmowanie.Database.Interfaces;
 using Microsoft.Extensions.Logging;
 

@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Nomination.Builders;
 using FluentAssertions;
@@ -45,6 +44,7 @@ public class MovieBuilderTests
             .WithTenant(new TenantId(1))
             .WithOriginalTitle("Inception")
             .WithPosterUrl("http://example.com/poster.jpg")
+            .WithBigPosterUrl("http://example.com/bigposter.jpg")
             .WithDescription("Dream within a dream within a dream I suppose")
             .WithCreationYear("2010")
             .WithDuration("148")
@@ -62,6 +62,7 @@ public class MovieBuilderTests
         movie.OriginalTitle.Should().Be("Inception");
         movie.Description.Should().Be("Dream within a dream within a dream I suppose");
         movie.PosterUrl.Should().Be("http://example.com/poster.jpg");
+        movie.BigPosterUrl.Should().Be("http://example.com/bigposter.jpg");
         movie.FilmwebUrl.Should().Be("http://example.com/inception");
         movie.Actors.Should().Contain("Leonard DiCaprio");
         movie.Directors.Should().Contain("Krzysiu Nolan");

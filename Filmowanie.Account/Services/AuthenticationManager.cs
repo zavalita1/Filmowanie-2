@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
-using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
@@ -8,7 +7,7 @@ using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
-using Filmowanie.Account.Results;
+using Filmowanie.Account.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Account.Services;

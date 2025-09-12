@@ -4,7 +4,7 @@ using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
-using Filmowanie.Account.Results;
+using Filmowanie.Account.Models;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.AspNetCore.Authentication;
 

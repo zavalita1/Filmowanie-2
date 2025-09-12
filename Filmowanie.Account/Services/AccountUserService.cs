@@ -6,7 +6,7 @@ using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.DTOs.Outgoing;
 using Filmowanie.Account.Interfaces;
-using Filmowanie.Account.Results;
+using Filmowanie.Account.Models;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Database.Repositories;

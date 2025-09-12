@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.Maybe;
-using Filmowanie.Account.Results;
+using Filmowanie.Account.Models;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Account.Interfaces;
