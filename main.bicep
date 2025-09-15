@@ -8,6 +8,8 @@ var serviceBusName = toLower('sb-${webAppName}')
 var dbAccountName = toLower('dba-${webAppName}')
 var dbName = toLower('db-${webAppName}')
 var keyVaultName = toLower('kv-${webAppName}')
+var storageAccountName = toLower('kv-${webAppName}')
+var blobName = toLower('blob-${webAppName}')
 
 var environments = {
   Development: {
@@ -227,6 +229,36 @@ resource cosmosDbEventsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatab
         kind: 'Hash'
         paths: ['/id']
       }
+    }
+  }
+}
+
+resource storage 'Microsoft.Storage/storageAccounts@2025-01-01' = {
+  location: location
+  name: storageAccountName
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'BlobStorage'
+  properties: {
+    accessTier: 'Cold'
+    encryption: {
+      keySource: 'Microsoft.Storage'
+      services: { 
+        blob: {
+          enabled: true
+        }
+      }
+    }
+  }
+}
+
+resource blob 'Microsoft.Storage/storageAccounts/blobServices@2025-01-01' = {
+  parent: storage
+  name: 'default'
+  properties: {
+    deleteRetentionPolicy: {
+      enabled: false
     }
   }
 }
