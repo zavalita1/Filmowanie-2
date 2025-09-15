@@ -3,13 +3,14 @@ import { useNavigate } from "react-router";
 import { Button, Input, Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../components/ui";
 import { VotingStatus } from "../consts/votingStatus";
 import { AppComponentProps, Layout } from "./Layout";
-import { useEndVotingMutation, useStartVotingMutation, useGetAllUsersQuery, useCreateUserMutation } from "../store/apis/3-Admin/api";
+import { useResumeVotingMutation, useEndVotingMutation, useStartVotingMutation, useGetAllUsersQuery, useCreateUserMutation } from "../store/apis/3-Admin/api";
 import ky from 'ky';
 
 const Admin: React.FC<AppComponentProps> = props => {
     const navigate = useNavigate();
     const [startVote] = useStartVotingMutation();
     const [endVote] = useEndVotingMutation();
+    const [resumeVote] = useResumeVotingMutation();
     const [createUser] = useCreateUserMutation();
 
     useEffect(() => {
@@ -32,6 +33,8 @@ const Admin: React.FC<AppComponentProps> = props => {
                 Voting status: {VotingStatus[props.votingStatus]}
         </h1>
         <Button className="mb-10" onClick={() => endVote()} disabled={props.votingStatus == VotingStatus.Results}>End voting!</Button>
+        <br/>
+        <Button className="mb-10" onClick={() => resumeVote()} disabled={props.votingStatus != VotingStatus.Results}>Resume voting!</Button>
         <br/>
         <Button className="mb-10" onClick={() => startVote()} disabled={props.votingStatus != VotingStatus.Results}>New vote!</Button>
         <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mb-20">

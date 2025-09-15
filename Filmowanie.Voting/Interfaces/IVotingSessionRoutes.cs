@@ -14,4 +14,6 @@ public interface IAdminVotingSessionRoutes
 {
     public Task<IResult> NewVoting(CancellationToken cancel);
     public Task<IResult> ConcludeVoting(CancellationToken cancel);
+
+    Task<IResult> ResumeVoting(CancellationToken cancel);
 }

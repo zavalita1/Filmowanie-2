@@ -1,12 +1,10 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Filmowanie.Database.Repositories;
 using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.Interfaces;
 using MassTransit;
@@ -68,7 +66,6 @@ internal sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>,
 
         var enrichedWinnerEntity = await EnrichWinnerEntityAsync(votingResults, context.CancellationToken); 
         await _votingResultsCommandRepository.UpdateAsync(currentVotingSessionId, votingResults.Movies, nominations, now, moviesAdded, enrichedWinnerEntity, context.CancellationToken);
-        await context.Publish(new ResultsCalculatedEvent(message.VotingSessionId));
 
         _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
     }

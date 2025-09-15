@@ -39,9 +39,17 @@ internal sealed class VotingSessionStateManager : IVotingStateManager
     public Task<Maybe<VotingSessionId>> StartNewVotingAsync(Maybe<DomainUser> input, CancellationToken cancelToken) =>
         input.AcceptAsync(StartNewVotingAsync, _log, cancelToken);
 
+    public Task<Maybe<VoidResult>> ResumeVotingAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken) => input.AcceptAsync(ResumeVotingAsync, _log, cancelToken);
+
+    private async Task<Maybe<VoidResult>> ResumeVotingAsync(VotingSessionId votingSessionId, CancellationToken cancelToken)
+    {
+        var message = new VotingResumedEvent(votingSessionId);
+        await _bus.Publish(message, cancelToken);
+        return VoidResult.Void;
+    }
+
     private async Task<Maybe<VotingSessionId>> StartNewVotingAsync(DomainUser input, CancellationToken cancelToken)
     {
-        // TODO error here
         var lastConcludedVotingSession = await _votingSessionQueryRepository
             .GetLastNVotingResultsAsync(1, cancelToken);
         var correlationId = _guidProvider.NewGuid();
@@ -53,6 +61,13 @@ internal sealed class VotingSessionStateManager : IVotingStateManager
             return new Error<VotingSessionId>("Previous voting has not concluded!", ErrorType.InvalidState);
 
         var lastVotingResult = lastConcludedVotingSession.Result!.Single();
+
+        if (!Guid.TryParse(lastVotingResult.id, out var lastVotingId))
+            return new Error<VotingSessionId>("Can't parse last voting id!", ErrorType.InvalidState);
+
+        var lastVotingResultId = new VotingSessionId(lastVotingId);
+        await _bus.Publish(new ResultsConfirmedEvent(lastVotingResultId), cancelToken);
+        
         var moviesGoingByeByeIds = lastVotingResult.MoviesGoingByeBye.Select(x => x.id).ToArray();
         var movies = lastVotingResult.Movies.Select(x => new EmbeddedMovie { id = x.Movie.id, Name = x.Movie.Name }).Where(x => x.id != lastVotingResult.Winner.Movie.id).Where(x => !moviesGoingByeByeIds.Contains(x.id)).ToArray();
         var nominationsData = lastVotingResult.UsersAwardedWithNominations.Select(x => new NominationData

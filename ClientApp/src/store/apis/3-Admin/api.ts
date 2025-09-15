@@ -14,6 +14,13 @@ export const adminApi = votingApi
           },
           invalidatesTags: ['VotingStatus']
         }),
+        resumeVoting: builder.mutation<void, void, void>({
+          query: () => ({url: '/voting/admin/resume', method: 'POST'}),
+          async onQueryStarted(params, { dispatch, queryFulfilled }) {
+            await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
+          },
+          invalidatesTags: ['VotingStatus']
+        }),
         startVoting: builder.mutation<void, void, void>({
           query: () => ({url: '/voting/admin/start', method: 'POST'}),
           async onQueryStarted(params, { dispatch, queryFulfilled }) {
@@ -38,4 +45,4 @@ export const adminApi = votingApi
     })
 });
 
-export const { useStartVotingMutation, useEndVotingMutation, useGetAllUsersQuery, useCreateUserMutation } = adminApi;
+export const { useStartVotingMutation, useEndVotingMutation, useGetAllUsersQuery, useCreateUserMutation, useResumeVotingMutation } = adminApi;

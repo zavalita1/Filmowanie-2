@@ -21,6 +21,7 @@ public static class RouteGroupBuilderExtensions
 
         adminGroup.MapPost("start", ([FromServices] IAdminVotingSessionRoutes routes, CancellationToken ct) => routes.NewVoting(ct));
         adminGroup.MapPost("end", ([FromServices] IAdminVotingSessionRoutes routes, CancellationToken ct) => routes.ConcludeVoting(ct));
+        adminGroup.MapPost("resume", ([FromServices] IAdminVotingSessionRoutes routes, CancellationToken ct) => routes.ResumeVoting(ct));
 
         var votingResultsGroup = accountRoutesBuilder.MapGroup("results").RequireAuthorization();
 
