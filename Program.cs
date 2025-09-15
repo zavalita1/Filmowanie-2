@@ -44,6 +44,11 @@ builder.Services.AddMemoryCache();
 builder.Services.RegisterPolicies();
 builder.Services.RegisterCustomServices(builder.Configuration);
 builder.Services.RegisterDatabaseServices(builder.Configuration);
+EnvironmentDependent.Invoke(new()
+{
+    [StartupMode.Production] = () => builder.Services.PersistDataProtectionKeysLocal(),
+    [StartupMode.Production ^ (StartupMode)0x11111111] = () => builder.Services.PersistDataProtectionKeysCtx(),
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

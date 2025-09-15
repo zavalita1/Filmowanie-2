@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Filmowanie.Database.Repositories.Internal;
+using Azure.Identity;
 
 namespace Filmowanie.Database.Extensions;
 
@@ -42,16 +43,20 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPushSubscriptionCommandRepository, PushSubscriptionCommandRepository>();
         services.AddScoped<IPushSubscriptionQueryRepository, PushSubscriptionQueryRepository>();
         services.Decorate<IPushSubscriptionQueryRepository, PushSubscriptionQueryDecorator>();
-        
-        PersistDataProtectionKeys(services);
     }
 
-    private static void PersistDataProtectionKeys(IServiceCollection services)
+    public static void PersistDataProtectionKeysLocal(this IServiceCollection services)
     {
         var dataProtectionBuilder = services.AddDataProtection().SetApplicationName("filmowanie2");
-        
+
         var currentDll = Assembly.GetCallingAssembly().Location;
         var currentDir = Path.GetDirectoryName(currentDll)!;
         dataProtectionBuilder.PersistKeysToFileSystem(new DirectoryInfo(currentDir));
+    }
+    
+    public static void PersistDataProtectionKeysCtx(this IServiceCollection services)
+    {
+        var dataProtectionBuilder = services.AddDataProtection().SetApplicationName("filmowanie2");
+        dataProtectionBuilder.PersistKeysToDbContext<IdentityDbContext>();
     }
 }
