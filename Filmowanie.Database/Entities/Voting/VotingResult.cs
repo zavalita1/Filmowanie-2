@@ -10,13 +10,13 @@ public class VotingResult : Entity, IReadOnlyVotingResult
     public IEnumerable<EmbeddedMovie> MoviesGoingByeBye { get; set; } = new List<EmbeddedMovie>();
     public IEnumerable<EmbeddedMovieWithNominationContext> MoviesAdded { get; set; } = new List<EmbeddedMovieWithNominationContext>();
     public virtual DateTime? Concluded { get; set; }
-    public virtual EmbeddedMovieWithNominatedBy Winner { get; set; }
+    public virtual EmbeddedMovieWithNominatedBy? Winner { get; set; }
 
     IReadOnlyEmbeddedMovieWithVotes[] IReadOnlyVotingResult.Movies => Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
     IReadOnlyEmbeddedUserWithNominationAward[] IReadOnlyVotingResult.UsersAwardedWithNominations => UsersAwardedWithNominations.Cast<IReadOnlyEmbeddedUserWithNominationAward>().ToArray();
     IReadOnlyEmbeddedMovie[] IReadOnlyVotingResult.MoviesGoingByeBye => MoviesGoingByeBye.Cast<IReadOnlyEmbeddedMovie>().ToArray();
     IReadOnlyEmbeddedMovieWithNominationContext[] IReadOnlyVotingResult.MoviesAdded => MoviesAdded.Cast<IReadOnlyEmbeddedMovieWithNominationContext>().ToArray();
-    IReadOnlyEmbeddedMovieWithNominatedBy IReadOnlyVotingResult.Winner => Winner;
+    IReadOnlyEmbeddedMovieWithNominatedBy IReadOnlyVotingResult.Winner => Winner!;
 
     public VotingResult()
     { }

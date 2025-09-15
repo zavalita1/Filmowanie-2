@@ -19,7 +19,7 @@ public sealed class FluentValidatorAdapterProvider : IFluentValidatorAdapterProv
 
     public IFluentValidatorAdapter<TInput> GetAdapter<TInput>(string keyedInstance)
     {
-        var typedValidator = (IValidator<TInput>)null;
+        var typedValidator = (IValidator<TInput>)null!;
 
         foreach (var validator in _validators)
         {

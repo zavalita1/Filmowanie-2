@@ -69,7 +69,7 @@ public sealed class FluentValidatorAdapterProviderTests
         // Arrange
         var validator = Substitute.For<IFluentValidatorAdapter>();
         var typedValidator = Substitute.For<IValidator<TestInput>>();
-        validator.CanHandle(string.Empty, out Arg.Any<IValidator<TestInput>>()).Returns(x =>
+        validator.CanHandle(string.Empty, out Arg.Any<IValidator<TestInput>>()!).Returns(x =>
         {
             x[1] = typedValidator;
             return true;

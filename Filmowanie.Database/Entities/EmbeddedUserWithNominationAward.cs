@@ -6,9 +6,9 @@ namespace Filmowanie.Database.Entities;
 
 public class EmbeddedUserWithNominationAward : IReadOnlyEmbeddedUserWithNominationAward
 {
-    public EmbeddedUser User { get; set; }
+    public EmbeddedUser User { get; set; } = null!;
 
-    public string AwardMessage { get; set; }
+    public string AwardMessage { get; set; } = null!;
 
     public Decade Decade { get; set; }
 

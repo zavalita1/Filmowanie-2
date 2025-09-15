@@ -4,11 +4,11 @@ namespace Filmowanie.Database.Entities;
 
 public sealed class ReadOnlyPushSubscriptionEntity : Entity, IReadOnlyPushSubscriptionEntity
 {
-    public string P256DH { get; set; }
-    public string Auth { get; set; }
-    public string Endpoint { get; set; }
+    public string P256DH { get; set; } = null!;
+    public string Auth { get; set; } = null!;
+    public string Endpoint { get; set; } = null!;
 
-    public EmbeddedUser User { get; set; }
+    public EmbeddedUser User { get; set; } = null!;
 
     IReadOnlyEmbeddedUser IReadOnlyPushSubscriptionEntity.User => User;
 

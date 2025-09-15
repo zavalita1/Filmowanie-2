@@ -11,7 +11,7 @@ public abstract class Event : IReadOnlyEntity
         set { }
     }
 
-    public virtual string id { get; set; }
+    public virtual string id { get; set; } = null!;
 
     public DateTime Created { get; set; }
 

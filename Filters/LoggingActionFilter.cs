@@ -16,7 +16,7 @@ namespace Filmowanie.Filters
             _log = log;
         }
 
-        public async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+        public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
         {
             var displayName = context.HttpContext.Request.Path;
             var userId = context.HttpContext.User.Claims.SingleOrDefault(x => x.Type == ClaimsTypes.UserId)?.Value;

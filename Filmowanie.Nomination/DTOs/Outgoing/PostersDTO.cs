@@ -2,5 +2,5 @@
 
 public class PostersDTO
 {
-    public IEnumerable<string> PosterUrls { get; set; }
+    public required IEnumerable<string> PosterUrls { get; set; }
 }

@@ -67,7 +67,7 @@ internal sealed class VotingResultsRepository : IVotingResultsRepository
         {
             var result = (await _repository.GetAll(x => x.Concluded != null, cancelToken)).ToArray();
 
-            var materializedResult = result.Select(IReadOnlyVotingResultMetadata (x) => new ReadOnlyVotingResultMetadata(x.Concluded!.Value, new MovieId(x.Winner.Movie.id), new VotingSessionId(Guid.Parse(x.id)), new DomainUser(x.Winner.NominatedBy.id, x.Winner.NominatedBy.Name, false, false, new TenantId(1), DateTime.UnixEpoch)));
+            var materializedResult = result.Select(IReadOnlyVotingResultMetadata (x) => new ReadOnlyVotingResultMetadata(x.Concluded!.Value, new MovieId(x.Winner!.Movie.id), new VotingSessionId(Guid.Parse(x.id)), new DomainUser(x.Winner.NominatedBy.id, x.Winner.NominatedBy.Name, false, false, new TenantId(1), DateTime.UnixEpoch)));
             return materializedResult.AsMaybe();
         }
         catch (Exception ex)

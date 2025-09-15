@@ -13,7 +13,7 @@ public static class WebApplicationBuilderExtensions
         if (!string.IsNullOrEmpty(startupMode) && Enum.TryParse<StartupMode>(startupMode, out var mode))
             return mode;
 
-        return builder.Environment.IsDevelopment() ? StartupMode.LocalWithFrontendDevServer : StartupMode.Production;
+        return builder.Environment.IsDevelopment() ? StartupMode.Local : StartupMode.Production;
     }
 
     public static void SetStartupMode(this WebApplicationBuilder builder)

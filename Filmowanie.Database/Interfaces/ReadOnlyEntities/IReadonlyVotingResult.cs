@@ -2,14 +2,14 @@
 
 public interface IReadOnlyVotingResult : IReadOnlyEntity
 {
-    public DateTime? Concluded { get; }
+    DateTime? Concluded { get; }
 
-    public IReadOnlyEmbeddedMovieWithVotes[] Movies { get; }
-    public IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations { get; }
+    IReadOnlyEmbeddedMovieWithVotes[] Movies { get; }
+    IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations { get; }
 
-    public IReadOnlyEmbeddedMovie[] MoviesGoingByeBye { get; }
+    IReadOnlyEmbeddedMovie[] MoviesGoingByeBye { get; }
 
-    public IReadOnlyEmbeddedMovieWithNominationContext[] MoviesAdded { get; }
+    IReadOnlyEmbeddedMovieWithNominationContext[] MoviesAdded { get; }
 
-    IReadOnlyEmbeddedMovieWithNominatedBy Winner { get; }
+    IReadOnlyEmbeddedMovieWithNominatedBy? Winner { get; }
 }

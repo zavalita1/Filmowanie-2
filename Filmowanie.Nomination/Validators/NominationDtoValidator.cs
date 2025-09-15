@@ -23,11 +23,11 @@ internal class NominationDtoValidator : AbstractValidator<(NominationDTO Dto, Do
             {
                 var movieYear = NominationMovieUrlValidator.GetGeneratedRegex().Match(x.Dto.MovieFilmwebUrl).Groups[1];
                 var decade = int.Parse(movieYear.Value).ToDecade();
-                return x.CurrentNominations.NominationData.Any(y => y.User.Id == x.User.Id && y.Year == decade);
+                return x.CurrentNominations.NominationData.Any(y => y.User!.Id == x.User.Id && y.Year == decade);
             }).WithMessage($"User must have nominations from proper decade to assign!");
         });
 
-        RuleFor(x => x).Must(x => x.CurrentNominations.NominationData.Any(y => y.User.Id == x.User.Id)).WithMessage("User must have nominations to assign!");
+        RuleFor(x => x).Must(x => x.CurrentNominations.NominationData.Any(y => y.User!.Id == x.User.Id)).WithMessage("User must have nominations to assign!");
     }
 
     public bool CanHandle<T>(string key, out IValidator<T>? typedValidator)

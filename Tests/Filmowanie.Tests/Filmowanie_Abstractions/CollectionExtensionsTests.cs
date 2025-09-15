@@ -8,10 +8,10 @@ public sealed class CollectionExtensionsTests
     [InlineData("one", "two", "three", ";", "one;two;three")]
     [InlineData("one", "two", "two", ";;;", "one;;;two;;;two")]
     [InlineData("one", null, "", ";;;", "one;;;;;;")]
-    public void ShouldProperlyConcat(string one, string two, string three, string separator, string expectedResult)
+    public void ShouldProperlyConcat(string one, string? two, string three, string separator, string expectedResult)
     {
         // Arrange
-        string[] collection = [one, two, three];
+        string[] collection = [one, two!, three];
 
         // Act
         var result = Abstractions.Extensions.CollectionExtensions.Concat(collection, separator);

@@ -4,5 +4,5 @@ public class CurrentNominationsResponse
 {
     public Guid CorrelationId { get; set; }
 
-    public NominationData[] Nominations { get; set; }
+    public NominationData[] Nominations { get; set; } = null!;
 }

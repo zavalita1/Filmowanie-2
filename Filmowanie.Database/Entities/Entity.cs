@@ -12,7 +12,7 @@ public abstract class Entity : IReadOnlyEntity
         set { }
     }
 
-    public virtual string id { get; set; }
+    public virtual string id { get; set; } = null!;
 
     public DateTime Created { get; set; }
     public int TenantId { get; set; }

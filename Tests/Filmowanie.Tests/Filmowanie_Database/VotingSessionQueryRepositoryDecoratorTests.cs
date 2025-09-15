@@ -40,12 +40,12 @@ public sealed class VotingSessionQueryRepositoryDecoratorTests
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Single(x => ci.ArgAt<Expression<Func<IReadOnlyVotingResult, bool>>>(0).Compile().Invoke(x)));
 
         // Act
-        var result = await _sut.Get(x => x.id == "loo" && x.Winner.Movie.Name == "double loo", CancellationToken.None);
+        var result = await _sut.Get(x => x.id == "loo" && x.Winner!.Movie.Name == "double loo", CancellationToken.None);
 
 
         // Assert
         result.Should().NotBeNull();
-        result!.Winner.Movie.MovieCreationYear.Should().Be(1111);
+        result!.Winner!.Movie.MovieCreationYear.Should().Be(1111);
     }
 
     [Fact]
@@ -64,13 +64,13 @@ public sealed class VotingSessionQueryRepositoryDecoratorTests
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Where(x => ci.ArgAt<Expression<Func<IReadOnlyVotingResult, bool>>>(0).Compile().Invoke(x)).ToArray());
 
         // Act
-        var result = (await _sut.GetVotingResultAsync(x => x.id == "loo" && x.Winner.Movie.Name == "double loo", x => x, 10, CancellationToken.None)).ToArray();
+        var result = (await _sut.GetVotingResultAsync(x => x.id == "loo" && x.Winner!.Movie.Name == "double loo", x => x, 10, CancellationToken.None)).ToArray();
 
 
         // Assert
         result.Should().HaveCount(2);
-        result.First().Winner.Movie.MovieCreationYear.Should().Be(1111);
-        result.Last().Winner.Movie.MovieCreationYear.Should().Be(6666);
+        result.First().Winner!.Movie.MovieCreationYear.Should().Be(1111);
+        result.Last().Winner!.Movie.MovieCreationYear.Should().Be(6666);
     }
 
     [Fact]
@@ -89,11 +89,11 @@ public sealed class VotingSessionQueryRepositoryDecoratorTests
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Where(x => ci.ArgAt<Expression<Func<IReadOnlyVotingResult, bool>>>(0).Compile().Invoke(x)).ToArray<IReadOnlyVotingResult>());
 
         // Act
-        var result = (await _sut.GetAll(x => x.id == "loo" && x.Winner.Movie.Name == "double loo", CancellationToken.None)).ToArray();
+        var result = (await _sut.GetAll(x => x.id == "loo" && x.Winner!.Movie.Name == "double loo", CancellationToken.None)).ToArray();
 
         // Assert
         result.Should().HaveCount(2);
-        result.First().Winner.Movie.MovieCreationYear.Should().Be(1111);
-        result.Last().Winner.Movie.MovieCreationYear.Should().Be(6666);
+        result.First().Winner!.Movie.MovieCreationYear.Should().Be(1111);
+        result.Last().Winner!.Movie.MovieCreationYear.Should().Be(6666);
     }
 }

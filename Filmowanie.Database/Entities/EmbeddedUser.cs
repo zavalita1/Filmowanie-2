@@ -4,9 +4,9 @@ namespace Filmowanie.Database.Entities;
 
 public class EmbeddedUser : IReadOnlyEmbeddedUser
 {
-    public string id { get; set; }
+    public string id { get; set; } = null!;
 
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public int TenantId { get; set; }
 

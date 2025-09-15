@@ -37,7 +37,7 @@ public sealed class MovieQueryRepositoryDecoratorTests
             new NominatedMovieEvent { id = "loo2", Movie = new() { Name = "double loo", MovieCreationYear = 4444 }, TenantId = 2137 },
             new NominatedMovieEvent { id = "loo", Movie = new() { Name = "double loo", MovieCreationYear = 2222 }, TenantId = 2137 },
         };
-        _movieRepo.GetMoviesNominatedAgainEventsAsync(default, CancellationToken.None)
+        _movieRepo.GetMoviesNominatedAgainEventsAsync(default!, CancellationToken.None)
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Where(x => ci.ArgAt<Expression<Func<IReadOnlyNominatedMovieEvent, bool>>>(0).Compile().Invoke(x)).ToArray<IReadOnlyNominatedMovieEvent>());
 
         // Act
@@ -62,7 +62,7 @@ public sealed class MovieQueryRepositoryDecoratorTests
             new MovieEntity { id = "loo2", Name = "double loo 3", Description = "d4", TenantId = 2137 },
             new MovieEntity { id = "loo", Name = "double loo", Description = "d5", TenantId = 2137 },
         };
-        _movieRepo.GetMoviesAsync(default, CancellationToken.None)
+        _movieRepo.GetMoviesAsync(default!, CancellationToken.None)
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Where(x => ci.ArgAt<Expression<Func<IReadOnlyMovieEntity, bool>>>(0).Compile().Invoke(x)).ToArray<IReadOnlyMovieEntity>());
 
         // Act
@@ -87,7 +87,7 @@ public sealed class MovieQueryRepositoryDecoratorTests
             new CanNominateMovieAgainEvent { id = "loo2", Movie = new() { Name = "double loo", MovieCreationYear = 4444 }, TenantId = 2137 },
             new CanNominateMovieAgainEvent { id = "loo", Movie = new() { Name = "double loo", MovieCreationYear = 2222 }, TenantId = 2137 },
         };
-        _movieRepo.GetMoviesThatCanBeNominatedAgainEventsAsync(default, CancellationToken.None)
+        _movieRepo.GetMoviesThatCanBeNominatedAgainEventsAsync(default!, CancellationToken.None)
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Where(x => ci.ArgAt<Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>>>(0).Compile().Invoke(x)).ToArray<IReadOnlyCanNominateMovieAgainEvent>());
 
         // Act

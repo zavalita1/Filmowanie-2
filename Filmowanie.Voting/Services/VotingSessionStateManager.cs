@@ -43,7 +43,7 @@ internal sealed class VotingSessionStateManager : IVotingStateManager
 
     private async Task<Maybe<VoidResult>> ResumeVotingAsync(VotingSessionId votingSessionId, CancellationToken cancelToken)
     {
-        var message = new VotingResumedEvent(votingSessionId);
+        var message = new ResumeVotingEvent(votingSessionId);
         await _bus.Publish(message, cancelToken);
         return VoidResult.Void;
     }

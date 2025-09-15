@@ -64,7 +64,8 @@ internal sealed class NominationsService : INominationsService
             var movie = new EmbeddedMovie { id = movieResult.id, MovieCreationYear = movieResult.CreationYear, Name = movieResult.Name };
 
             await _bus.Publish(new RemoveMovieEvent(votingSessionId, movie, user), cancelToken);
-            return new AknowledgedNominationDTO { Message = "OK" }.AsMaybe();
+            var decade = movie.MovieCreationYear.ToDecade().ToString();
+            return new AknowledgedNominationDTO { Message = "OK", Decade = decade }.AsMaybe();
         }
         catch (Exception ex)
         {

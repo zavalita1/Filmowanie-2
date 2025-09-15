@@ -2,7 +2,7 @@
 {
     public class AknowledgedNominationDTO
     {
-        public string Message { get; set; }
-        public string Decade { get; set; }
+        public required string Message { get; set; }
+        public required string Decade { get; set; }
     }
 }

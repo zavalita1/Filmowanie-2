@@ -5,11 +5,11 @@ namespace Filmowanie.Database.Entities;
 
 internal class NominatedMovieEvent : Event, IReadOnlyNominatedMovieEvent
 {
-    public EmbeddedMovie Movie { get; set; }
+    public EmbeddedMovie Movie { get; set; } = null!;
 
     IReadOnlyEmbeddedMovie IReadOnlyNominatedMovieEvent.Movie => Movie;
 
-    public string UserId { get; init; }
+    public string UserId { get; init; } = null!;
 
     public NominatedMovieEvent() {}
 

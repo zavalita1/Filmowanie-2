@@ -22,7 +22,7 @@ internal static class Endpoints
 
         EnvironmentDependent.Invoke(new ()
         {
-            [StartupMode.LocalWithFrontendDevServer] = () =>
+            [StartupMode.Local] = () =>
             {
                 webApplication.UseSwagger();
                 webApplication.UseSwaggerUI();
@@ -37,8 +37,8 @@ internal static class Endpoints
                 {
                     EnvironmentDependent.Invoke(new()
                     {
-                        [StartupMode.LocalWithFrontendDevServer] = () => spa.UseProxyToSpaDevelopmentServer(webApplication.Configuration["FrontendDevServer"]),
-                        [StartupMode.Production | StartupMode.LocalWithFrontendDevServer] = () => spa.Options.SourcePath = "wwwroot"
+                        [StartupMode.Local] = () => spa.UseProxyToSpaDevelopmentServer(webApplication.Configuration["FrontendDevServer"]),
+                        [StartupMode.Production | StartupMode.Local] = () => spa.Options.SourcePath = "wwwroot"
                     });
                 });
             });

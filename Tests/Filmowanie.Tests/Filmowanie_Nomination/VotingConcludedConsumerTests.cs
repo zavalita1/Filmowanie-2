@@ -81,7 +81,7 @@ public class VotingConcludedConsumerTests
         _dateTimeProvider.Now.Returns(now1, now2);
 
         IEnumerable<IReadOnlyCanNominateMovieAgainEvent> capturedInput = null!;
-        _movieCommandRepository.InsertCanBeNominatedAgainAsync(default, default).ReturnsForAnyArgs(Task.CompletedTask)
+        _movieCommandRepository.InsertCanBeNominatedAgainAsync(default!, default).ReturnsForAnyArgs(Task.CompletedTask)
             .AndDoes(x => capturedInput = x.ArgAt<IEnumerable<IReadOnlyCanNominateMovieAgainEvent>>(0));
 
         var expectedInput = new[]

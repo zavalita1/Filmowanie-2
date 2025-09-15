@@ -22,7 +22,7 @@ internal sealed class NominationsMapper : INominationsMapper
     private static Maybe<NominationsDataDTO> Map((CurrentNominationsData, DomainUser) input)
     {
         var user = input.Item2;
-        var nominationDecades = input.Item1.NominationData.Where(x => x.User.Id == user.Id && x.Concluded == null).Select(x => x.Year.ToString()[1..]).ToArray();
+        var nominationDecades = input.Item1.NominationData.Where(x => x!.User!.Id == user.Id && x.Concluded == null).Select(x => x.Year.ToString()[1..]).ToArray();
 
         var result = new NominationsDataDTO { Nominations = nominationDecades };
 

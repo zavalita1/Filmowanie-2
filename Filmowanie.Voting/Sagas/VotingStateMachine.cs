@@ -39,6 +39,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
         Event(() => GetMovieListEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => GetNominationsEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => ResultsConfirmedEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => ResumeVotingEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => Error, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
 
         Initially(
@@ -140,7 +141,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 .TransitionTo(CalculatingResults)
         );
 
-        During(CalculatingResults, When(VotingResumedEvent).TransitionTo(NominationsConcluded));
+        During(CalculatingResults, When(ResumeVotingEvent).TransitionTo(NominationsConcluded));
         During(CalculatingResults, When(ResultsConfirmedEvent).Finalize());
         During(CalculatingResults, When(Error)
             .Then(ctx => ctx.Saga.Error = new ErrorData { ErrorMessage = ctx.Message.Message, CallStack = ctx.Message.CallStack })
@@ -169,12 +170,12 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
     public Event<RemoveVoteEvent> RemoveVoteEvent { get; private set; } = null!;
 
     public Event<ConcludeVotingEvent> ConcludeVoting { get; private set; } = null!;
+    public Event<ResumeVotingEvent> ResumeVotingEvent { get; private set; } = null!;
 
     // Events
     public Event<MoviesListRequestedEvent> GetMovieListEvent { get; private set; } = null!;
     public Event<NominationsRequestedEvent> GetNominationsEvent { get; private set; } = null!;
     public Event<ResultsConfirmedEvent> ResultsConfirmedEvent { get; private set; } = null!;
-    public Event<VotingResumedEvent> VotingResumedEvent { get; private set; } = null!;
     public Event<ErrorEvent> Error { get; private set; } = null!;
 
     // States

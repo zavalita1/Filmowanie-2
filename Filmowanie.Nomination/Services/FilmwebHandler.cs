@@ -100,7 +100,7 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
         ExtractDirectors(responseContent, ref movieBuilder);
         ExtractWriters(responseContent, ref movieBuilder);
 
-        if (!string.IsNullOrEmpty(responseContent2.Title))
+        if (!string.IsNullOrEmpty(responseContent2!.Title))
             movieBuilder.WithName(responseContent2.Title);
 
         if (!string.IsNullOrEmpty(responseContent2.OriginalTitle))
@@ -276,8 +276,8 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
 
     public sealed class FilmwebInfoDTO
     {
-        public string Title { get; set; }
-        public string OriginalTitle { get; set; }
+        public string Title { get; set; } = null!;
+        public string OriginalTitle { get; set; } = null!;
         public int Year { get; set; }
     }
 }

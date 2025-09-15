@@ -5,7 +5,7 @@ namespace Filmowanie.Database.Entities;
 
 internal class CanNominateMovieAgainEvent : Event, IReadOnlyCanNominateMovieAgainEvent
 {
-    public EmbeddedMovie Movie { get; set; }
+    public EmbeddedMovie Movie { get; set; } = null!;
 
     IReadOnlyEmbeddedMovie IReadOnlyCanNominateMovieAgainEvent.Movie => Movie;
 

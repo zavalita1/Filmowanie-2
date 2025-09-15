@@ -3,7 +3,8 @@
 [Flags]
 public enum StartupMode
 {
-    LocalWithFrontendDevServer = 0x00000001,
-    LocalWithCompiledFrontend = 0x00000010,
-    Production = 0x00000100,
+    Local = 0x00000001,
+    CompiledFrontend = 0x00000010,
+    WithAppInsights = 0x00000100,
+    Production = CompiledFrontend | WithAppInsights,
 }

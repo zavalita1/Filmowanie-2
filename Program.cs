@@ -21,7 +21,7 @@ builder.Services.AddSignalR();
 
 EnvironmentDependent.Invoke(new ()
 {
-    [StartupMode.LocalWithFrontendDevServer] = () => builder.Services.AddCors(o => o.AddPolicy("ViteLocalDevServer", p => p.WithOrigins(builder.Configuration["FrontendDevServer"]!)))
+    [StartupMode.CompiledFrontend ^ (StartupMode)0x11111111] = () => builder.Services.AddCors(o => o.AddPolicy("ViteLocalDevServer", p => p.WithOrigins(builder.Configuration["FrontendDevServer"]!)))
 });
 
 builder.Services
@@ -46,7 +46,11 @@ builder.Services.RegisterCustomServices(builder.Configuration);
 builder.Services.RegisterDatabaseServices(builder.Configuration);
 EnvironmentDependent.Invoke(new()
 {
-    [StartupMode.Production] = () => builder.Services.PersistDataProtectionKeysLocal(),
+    [StartupMode.Production] = () =>
+    {
+        builder.Services.PersistDataProtectionKeysLocal();
+        builder.Services.AddOpenTelemetry().UseAzureMonitor();
+    },
     [StartupMode.Production ^ (StartupMode)0x11111111] = () => builder.Services.PersistDataProtectionKeysCtx(),
 });
 builder.Services.AddEndpointsApiExplorer();
@@ -54,7 +58,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<PushNotificationOptions>(builder.Configuration.GetSection("Vapid"));
 builder.Services.ConfigureMassTransit(builder.Configuration);
-builder.Services.AddOpenTelemetry().UseAzureMonitor();
 
 var app = builder.Build();
 var log = app.Services.GetRequiredService<ILogger<Program>>();
@@ -62,8 +65,8 @@ log.LogInformation($"Starting the app in mode: {Environment.Mode}...");
 
 EnvironmentDependent.Invoke(new ()
 {
-    [StartupMode.LocalWithFrontendDevServer] = () => app.UseCors("ViteLocalDevServer"),
-    [StartupMode.Production | StartupMode.LocalWithCompiledFrontend] = () => app.UseStaticFiles() 
+    [StartupMode.CompiledFrontend ^ (StartupMode)0x11111111] = () => app.UseCors("ViteLocalDevServer"),
+    [StartupMode.CompiledFrontend] = () => app.UseStaticFiles() 
 });
 
 app.ConfigureEndpoints();

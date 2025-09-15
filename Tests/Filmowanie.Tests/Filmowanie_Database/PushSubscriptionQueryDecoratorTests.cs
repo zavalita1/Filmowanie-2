@@ -33,7 +33,7 @@ public sealed class PushSubscriptionQueryDecoratorTests
             new ReadOnlyPushSubscriptionEntity { id = "loo", Auth = "double loo", Endpoint = "2222" , TenantId = 2137 },
             new ReadOnlyPushSubscriptionEntity { id = "loo", Auth = "double loo", Endpoint = "6666" , TenantId = 21372 },
         };
-        _pushNotificationRepo.GetAsync(default, default, CancellationToken.None)
+        _pushNotificationRepo.GetAsync(default!, default, CancellationToken.None)
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Where(x => ci.ArgAt<Expression<Func<IReadOnlyPushSubscriptionEntity, bool>>>(0).Compile().Invoke(x)).ToArray<IReadOnlyPushSubscriptionEntity>());
 
         // Act
@@ -60,7 +60,7 @@ public sealed class PushSubscriptionQueryDecoratorTests
             new ReadOnlyPushSubscriptionEntity { id = "loo2",Auth = "double loo", Endpoint = "4444" , TenantId = 2137 },
             new ReadOnlyPushSubscriptionEntity { id = "loo", Auth = "double loo", Endpoint = "2222" , TenantId = 2137 },
         };
-        _pushNotificationRepo.GetAsync(default, default, CancellationToken.None)
+        _pushNotificationRepo.GetAsync(default!, default, CancellationToken.None)
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Where(x => ci.ArgAt<Expression<Func<IReadOnlyPushSubscriptionEntity, bool>>>(0).Compile().Invoke(x)).ToArray<IReadOnlyPushSubscriptionEntity>());
 
         // Act

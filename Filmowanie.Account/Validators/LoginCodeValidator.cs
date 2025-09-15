@@ -16,7 +16,7 @@ internal class LoginCodeValidator : AbstractValidator<LoginDto>, IFluentValidato
     public bool CanHandle<T>(string key, out IValidator<T> typedValidator)
     {
         var result = typeof(T) == typeof(LoginDto);
-        typedValidator = result ? (IValidator<T>) this : null;
+        typedValidator = result ? (IValidator<T>) this : null!;
 
         return result;
     }

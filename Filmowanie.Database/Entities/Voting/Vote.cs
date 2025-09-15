@@ -6,7 +6,7 @@ namespace Filmowanie.Database.Entities.Voting;
 
 public class Vote : IReadOnlyVote
 {
-    public virtual EmbeddedUser User { get; set; } 
+    public virtual EmbeddedUser User { get; set; } = null!;
     public virtual VoteType VoteType { get; set; }
 
     IReadOnlyEmbeddedUser IReadOnlyVote.User => User;

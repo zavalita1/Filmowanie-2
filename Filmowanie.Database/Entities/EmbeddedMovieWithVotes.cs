@@ -8,7 +8,7 @@ public class EmbeddedMovieWithVotes : IReadOnlyEmbeddedMovieWithVotes
 {
     public IEnumerable<Vote> Votes { get; set; }
 
-    public EmbeddedMovie Movie { get; set; }
+    public EmbeddedMovie Movie { get; set; } = null!;
 
     public int VotingScore { get; set; }
 

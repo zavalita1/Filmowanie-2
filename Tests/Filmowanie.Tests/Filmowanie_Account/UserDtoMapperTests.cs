@@ -84,7 +84,7 @@ public sealed class UserDtoMapperTests
             new TenantId(21),
             DateTime.UtcNow)
         {
-            Name = name
+            Name = name!
         };
 
         var input = new Maybe<DomainUser>(user, null);

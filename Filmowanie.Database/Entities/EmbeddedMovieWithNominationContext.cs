@@ -5,9 +5,9 @@ namespace Filmowanie.Database.Entities;
 
 public class EmbeddedMovieWithNominatedBy : IReadOnlyEmbeddedMovieWithNominatedBy
 {
-    public virtual EmbeddedMovie Movie { get; set; }
+    public virtual EmbeddedMovie Movie { get; set; } = null!;
 
-    public virtual EmbeddedUser NominatedBy { get; set; }
+    public virtual EmbeddedUser NominatedBy { get; set; } = null!;
 
     IReadOnlyEmbeddedUser IReadOnlyEmbeddedMovieWithNominatedBy.NominatedBy => NominatedBy;
     IReadOnlyEmbeddedMovie IReadOnlyEmbeddedMovieWithNominatedBy.Movie => Movie;
