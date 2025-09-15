@@ -9,7 +9,6 @@ var dbAccountName = toLower('dba-${webAppName}')
 var dbName = toLower('db-${webAppName}')
 var keyVaultName = toLower('kv-${webAppName}')
 var storageAccountName = toLower('kv-${webAppName}')
-var blobName = toLower('blob-${webAppName}')
 
 var environments = {
   Development: {
