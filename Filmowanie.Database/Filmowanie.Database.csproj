@@ -20,9 +20,8 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Filmowanie.Tests" />
 	</ItemGroup>
-
 	<ItemGroup>
-	  <Folder Include="Retrievers\" />
+		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
 
 </Project>

@@ -4,8 +4,10 @@ using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities.Voting.Events;
+using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Database.Repositories;
+using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.Interfaces;
 using Filmowanie.Voting.Sagas;
 using MassTransit;
@@ -13,6 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Services;
 
+// TODO UTs
 internal sealed class CurrentVotingService : ICurrentVotingService
 {
     private readonly IRequestClient<MoviesListRequestedEvent> _getMoviesListRequestClient;

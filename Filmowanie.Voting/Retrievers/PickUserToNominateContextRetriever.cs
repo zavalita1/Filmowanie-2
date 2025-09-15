@@ -5,6 +5,7 @@ using Filmowanie.Voting.Interfaces;
 
 namespace Filmowanie.Voting.Retrievers;
 
+// TODO UTs
 internal sealed class PickUserToNominateContextRetriever : IPickUserToNominateContextRetriever
 {
     public Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> GetPickUserToNominateContexts(IReadOnlyVotingResult[] lastVotingResults, IReadOnlyEmbeddedMovieWithNominationContext[] moviesAdded, VotingConcludedEvent message)

@@ -8,6 +8,7 @@ using Filmowanie.Voting.Interfaces;
 
 namespace Filmowanie.Voting.Retrievers;
 
+// TODO UTs
 internal sealed class NominationsRetriever : INominationsRetriever
 {
     private readonly IPickUserToNominateStrategyFactory _pickUserToNominateStrategyFactory;

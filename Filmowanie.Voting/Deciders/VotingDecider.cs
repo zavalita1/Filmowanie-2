@@ -4,6 +4,7 @@ using Filmowanie.Voting.Interfaces;
 
 namespace Filmowanie.Voting.Deciders;
 
+// TODO UTs
 public sealed class VotingDecider : IVotingDecider
 {
     public IEnumerable<(IReadOnlyEmbeddedMovieWithVotes Movie, bool IsWinner)> AssignScores(IEnumerable<IReadOnlyEmbeddedMovieWithVotes> moviesWithVotes,

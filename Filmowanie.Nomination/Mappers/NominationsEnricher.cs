@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
-using Filmowanie.Database.Repositories;
+using Filmowanie.Database.Interfaces;
+using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -44,12 +45,15 @@ internal sealed class NominationsEnricher : INominationsEnricher
 
         var moviesThatCanBeNominatedAgain = await _movieQueryRepository.GetManyByIdAsync(moviesThatCanBeNominatedAgainIds, cancelToken, false);
 
-        var moviesThatCanBeNominatedAgainDTOs = moviesThatCanBeNominatedAgain.Result
+        if (moviesThatCanBeNominatedAgain.Error.HasValue)
+            return moviesThatCanBeNominatedAgain.Error.Value.ChangeResultType<IReadOnlyMovieEntity[], NominationsFullDataDTO>();
+
+        var moviesThatCanBeNominatedAgainDtos = moviesThatCanBeNominatedAgain.Result!
             .OrderBy(x => x.CreationYear)
             .Select(x => new MovieDTO(x.id, x.Name, x.PosterUrl, x.BigPosterUrl, x.Description, x.FilmwebUrl, x.CreationYear, x.DurationInMinutes.GetDurationString(), x.Genres, x.Actors, x.Directors, x.Writers, x.OriginalTitle))
             .ToArray();
 
-        var result = new NominationsFullDataDTO { Nominations = input.Nominations, MoviesThatCanBeNominatedAgain = moviesThatCanBeNominatedAgainDTOs };
+        var result = new NominationsFullDataDTO { Nominations = input.Nominations, MoviesThatCanBeNominatedAgain = moviesThatCanBeNominatedAgainDtos };
         return result.AsMaybe();
     }
 }

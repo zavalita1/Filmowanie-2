@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Nomination.Services;
 
+// TODO UTs
 internal sealed class MoviePostersService : IMoviePostersService
 {
     private readonly ILogger<MoviePostersService> _log;

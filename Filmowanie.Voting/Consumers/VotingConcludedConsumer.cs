@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Consumers;
 
+// TODO UTs
 internal sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, IConsumer<Fault<VotingConcludedEvent>>
 {
     private readonly ILogger<VotingConcludedConsumer> _logger;

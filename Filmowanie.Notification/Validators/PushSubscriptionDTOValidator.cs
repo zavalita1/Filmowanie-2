@@ -4,6 +4,7 @@ using FluentValidation;
 
 namespace Filmowanie.Notification.Validators;
 
+// TODO UTs
 internal class PushSubscriptionDTOValidator : AbstractValidator<PushSubscriptionDTO>, IFluentValidatorAdapter
 {
     public PushSubscriptionDTOValidator()

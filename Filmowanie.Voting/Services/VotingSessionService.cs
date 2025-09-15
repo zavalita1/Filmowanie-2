@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Services;
 
+// TODO UTs
 internal sealed class VotingSessionService : IVotingSessionService
 {
     private readonly IVotingResultsRepository _votingSessionQueryRepository;

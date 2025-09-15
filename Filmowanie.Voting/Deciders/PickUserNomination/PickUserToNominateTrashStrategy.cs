@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Deciders.PickUserNomination;
 
+// TODO UTs
 public sealed class PickUserToNominateTrashStrategy : IPickUserToNominateStrategy
 {
     private readonly ILogger<PickUserToNominateTrashStrategy> _log;

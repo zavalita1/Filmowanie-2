@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Interfaces;
@@ -17,7 +16,7 @@ internal sealed class PushSubscriptionQueryRepository : IPushSubscriptionQueryRe
         _ctx = ctx;
     }
 
-    public async Task<IReadOnlyPushSubscriptionEntity[]> GetAsync(TenantId tenant, CancellationToken cancelToken)
+    public async Task<IReadOnlyPushSubscriptionEntity[]> GetAllAsync(TenantId tenant, CancellationToken cancelToken)
     {
         return await _ctx.Subscriptions.AsNoTracking().ToArrayAsync(cancelToken);
     }

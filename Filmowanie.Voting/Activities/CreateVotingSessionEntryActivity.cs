@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Activities;
 
+// TODO UTs
 public class CreateVotingSessionEntryActivity : IStateMachineActivity<VotingStateInstance, StartVotingEvent>
 {
     private readonly ILogger<VotingStateMachine> _logger;

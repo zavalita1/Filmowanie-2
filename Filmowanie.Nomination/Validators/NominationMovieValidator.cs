@@ -8,6 +8,7 @@ using FluentValidation;
 
 namespace Filmowanie.Nomination.Validators;
 
+// TODO UTs
 internal class NominationMovieValidator : AbstractValidator<(IReadOnlyMovieEntity Movie, DomainUser User, CurrentNominationsData CurrentNominations)>, IFluentValidatorAdapter
 {
     public NominationMovieValidator()

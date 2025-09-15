@@ -1,9 +1,8 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
-namespace Filmowanie.Database.Repositories;
+namespace Filmowanie.Database.Interfaces;
 
 public interface IMovieDomainRepository
 {

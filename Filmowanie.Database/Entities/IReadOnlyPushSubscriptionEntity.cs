@@ -12,7 +12,7 @@ public sealed class ReadOnlyPushSubscriptionEntity : Entity, IReadOnlyPushSubscr
 
     IReadOnlyEmbeddedUser IReadOnlyPushSubscriptionEntity.User => User;
 
-    private ReadOnlyPushSubscriptionEntity() { }
+    internal ReadOnlyPushSubscriptionEntity() { }
 
     public ReadOnlyPushSubscriptionEntity(IReadOnlyPushSubscriptionEntity other)
     {

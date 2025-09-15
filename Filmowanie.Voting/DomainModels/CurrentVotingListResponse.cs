@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
-namespace Filmowanie.Voting.Sagas;
+namespace Filmowanie.Voting.DomainModels;
 
 public class CurrentVotingListResponse
 {

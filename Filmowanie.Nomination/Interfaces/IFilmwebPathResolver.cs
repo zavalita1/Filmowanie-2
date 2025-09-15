@@ -1,4 +1,4 @@
-﻿using Filmowanie.Nomination.Handlers;
+﻿using Filmowanie.Nomination.Services;
 
 namespace Filmowanie.Nomination.Interfaces;
 

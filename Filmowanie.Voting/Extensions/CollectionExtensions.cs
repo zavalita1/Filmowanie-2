@@ -1,5 +1,6 @@
 ﻿namespace Filmowanie.Voting.Extensions;
 
+// TODO UTs
 internal static class CollectionExtensions
 {
     public static IDictionary<TSelect, int> GetExAeuquoRankings<T, TSortBy, TSelect>(this IEnumerable<T> collection, Func<T, TSortBy> sortByFunc, Func<T, TSelect> selectFunc) where TSelect : notnull

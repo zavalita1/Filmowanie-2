@@ -1,92 +1,105 @@
+using AutoFixture;
+using FluentAssertions;
 using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Validators;
-using FluentAssertions;
+using FluentValidation;
+using Xunit;
 
 namespace Filmowanie.Tests.Filmowanie_Account;
 
-public class LoginCodeValidatorTests
+public sealed class LoginCodeValidatorTests
 {
-    private readonly LoginCodeValidator _validator;
+    private readonly LoginCodeValidator _sut;
+    private readonly IFixture _fixture;
 
     public LoginCodeValidatorTests()
     {
-        _validator = new LoginCodeValidator();
+        _sut = new LoginCodeValidator();
+        _fixture = new Fixture();
     }
 
     [Fact]
-    public void Validate_ShouldReturnError_WhenCodeIsNull()
+    public void ValidateCode_WhenCodeIsNull_ShouldHaveValidationError()
     {
         // Arrange
-        var dto = new LoginDto(null);
+        var dto = new LoginDto(null!);
 
         // Act
-        var result = _validator.Validate(dto);
+        var result = _sut.Validate(dto);
 
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().ContainSingle(e => e.ErrorMessage == "Code cannot be null!");
+        result.Errors.Should().Contain(x => x.PropertyName == nameof(LoginDto.Code) 
+            && x.ErrorMessage == $"{nameof(LoginDto.Code)} cannot be null!");
     }
 
     [Fact]
-    public void Validate_ShouldReturnError_WhenCodeIsEmpty()
+    public void ValidateCode_WhenCodeIsEmpty_ShouldHaveValidationError()
     {
         // Arrange
-        var dto = new LoginDto("");
+        var dto = new LoginDto(string.Empty);
 
         // Act
-        var result = _validator.Validate(dto);
+        var result = _sut.Validate(dto);
 
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().ContainSingle(e => e.ErrorMessage == "Code cannot be empty!");
+        result.Errors.Should().Contain(x => x.PropertyName == nameof(LoginDto.Code) 
+            && x.ErrorMessage == $"{nameof(LoginDto.Code)} cannot be empty!");
     }
 
-    [Fact]
-    public void Validate_ShouldReturnError_WhenCodeIsInvalidGuid()
+    [Theory]
+    [InlineData("not-a-guid")]
+    [InlineData("123")]
+    [InlineData("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")]
+    public void ValidateCode_WhenCodeIsNotValidGuid_ShouldHaveValidationError(string invalidCode)
     {
         // Arrange
-        var dto = new LoginDto ("invalid-guid");
+        var dto = new LoginDto(invalidCode);
 
         // Act
-        var result = _validator.Validate(dto);
+        var result = _sut.Validate(dto);
 
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().ContainSingle(e => e.ErrorMessage == "Code must be a valid guid!");
+        result.Errors.Should().Contain(x => x.PropertyName == nameof(LoginDto.Code) 
+            && x.ErrorMessage == $"{nameof(LoginDto.Code)} must be a valid guid!");
     }
 
     [Fact]
-    public void Validate_ShouldReturnSuccess_WhenCodeIsValidGuid()
+    public void ValidateDto_WhenCodeIsValidGuid_ShouldNotHaveValidationErrors()
     {
         // Arrange
         var dto = new LoginDto(Guid.NewGuid().ToString());
 
         // Act
-        var result = _validator.Validate(dto);
+        var result = _sut.Validate(dto);
 
         // Assert
         result.IsValid.Should().BeTrue();
+        result.Errors.Should().BeEmpty();
     }
 
     [Fact]
-    public void CanHandle_ShouldReturnTrue_ForValidType()
+    public void CanHandle_WhenTypeMatches_ShouldReturnTrueAndValidator()
     {
         // Act
-        var canHandle = _validator.CanHandle<LoginDto>("anyKey", out var typedValidator);
+        var canHandle = _sut.CanHandle<LoginDto>("any-key", out var validator);
 
         // Assert
         canHandle.Should().BeTrue();
-        typedValidator.Should().NotBeNull();
+        validator.Should().NotBeNull();
+        validator.Should().BeOfType<LoginCodeValidator>();
     }
 
     [Fact]
-    public void CanHandle_ShouldReturnFalse_ForInvalidType()
+    public void CanHandle_WhenTypeDoesNotMatch_ShouldReturnFalseAndNullValidator()
     {
         // Act
-        var canHandle = _validator.CanHandle<object>("anyKey", out var typedValidator);
+        var canHandle = _sut.CanHandle<string>("any-key", out var validator);
 
         // Assert
         canHandle.Should().BeFalse();
-        typedValidator.Should().BeNull();
+        validator.Should().BeNull();
     }
 }

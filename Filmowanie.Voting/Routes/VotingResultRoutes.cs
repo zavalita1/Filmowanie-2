@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Voting.Routes;
 
+// TODO UTs
 internal sealed class VotingResultRoutes : IVotingResultRoutes
 {
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Voting.Helpers;
 
+// TODO UTs
 internal static class RoutesResultHelper
 {
     public static IResult UnwrapOperationResult<T>(Maybe<T> result, IResult? onSuccess = null, Func<ErrorType, IResult?>? overrideDefault = null)

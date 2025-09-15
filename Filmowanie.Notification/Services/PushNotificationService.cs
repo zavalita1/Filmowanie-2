@@ -17,6 +17,7 @@ using WebPush;
 
 namespace Filmowanie.Notification.Services;
 
+// TODO UTs
 internal sealed class PushNotificationService : IPushNotificationService
 {
     private readonly IPushSubscriptionCommandRepository _pushSubscriptionCommandRepository;
@@ -55,7 +56,7 @@ internal sealed class PushNotificationService : IPushNotificationService
 
     public async Task<Maybe<VoidResult>> SendAllPushNotificationsAsync((TenantId, string Message) input, CancellationToken cancelToken)
     {
-        var pushSubscriptions = await _pushSubscriptionQueryRepository.GetAsync(input.Item1, cancelToken);
+        var pushSubscriptions = await _pushSubscriptionQueryRepository.GetAllAsync(input.Item1, cancelToken);
         var errors = new ConcurrentStack<Maybe<VoidResult>>();
         var corruptSubscriptions = new ConcurrentBag<IReadOnlyPushSubscriptionEntity>();
 

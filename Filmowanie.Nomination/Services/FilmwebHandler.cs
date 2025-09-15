@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using System.Web;
-using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
@@ -15,7 +14,7 @@ using Filmowanie.Nomination.Interfaces;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 
-namespace Filmowanie.Nomination.Handlers;
+namespace Filmowanie.Nomination.Services;
 
 // TODO refactor to ditch regexes, write UTs
 internal sealed partial class FilmwebHandler : IFilmwebHandler

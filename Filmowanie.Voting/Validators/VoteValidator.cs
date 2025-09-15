@@ -4,6 +4,7 @@ using FluentValidation;
 
 namespace Filmowanie.Voting.Validators;
 
+// TODO UTs
 internal class VoteValidator : AbstractValidator<VoteDTO>, IFluentValidatorAdapter
 {
     private const string MovieIdPrefix = "movie-";

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Notification.Consumers;
 
+// TODO UTs
 public sealed class RemoveVoteEventConsumer : IConsumer<RemoveVoteEvent>, IConsumer<Fault<RemoveVoteEvent>>
 {
     private readonly ILogger<RemoveVoteEventConsumer> _logger;

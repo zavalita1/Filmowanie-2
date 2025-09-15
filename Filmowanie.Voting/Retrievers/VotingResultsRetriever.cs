@@ -5,6 +5,7 @@ using Filmowanie.Voting.Interfaces;
 
 namespace Filmowanie.Voting.Retrievers;
 
+// TODO UTs
 internal sealed class VotingResultsRetriever : IVotingResultsRetriever
 {
     private readonly IVotingDeciderFactory _votingDeciderFactory;

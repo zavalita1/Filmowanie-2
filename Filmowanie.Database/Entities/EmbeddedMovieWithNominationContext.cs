@@ -12,7 +12,7 @@ public class EmbeddedMovieWithNominatedBy : IReadOnlyEmbeddedMovieWithNominatedB
     IReadOnlyEmbeddedUser IReadOnlyEmbeddedMovieWithNominatedBy.NominatedBy => NominatedBy;
     IReadOnlyEmbeddedMovie IReadOnlyEmbeddedMovieWithNominatedBy.Movie => Movie;
 
-    protected EmbeddedMovieWithNominatedBy()
+    protected internal EmbeddedMovieWithNominatedBy()
     { }
 
 public EmbeddedMovieWithNominatedBy(IReadOnlyEmbeddedMovieWithNominatedBy other)

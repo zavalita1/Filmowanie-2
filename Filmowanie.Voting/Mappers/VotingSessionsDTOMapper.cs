@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Mappers;
 
+// TODO UTs
 internal sealed class VotingSessionsDTOMapper : IVotingSessionsDTOMapper
 {
     private readonly ILogger<VotingSessionsDTOMapper> _log;

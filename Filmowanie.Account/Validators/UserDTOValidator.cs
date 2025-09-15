@@ -9,6 +9,7 @@ internal class UserDTOValidator : AbstractValidator<UserDTO>, IFluentValidatorAd
 {
     public UserDTOValidator()
     {
+        RuleFor(x => x.Id).NotNull().WithMessage("Value cannot be null!");
         RuleFor(x => x.Id).SetValidator(new UserIdValidator());
     }
 

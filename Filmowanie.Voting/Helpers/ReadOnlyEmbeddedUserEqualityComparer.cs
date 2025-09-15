@@ -2,6 +2,7 @@
 
 namespace Filmowanie.Voting.Helpers;
 
+// TODO UTs
 public class ReadOnlyEmbeddedUserEqualityComparer : IEqualityComparer<IReadOnlyEmbeddedUser>
 {
     public static ReadOnlyEmbeddedUserEqualityComparer Instance => new ();

@@ -6,6 +6,7 @@ using FluentValidation;
 
 namespace Filmowanie.Nomination.Validators;
 
+// TODO UTs
 internal partial class NominationMovieUrlValidator : AbstractValidator<string>, IFluentValidatorAdapter
 {
     [GeneratedRegex("https://www\\.filmweb\\.pl/film/[^-]*-([0-9][0-9][0-9][0-9])-", RegexOptions.IgnoreCase)]

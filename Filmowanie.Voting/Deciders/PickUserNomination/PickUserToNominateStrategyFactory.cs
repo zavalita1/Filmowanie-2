@@ -3,12 +3,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Deciders.PickUserNomination;
 
-public interface IPickUserToNominateStrategyFactory
-{
-    IPickUserToNominateStrategy ForTrashVoting();
-    IPickUserToNominateStrategy ForRegularVoting();
-}
-
 public sealed class PickUserToNominateStrategyFactory : IPickUserToNominateStrategyFactory
 {
     private readonly ILogger<PickUserToNominateTrashStrategy> _trashLog;

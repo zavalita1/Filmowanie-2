@@ -10,7 +10,9 @@ internal class BasicAuthSignupValidator : BasicAuthValidator
 
     public BasicAuthSignupValidator()
     {
-        RuleFor(x => x.Password).Must(x => x.Length >= MinimalPasswordLength).WithMessage($"{nameof(BasicAuthLoginDTO.Password)} must have {MinimalPasswordLength} characters or more");
+        RuleFor(x => x.Password).NotEmpty();
+        When(x => !string.IsNullOrEmpty(x.Password), () => 
+        RuleFor(x => x.Password).Must(x => x.Length >= MinimalPasswordLength).WithMessage($"{nameof(BasicAuthLoginDTO.Password)} must have {MinimalPasswordLength} characters or more"));
     }
 
     public override bool CanHandle<T>(string key, out IValidator<T>? typedValidator)

@@ -4,6 +4,7 @@ using FluentValidation;
 
 namespace Filmowanie.Voting.Validators;
 
+// TODO UTs
 internal class VotingSessionIdValidator : AbstractValidator<string>, IFluentValidatorAdapter
 {
     public VotingSessionIdValidator()

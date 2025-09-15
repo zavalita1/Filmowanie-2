@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Mappers;
 
+// TODO UTs
 internal sealed class HistoryDtoMapper : IHistoryDtoMapper
 {
     private readonly ILogger<HistoryDtoMapper> _log;

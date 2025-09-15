@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Voting.Routes;
 
+// TODO UTs
 internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
 {
     private readonly ICurrentUserAccessor _userAccessor;

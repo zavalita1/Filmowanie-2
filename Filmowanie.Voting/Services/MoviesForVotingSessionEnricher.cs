@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Services;
 
+// TODO UTs
 internal sealed class MoviesForVotingSessionEnricher : IMoviesForVotingSessionEnricher
 {
     private readonly IRequestClient<NominationsRequestedEvent> _getNominationsRequestClient;

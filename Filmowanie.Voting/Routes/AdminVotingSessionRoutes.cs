@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Voting.Routes;
 
+// TODO UTs
 internal sealed class AdminVotingSessionRoutes : IAdminVotingSessionRoutes
 {
     private readonly IVotingStateManager _votingStateManager;

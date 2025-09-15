@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Notification.Consumers;
 
+// TODO UTs
 public sealed class MovieAddedConsumer : IConsumer<AddMovieEvent>, IConsumer<Fault<AddMovieEvent>>
 {
     private readonly ILogger<MovieAddedConsumer> _logger;

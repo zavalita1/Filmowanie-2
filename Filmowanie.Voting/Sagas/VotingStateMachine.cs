@@ -7,12 +7,14 @@ using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.Activities;
+using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.Extensions;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Sagas;
 
+// TODO UTs
 public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInstance>
 {
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable

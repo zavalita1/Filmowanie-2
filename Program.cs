@@ -50,7 +50,7 @@ builder.Services.Configure<PushNotificationOptions>(builder.Configuration.GetSec
 builder.Services.ConfigureMassTransit(builder.Configuration);
 
 var app = builder.Build();
-var log = app.Services.GetRequiredService<ILogger>();
+var log = app.Services.GetRequiredService<ILogger<Program>>();
 log.LogInformation($"Starting the app in mode: {Environment.Mode}...");
 
 EnvironmentDependent.Invoke(new ()

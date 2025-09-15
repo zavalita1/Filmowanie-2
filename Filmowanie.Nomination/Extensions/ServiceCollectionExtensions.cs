@@ -1,6 +1,5 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Nomination.Consts;
-using Filmowanie.Nomination.Handlers;
 using Filmowanie.Nomination.Helpers;
 using Filmowanie.Nomination.Interfaces;
 using Filmowanie.Nomination.Mappers;
@@ -8,6 +7,7 @@ using Filmowanie.Nomination.Routes;
 using Filmowanie.Nomination.Services;
 using Filmowanie.Nomination.Validators;
 using Microsoft.Extensions.DependencyInjection;
+using FilmwebHandler = Filmowanie.Nomination.Services.FilmwebHandler;
 
 namespace Filmowanie.Nomination.Extensions;
 

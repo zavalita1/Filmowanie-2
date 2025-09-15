@@ -4,6 +4,7 @@ using Filmowanie.Voting.Interfaces;
 
 namespace Filmowanie.Voting.Deciders;
 
+// TODO UTs
 public sealed class TrashVotingDecider : IVotingDecider
 {
     private const int InitialTrashVotesThreshold = 1;

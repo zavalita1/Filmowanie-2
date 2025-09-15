@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Nomination.Services;
 
+// TODO UTs
 internal sealed class NominationsService : INominationsService
 {
     private readonly IRequestClient<NominationsRequestedEvent> _getNominationsRequestClient;

@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -15,7 +14,7 @@ namespace Filmowanie.Database.Decorators
             _decorated = decorated;
         }
 
-        public Task<IReadOnlyPushSubscriptionEntity[]> GetAsync(TenantId tenant, CancellationToken cancelToken) => _decorated.GetAsync(x => x.TenantId == tenant.Id, tenant, cancelToken);
+        public Task<IReadOnlyPushSubscriptionEntity[]> GetAllAsync(TenantId tenant, CancellationToken cancelToken) => _decorated.GetAsync(x => x.TenantId == tenant.Id, tenant, cancelToken);
 
         public Task<IReadOnlyPushSubscriptionEntity[]> GetAsync(Expression<Func<IReadOnlyPushSubscriptionEntity, bool>> predicate, TenantId tenant, CancellationToken cancelToken)
         {

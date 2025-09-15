@@ -1,5 +1,4 @@
 using AutoFixture;
-using AutoFixture.Kernel;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Extensions;

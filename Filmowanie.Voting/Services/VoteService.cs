@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Services;
 
+// TODO UTs
 internal sealed class VoteService : IVoteService
 {
     private readonly IBus _bus;

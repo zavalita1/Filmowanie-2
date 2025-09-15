@@ -1,12 +1,11 @@
-﻿using System.Text.RegularExpressions;
-using Filmowanie.Abstractions.Interfaces;
+﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Nomination.Consts;
-using Filmowanie.Nomination.DTOs.Incoming;
 using FluentValidation;
 
 namespace Filmowanie.Nomination.Validators;
 
-internal partial class NominationMovieIdValidator : AbstractValidator<string>, IFluentValidatorAdapter
+// TODO UTs
+internal class NominationMovieIdValidator : AbstractValidator<string>, IFluentValidatorAdapter
 {
     private const string MovieIdPrefix = "movie-";
 

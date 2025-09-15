@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Services;
 
+// TODO UTs
 internal sealed class VotingSessionStateManager : IVotingStateManager
 {
     private readonly ILogger<VotingSessionStateManager> _log;

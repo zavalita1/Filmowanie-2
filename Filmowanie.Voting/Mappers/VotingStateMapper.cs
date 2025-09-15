@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Voting.Mappers;
 
+// TODO UTs
 internal sealed class VotingStateMapper : IVotingStateMapper
 {
     private readonly ILogger<VotingStateMapper> _log;

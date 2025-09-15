@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Notification.Services;
 
+// TODO UTs
 internal sealed class RoutesResultHelper : IRoutesResultHelper
 {
     public IResult UnwrapOperationResult<T>(Maybe<T> result)

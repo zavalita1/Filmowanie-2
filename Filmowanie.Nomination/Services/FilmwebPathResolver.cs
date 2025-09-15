@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.Interfaces;
 
-namespace Filmowanie.Nomination.Handlers;
+namespace Filmowanie.Nomination.Services;
 
 internal sealed class FilmwebPathResolver : IFilmwebPathResolver
 {
