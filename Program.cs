@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Filmowanie;
 using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.Constants;
@@ -48,6 +49,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<PushNotificationOptions>(builder.Configuration.GetSection("Vapid"));
 builder.Services.ConfigureMassTransit(builder.Configuration);
+builder.Services.AddOpenTelemetry().UseAzureMonitor();
 
 var app = builder.Build();
 var log = app.Services.GetRequiredService<ILogger<Program>>();
