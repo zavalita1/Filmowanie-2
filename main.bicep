@@ -8,7 +8,7 @@ var serviceBusName = toLower('sb-${webAppName}')
 var dbAccountName = toLower('dba-${webAppName}')
 var dbName = toLower('db-${webAppName}')
 var keyVaultName = toLower('kv-${webAppName}')
-var storageAccountName = toLower('kv-${webAppName}')
+var storageAccountName = toLower('storage${webAppName}')
 
 var environments = {
   Development: {
