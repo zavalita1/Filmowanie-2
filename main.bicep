@@ -9,6 +9,7 @@ var dbAccountName = toLower('dba-${webAppName}')
 var dbName = toLower('db-${webAppName}')
 var keyVaultName = toLower('kv-${webAppName}')
 var storageAccountName = toLower('storage${webAppName}')
+var blobKeysContainerName = toLower('dpk-${webAppName}')
 
 var environments = {
   Development: {
@@ -260,7 +261,14 @@ resource blob 'Microsoft.Storage/storageAccounts/blobServices@2025-01-01' = {
       enabled: false
     }
   }
+  resource keysContainer 'containers' = {
+    name: blobKeysContainerName
+    properties: {
+      publicAccess: 'None'
+    }
+  }
 }
+
 
 resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
   location: location
