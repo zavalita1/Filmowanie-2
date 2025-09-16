@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Filmowanie.Database.Repositories.Internal;
 using Azure.Identity;
+using System.Configuration;
 
 namespace Filmowanie.Database.Extensions;
 
@@ -54,9 +55,15 @@ public static class ServiceCollectionExtensions
         dataProtectionBuilder.PersistKeysToFileSystem(new DirectoryInfo(currentDir));
     }
     
-    public static void PersistDataProtectionKeysCtx(this IServiceCollection services)
+    public static void PersistDataProtectionKeysBlob(this IServiceCollection services, IConfiguration configuration)
     {
         var dataProtectionBuilder = services.AddDataProtection().SetApplicationName("filmowanie2");
-        dataProtectionBuilder.PersistKeysToDbContext<IdentityDbContext>();
+        var credential = new DefaultAzureCredential();
+        var blobUrl = configuration["DataProtectionKeysBlobUrl"];
+
+        if (string.IsNullOrEmpty(blobUrl))
+            throw new ConfigurationErrorsException("Missing data-protection blob url!");
+
+        dataProtectionBuilder.PersistKeysToAzureBlobStorage(new Uri(blobUrl), credential);
     }
 }

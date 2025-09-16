@@ -21,7 +21,7 @@ builder.Services.AddSignalR();
 
 EnvironmentDependent.Invoke(new ()
 {
-    [StartupMode.CompiledFrontend ^ (StartupMode)0x11111111] = () => builder.Services.AddCors(o => o.AddPolicy("ViteLocalDevServer", p => p.WithOrigins(builder.Configuration["FrontendDevServer"]!)))
+    [StartupMode.Local] = () => builder.Services.AddCors(o => o.AddPolicy("ViteLocalDevServer", p => p.WithOrigins(builder.Configuration["FrontendDevServer"]!)))
 });
 
 builder.Services
@@ -46,12 +46,12 @@ builder.Services.RegisterCustomServices(builder.Configuration);
 builder.Services.RegisterDatabaseServices(builder.Configuration);
 EnvironmentDependent.Invoke(new()
 {
+    [StartupMode.Local | StartupMode.LocalWithCompiledFrontend] = () => builder.Services.PersistDataProtectionKeysLocal(),
     [StartupMode.Production] = () =>
     {
-        builder.Services.PersistDataProtectionKeysLocal();
+        builder.Services.PersistDataProtectionKeysBlob();
         builder.Services.AddOpenTelemetry().UseAzureMonitor();
-    },
-    [StartupMode.Production ^ (StartupMode)0x11111111] = () => builder.Services.PersistDataProtectionKeysCtx(),
+    }
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -65,8 +65,8 @@ log.LogInformation($"Starting the app in mode: {Environment.Mode}...");
 
 EnvironmentDependent.Invoke(new ()
 {
-    [StartupMode.CompiledFrontend ^ (StartupMode)0x11111111] = () => app.UseCors("ViteLocalDevServer"),
-    [StartupMode.CompiledFrontend] = () => app.UseStaticFiles() 
+    [StartupMode.Local] = () => app.UseCors("ViteLocalDevServer"),
+    [StartupMode.LocalWithCompiledFrontend | StartupMode.Production] = () => app.UseStaticFiles() 
 });
 
 app.ConfigureEndpoints();

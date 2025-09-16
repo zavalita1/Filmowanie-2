@@ -4,7 +4,6 @@
 public enum StartupMode
 {
     Local = 0x00000001,
-    CompiledFrontend = 0x00000010,
-    WithAppInsights = 0x00000100,
-    Production = CompiledFrontend | WithAppInsights,
+    LocalWithCompiledFrontend = 0x00000010,
+    Production = 0x10000100
 }

@@ -26,7 +26,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.SpaProxy">
 			<Version>8.*-*</Version>
 		</PackageReference>
-		<PackageReference Include="Azure.Extensions.AspNetCore.DataProtection.Blobs" Version="1.3.4" />
 		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.7.0" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.10" />
 		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.17" />
@@ -45,7 +44,6 @@
 		<Compile Remove="Filmowanie.Tests\**" />
 		<Compile Remove="Filmowanie.Voting\**" />
 		<Compile Remove="Tests\**" />
-		<Compile Remove="xoxoxoxoxoxx\**" />
 		<Content Remove="$(SpaRoot)**" />
 		<Content Remove="Constants\**" />
 		<Content Remove="Filmowanie.Abstractions\**" />
@@ -56,7 +54,6 @@
 		<Content Remove="Filmowanie.Tests\**" />
 		<Content Remove="Filmowanie.Voting\**" />
 		<Content Remove="Tests\**" />
-		<Content Remove="xoxoxoxoxoxx\**" />
 		<EmbeddedResource Remove="Constants\**" />
 		<EmbeddedResource Remove="Filmowanie.Abstractions\**" />
 		<EmbeddedResource Remove="Filmowanie.Account\**" />
@@ -66,7 +63,6 @@
 		<EmbeddedResource Remove="Filmowanie.Tests\**" />
 		<EmbeddedResource Remove="Filmowanie.Voting\**" />
 		<EmbeddedResource Remove="Tests\**" />
-		<EmbeddedResource Remove="xoxoxoxoxoxx\**" />
 		<None Remove="$(SpaRoot)**" />
 		<None Remove="Constants\**" />
 		<None Remove="Filmowanie.Abstractions\**" />
@@ -77,7 +73,6 @@
 		<None Remove="Filmowanie.Tests\**" />
 		<None Remove="Filmowanie.Voting\**" />
 		<None Remove="Tests\**" />
-		<None Remove="xoxoxoxoxoxx\**" />
 		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
 	</ItemGroup>
 
