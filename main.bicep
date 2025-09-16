@@ -11,6 +11,8 @@ var keyVaultName = toLower('kv-${webAppName}')
 var storageAccountName = toLower('storage${webAppName}')
 var blobKeysContainerName = toLower('dpk-${webAppName}')
 
+var storageBlobDataOwnerRoleId  = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b' // built-in azure 'Storage Blob Data Owner' RBAC
+
 var environments = {
   Development: {
     webAppName: 'filmowanie2'
@@ -266,6 +268,16 @@ resource blob 'Microsoft.Storage/storageAccounts/blobServices@2025-01-01' = {
     properties: {
       publicAccess: 'None'
     }
+  }
+}
+
+resource roleAssignmentBlobDataOwner 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(subscription().id, storage.id, 'blob')
+  scope: storage
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', storageBlobDataOwnerRoleId)
+    principalId: filmowanie.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
 
