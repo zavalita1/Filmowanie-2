@@ -6,7 +6,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   build: {
     outDir: "../wwwroot",
-    sourcemap: true,
+    sourcemap: false,
   },
   publicDir: 'public',
   resolve: {
