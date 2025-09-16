@@ -256,7 +256,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2025-01-01' = {
   kind: 'BlobStorage'
   properties: {
     accessTier: 'Cold'
-    allowBlobPublicAccess: true
+    allowBlobPublicAccess: false
     encryption: {
       keySource: 'Microsoft.Storage'
       services: { 
@@ -279,7 +279,7 @@ resource blob 'Microsoft.Storage/storageAccounts/blobServices@2025-01-01' = {
   resource keysContainer 'containers' = {
     name: blobKeysContainerName
     properties: {
-      publicAccess: 'Container'
+      publicAccess: 'None'
     }
   }
 }
