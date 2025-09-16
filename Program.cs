@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.SetStartupMode();
-
+builder.SetupConfiguration();
 builder.ConfigureLogging();
 
 builder.Services.AddSignalR();

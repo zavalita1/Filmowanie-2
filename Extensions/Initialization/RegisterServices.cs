@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions.Configuration;
-using Filmowanie.Abstractions.Interfaces;
+﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Wrappers;
 using Filmowanie.Account.Extensions;
 using Filmowanie.Infrastructure;
@@ -23,9 +22,6 @@ public static class RegisterServices
         services.AddScoped<IFluentValidationAdapterFactory, FluentValidationAdapterFactory>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IGuidProvider, GuidProvider>();
-
-        
-        services.Configure<PushNotificationOptions>(configuration.GetSection("Vapid"));
 
         services.RegisterAccountDomain();
         services.RegisterVotingDomain();
