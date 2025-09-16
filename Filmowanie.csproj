@@ -78,12 +78,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="ClientApp\public\service-worker.js">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="Filmowanie.Abstractions\Filmowanie.Abstractions.csproj" />
 	  <ProjectReference Include="Filmowanie.Account\Filmowanie.Account.csproj" />
 	  <ProjectReference Include="Filmowanie.Database\Filmowanie.Database.csproj" />
@@ -107,10 +101,10 @@
 		<Exec WorkingDirectory="$(SpaRoot)" Command="cmd /c pnpm build" />
 		<!-- Include the newly-built files in the publish output -->
 		<ItemGroup>
-			<DistFiles Include="$(SpaRoot)dist\**" />
+			<DistFiles Include="wwwroot\**" />
 			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
 				<RelativePath>%(DistFiles.Identity)</RelativePath>
-				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+				<CopyToPublishDirectory>Always</CopyToPublishDirectory>
 				<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			</ResolvedFileToPublish>
 		</ItemGroup>
