@@ -38,7 +38,8 @@ internal static class Endpoints
                     EnvironmentDependent.Invoke(new()
                     {
                         [StartupMode.Local] = () => spa.UseProxyToSpaDevelopmentServer(webApplication.Configuration["FrontendDevServer"]),
-                        [StartupMode.LocalWithCompiledFrontend] = () => spa.Options.SourcePath = "wwwroot"
+                        [StartupMode.LocalWithCompiledFrontend] = () => spa.Options.SourcePath = "wwwroot",
+                        [StartupMode.Production] = () => spa.Options.SourcePath = string.Empty
                     });
                 });
             });

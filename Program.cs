@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Filmowanie;
-using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Database.Extensions;
@@ -56,7 +55,6 @@ EnvironmentDependent.Invoke(new()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<PushNotificationOptions>(builder.Configuration.GetSection("Vapid"));
 builder.Services.ConfigureMassTransit(builder.Configuration);
 
 var app = builder.Build();

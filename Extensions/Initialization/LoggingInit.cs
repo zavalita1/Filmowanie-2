@@ -18,6 +18,9 @@ internal static class LoggingInit
         var currentDll = Assembly.GetExecutingAssembly().Location;
         var currentDir = Path.GetDirectoryName(currentDll);
         var logPath = $"{currentDir}\\AppLog.txt";
-        appBuilder.Logging.AddZLoggerFile(logPath);
+        appBuilder.Logging.AddZLoggerFile(logPath, o =>
+        {
+            o.CaptureThreadInfo = true;
+        });
     }
 }
