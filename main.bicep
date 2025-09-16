@@ -32,6 +32,10 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-pr
   }
   properties: {
     adminUserEnabled: true
+    dataEndpointEnabled: false
+    encryption: {
+      status: 'disabled'
+    }
   }
 }
 
@@ -128,6 +132,7 @@ resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
       ftpsState: 'FtpsOnly'
+      localMySqlEnabled: false
       appSettings: [
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -177,6 +182,11 @@ resource cosmosDbAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
     }]
     databaseAccountOfferType: 'Standard'
     enableAutomaticFailover: false
+    analyticalStorageConfiguration: {
+      schemaType: 'WellDefined'
+    }
+    defaultIdentity: 'FirstPartyIdentity'
+    minimalTlsVersion: 'Tls12'
   }
 }
 
@@ -202,6 +212,7 @@ resource cosmosDbEntitiesContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDat
       id: 'Entities'
       conflictResolutionPolicy: {
         mode: 'LastWriterWins'
+        conflictResolutionPath: '/_ts'
       }
       indexingPolicy: {
         automatic: true // maybe change later?
@@ -223,6 +234,7 @@ resource cosmosDbEventsContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatab
       id: 'Events'
       conflictResolutionPolicy: {
         mode: 'LastWriterWins'
+        conflictResolutionPath: '/_ts'
       }
       indexingPolicy: {
         automatic: true // maybe change later?
@@ -266,7 +278,7 @@ resource blob 'Microsoft.Storage/storageAccounts/blobServices@2025-01-01' = {
   resource keysContainer 'containers' = {
     name: blobKeysContainerName
     properties: {
-      publicAccess: 'None'
+      publicAccess: 'Container'
     }
   }
 }
