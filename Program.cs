@@ -49,7 +49,7 @@ EnvironmentDependent.Invoke(new()
     [StartupMode.Local | StartupMode.LocalWithCompiledFrontend] = () => builder.Services.PersistDataProtectionKeysLocal(),
     [StartupMode.Production] = () =>
     {
-        builder.Services.PersistDataProtectionKeysBlob();
+        builder.Services.PersistDataProtectionKeysBlob(builder.Configuration);
         builder.Services.AddOpenTelemetry().UseAzureMonitor();
     }
 });
