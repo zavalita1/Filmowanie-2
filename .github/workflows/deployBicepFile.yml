@@ -51,7 +51,7 @@ jobs:
           issue-title: "Manual Approval Required for Terraform Apply"
           issue-body: "Please approve or deny the deployment."  
   
-  Bicep apply:
+  bicep-apply:
     name: Apply IaC configuration
     runs-on: ubuntu-latest
     needs: manual-approval
