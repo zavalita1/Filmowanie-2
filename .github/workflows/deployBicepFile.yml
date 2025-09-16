@@ -34,7 +34,8 @@ jobs:
           --template-file ./main.bicep \
           --parameters env=Development
 
-    - uses: trstringer/manual-approval@v1
+    - name: Manual approval step
+      uses: trstringer/manual-approval@v1
       with:
         secret: ${{ github.TOKEN }}
         approvers: zavalita1
