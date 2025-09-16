@@ -256,6 +256,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2025-01-01' = {
   kind: 'BlobStorage'
   properties: {
     accessTier: 'Cold'
+    allowBlobPublicAccess: true
     encryption: {
       keySource: 'Microsoft.Storage'
       services: { 
