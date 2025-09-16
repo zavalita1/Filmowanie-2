@@ -5,9 +5,10 @@ import { defineConfig } from 'vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    outDir: "../wwwroot",
+    outDir: "./dist",
     sourcemap: true,
   },
+  publicDir: 'public',
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url))

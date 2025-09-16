@@ -107,7 +107,7 @@
 		<Exec WorkingDirectory="$(SpaRoot)" Command="cmd /c pnpm build" />
 		<!-- Include the newly-built files in the publish output -->
 		<ItemGroup>
-			<DistFiles Include="$(SpaRoot)build\**; $(SpaRoot)build-ssr\**" />
+			<DistFiles Include="$(SpaRoot)dist\**" />
 			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
 				<RelativePath>%(DistFiles.Identity)</RelativePath>
 				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
