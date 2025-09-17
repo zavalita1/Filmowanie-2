@@ -1,3 +1,4 @@
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces;
 using MassTransit;
@@ -33,7 +34,7 @@ public sealed class ResumeVotingEventConsumer : IConsumer<ResumeVotingEvent>, IC
             var result = await _votingResultsCommandRepository.ResetAsync(context.Message.VotingSessionId, context.CancellationToken);
 
             if (result.Error.HasValue)
-                await PublishErrorAsync(context);
+                await PublishErrorAsync(context, error: result.Error);
         }
         catch (Exception ex)
         {
@@ -43,9 +44,9 @@ public sealed class ResumeVotingEventConsumer : IConsumer<ResumeVotingEvent>, IC
          _log.LogInformation($"Consumed {nameof(VotingConcludedEvent)}.");
     }
     
-      private Task PublishErrorAsync(ConsumeContext<ResumeVotingEvent> context, Exception? ex = null)
+      private Task PublishErrorAsync(ConsumeContext<ResumeVotingEvent> context, Exception? ex = null, Error<VoidResult>? error = null)
     {
-        var msg = "Error occurred during resuming the voting...";
+        var msg = "Error occurred during resuming the voting..." + error?.ToString();
 
         if (ex == null)
             _log.LogError(msg);

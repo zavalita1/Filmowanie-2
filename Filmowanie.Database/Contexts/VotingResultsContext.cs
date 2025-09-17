@@ -17,15 +17,13 @@ internal class VotingResultsContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder
-            .Entity<VotingResult>()
+        builder.Entity<VotingResult>()
             .ToContainer(DbContainerNames.Entities)
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
 
-        builder
-            .Entity<EmbeddedMovieWithVotes>()
-            .OwnsMany(o => o.Votes);
+        //builder.Entity<EmbeddedMovieWithVotes>().OwnsMany(x => x.Votes, v => v.HasKey(y => y.id));
+        //builder.Entity<EmbeddedMovieWithVotes>().HasNoKey().OwnsOne(x => x.Movie);
 
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

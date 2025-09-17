@@ -6,7 +6,7 @@ namespace Filmowanie.Database.Entities;
 
 public class EmbeddedMovieWithVotes : IReadOnlyEmbeddedMovieWithVotes
 {
-    public IEnumerable<Vote> Votes { get; set; }
+    public IEnumerable<Vote> Votes { get; set; } = new List<Vote>();
 
     public EmbeddedMovie Movie { get; set; } = null!;
 

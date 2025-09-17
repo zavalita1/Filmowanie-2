@@ -23,7 +23,7 @@ internal static class MassTransitInit
             });
 
             x.SetKebabCaseEndpointNameFormatter();
-            var dbConnectionString = configuration["dbConnectionString"]!;
+            var dbConnectionString = configuration["dbConnectionString"]!; // TODO cosmos options 
             x.SetCosmosSagaRepositoryProvider(dbConnectionString, cosmosConfig =>
             {
                 cosmosConfig.DatabaseId = "db-filmowanie2";

@@ -12,7 +12,8 @@ public class EmbeddedMovieWithNominatedBy : IReadOnlyEmbeddedMovieWithNominatedB
     IReadOnlyEmbeddedUser IReadOnlyEmbeddedMovieWithNominatedBy.NominatedBy => NominatedBy;
     IReadOnlyEmbeddedMovie IReadOnlyEmbeddedMovieWithNominatedBy.Movie => Movie;
 
-    protected internal EmbeddedMovieWithNominatedBy()
+    [Obsolete("do not use this")]
+    public EmbeddedMovieWithNominatedBy()
     { }
 
 public EmbeddedMovieWithNominatedBy(IReadOnlyEmbeddedMovieWithNominatedBy other)

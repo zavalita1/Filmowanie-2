@@ -11,5 +11,6 @@ public static class Configuration
     {
         builder.Configuration.AddEnvironmentVariables();
         builder.Services.Configure<PushNotificationOptions>(builder.Configuration.GetSection("Vapid"));
+        builder.Services.Configure<CosmosOptions>(builder.Configuration);
     }
 }

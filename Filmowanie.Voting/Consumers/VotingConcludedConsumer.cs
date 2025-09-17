@@ -1,6 +1,7 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces;
@@ -69,7 +70,7 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
             var updateResult = await _votingResultsCommandRepository.UpdateAsync(currentVotingSessionId, votingResults.Movies, nominations, now, moviesAdded, enrichedWinnerEntity, votingResults.MoviesGoingByeBye, context.CancellationToken);
 
             if (updateResult.Error.HasValue)
-                await PublishErrorAsync(context);
+                await PublishErrorAsync(context, error: updateResult.Error);
 
             _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
         }
@@ -79,9 +80,9 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         }
     }
 
-    private Task PublishErrorAsync(ConsumeContext<VotingConcludedEvent> context, Exception? ex = null)
+    private Task PublishErrorAsync(ConsumeContext<VotingConcludedEvent> context, Exception? ex = null, Error<VoidResult>? error = null)
     {
-        var msg = "Error occurred during concluding the voting...";
+        var msg = "Error occurred during concluding the voting..." + error?.ToString();
 
         if (ex == null)
             _logger.LogError(msg);

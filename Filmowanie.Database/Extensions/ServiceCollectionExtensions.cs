@@ -15,7 +15,7 @@ namespace Filmowanie.Database.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    private const string DatabaseName = "db-filmowanie2";
+    public const string DatabaseName = "db-filmowanie2";
 
     public static void RegisterDatabaseServices(this IServiceCollection services, IConfiguration configuration)
     {
