@@ -68,7 +68,7 @@ const VotingResults: React.FC = () => {
             </SelectTrigger>
             <SelectContent>
                 {monthsToChoseFrom.map((x, index) => (
-                    <SelectItem value={x.toString()} key={index}>{x}</SelectItem>
+                    <SelectItem value={x.toString()} key={index}>{x+1}</SelectItem>
                 ))}
             </SelectContent>
         </Select>

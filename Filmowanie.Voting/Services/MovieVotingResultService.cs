@@ -1,11 +1,9 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.Enums;
+﻿using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Filmowanie.Database.Repositories;
 using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.DTOs.Outgoing;
 using Filmowanie.Voting.Interfaces;
@@ -31,7 +29,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
         _currentVotingService = currentVotingService;
     }
    
-    public Task<Maybe<VotingResultDTO>> GetVotingResultsAsync(Maybe<(DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId? VotingSessionId)> input, CancellationToken cancelToken) =>
+    public Task<Maybe<VotingResultDTO>> GetVotingResultsAsync(Maybe<(DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId VotingSessionId)> input, CancellationToken cancelToken) =>
         input.AcceptAsync(GetVotingResultsAsync, _log, cancelToken);
 
     public Task<Maybe<VotingMetadata[]>> GetVotingMetadataAsync(Maybe<TenantId> input, CancellationToken cancelToken) =>
@@ -65,7 +63,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
         return new VotingMetadata(votingSessionId, x.Concluded, votingMetadataWinnerData);
     }
 
-    private async Task<Maybe<VotingResultDTO>> GetVotingResultsAsync((DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId? VotingSessionId) input, CancellationToken cancelToken)
+    private async Task<Maybe<VotingResultDTO>> GetVotingResultsAsync((DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId VotingSessionId) input, CancellationToken cancelToken)
     {
         var votingResult = await GetReadonlyVotingResultAsync(input, cancelToken);
 
@@ -73,7 +71,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
             return votingResult.Error.Value.ChangeResultType<IReadOnlyVotingResult, VotingResultDTO>();
 
         var resultsRows = new List<VotingResultRowDTO>(votingResult.Result!.Movies.Length);
-        var sortedMovies = votingResult.Result!.Movies.OrderByDescending(x => x.VotingScore).ThenByDescending(x => x.Movie.id == votingResult.Result!.Winner.Movie.id ? 1 : 0).ToArray();
+        var sortedMovies = votingResult.Result!.Movies.OrderByDescending(x => x.VotingScore).ThenByDescending(x => x.Movie.id == votingResult.Result!.Winner!.Movie.id ? 1 : 0).ToArray();
         
         for (var i = 0; i < sortedMovies.Length; i++)
         {
@@ -114,7 +112,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
             if (movies.Error.HasValue)
                 return movies.Error.Value.ChangeResultType<IReadOnlyEmbeddedMovieWithVotes[], IReadOnlyVotingResult>();
 
-            var readOnlyEmbeddedMovie = movies.Result.First().Movie;
+            var readOnlyEmbeddedMovie = movies.Result!.First().Movie;
             var readOnlyEmbeddedMovieWithNominatedBy = new EmbeddedMovieWithNominationContext(readOnlyEmbeddedMovie);
             IReadOnlyVotingResult votingResult = new VotingResult(input.VotingSessionId!.Value.CorrelationId.ToString(), DateTime.Now, 1, DateTime.Now, movies.Result, [], [], [], readOnlyEmbeddedMovieWithNominatedBy);
             return votingResult.AsMaybe();

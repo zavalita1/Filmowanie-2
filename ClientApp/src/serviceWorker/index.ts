@@ -19,7 +19,7 @@ export async function registerServiceWorker() {
 
 function notificationRequestPermissionCallback(serviceWorkerRegistration: ServiceWorkerRegistration, status: NotificationPermission) {
     if (status === "denied") {
-        alert('To smutne. Odrzucasz powiadomienia :(???');
+        console.log('To smutne. Odrzucasz powiadomienia :(???');
         return;
     }
 

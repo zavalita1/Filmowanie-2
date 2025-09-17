@@ -13,17 +13,18 @@ public sealed class VotingDecider : IVotingDecider
         var previousVotingByMovies = previousVotingMoviesWithVotes.ToDictionary(x => x.Movie.id, x => GetVotesCount(x.Votes));
 
         var sorted = moviesWithVotes
-            .Select(x => new { MovieContainer = x, CurrentVotes = GetVotesCount(x.Votes), PreviousVotes = previousVotingByMovies.GetValueOrDefault(x.Movie.id, 0) })
-            .OrderByDescending(x => x.CurrentVotes)
+            .Select(x => new { MovieContainer = x, CurrentVotes = x.Votes, CurrentVotesScore = GetVotesCount(x.Votes), PreviousVotes = previousVotingByMovies.GetValueOrDefault(x.Movie.id, 0) })
+            .OrderByDescending(x => x.CurrentVotesScore)
             .ThenBy(x => x.PreviousVotes)
             .ToArray();
 
-        var result = new ReadOnlyEmbeddedMovieWithVotes(sorted[0].MovieContainer.Movie, [], sorted[0].CurrentVotes);
+        var winner = sorted[0];
+        var result = new ReadOnlyEmbeddedMovieWithVotes(winner.MovieContainer.Movie, winner.CurrentVotes, winner.CurrentVotesScore);
         yield return (result, true);
 
         foreach (var loser in sorted.Skip(1))
         {
-            var loserResult = new ReadOnlyEmbeddedMovieWithVotes(loser.MovieContainer.Movie, [], loser.CurrentVotes);
+            var loserResult = new ReadOnlyEmbeddedMovieWithVotes(loser.MovieContainer.Movie, loser.CurrentVotes, loser.CurrentVotesScore);
             yield return (loserResult, false);
         }
     }

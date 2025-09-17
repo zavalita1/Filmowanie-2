@@ -16,7 +16,7 @@ internal class PushSubscriptionsContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<ReadOnlyPushSubscriptionEntity>().ToContainer(DbContainerNames.Events)
+        builder.Entity<ReadOnlyPushSubscriptionEntity>().ToContainer(DbContainerNames.Entities)
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
 

@@ -36,9 +36,9 @@ export type VoteableMovieCardProps = BaseCardProps & {
 export type MovieCardProps = ReadOnlyMovieCardProps | VoteableMovieCardProps | PlaceholderMovieCardProps;
 
 const voteTypeIconColorMap: {[key in Vote]: {icon: IconType, color: [number, number, number]}} = {
-  [Vote.ThreePoints]: {icon: BsEmojiGrin, color: [4, 184, 8]},
-  [Vote.TwoPoints]: {icon: BsEmojiLaughing, color: [204, 228, 47]},
-  [Vote.OnePoint]: {icon: BsEmojiSmile, color: [251, 191, 36]},
+  [Vote.ThreePoints]: {icon: BsEmojiGrin, color: [37, 234, 239]},
+  [Vote.TwoPoints]: {icon: BsEmojiLaughing, color: [112, 207, 34]},
+  [Vote.OnePoint]: {icon: BsEmojiSmile, color: [145, 118, 48]},
   [Vote.Trash]: {icon: BsTrashFill, color: [251, 0, 0]},
 }
 
@@ -79,6 +79,7 @@ interface IMovieCardCustomzer {
     renderVotingSection: () => ReactNode;
     getAdditionalCardClassNames: () => string[];
     getPosterElementClassName: () => string;
+    overridesCardColor: () => boolean;
 }
 
 const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCardProps> = props => {
@@ -97,8 +98,8 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
     "w-3xs",
     "m-2",
     "hover:bg-emerald-100 hover:cursor-pointer dark:hover:bg-pink-950",
-    "dark:bg-linear-to-tl/increasing dark:from-black dark:to-pink-900",
-    "bg-linear-to-tl/hsl  from-emerald-100 to-sky-100",
+    customizer.overridesCardColor() ? "" : "dark:bg-linear-to-tl/increasing dark:from-black dark:to-pink-900",
+    customizer.overridesCardColor() ? "" : "bg-linear-to-tl/hsl from-emerald-100 to-sky-100",
     props.isMobile ? '' : 'mr-10',
     ...customizer.getAdditionalCardClassNames()
   ]);
@@ -137,7 +138,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
               </DrawerTitle>
             <div className="text-xl text-justify dark:text-amber-300">
               { isLoading ? <Spinner isLoading></Spinner> : <div className="flex overflow-hidden">
-                { props.isMobile ? <></> : <img className="mr-10 -mt-12" src={props.movie.bigPosterUrl} alt="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" onLoad={() => setIsLoading(false)}></img> }
+                { props.isMobile ? <></> : <img className="mr-10 -mt-12 h-max" src={props.movie.bigPosterUrl} alt="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" onLoad={() => setIsLoading(false)}></img> }
                 <div className={props.isMobile ? "block text-sm" : "block"}>
                   <p className="mb-10">{props.movie.description}</p>
                   <div >
@@ -173,6 +174,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
       return {
         getPosterElementClassName: () => props.votesActive.length > 0 ? "mask-r-from-blue-200 mask-r-from-70%" : "",
         getAdditionalCardClassNames: () => [getCardBgColor(props.votesActive)],
+        overridesCardColor: () => props.votesActive.length !== 0,
         renderVotingSection: () => {
           const extendedProps = ({
             ...props, onVoteCallback: (vote: Vote) => {
@@ -212,7 +214,8 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
     else return {
       getPosterElementClassName: () => "",
       getAdditionalCardClassNames: () => [],
-      renderVotingSection: () => <></>
+      renderVotingSection: () => <></>,
+      overridesCardColor: () => false
     }
   }
 };
@@ -243,13 +246,13 @@ function getCardBgColor(votesActive: Vote[]) {
   if (votesActive.length !== 0) {
     switch (votesActive[0]) {
       case Vote.Trash:
-        return "bg-red-100 dark:bg-violet-900";
+        return "bg-red-100 dark:bg-gray-800";
       case Vote.OnePoint:
-        return "bg-emerald-50 dark:bg-pink-900";
+        return "bg-emerald-200 dark:bg-violet-900";
       case Vote.TwoPoints:
-        return "bg-emerald-100 dark:bg-pink-800";
+        return "bg-emerald-300 dark:bg-violet-700";
       case Vote.ThreePoints:
-        return "bg-emerald-200 dark:bg-pink-700";
+        return "bg-emerald-400 dark:bg-violet-600";
     }
   }
 

@@ -10,7 +10,7 @@ import { ResultRow, Results } from '../../../models/Results';
 import { mapVotingResults } from '../../../mappers/mapVotingResults';
 
 export const votingApi = userApi
-.enhanceEndpoints({ addTagTypes: ['MoviesList', 'VotingStatus']})
+.enhanceEndpoints({ addTagTypes: ['MoviesList', 'VotingStatus'], endpoints: { logout: { invalidatesTags: ['MoviesList', 'UserData']}}})
 .injectEndpoints({
   endpoints: (builder) => ({
     getCurrentVoting: builder.query<VotableOrPlaceholderMovie[], void>({

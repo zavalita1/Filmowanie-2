@@ -1,5 +1,7 @@
-﻿using Filmowanie.Abstractions.Enums;
+﻿using Filmowanie.Abstractions.DomainModels;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Maybe;
+using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces;
@@ -19,21 +21,22 @@ internal sealed class VotingResultsCommandRepository : IVotingResultsCommandRepo
         _logger = logger;
     }
 
-    public async Task<Maybe<VoidResult>> UpdateAsync(string id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards, DateTime concluded,
-        IEnumerable<IReadOnlyEmbeddedMovieWithNominationContext> moviesAdded, IReadOnlyEmbeddedMovieWithNominatedBy winner, CancellationToken cancelToken)
+    public async Task<Maybe<VoidResult>> UpdateAsync(VotingSessionId id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards, DateTime concluded,
+        IEnumerable<IReadOnlyEmbeddedMovieWithNominationContext> moviesAdded, IReadOnlyEmbeddedMovieWithNominatedBy winner, IEnumerable<IReadOnlyEmbeddedMovie> moviesToRemove, CancellationToken cancelToken)
     {
         var updateFunc = (VotingResult votingResultEntity) =>
         {
-            votingResultEntity.Movies = movies.Select(IReadOnlyEntitiesExtensions.AsMutable).ToArray();
+            votingResultEntity.Movies = movies.Select(IReadOnlyEntitiesExtensions.AsMutable).ToList();
             votingResultEntity.Concluded = concluded;
-            votingResultEntity.UsersAwardedWithNominations = usersAwards.Select(IReadOnlyEntitiesExtensions.AsMutable).ToArray();
-            votingResultEntity.MoviesAdded = moviesAdded.Select(IReadOnlyEntitiesExtensions.AsMutable).ToArray();
+            votingResultEntity.UsersAwardedWithNominations = usersAwards.Select(IReadOnlyEntitiesExtensions.AsMutable).ToList();
+            votingResultEntity.MoviesAdded = moviesAdded.Select(IReadOnlyEntitiesExtensions.AsMutable).ToList();
             votingResultEntity.Winner = winner.AsMutable();
+            votingResultEntity.MoviesGoingByeBye = moviesToRemove.Select(IReadOnlyEntitiesExtensions.AsMutable).ToList();
         };
 
         try
         {
-            await _repository.UpdateAsync(id, updateFunc, cancelToken);
+            await _repository.UpdateAsync(id.CorrelationId.ToString(), updateFunc, cancelToken);
             return VoidResult.Void;
         }
         catch (Exception e)
@@ -44,4 +47,28 @@ internal sealed class VotingResultsCommandRepository : IVotingResultsCommandRepo
     }
 
     public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancelToken) => _repository.InsertAsync(votingResult, cancelToken);
+
+    public async Task<Maybe<VoidResult>> ResetAsync(VotingSessionId id, CancellationToken cancelToken)
+    {
+         var updateFunc = (VotingResult votingResultEntity) =>
+        {
+            votingResultEntity.Movies = new List<EmbeddedMovieWithVotes>();
+            votingResultEntity.Concluded = null;
+            votingResultEntity.UsersAwardedWithNominations = new List<EmbeddedUserWithNominationAward>();
+            votingResultEntity.MoviesAdded = new List<EmbeddedMovieWithNominationContext>();
+            votingResultEntity.Winner = null;
+            votingResultEntity.MoviesGoingByeBye = new List<EmbeddedMovie>();
+        };
+
+        try
+        {
+            await _repository.UpdateAsync(id.CorrelationId.ToString(), updateFunc, cancelToken);
+            return VoidResult.Void;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error when updating voting result entity!");
+            return new Error<VoidResult>(e.Message, ErrorType.Unknown);
+        }
+    }
 }

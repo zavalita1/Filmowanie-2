@@ -4,7 +4,7 @@ using Filmowanie.Voting.DomainModels;
 
 namespace Filmowanie.Voting.Interfaces;
 
-internal interface INominationsRetriever
+public interface INominationsRetriever
 {
     List<IReadOnlyEmbeddedUserWithNominationAward> GetNominations(Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> assignNominationsUserContexts, VotingConcludedEvent message, VotingResults votingResults);
 }

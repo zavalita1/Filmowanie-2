@@ -7,7 +7,7 @@ using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Decorators
 {
-    internal sealed class VotingSessionQueryRepositoryDecorator : IVotingSessionQueryRepository
+    internal sealed class VotingSessionQueryRepositoryDecorator : IVotingSessionQueryRepositoryInUserlessContext
     {
         private readonly IVotingSessionQueryRepository _decorated;
         private readonly ICurrentUserAccessor _currentUserAccessor;
@@ -40,9 +40,10 @@ namespace Filmowanie.Database.Decorators
             return _decorated.GetVotingResultAsync(newPredicate, sortBy, take, cancelToken);
         }
 
-        private static Expression<Func<T, bool>> GetPredicateWithTenantFilter<T>(Expression<Func<T, bool>> predicate, TenantId user) where T: IReadOnlyEntity
+        private static Expression<Func<T, bool>> GetPredicateWithTenantFilter<T>(Expression<Func<T, bool>> predicate, TenantId user) where T : IReadOnlyEntity
         {
-            Expression<Func<T, bool>> tenantCheck = x => x.TenantId == user.Id;
+            var userId = user.Id;
+            Expression<Func<T, bool>> tenantCheck = x => x.TenantId == userId;
             var newPredicateBody = Expression.AndAlso(tenantCheck.Body, Expression.Invoke(predicate, tenantCheck.Parameters.Single()));
             var newPredicate = Expression.Lambda<Func<T, bool>>(newPredicateBody, tenantCheck.Parameters);
             return newPredicate;

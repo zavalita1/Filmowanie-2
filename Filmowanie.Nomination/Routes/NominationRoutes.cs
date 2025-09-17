@@ -6,9 +6,11 @@ using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.DTOs.Incoming;
+using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
 using Filmowanie.Nomination.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 
 namespace Filmowanie.Nomination.Routes;
 
@@ -42,6 +44,10 @@ internal sealed class NominationRoutes : INominationRoutes
     {
         var maybeCurrentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void);
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancelToken);
+
+        if (maybeNullableCurrentVotingId.Result == null)
+            return _routesResultHelper.UnwrapOperationResult(new NominationsDataDTO { Nominations = [] }.AsMaybe());
+
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancelToken);
         var merged = maybeNominations.Merge(maybeCurrentUser);

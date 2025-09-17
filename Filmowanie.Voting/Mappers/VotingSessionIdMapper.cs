@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
@@ -20,16 +19,29 @@ internal sealed class VotingSessionIdMapper : IVotingSessionIdMapper
         _votingSessionService = votingSessionService;
     }
 
-    public Task<Maybe<VotingSessionId?>> MapAsync(Maybe<(string, DomainUser)> input, CancellationToken cancelToken) => input.AcceptAsync(MapAsync, _log, cancelToken);
+    public Task<Maybe<VotingSessionId>> MapAsync(Maybe<(string, DomainUser)> input, CancellationToken cancelToken) => input.AcceptAsync(MapAsync, _log, cancelToken);
 
-    private async Task<Maybe<VotingSessionId?>> MapAsync((string, DomainUser) input, CancellationToken cancelToken)
+    private async Task<Maybe<VotingSessionId>> MapAsync((string, DomainUser) input, CancellationToken cancelToken)
     {
         if (string.IsNullOrEmpty(input.Item1))
-            return await _votingSessionService.GetCurrentVotingSessionIdAsync(input.Item2.AsMaybe(), cancelToken);
+        {
+            var currentUser = input.Item2.AsMaybe();
+            var currentVoting = await _votingSessionService.GetCurrentVotingSessionIdAsync(currentUser, cancelToken);
+
+            var result = await currentVoting.AcceptAsync(async (currentVotingSessionId, innerCt) =>
+            {
+                if (currentVotingSessionId.HasValue)
+                    return currentVotingSessionId.Value.AsMaybe();
+
+                return await _votingSessionService.GetLastVotingSessionIdAsync(currentUser, innerCt);
+            }, _log, cancelToken);
+
+            return result;
+        }
 
         if (!Guid.TryParse(input.Item1, out var correlationId))
-            return new Error<VotingSessionId?>("Invalid id!", ErrorType.IncomingDataIssue);
+            return new Error<VotingSessionId>("Invalid id!", ErrorType.IncomingDataIssue);
 
-        return (new VotingSessionId(correlationId) as VotingSessionId?).AsMaybe();
+        return new VotingSessionId(correlationId).AsMaybe();
     }
 }

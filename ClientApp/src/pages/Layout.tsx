@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import React, { createContext, ReactElement } from 'react';
 import { LuLogIn, LuMenu, LuLogOut } from 'react-icons/lu';
 import { Moon, Sun } from "lucide-react"
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import penguinSvg from '../components/ui/footerIcon.svg';
 import { Toaster, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Button } from '../components/ui';
 import { ThemeProvider, useTheme } from '../components/ThemeProvider';
@@ -38,6 +38,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const [nominationQueryTrigger, nominations] = useLazyGetNominationsQuery();
   const isUserLogged = userData !== undefined && userData !== null
   const [useLogout, result] = useLogoutMutation();
+  const navigate = useNavigate();
 
   if (isUserLogged && !votingState.isLoading && !votingState.isError && !votingState.isSuccess) {
     votingStateQueryTrigger();
@@ -182,8 +183,9 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
     </section>
   }
 
-  function logout() {
-    useLogout();
+  async function logout() {
+    navigate('/');
+    await useLogout().unwrap();
   }
 };
 

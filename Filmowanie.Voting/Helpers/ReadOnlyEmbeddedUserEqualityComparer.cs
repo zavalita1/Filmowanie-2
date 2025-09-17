@@ -12,7 +12,6 @@ public class ReadOnlyEmbeddedUserEqualityComparer : IEqualityComparer<IReadOnlyE
         if (ReferenceEquals(x, y)) return true;
         if (x is null) return false;
         if (y is null) return false;
-        if (x.GetType() != y.GetType()) return false;
         return x.id == y.id && x.Name == y.Name && x.TenantId == y.TenantId;
     }
 

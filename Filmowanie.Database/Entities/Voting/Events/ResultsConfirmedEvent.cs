@@ -2,4 +2,4 @@
 
 namespace Filmowanie.Database.Entities.Voting.Events;
 
-public record ResultsConfirmedEvent(VotingSessionId VotingSessionId) : IEvent;
+public record ResultsConfirmedEvent(VotingSessionId VotingSessionId, TenantId Tenant) : IEvent;

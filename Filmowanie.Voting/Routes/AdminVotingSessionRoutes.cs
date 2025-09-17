@@ -43,8 +43,7 @@ internal sealed class AdminVotingSessionRoutes : IAdminVotingSessionRoutes
     public async Task<IResult> ResumeVoting(CancellationToken cancel)
     {
         var maybeCurrentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void);
-        var maybeNullableVotingSessionId = await _votingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
-        var maybeVotingSessionId = _votingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableVotingSessionId);
+        var maybeVotingSessionId = await _votingSessionIdAccessor.GetLastVotingSessionIdAsync(maybeCurrentUser, cancel);
         var result = await _votingStateManager.ResumeVotingAsync(maybeVotingSessionId, cancel);
 
         return RoutesResultHelper.UnwrapOperationResult(result);

@@ -23,4 +23,5 @@ public interface ICurrentVotingSessionIdAccessor
     /// <returns>A non-nullable voting session ID wrapped in a Maybe type.</returns>
     Maybe<VotingSessionId> GetRequiredVotingSessionId(Maybe<VotingSessionId?> maybeCurrentVotingSessionId);
 
+    Task<Maybe<VotingSessionId>> GetLastVotingSessionIdAsync(Maybe<DomainUser> maybeCurrentUser, CancellationToken cancelToken);
 }

@@ -20,9 +20,9 @@ namespace Filmowanie.Filters
         {
             var displayName = context.HttpContext.Request.Path;
             var userId = context.HttpContext.User.Claims.SingleOrDefault(x => x.Type == ClaimsTypes.UserId)?.Value;
-            _log.LogInformation("{} [Request {}, UserId: {}] Request starting", DateTimeOffset.UtcNow, displayName, userId);
+            _log.LogInformation("{} [Request {} {}, UserId: {}] Request starting", DateTimeOffset.UtcNow, context.HttpContext.Request.Method, displayName, userId);
             var result = await next(context);
-            _log.LogInformation("{} [Request {}, UserId: {}] Request ending. Result: {}", DateTimeOffset.UtcNow, displayName, userId, (result as IStatusCodeHttpResult)?.StatusCode);
+            _log.LogInformation("{} [Request {} {}, UserId: {}] Request ending. Result: {}", DateTimeOffset.UtcNow, context.HttpContext.Request.Method, displayName, userId, (result as IStatusCodeHttpResult)?.StatusCode);
             return result;
         }
     }

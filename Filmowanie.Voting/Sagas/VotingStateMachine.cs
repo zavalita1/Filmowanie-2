@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Entities;
@@ -36,6 +35,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
         Event(() => AddVoteEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => RemoveVoteEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => ConcludeVoting, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => GetVotingStatusEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => GetMovieListEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => GetNominationsEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => ResultsConfirmedEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
@@ -52,6 +52,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     ctx.Saga.Movies = movies;
                     ctx.Saga.Nominations = ctx.Message.NominationsData;
                     ctx.Saga.TenantId = ctx.Message.TenantId.Id;
+                    ctx.Saga.Created = _dateTimeProvider.Now;
                 })
                 .ThenAsync(async ctx =>
                 {
@@ -74,6 +75,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     var nominationToConclude = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
                     nominationToConclude.Concluded = _dateTimeProvider.Now;
                     nominationToConclude.MovieId = ctx.Message.Movie.id;
+
                     return ctx.Saga.Nominations.Any(x => x.Concluded != null) ? Task.CompletedTask : ctx.TransitionToState(NominationsConcluded);
                 }));
 
@@ -99,6 +101,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During([WaitingForNominations, NominationsConcluded],
             When(AddVoteEvent)
+                .Then(ctx => _logger.LogInformation("Adding a vote..."))
                 .Then(ctx =>
                 {
                     var movie = ctx.Saga.Movies.Single(x => x.Movie.id == ctx.Message.Movie.id);
@@ -115,6 +118,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During([WaitingForNominations, NominationsConcluded],
             When(RemoveVoteEvent)
+                .Then(ctx => _logger.LogInformation("Removing a vote..."))
                 .Then(ctx =>
                 {
                     var movie = ctx.Saga.Movies.Single(x => x.Movie.id == ctx.Message.Movie.id);
@@ -131,7 +135,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During(NominationsConcluded,
             When(ConcludeVoting)
-                .Then(ctx => _logger.LogWarning("Voting ending..."))
+                .Then(ctx => _logger.LogInformation("Voting ending..."))
                 .Publish(ctx =>
                 {
                     var movies = ctx.Saga.Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
@@ -143,17 +147,21 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During(CalculatingResults, When(ResumeVotingEvent).TransitionTo(NominationsConcluded));
         During(CalculatingResults, When(ResultsConfirmedEvent).Finalize());
-        During(CalculatingResults, When(Error)
+        During(CalculatingResults, When(GetNominationsEvent).Respond(ctx => new CurrentNominationsResponse { Nominations = [], CorrelationId = ctx.Saga.CorrelationId }));
+        During([CalculatingResults, NominationsConcluded], When(Error)
             .Then(ctx => ctx.Saga.Error = new ErrorData { ErrorMessage = ctx.Message.Message, CallStack = ctx.Message.CallStack })
             .TransitionTo(NominationsConcluded));
 
-        During([WaitingForNominations, NominationsConcluded],
+        During([WaitingForNominations, NominationsConcluded, CalculatingResults],
             When(GetMovieListEvent)
                 .Respond(ctx => new CurrentVotingListResponse { Movies = ctx.Saga.Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray() }));
 
         During([WaitingForNominations, NominationsConcluded],
             When(GetNominationsEvent)
                 .Respond(ctx => new CurrentNominationsResponse { Nominations = ctx.Saga.Nominations.ToArray(), CorrelationId = ctx.Saga.CorrelationId }));
+
+        During([WaitingForNominations, NominationsConcluded, CalculatingResults], When(GetVotingStatusEvent)
+            .Respond(ctx => new CurrentVotingStatusResponse { State = ctx.Saga.CurrentState! }));
     }
 
     // Commands
@@ -173,6 +181,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
     public Event<ResumeVotingEvent> ResumeVotingEvent { get; private set; } = null!;
 
     // Events
+    public Event<GetVotingStatusEvent> GetVotingStatusEvent { get; private set; } = null!;
     public Event<MoviesListRequestedEvent> GetMovieListEvent { get; private set; } = null!;
     public Event<NominationsRequestedEvent> GetNominationsEvent { get; private set; } = null!;
     public Event<ResultsConfirmedEvent> ResultsConfirmedEvent { get; private set; } = null!;

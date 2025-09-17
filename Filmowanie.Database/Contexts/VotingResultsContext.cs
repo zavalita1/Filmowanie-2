@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Database.Entities;
 
 namespace Filmowanie.Database.Contexts;
 
@@ -16,9 +17,15 @@ internal class VotingResultsContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<VotingResult>().ToContainer(DbContainerNames.Entities)
+        builder
+            .Entity<VotingResult>()
+            .ToContainer(DbContainerNames.Entities)
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
+
+        builder
+            .Entity<EmbeddedMovieWithVotes>()
+            .OwnsMany(o => o.Votes);
 
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

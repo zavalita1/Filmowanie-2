@@ -14,7 +14,7 @@ public sealed class PickUserToNominateContext
 
     public int NominationsCount { get; set; }
 
-    public double ParticipationPercent { get; set; }
+    public double ParticipationFactor { get; set; }
 
     public (string MovieId, VoteType)[] Votes { get; set; }
 }

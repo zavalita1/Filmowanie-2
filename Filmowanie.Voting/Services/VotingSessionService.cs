@@ -1,4 +1,5 @@
-﻿using Filmowanie.Abstractions;
+﻿using System.Runtime.InteropServices;
+using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
@@ -31,6 +32,9 @@ internal sealed class VotingSessionService : IVotingSessionService
 
     public Task<Maybe<VotingSessionId?>> GetCurrentVotingSessionIdAsync(Maybe<DomainUser> maybeCurrentUser, CancellationToken cancelToken) =>
         maybeCurrentUser.AcceptAsync(GetCurrentVotingSessionId, _log, cancelToken);
+
+    public Task<Maybe<VotingSessionId>> GetLastVotingSessionIdAsync(Maybe<DomainUser> maybeCurrentUser, CancellationToken cancelToken) =>
+        maybeCurrentUser.AcceptAsync(GetLastVotingSessionId, _log, cancelToken);
 
     public Maybe<VotingSessionId> GetRequiredVotingSessionId(Maybe<VotingSessionId?> maybeCurrentVotingSessionId) =>
         maybeCurrentVotingSessionId.Accept(GetRequiredCurrentVotingSessionId, _log);
@@ -77,6 +81,14 @@ internal sealed class VotingSessionService : IVotingSessionService
             return default(VotingSessionId?).AsMaybe(); // no current voting = voting has not been started yet.
 
         return votingSession.Map(x => Guid.Parse(x!.id)).Map(x => new VotingSessionId(x) as VotingSessionId?);
+    }
+
+    public async Task<Maybe<VotingSessionId>> GetLastVotingSessionId(DomainUser currentUser, CancellationToken cancelToken)
+    {
+        var votingSession = await _votingSessionQueryRepository.GetLastNVotingResultsAsync(1, cancelToken);
+        var id = votingSession.Map(x => x.Single());
+        var guidId = id.Map(x => Guid.Parse(x.id));
+        return guidId.Map(x => new VotingSessionId(x));
     }
 
     private static Maybe<VotingSessionId> GetRequiredCurrentVotingSessionId(VotingSessionId? input)

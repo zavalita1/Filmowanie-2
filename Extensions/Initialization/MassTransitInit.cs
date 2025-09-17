@@ -3,6 +3,7 @@ using System.Reflection;
 using Filmowanie.Database.Contants;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Notification.Consumers;
+using Filmowanie.Voting.Consumers;
 using Filmowanie.Voting.Sagas;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -33,8 +34,9 @@ internal static class MassTransitInit
             {
                 Assembly.GetEntryAssembly()!,
                 typeof(VotingStateInstance).Assembly,
-                typeof(Nomination.Consumers.VotingConcludedConsumer).Assembly,
+                typeof(Nomination.Consumers.ResultsConfirmedConsumer).Assembly,
                 typeof(ConcludeVotingEventConsumer).Assembly,
+                typeof(VotingConcludedConsumer).Assembly,
             }; // TODO
 
             x.AddConsumers(entryAssembly);

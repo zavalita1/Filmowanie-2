@@ -140,8 +140,9 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
     private static string GetPosterUrl(string posterUrl, bool isBigPoster)
     {
         var extensionIndex = posterUrl.LastIndexOf(".");
+        var sizePartIndex = posterUrl[..extensionIndex].LastIndexOf(".");
         var size = isBigPoster ? "8" : "10";
-        posterUrl = posterUrl[..(extensionIndex - 1)] + size + posterUrl[extensionIndex..];
+        posterUrl = $"{posterUrl[..sizePartIndex]}.{size}{posterUrl[extensionIndex..]}";
         return posterUrl;
     }
 

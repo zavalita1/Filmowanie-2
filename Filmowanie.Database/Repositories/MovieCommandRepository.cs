@@ -27,7 +27,7 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
     public async Task InsertNominatedAsync(IReadOnlyNominatedMovieEvent nominatedEvent, CancellationToken cancelToken)
     {
         var entity = nominatedEvent.AsMutable();
-        await _ctx.NominatedMovieAgainEvents.AddAsync(entity, cancelToken);
+        await _ctx.NominatedMovieEvents.AddAsync(entity, cancelToken);
         await _ctx.SaveChangesAsync(cancelToken);
     }
 

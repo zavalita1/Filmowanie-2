@@ -33,17 +33,18 @@ namespace Filmowanie.Database.Decorators
             return _decorated.GetMoviesThatCanBeNominatedAgainEventsAsync(newPredicate, cancelToken);
         }
 
-        public Task<IReadOnlyNominatedMovieEvent[]> GetMoviesNominatedAgainEventsAsync(Expression<Func<IReadOnlyNominatedMovieEvent, bool>> predicate,
+        public Task<IReadOnlyNominatedMovieEvent[]> GetMovieNominatedEventsAsync(Expression<Func<IReadOnlyNominatedMovieEvent, bool>> predicate,
             CancellationToken cancelToken)
         {
             var currentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
             var newPredicate = GetPredicateWithTenantFilter(predicate, currentUser.Tenant);
-            return _decorated.GetMoviesNominatedAgainEventsAsync(newPredicate, cancelToken);
+            return _decorated.GetMovieNominatedEventsAsync(newPredicate, cancelToken);
         }
 
         private static Expression<Func<T, bool>> GetPredicateWithTenantFilter<T>(Expression<Func<T, bool>> predicate, TenantId user) where T: IReadOnlyEntity
         {
-            Expression<Func<T, bool>> tenantCheck = x => x.TenantId == user.Id;
+            var userId = user.Id;
+            Expression<Func<T, bool>> tenantCheck = x => x.TenantId == userId;
             var newPredicateBody = Expression.AndAlso(tenantCheck.Body, Expression.Invoke(predicate, tenantCheck.Parameters.Single()));
             var newPredicate = Expression.Lambda<Func<T, bool>>(newPredicateBody, tenantCheck.Parameters);
             return newPredicate;

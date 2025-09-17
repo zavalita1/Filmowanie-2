@@ -19,12 +19,11 @@ internal sealed class VotingStateMapper : IVotingStateMapper
         _log = log;
     }
 
-    public Maybe<VotingSessionStatusDto> Map(Maybe<VotingSessionId?> input) => input.Accept(Map, _log);
+    public Maybe<VotingSessionStatusDto> Map(Maybe<(VotingState, VotingSessionId?)> input) => input.Accept(Map, _log);
 
-    private static Maybe<VotingSessionStatusDto> Map(VotingSessionId? input)
+    private static Maybe<VotingSessionStatusDto> Map((VotingState, VotingSessionId?) input)
     {
-        var state = input == null ? VotingState.Results : VotingState.Voting;
-        var result = new VotingSessionStatusDto(state.ToString(), input?.ToString());
+        var result = new VotingSessionStatusDto(input.Item1.ToString(), input.Item2?.ToString());
         return result.AsMaybe();
     }
 }

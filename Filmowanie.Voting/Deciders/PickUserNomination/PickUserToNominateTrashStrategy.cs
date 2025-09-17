@@ -43,13 +43,13 @@ public sealed class PickUserToNominateTrashStrategy : IPickUserToNominateStrateg
     private (IReadOnlyEmbeddedUser User, double Score) GetScore(KeyValuePair<IReadOnlyEmbeddedUser, PickUserToNominateContext> context)
     {
         var nominationPendingComponent = Math.Pow(1.2, Math.Floor(context.Value.AverageNominationPendingTimeInDays));
-        var participationComponent = 1 / (1 + 5 * context.Value.ParticipationPercent);
+        var participationComponent = 1 / (1 + 5 * context.Value.ParticipationFactor);
         var previousNominationsLength = context.Value.NominationsCount;
         var result = -1 * previousNominationsLength * nominationPendingComponent * participationComponent;
 
         _log.LogInformation("{type}: user: {user} participation percent: {percent}, previous nominations: {prev}, giving score: {score}."
             , nameof(PickUserToNominateTrashStrategy),
-            context.Key.Name, context.Value.ParticipationPercent, context.Value.NominationsCount, result);
+            context.Key.Name, context.Value.ParticipationFactor, context.Value.NominationsCount, result);
         return (context.Key, result);
     }
 }

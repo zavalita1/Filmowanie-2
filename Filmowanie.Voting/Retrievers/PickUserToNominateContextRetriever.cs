@@ -10,40 +10,44 @@ internal sealed class PickUserToNominateContextRetriever : IPickUserToNominateCo
 {
     public Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> GetPickUserToNominateContexts(IReadOnlyVotingResult[] lastVotingResults, IReadOnlyEmbeddedMovieWithNominationContext[] moviesAdded, VotingConcludedEvent message)
     {
-        var groups = lastVotingResults
+        var usersWithTheirPastNominationPendingTimes = lastVotingResults
             .SelectMany(x => x.MoviesAdded)
             .Concat(moviesAdded)
             .GroupBy(x => x.NominatedBy, x => x.NominationConcluded.Subtract(x.NominationStarted), ReadOnlyEmbeddedUserEqualityComparer.Instance)
             .Select(x => (x.Key, x.ToArray()));
 
-        var missingUsers = message.MoviesWithVotes.SelectMany(x => x.Votes).Select(x => x.User).Where(x => groups.All(y => y.Key.id != x.id));
-        var userContextsPreCalculationMap = groups
-            .Concat(missingUsers.Select(y => (y, Array.Empty<TimeSpan>())))
+        var usersWithoutPastNominations = message.MoviesWithVotes.SelectMany(x => x.Votes).Select(x => x.User).Where(x => usersWithTheirPastNominationPendingTimes.All(y => y.Key.id != x.id)).DistinctBy(x => x.id);
+        var usersWithTheirPastNominationPendingTimesMap = usersWithTheirPastNominationPendingTimes
+            .Concat(usersWithoutPastNominations.Select(y => (y, Array.Empty<TimeSpan>())))
             .ToDictionary(x => x.Item1, x => x.Item2, ReadOnlyEmbeddedUserEqualityComparer.Instance);
 
-        var userVotesMap = message.MoviesWithVotes
+        var currentVotingUserVotesMap = message.MoviesWithVotes
             .SelectMany(x => x.Votes.Select(y => new { MovieId = x.Movie.id, Vote = y }))
             .GroupBy(x => x.Vote.User, x => new { x.MovieId, x.Vote.VoteType }, ReadOnlyEmbeddedUserEqualityComparer.Instance)
             .ToDictionary(x => x.Key, x => x.ToArray(), ReadOnlyEmbeddedUserEqualityComparer.Instance);
 
-        var contextsDictionary = new Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext>(userContextsPreCalculationMap.Count());
+        var result = new Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext>(usersWithTheirPastNominationPendingTimesMap.Count());
 
-        foreach (var group in userContextsPreCalculationMap)
+        foreach (var userWithPastNominations in usersWithTheirPastNominationPendingTimesMap)
         {
-            var averageNominationPendingTime = group.Value.Length == 0 ? 0 : group.Value.Average(y => y.TotalDays);
-            var votingTookPartIn = 1 + lastVotingResults.Count(x => x.Movies.SelectMany(y => y.Votes).Any(y => y.User.id == group.Key.id));
-            var votes = userVotesMap[group.Key].Select(x => (x.MovieId, x.VoteType)).ToArray();
+            var averageNominationPendingTime = userWithPastNominations.Value.Length == 0 ? 0 : userWithPastNominations.Value.Average(y => y.TotalDays);
+            var votingSessionsUserTookPartInCount = 1 + lastVotingResults.Count(x => x.Movies.SelectMany(y => y.Votes).Any(y => y.User.id == userWithPastNominations.Key.id));
+
+            if (!currentVotingUserVotesMap.TryGetValue(userWithPastNominations.Key, out var votes))
+                votes = [];
+
+            var mappedVotes = votes.Select(x => (x.MovieId, x.VoteType)).ToArray();
 
             var entry = new PickUserToNominateContext
             {
                 AverageNominationPendingTimeInDays = averageNominationPendingTime,
-                NominationsCount = group.Value.Length,
-                ParticipationPercent = (100d / (lastVotingResults.Length + 1)) * votingTookPartIn,
-                Votes = votes
+                NominationsCount = userWithPastNominations.Value.Length,
+                ParticipationFactor = (100d / (lastVotingResults.Length + 1)) * votingSessionsUserTookPartInCount,
+                Votes = mappedVotes
             };
-            contextsDictionary[group.Key] = entry;
+            result[userWithPastNominations.Key] = entry;
         }
 
-        return contextsDictionary;
+        return result;
     }
 }

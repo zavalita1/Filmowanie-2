@@ -10,3 +10,5 @@ internal interface IVotingSessionQueryRepository
     Task<IEnumerable<IReadOnlyVotingResult>> GetVotingResultAsync(Expression<Func<IReadOnlyVotingResult, bool>> predicate, Expression<Func<IReadOnlyVotingResult, object>> sortBy, int take,
         CancellationToken cancelToken);
 }
+
+internal interface IVotingSessionQueryRepositoryInUserlessContext : IVotingSessionQueryRepository;

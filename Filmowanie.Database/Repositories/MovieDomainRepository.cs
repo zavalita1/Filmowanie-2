@@ -75,16 +75,16 @@ internal sealed class MovieDomainRepository : IMovieDomainRepository
 
     public Task<IReadOnlyNominatedMovieEvent[]> GetMovieNominatedEventsAsync(CancellationToken cancelToken)
     {
-        return _movieQueryRepository.GetMoviesNominatedAgainEventsAsync(_ => true, cancelToken);
+        return _movieQueryRepository.GetMovieNominatedEventsAsync(_ => true, cancelToken);
     }
 
     public Task<IReadOnlyNominatedMovieEvent[]> GetMovieNominatedEventsAsync(string movieName, int movieCreationYear, CancellationToken cancelToken)
     {
-        return _movieQueryRepository.GetMoviesNominatedAgainEventsAsync(x => x.Movie.Name == movieName && x.Movie.MovieCreationYear == movieCreationYear, cancelToken);
+        return _movieQueryRepository.GetMovieNominatedEventsAsync(x => x.MovieName == movieName && x.MovieCreationYear == movieCreationYear, cancelToken);
     }
 
     public Task<IReadOnlyNominatedMovieEvent[]> GetMovieNominatedEventsAsync(MovieId movieId, CancellationToken cancelToken)
     {
-        return _movieQueryRepository.GetMoviesNominatedAgainEventsAsync(x => x.Movie.id == movieId.Id, cancelToken);
+        return _movieQueryRepository.GetMovieNominatedEventsAsync(x => x.MovieId == movieId.Id, cancelToken);
     }
 }

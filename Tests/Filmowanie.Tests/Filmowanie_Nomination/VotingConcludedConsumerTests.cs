@@ -20,18 +20,18 @@ namespace Filmowanie.Tests.Filmowanie_Nomination;
 
 public class VotingConcludedConsumerTests
 {
-    private readonly ILogger<VotingConcludedConsumer> _logger;
+    private readonly ILogger<ResultsConfirmedConsumer> _logger;
     private readonly IVotingResultsRepository _votesRepository;
     private readonly IMovieCommandRepository _movieCommandRepository;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly VotingConcludedConsumer _consumer;
+    private readonly ResultsConfirmedConsumer _consumer;
 
     private readonly IFixture _fixture = new Fixture();
 
     public VotingConcludedConsumerTests()
     {
-        _logger = Substitute.For<ILogger<VotingConcludedConsumer>>();
+        _logger = Substitute.For<ILogger<ResultsConfirmedConsumer>>();
         _votesRepository = Substitute.For<IVotingResultsRepository>();
         _movieCommandRepository = Substitute.For<IMovieCommandRepository>();
         _guidProvider = Substitute.For<IGuidProvider>();

@@ -3,7 +3,7 @@ using Filmowanie.Voting.DomainModels;
 
 namespace Filmowanie.Voting.Interfaces;
 
-internal interface IVotingResultsRetriever
+public interface IVotingResultsRetriever
 {
     VotingResults GetVotingResults(IReadOnlyEmbeddedMovieWithVotes[] currentMovies, IReadOnlyVotingResult? previous);
 }

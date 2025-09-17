@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Filmowanie.Database.Repositories.Internal;
 
-internal class VotingSessionQueryRepository : IVotingSessionQueryRepository
+internal class VotingSessionQueryRepository : IVotingSessionQueryRepositoryInUserlessContext
 {
     private readonly VotingResultsContext _ctx;
 

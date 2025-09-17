@@ -37,11 +37,11 @@ public sealed class MovieQueryRepositoryDecoratorTests
             new NominatedMovieEvent { id = "loo2", Movie = new() { Name = "double loo", MovieCreationYear = 4444 }, TenantId = 2137 },
             new NominatedMovieEvent { id = "loo", Movie = new() { Name = "double loo", MovieCreationYear = 2222 }, TenantId = 2137 },
         };
-        _movieRepo.GetMoviesNominatedAgainEventsAsync(default!, CancellationToken.None)
+        _movieRepo.GetMovieNominatedEventsAsync(default!, CancellationToken.None)
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Where(x => ci.ArgAt<Expression<Func<IReadOnlyNominatedMovieEvent, bool>>>(0).Compile().Invoke(x)).ToArray<IReadOnlyNominatedMovieEvent>());
 
         // Act
-        var result = await _sut.GetMoviesNominatedAgainEventsAsync(x => x.id == "loo" && x.Movie.Name == "double loo", CancellationToken.None);
+        var result = await _sut.GetMovieNominatedEventsAsync(x => x.id == "loo" && x.Movie.Name == "double loo", CancellationToken.None);
 
 
         // Assert

@@ -41,6 +41,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IVoteService, VoteService>();
         services.AddScoped<IVotingResultsRetriever, VotingResultsRetriever>();
         services.AddScoped<INominationsRetriever, NominationsRetriever>();
+        services.AddScoped<ICurrentVotingStatusRetriever, CurrentVotingStatusRetriever>();
 
         services.AddSingleton<IVotingDeciderFactory, VotingDeciderFactory>();
         services.AddSingleton<IPickUserToNominateStrategyFactory, PickUserToNominateStrategyFactory>();

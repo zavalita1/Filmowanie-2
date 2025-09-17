@@ -23,7 +23,7 @@ internal sealed class VotingMappersComposite : IVotingMappersComposite
         _votingSessionIdMapper = votingSessionIdMapper;
     }
 
-    public Task<Maybe<VotingSessionId?>> MapAsync(Maybe<(string, DomainUser)> input, CancellationToken cancelToken) => _votingSessionIdMapper.MapAsync(input, cancelToken);
+    public Task<Maybe<VotingSessionId>> MapAsync(Maybe<(string, DomainUser)> input, CancellationToken cancelToken) => _votingSessionIdMapper.MapAsync(input, cancelToken);
 
     public Maybe<VotingSessionsDTO> Map(Maybe<VotingMetadata[]> input) => _votingSessionsDtoMapper.Map(input);
 

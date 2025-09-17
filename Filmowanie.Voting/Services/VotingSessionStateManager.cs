@@ -66,7 +66,7 @@ internal sealed class VotingSessionStateManager : IVotingStateManager
             return new Error<VotingSessionId>("Can't parse last voting id!", ErrorType.InvalidState);
 
         var lastVotingResultId = new VotingSessionId(lastVotingId);
-        await _bus.Publish(new ResultsConfirmedEvent(lastVotingResultId), cancelToken);
+        await _bus.Publish(new ResultsConfirmedEvent(lastVotingResultId, input.Tenant), cancelToken);
         
         var moviesGoingByeByeIds = lastVotingResult.MoviesGoingByeBye.Select(x => x.id).ToArray();
         var movies = lastVotingResult.Movies.Select(x => new EmbeddedMovie { id = x.Movie.id, Name = x.Movie.Name }).Where(x => x.id != lastVotingResult.Winner.Movie.id).Where(x => !moviesGoingByeByeIds.Contains(x.id)).ToArray();

@@ -13,7 +13,7 @@ internal class NominationMovieValidator : AbstractValidator<(IReadOnlyMovieEntit
 {
     public NominationMovieValidator()
     {
-        RuleFor(x => x.Movie.Genres).Must(x => x.Contains("horror", StringComparer.OrdinalIgnoreCase)).WithMessage("Horrors are not allowed. Nice try motherfucker.");
+        RuleFor(x => x.Movie.Genres).Must(x => !x.Contains("horror", StringComparer.OrdinalIgnoreCase)).WithMessage("Horrors are not allowed. Nice try motherfucker.");
         RuleFor(x => x).Must(x => x.CurrentNominations.NominationData.Where(y => x.User.Id == y.User!.Id).Select(y => y.Year).Any(y => x.Movie.CreationYear.ToDecade() == y))
             .WithMessage("This movie is not made during a decade you're allowed to nominate from");
     }

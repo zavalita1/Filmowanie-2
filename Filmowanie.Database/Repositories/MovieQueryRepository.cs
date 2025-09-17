@@ -26,9 +26,10 @@ internal sealed class MovieQueryRepository : IMovieQueryRepository
         return await _ctx.CanNominateMovieAgainEvents.Where(predicate).ToArrayAsync(cancelToken);
     }
 
-    public async Task<IReadOnlyNominatedMovieEvent[]> GetMoviesNominatedAgainEventsAsync(Expression<Func<IReadOnlyNominatedMovieEvent, bool>> predicate,
+    public async Task<IReadOnlyNominatedMovieEvent[]> GetMovieNominatedEventsAsync(Expression<Func<IReadOnlyNominatedMovieEvent, bool>> predicate,
         CancellationToken cancelToken)
     {
-        return await _ctx.NominatedMovieAgainEvents.Where(predicate).ToArrayAsync(cancelToken);
+        var res = await _ctx.NominatedMovieEvents.Where(predicate).ToArrayAsync(cancelToken);
+        return res;
     }
 }

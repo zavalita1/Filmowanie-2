@@ -88,7 +88,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
         const nominateResult = await nominate(dto);
         
         if (!nominateResult.error) {
-            navigate("");
+            navigate("/");
         }
     }
 
@@ -118,7 +118,7 @@ const PosterPicker: React.FC<PosterPickerProps> = props => {
     const [api, setApi] = useState<CarouselApi>();
     const stateRef = useRef<number | null>();
 
-    const cardsInCarouselForBigScreens = 5;
+    const cardsInCarouselForBigScreens = 3;
     stateRef.current = chosenIndex;
 
     useEffect(() => {

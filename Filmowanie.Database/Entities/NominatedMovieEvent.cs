@@ -1,5 +1,4 @@
-﻿using Filmowanie.Database.Extensions;
-using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+﻿using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Entities;
 
@@ -7,7 +6,9 @@ internal class NominatedMovieEvent : Event, IReadOnlyNominatedMovieEvent
 {
     public EmbeddedMovie Movie { get; set; } = null!;
 
-    IReadOnlyEmbeddedMovie IReadOnlyNominatedMovieEvent.Movie => Movie;
+     public string MovieId { get; set; }
+    public string MovieName { get; set; }
+    public int MovieCreationYear { get; set; }
 
     public string UserId { get; init; } = null!;
 
@@ -15,9 +16,14 @@ internal class NominatedMovieEvent : Event, IReadOnlyNominatedMovieEvent
 
     public NominatedMovieEvent(IReadOnlyNominatedMovieEvent other) : base(other)
     {
-        Movie = other.Movie.AsMutable();
+        MovieId = other.MovieId;
+        MovieName = other.MovieName;
+        MovieCreationYear = other.MovieCreationYear;
         UserId = other.UserId;
     }
 }
 
-public readonly record struct NominatedEventRecord(IReadOnlyEmbeddedMovie Movie, string id, DateTime Created, int TenantId, string UserId) : IReadOnlyNominatedMovieEvent;
+public readonly record struct NominatedEventRecord(string MovieId, string MovieName, int MovieCreationYear, string id, DateTime Created, int TenantId, string UserId) : IReadOnlyNominatedMovieEvent
+{
+    public NominatedEventRecord(IReadOnlyEmbeddedMovie movie, string id, DateTime created, int tenantId, string userId) : this(movie.id, movie.Name, movie.MovieCreationYear, id, created, tenantId, userId) { }
+}

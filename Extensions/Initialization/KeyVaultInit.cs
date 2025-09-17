@@ -26,5 +26,4 @@ internal static class KeyVaultInit
         });
         webApplicationBuilder.Configuration.AddInMemoryCollection(keyVaultConfigurationProvider!);
     }
-
 }

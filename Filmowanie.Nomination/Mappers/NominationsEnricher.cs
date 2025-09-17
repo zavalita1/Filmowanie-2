@@ -35,8 +35,8 @@ internal sealed class NominationsEnricher : INominationsEnricher
             .ToDictionary(x => x.Key, x => x.Max());
 
         var filteredMovieNominatedAgainEvents = movieNominatedAgainEvents
-            .Where(x => userNominationsDecades.Contains(x.Movie.MovieCreationYear.ToDecade()))
-            .GroupBy(x => x.Movie.id, x => x.Created)
+            .Where(x => userNominationsDecades.Contains(x.MovieCreationYear.ToDecade()))
+            .GroupBy(x => x.MovieId, x => x.Created)
             .ToDictionary(x => x.Key, x => x.Max());
 
         var moviesThatCanBeNominatedAgainIds = filteredMoviesThatCanBeNominatedAgainEvents

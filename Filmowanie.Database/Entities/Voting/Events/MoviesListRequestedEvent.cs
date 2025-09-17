@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 
 namespace Filmowanie.Database.Entities.Voting.Events;
 

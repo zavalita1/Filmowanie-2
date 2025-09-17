@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Voting.DomainModels;
@@ -9,7 +8,7 @@ namespace Filmowanie.Voting.Interfaces;
 
 internal interface IVotingMappersComposite
 {
-    Task<Maybe<VotingSessionId?>> MapAsync(Maybe<(string, DomainUser)> input, CancellationToken cancelToken);
+    Task<Maybe<VotingSessionId>> MapAsync(Maybe<(string, DomainUser)> input, CancellationToken cancelToken);
 
     Maybe<VotingSessionsDTO> Map(Maybe<VotingMetadata[]> input);
     

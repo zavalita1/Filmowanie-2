@@ -9,7 +9,7 @@ internal class MoviesContext : DbContext
 {
     public DbSet<MovieEntity> Movies { get; set; }
     public DbSet<CanNominateMovieAgainEvent> CanNominateMovieAgainEvents { get; set; }
-    public DbSet<NominatedMovieEvent> NominatedMovieAgainEvents { get; set; }
+    public DbSet<NominatedMovieEvent> NominatedMovieEvents { get; set; }
 
     public MoviesContext(DbContextOptions<MoviesContext> options)
         : base(options)
@@ -22,11 +22,15 @@ internal class MoviesContext : DbContext
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
 
-        builder.Entity<CanNominateMovieAgainEvent>().ToContainer(DbContainerNames.Events)
+        builder.Entity<CanNominateMovieAgainEvent>()
+            .HasDefaultTimeToLive(60*60*24*365) // a year
+            .ToContainer(DbContainerNames.Events)
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
 
-        builder.Entity<NominatedMovieEvent>().ToContainer(DbContainerNames.Events)
+        builder.Entity<NominatedMovieEvent>()
+            .ToContainer(DbContainerNames.Events)
+            .HasDefaultTimeToLive(60*60*24*365) // a year
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
 
