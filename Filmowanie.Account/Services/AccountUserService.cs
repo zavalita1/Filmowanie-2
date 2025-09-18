@@ -79,7 +79,7 @@ internal sealed class AccountUserService : IAccountUserService
     private async Task<Maybe<IEnumerable<DomainUser>>> GetAllUsers(CancellationToken cancelToken)
     {
         var allEntities = await _usersQueryRepository.GetAllAsync(cancelToken);
-        var result = allEntities.Select(x => new DomainUser(x.id, x.DisplayName, x.IsAdmin, !string.IsNullOrEmpty(x.PasswordHash), new TenantId(x.TenantId), x.Created));
+        var result = allEntities.Select(x => new DomainUser(x.id, x.DisplayName, x.IsAdmin, !string.IsNullOrEmpty(x.PasswordHash), new TenantId(x.TenantId), x.Created, Enum.Parse<Gender>(x.Gender)));
         var all = result;
         return new Maybe<IEnumerable<DomainUser>>(all, null);
     }
@@ -111,5 +111,5 @@ internal sealed class AccountUserService : IAccountUserService
 
     private static Maybe<LoginResultData> GetInvalidCredentialsError() => new Error<LoginResultData>("Invalid credentials", ErrorType.IncomingDataIssue);
 
-    private readonly record struct User(string id, DateTime Created, int TenantId, string Email, string PasswordHash, string Code, string DisplayName, bool IsAdmin) : IReadOnlyUserEntity;
+    private readonly record struct User(string id, DateTime Created, int TenantId, string Email, string PasswordHash, string Code, string DisplayName, bool IsAdmin, string Gender) : IReadOnlyUserEntity;
 }

@@ -122,7 +122,7 @@ const WatchedMovies: React.FC = () => {
             <TableBody>
                 { data!.map((x, index) => (
                 <TableRow key={index}>
-                    <TableCell className="font-medium">{x.title}</TableCell>
+                    <TableCell className="font-medium text-blue-700 dark:text-pink-300 hover:cursor-pointer"><a href={x.filmwebUrl} target="_blank">{x.title}</a></TableCell>
                     <TableCell>{x.originalTitle}</TableCell>
                     <TableCell>{x.watched}</TableCell>
                     <TableCell className="text-right">{x.nominatedBy}</TableCell>

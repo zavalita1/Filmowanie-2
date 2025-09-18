@@ -30,7 +30,7 @@ public sealed class MovieAddedConsumer : IConsumer<AddMovieEvent>, IConsumer<Fau
         _logger.LogInformation($"Consuming {nameof(AddMovieEvent)}...");
 
         var user = context.Message.User;
-        await _votingHubContext.Clients.All.SendAsync("movie nominated", user.Name, context.CancellationToken);
+        await _votingHubContext.Clients.All.SendAsync("movie nominated", new { user.Name, Gender = user.Gender.ToString() } , context.CancellationToken);
         _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
     }
 }

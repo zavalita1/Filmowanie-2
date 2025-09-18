@@ -23,6 +23,7 @@ internal sealed class LoginResultDataExtractor : ILoginResultDataExtractor
             new Claim(ClaimsTypes.Tenant, user.TenantId.ToString()),
             new Claim(ClaimsTypes.HasBasicAuth, hasBasicAuth.ToString(CultureInfo.InvariantCulture)),
             new Claim(ClaimsTypes.Created, user.Created.ToString("O")),
+            new Claim(ClaimsTypes.Gender, user.Gender.ToString()),
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, Schemes.Cookie);

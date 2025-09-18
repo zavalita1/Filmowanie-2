@@ -1,4 +1,6 @@
-﻿namespace Filmowanie.Database.Interfaces.ReadOnlyEntities;
+﻿using Filmowanie.Abstractions.Enums;
+
+namespace Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 public interface IReadOnlyUserEntity : IReadOnlyEntity
 {
@@ -11,4 +13,6 @@ public interface IReadOnlyUserEntity : IReadOnlyEntity
     public string DisplayName { get; }
 
     public bool IsAdmin { get; }
+
+    public string Gender {get;}
 }

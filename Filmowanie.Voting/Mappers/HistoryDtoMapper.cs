@@ -18,12 +18,12 @@ internal sealed class HistoryDtoMapper : IHistoryDtoMapper
         _log = log;
     }
 
-    public Maybe<HistoryDTO> Map(Maybe<WinnerMetadata[]> input) => input.Accept(HistoryDtoMapper.Map, _log);
+    public Maybe<HistoryDTO> Map(Maybe<WinnerMetadata[]> input) => input.Accept(Map, _log);
 
     private static Maybe<HistoryDTO> Map(WinnerMetadata[] input)
     {
         var entries = input
-            .Select(x => new HistoryEntryDTO(x.Name, x.OriginalTitle, x.CreationYear, x.NominatedBy, x.Watched.ToString("d", new CultureInfo("pl"))))
+            .Select(x => new HistoryEntryDTO(x.Name, x.OriginalTitle, x.CreationYear, x.NominatedBy, x.Watched.ToString("d", new CultureInfo("pl")), x.FilmwebUrl))
             .ToArray();
 
         var result = new HistoryDTO(entries);

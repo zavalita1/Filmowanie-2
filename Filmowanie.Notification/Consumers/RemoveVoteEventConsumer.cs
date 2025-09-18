@@ -29,7 +29,7 @@ public sealed class RemoveVoteEventConsumer : IConsumer<RemoveVoteEvent>, IConsu
     {
         _logger.LogInformation($"Consuming {nameof(RemoveVoteEvent)}...");
         var userId = context.Message.User;
-        await _votingHubContext.Clients.All.SendAsync("voted", userId.Name, context.CancellationToken);
+        await _votingHubContext.Clients.All.SendAsync("voted", new { userId.Name, Gender = context.Message.User.Gender.ToString() }, context.CancellationToken);
         _logger.LogInformation($"Consumed {nameof(RemoveVoteEvent)} event.");
     }
 }

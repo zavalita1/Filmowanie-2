@@ -74,10 +74,10 @@ export const ResultsComponent: React.FC<ResultsComponentProps> = props => {
                 <Table className="min-w-4/5">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
+                            <TableRow key={`header-${headerGroup.id}`}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} >
+                                        <TableHead key={`header-${header.id}`} >
                                             {
                                                 flexRender(header.column.columnDef.header, header.getContext())
                                             }
@@ -110,7 +110,7 @@ export const ResultsComponent: React.FC<ResultsComponentProps> = props => {
                 <Table>
                     <TableHeader>
                         {trashVotingTable.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
+                            <TableRow key={`trash-header-${headerGroup.id}`}>
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead key={header.id}>
@@ -127,13 +127,14 @@ export const ResultsComponent: React.FC<ResultsComponentProps> = props => {
                     <TableBody>
                         {trashVotingTable.getRowModel().rows?.length ? (
                             trashVotingTable.getRowModel().rows.map((row) => (
-                                <><TableRow
-                                    key={row.id}
+                                <>
+                                <TableRow
+                                    key={`trash-${row.id}`}
                                     onClick={() => onTrashResultRowClick(row)}
                                     className={row.original.votesCount === 0 ? "" : "cursor-pointer"}
                                 >
                                             {row.getVisibleCells().map((cell) => (
-                                                    <TableCell key={cell.id} className={row.original.isDecorated ? "bg-rose-300 dark:bg-rose-500 font-bold" : ""}>
+                                                    <TableCell key={'trash-'+ row.id + cell.id} className={row.original.isDecorated ? "bg-rose-300 dark:bg-rose-500 font-bold" : ""}>
                                                     { 
                                                         cell.column.columnDef.header === "" 
                                                         ? (!expandedRows.includes(row.original.rank) ? <BsChevronDown />: <BsChevronUp />)
@@ -143,11 +144,11 @@ export const ResultsComponent: React.FC<ResultsComponentProps> = props => {
                                             ))}
                                 </TableRow>
                                 { expandedRows.includes(row.original.rank) 
-                                ? <TableRow>
+                                ? <TableRow key={`expanded-${row.id}`}>
                                     <TableCell></TableCell>
                                     <TableCell>
                                     <h3><b>Śmieciarze:</b></h3>
-                                    {row.original.voters!.map(x => (<p>{x}</p>))}
+                                    {row.original.voters!.map((x, i) => (<p key={`par-${i}`}>{x}</p>))}
                                     </TableCell>
                                 </TableRow> 
                                 : <></>}

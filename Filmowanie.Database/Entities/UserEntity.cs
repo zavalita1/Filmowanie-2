@@ -14,6 +14,8 @@ internal class UserEntity : Entity, IReadOnlyUserEntity
 
     public virtual bool IsAdmin { get; set; }
 
+    public virtual string Gender { get; set; }
+
     public UserEntity()
     { }
 
@@ -27,5 +29,6 @@ internal class UserEntity : Entity, IReadOnlyUserEntity
         IsAdmin = other.IsAdmin;
         id = other.id;
         Created = other.Created;
+        Gender = other.Gender;
     }
 }

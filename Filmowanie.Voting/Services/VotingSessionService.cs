@@ -65,7 +65,7 @@ internal sealed class VotingSessionService : IVotingSessionService
             return new Error<WinnerMetadata[]>("Invalid cache object!", ErrorType.InvalidState);
 
         var result = input.Item1.Join(typedValue, x => x.Winner.Id, x => x.Key, (x, y) =>
-                new WinnerMetadata(x.Winner.Id, x.Winner.Name, x.Winner.OriginalTitle, x.Winner.CreationYear, y.Value, x.Concluded))
+                new WinnerMetadata(x.Winner.Id, x.Winner.Name, x.Winner.OriginalTitle, x.Winner.CreationYear, y.Value, x.Concluded, x.Winner.FilmwebUrl))
             .OrderByDescending(x => x.Watched)
             .ToArray();
         return result.AsMaybe();

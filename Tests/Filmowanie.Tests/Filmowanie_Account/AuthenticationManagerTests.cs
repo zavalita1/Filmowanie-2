@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Security.Claims;
 using System.Security.Principal;
+using AutoFixture;
 using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Maybe;
@@ -19,6 +20,8 @@ public sealed class AuthenticationManagerTests
 {
     private readonly IHttpContextWrapper _httpContextWrapper;
     private readonly AuthenticationManager _sut;
+
+    private readonly Fixture _fixture = new();
 
     public AuthenticationManagerTests()
     {
@@ -79,6 +82,7 @@ public sealed class AuthenticationManagerTests
         var hasBasicAuth = true;
         var tenantId = 42;
         var created = DateTime.UtcNow;
+        var gender = _fixture.Create<Gender>();
 
         var claims = new[]
         {
@@ -87,7 +91,8 @@ public sealed class AuthenticationManagerTests
             new Claim(ClaimsTypes.IsAdmin, isAdmin.ToString()),
             new Claim(ClaimsTypes.HasBasicAuth, hasBasicAuth.ToString()),
             new Claim(ClaimsTypes.Tenant, tenantId.ToString(CultureInfo.InvariantCulture)),
-            new Claim(ClaimsTypes.Created, created.ToString("O"))
+            new Claim(ClaimsTypes.Created, created.ToString("O")),
+            new Claim(ClaimsTypes.Gender, gender.ToString())
         };
 
         var identity = Substitute.For<IIdentity>();
@@ -105,7 +110,7 @@ public sealed class AuthenticationManagerTests
         // Assert
         result.Result.Should().NotBeNull();
         result.Error.Should().BeNull();
-        
+
         var user = result.Result;
         user.Should().NotBeNull();
         user!.Id.Should().Be(userId);
@@ -114,6 +119,7 @@ public sealed class AuthenticationManagerTests
         user.HasBasicAuthSetup.Should().Be(hasBasicAuth);
         user.Tenant.Id.Should().Be(tenantId);
         user.Created.Should().Be(created);
+        user.Gender.Should().Be(gender);
     }
 
     [Fact]

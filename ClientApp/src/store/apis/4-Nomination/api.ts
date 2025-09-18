@@ -27,6 +27,7 @@ export const nominationApi = adminApi
             async onQueryStarted(params, { dispatch, queryFulfilled }) {
                 await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, false, true);
             },
+            invalidatesTags: ['MoviesList']
         }),
         getPosters: builder.query<string[], string>({
             query: movieUrl => ({url: 'nominations/posters', method: 'GET', params: { movieUrl } }),

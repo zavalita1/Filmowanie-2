@@ -53,8 +53,10 @@ internal sealed class AuthenticationManager : IAuthenticationManager
         var tenant = new TenantId(tenantId);
         var createdLiteral = user.Claims.Single(x => x.Type == ClaimsTypes.Created).Value;
         var created = DateTime.Parse(createdLiteral, null, DateTimeStyles.RoundtripKind);
+        var genderLiteral = user.Claims.Single(x => x.Type == ClaimsTypes.Gender).Value;
+        var gender = Enum.Parse<Gender>(genderLiteral);
 
-        var result = new DomainUser(id, username, isAdmin, hasBasicAuthSetup, tenant, created);
+        var result = new DomainUser(id, username, isAdmin, hasBasicAuthSetup, tenant, created, gender);
         return new Maybe<DomainUser>(result, null);
     }
 

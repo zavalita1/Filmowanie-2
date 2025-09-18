@@ -36,6 +36,7 @@ public sealed class CurrentVotingStatusRetriever : ICurrentVotingStatusRetriever
             "WaitingForNominations" => VotingState.Voting.AsMaybe(),
             "NominationsConcluded" => VotingState.Voting.AsMaybe(),
             "CalculatingResults" => VotingState.Results.AsMaybe(),
+            "Final" => VotingState.Results.AsMaybe(),
             _ => new Error<VotingState>($"Unknown voting state: {state}!", ErrorType.InvalidState)
         };
     }

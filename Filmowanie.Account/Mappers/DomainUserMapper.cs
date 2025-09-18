@@ -31,7 +31,7 @@ internal sealed class DomainUserMapper : IDomainUserMapper
         var now = _dateTimeProvider.Now;
         var guid = _guidProvider.NewGuid();
         var userId = $"user-{guid}";
-        var domainUser = new DomainUser(userId, input.Item1.Id, false, false, input.CurrentUser.Tenant, now);
+        var domainUser = new DomainUser(userId, input.Item1.Id, false, false, input.CurrentUser.Tenant, now, input.Item2.Gender);
         return new Maybe<DomainUser>(domainUser, null);
     }
 }

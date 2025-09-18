@@ -1,5 +1,6 @@
 using System.Globalization;
 using AutoFixture;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Helpers;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -31,6 +32,7 @@ public sealed class LoginResultDataExtractorTests
         var tenantId = 42;
         var created = DateTime.UtcNow;
         var passwordHash = "somehash";
+        var gender = _fixture.Create<Gender>();
 
         _userEntity.DisplayName.Returns(displayName);
         _userEntity.id.Returns(userId);
@@ -50,6 +52,7 @@ public sealed class LoginResultDataExtractorTests
         result.Result!.Identity.Claims.Should().Contain(c => c.Type == ClaimsTypes.Tenant && c.Value == tenantId.ToString());
         result.Result!.Identity.Claims.Should().Contain(c => c.Type == ClaimsTypes.HasBasicAuth && c.Value == true.ToString(CultureInfo.InvariantCulture));
         result.Result!.Identity.Claims.Should().Contain(c => c.Type == ClaimsTypes.Created && c.Value == created.ToString("O"));
+        result.Result!.Identity.Claims.Should().Contain(c => c.Type == ClaimsTypes.Gender && c.Value == gender.ToString());
     }
 
     [Fact]

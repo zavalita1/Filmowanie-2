@@ -147,12 +147,12 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During(CalculatingResults, When(ResumeVotingEvent).TransitionTo(NominationsConcluded));
         During(CalculatingResults, When(ResultsConfirmedEvent).Finalize());
-        During(CalculatingResults, When(GetNominationsEvent).Respond(ctx => new CurrentNominationsResponse { Nominations = [], CorrelationId = ctx.Saga.CorrelationId }));
+        During([CalculatingResults, Final], When(GetNominationsEvent).Respond(ctx => new CurrentNominationsResponse { Nominations = [], CorrelationId = ctx.Saga.CorrelationId }));
         During([CalculatingResults, NominationsConcluded], When(Error)
             .Then(ctx => ctx.Saga.Error = new ErrorData { ErrorMessage = ctx.Message.Message, CallStack = ctx.Message.CallStack })
             .TransitionTo(NominationsConcluded));
 
-        During([WaitingForNominations, NominationsConcluded, CalculatingResults],
+        During([WaitingForNominations, NominationsConcluded, CalculatingResults, Final],
             When(GetMovieListEvent)
                 .Respond(ctx => new CurrentVotingListResponse { Movies = ctx.Saga.Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray() }));
 
@@ -160,7 +160,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
             When(GetNominationsEvent)
                 .Respond(ctx => new CurrentNominationsResponse { Nominations = ctx.Saga.Nominations.ToArray(), CorrelationId = ctx.Saga.CorrelationId }));
 
-        During([WaitingForNominations, NominationsConcluded, CalculatingResults], When(GetVotingStatusEvent)
+        During([WaitingForNominations, NominationsConcluded, CalculatingResults, Final], When(GetVotingStatusEvent)
             .Respond(ctx => new CurrentVotingStatusResponse { State = ctx.Saga.CurrentState! }));
     }
 

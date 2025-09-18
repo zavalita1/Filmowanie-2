@@ -20,7 +20,8 @@ internal sealed class UserDtoMapper : IUserDtoMapper
 
     private static Maybe<UserDTO> MapToDtoInternal(DomainUser user)
     {
-        var userDto = new UserDTO(user.Name, user.IsAdmin, user.HasBasicAuthSetup);
+        var gender = user.Gender.ToString();
+        var userDto = new UserDTO(user.Name, user.IsAdmin, user.HasBasicAuthSetup, gender);
         return new Maybe<UserDTO>(userDto, null);
     }
 }

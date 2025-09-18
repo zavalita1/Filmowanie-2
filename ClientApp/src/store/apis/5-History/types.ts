@@ -8,6 +8,7 @@ export type WatchedMovieIncomingDTO = {
     createdYear: number;
     nominatedBy: string;
     watched: string;
+    filmwebUrl: string;
 };
 
 export type ConcludedVotingIncomingDTO = {

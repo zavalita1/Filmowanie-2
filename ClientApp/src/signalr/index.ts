@@ -25,20 +25,20 @@ export function setupSignalRConnection() {
         debugger;
     });
 
-    connection.on("movie nominated", (user: string) => {
-        const gender = user.endsWith('a'); // TODO
+    connection.on("movie nominated", (data: {name: string, gender: string}) => {
+        const gender = data.gender === "female";
         const nominated = gender ? 'nominowała' : 'nominował';
-        store.dispatch(notificationsSlice.actions.addNotification(`${user} właśnie ${nominated} film.`));
+        store.dispatch(notificationsSlice.actions.addNotification(`${data.name} właśnie ${nominated} film.`));
         store.dispatch(votingSlice.actions.reloadMovies());
     });
 
-    connection.on("voted", (user: string) => {
+    connection.on("voted", (data: {name: string, gender: string}) => {
         const state = store.getState();
         const userData: UserState | undefined = state.api.queries["getUser(undefined)"]?.data as any;
-        if (userData?.username !== user) {
-            const gender = user.endsWith('a'); // TODO 
+        if (userData?.username !== data.name) {
+            const gender = data.gender === "female";
             const nominated = gender ? 'zagłosowała' : 'zagłosował';
-            const message = `${user} właśnie ${nominated} na jeden z filmów.`;
+            const message = `${data.name} właśnie ${nominated} na jeden z filmów.`;
             toast.info(message);
             store.dispatch(notificationsSlice.actions.addNotification(message));
         }

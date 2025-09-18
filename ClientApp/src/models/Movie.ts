@@ -3,6 +3,7 @@ export type WatchedMovie = {
     originalTitle: string;
     watched: string;
     nominatedBy: string;
+    filmwebUrl: string;
 }
 
 export type Movie = {

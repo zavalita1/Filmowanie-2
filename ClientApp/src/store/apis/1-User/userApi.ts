@@ -18,8 +18,10 @@ export const userApi = apiSlice
         queryApi.dispatch(globalConfigSlice.actions.setLoading(true));
         const resultWrapped = await fetchWithBQ({url: baseUrl, timeout: 1000 * 60 * 1});
         queryApi.dispatch(globalConfigSlice.actions.setLoading(false));
-        let isError = !resultWrapped.data;
-        let result = { data: resultWrapped.data as UserState | null };
+        const resultData = resultWrapped.data as any;
+        let isError = !resultData;
+        const useFemaleSuffixes = resultData?.gender === "Female";
+        let result = { data: { ...resultData, useFemaleSuffixes } as UserState | null };
 
         if (resultWrapped.error?.status === StatusCode.Unauthorized) {
           console.log('Unauthorized user');

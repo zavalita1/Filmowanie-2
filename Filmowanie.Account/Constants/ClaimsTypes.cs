@@ -8,4 +8,5 @@ public static class ClaimsTypes
     public const string Tenant = "tenant";
     public const string HasBasicAuth = "hasBasicAuth";
     public const string Created = "created";
+    public const string Gender = "gender";
 }

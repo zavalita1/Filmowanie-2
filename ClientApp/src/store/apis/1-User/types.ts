@@ -10,6 +10,7 @@ export type UserState = {
     username: string;
     isAdmin: boolean;
     hasBasicAuthSetup: boolean;
+    useFemaleSuffixes: boolean;
 };
 
 export type UserStateWithNominations = UserState & {

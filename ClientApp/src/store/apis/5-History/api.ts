@@ -42,7 +42,8 @@ function mapWinnersList(dto: WatchedMoviesListIncomingDTO) {
         nominatedBy: x.nominatedBy,
         watched: x.watched,
         title: x.title,
-        originalTitle: x.originalTitle
+        originalTitle: x.originalTitle,
+        filmwebUrl: x.filmwebUrl
     } satisfies WatchedMovie));
 }
 

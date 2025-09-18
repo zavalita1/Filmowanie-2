@@ -65,7 +65,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
                         dialogCancelText="Dobra, zmiękła mi pałka, chcę rozważyć inny wariant..."
                         dialogContent={ manualPosterPick ? <PosterPicker movieUrl={url} isMobile={props.isMobile} onPosterPick={e => setChosenPosterUrl(e)}/> : "Czy na pewno chcesz nominować podany film? Po zaakceptowaniu nie będzie odwrotu."}
                         dialogTitle="Czy aby na pewno?"
-                        dialogSubtitle="Pozostaje jeszcze wybór plakatu:"
+                        dialogSubtitle={ manualPosterPick ? "Pozostaje jeszcze wybór plakatu:" : "" }
                       />
                 <div className="flex flex-row flex-wrap justify-center mt-10">
                       { data!.map(d => renderMovieCard(d, counter++))}

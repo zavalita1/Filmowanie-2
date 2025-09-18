@@ -60,7 +60,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
     private static VotingMetadata GetVotingMetadata(IReadOnlyVotingResultMetadata x, IReadOnlyMovieEntity y)
     {
         var votingSessionId = x.VotingResultId.CorrelationId.ToString();
-        var votingMetadataWinnerData = new VotingMetadataWinnerData(y.id, y.Name, y.OriginalTitle, y.CreationYear);
+        var votingMetadataWinnerData = new VotingMetadataWinnerData(y.id, y.Name, y.OriginalTitle, y.CreationYear, y.FilmwebUrl);
         return new VotingMetadata(votingSessionId, x.Concluded, votingMetadataWinnerData);
     }
 
