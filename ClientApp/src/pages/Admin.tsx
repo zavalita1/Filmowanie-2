@@ -32,11 +32,11 @@ const Admin: React.FC<AppComponentProps> = props => {
         <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mb-20">
                 Voting status: {VotingStatus[props.votingStatus]}
         </h1>
-        <Button className="mb-10" onClick={() => endVote()} disabled={props.votingStatus == VotingStatus.Results}>End voting!</Button>
+        <Button className="mb-10" onClick={async () => {await endVote().unwrap(); window.location.reload() }} disabled={props.votingStatus == VotingStatus.Results}>End voting!</Button>
         <br/>
-        <Button className="mb-10" onClick={() => resumeVote()} disabled={props.votingStatus != VotingStatus.Results}>Resume voting!</Button>
+        <Button className="mb-10" onClick={async () => {await resumeVote().unwrap(); window.location.reload()}} disabled={props.votingStatus != VotingStatus.Results}>Resume voting!</Button>
         <br/>
-        <Button className="mb-10" onClick={() => startVote()} disabled={props.votingStatus != VotingStatus.Results}>New vote!</Button>
+        <Button className="mb-10" onClick={async () => {await startVote().unwrap(); window.location.reload()}} disabled={props.votingStatus != VotingStatus.Results}>New vote!</Button>
         <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mb-20">
                 Users:
         </h1>

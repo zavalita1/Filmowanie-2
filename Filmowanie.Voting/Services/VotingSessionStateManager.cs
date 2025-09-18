@@ -22,14 +22,16 @@ internal sealed class VotingSessionStateManager : IVotingStateManager
     private readonly IVotingResultsRepository _votingSessionQueryRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
+    private readonly ICurrentVotingSessionCacheService _currentVotingSessionCacheService;
 
-    public VotingSessionStateManager(ILogger<VotingSessionStateManager> log, IBus bus, IVotingResultsRepository votingSessionQueryRepository, IDateTimeProvider dateTimeProvider, IGuidProvider guidProvider)
+    public VotingSessionStateManager(ILogger<VotingSessionStateManager> log, IBus bus, IVotingResultsRepository votingSessionQueryRepository, IDateTimeProvider dateTimeProvider, IGuidProvider guidProvider, ICurrentVotingSessionCacheService currentVotingSessionCacheService)
     {
         _log = log;
         _bus = bus;
         _votingSessionQueryRepository = votingSessionQueryRepository;
         _dateTimeProvider = dateTimeProvider;
         _guidProvider = guidProvider;
+        _currentVotingSessionCacheService = currentVotingSessionCacheService;
     }
 
     public Task<Maybe<VoidResult>> ConcludeVotingAsync(Maybe<VotingSessionId> maybeVotingId, Maybe<DomainUser> maybeCurrentUser, CancellationToken cancelToken) =>
@@ -67,8 +69,9 @@ internal sealed class VotingSessionStateManager : IVotingStateManager
         var lastVotingResultId = new VotingSessionId(lastVotingId);
         await _bus.Publish(new ResultsConfirmedEvent(lastVotingResultId, input.Tenant), cancelToken);
         
+        
         var moviesGoingByeByeIds = lastVotingResult.MoviesGoingByeBye.Select(x => x.id).ToArray();
-        var movies = lastVotingResult.Movies.Select(x => new EmbeddedMovie { id = x.Movie.id, Name = x.Movie.Name }).Where(x => x.id != lastVotingResult.Winner.Movie.id).Where(x => !moviesGoingByeByeIds.Contains(x.id)).ToArray();
+        var movies = lastVotingResult.Movies.Select(x => new EmbeddedMovie { id = x.Movie.id, Name = x.Movie.Name, MovieCreationYear = x.Movie.MovieCreationYear }).Where(x => x.id != lastVotingResult.Winner.Movie.id).Where(x => !moviesGoingByeByeIds.Contains(x.id)).ToArray();
         var nominationsData = lastVotingResult.UsersAwardedWithNominations.Select(x => new NominationData
         {
             Concluded = null,
@@ -77,6 +80,7 @@ internal sealed class VotingSessionStateManager : IVotingStateManager
         }).ToArray();
 
         var votingSessionId = new VotingSessionId(correlationId);
+        _currentVotingSessionCacheService.InvalidateCache(input.Tenant);
         var @event = new StartVotingEvent(votingSessionId, movies, nominationsData, _dateTimeProvider.Now, input.Tenant);
         await _bus.Publish(@event, cancelToken);
 

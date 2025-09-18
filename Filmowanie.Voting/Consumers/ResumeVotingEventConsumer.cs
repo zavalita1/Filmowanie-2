@@ -28,7 +28,7 @@ public sealed class ResumeVotingEventConsumer : IConsumer<ResumeVotingEvent>, IC
 
     public async Task Consume(ConsumeContext<ResumeVotingEvent> context)
     {
-        _log.LogInformation($"Consuming {nameof(VotingConcludedEvent)}...");
+        _log.LogInformation($"Consuming {nameof(ResumeVotingEvent)}...");
         try
         {
             var result = await _votingResultsCommandRepository.ResetAsync(context.Message.VotingSessionId, context.CancellationToken);
@@ -41,7 +41,7 @@ public sealed class ResumeVotingEventConsumer : IConsumer<ResumeVotingEvent>, IC
             await PublishErrorAsync(context, ex);
         }
         
-         _log.LogInformation($"Consumed {nameof(VotingConcludedEvent)}.");
+         _log.LogInformation($"Consumed {nameof(ResumeVotingEvent)}.");
     }
     
       private Task PublishErrorAsync(ConsumeContext<ResumeVotingEvent> context, Exception? ex = null, Error<VoidResult>? error = null)

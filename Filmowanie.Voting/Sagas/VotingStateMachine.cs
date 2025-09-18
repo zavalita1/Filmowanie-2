@@ -76,7 +76,8 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                     nominationToConclude.Concluded = _dateTimeProvider.Now;
                     nominationToConclude.MovieId = ctx.Message.Movie.id;
 
-                    return ctx.Saga.Nominations.Any(x => x.Concluded != null) ? Task.CompletedTask : ctx.TransitionToState(NominationsConcluded);
+                    var result = ctx.Saga.Nominations.All(x => x.Concluded != null) ? ctx.TransitionToState(NominationsConcluded) : Task.CompletedTask;
+                    return result;
                 }));
 
         During([WaitingForNominations, NominationsConcluded],
