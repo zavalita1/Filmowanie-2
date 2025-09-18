@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Database.Entities.Voting;
 
 namespace Filmowanie.Nomination.Models;

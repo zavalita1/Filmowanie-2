@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
@@ -33,8 +32,8 @@ internal sealed class VotingSessionStateManager : IVotingStateManager
         _guidProvider = guidProvider;
     }
 
-    public Task<Maybe<VoidResult>> ConcludeVotingAsync(Maybe<(VotingSessionId, DomainUser)> input, CancellationToken cancelToken) =>
-        input.AcceptAsync(ConcludeVotingAsync, _log, cancelToken);
+    public Task<Maybe<VoidResult>> ConcludeVotingAsync(Maybe<VotingSessionId> maybeVotingId, Maybe<DomainUser> maybeCurrentUser, CancellationToken cancelToken) =>
+        maybeVotingId.Merge(maybeCurrentUser).AcceptAsync(ConcludeVotingAsync, _log, cancelToken);
 
     public Task<Maybe<VotingSessionId>> StartNewVotingAsync(Maybe<DomainUser> input, CancellationToken cancelToken) =>
         input.AcceptAsync(StartNewVotingAsync, _log, cancelToken);

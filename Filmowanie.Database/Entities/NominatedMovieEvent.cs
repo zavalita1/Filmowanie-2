@@ -4,9 +4,7 @@ namespace Filmowanie.Database.Entities;
 
 internal class NominatedMovieEvent : Event, IReadOnlyNominatedMovieEvent
 {
-    public EmbeddedMovie Movie { get; set; } = null!;
-
-     public string MovieId { get; set; }
+    public string MovieId { get; set; }
     public string MovieName { get; set; }
     public int MovieCreationYear { get; set; }
 

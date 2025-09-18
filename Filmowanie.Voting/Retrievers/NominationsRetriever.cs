@@ -2,7 +2,6 @@
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Filmowanie.Voting.Deciders.PickUserNomination;
 using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.Interfaces;
 

@@ -24,7 +24,7 @@ internal sealed class AccountSignUpService : ISignUpService
         _extractor = extractor;
     }
 
-    public Task<Maybe<LoginResultData>> SignUp(Maybe<(DomainUser, BasicAuth)> data, CancellationToken cancellation) => data.AcceptAsync(SignUp, _log, cancellation);
+    public Task<Maybe<LoginResultData>> SignUp(Maybe<DomainUser> user, Maybe<BasicAuth> basicAuth, CancellationToken cancellation) => user.Merge(basicAuth).AcceptAsync(SignUp, _log, cancellation);
 
     public async Task<Maybe<LoginResultData>> SignUp((DomainUser, BasicAuth) data, CancellationToken cancellation)
     {

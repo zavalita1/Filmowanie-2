@@ -1,5 +1,4 @@
 ﻿using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Filmowanie.Voting.Deciders;
 using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.Interfaces;
 

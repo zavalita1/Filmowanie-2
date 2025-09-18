@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
@@ -10,7 +9,6 @@ using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
 using Filmowanie.Nomination.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 
 namespace Filmowanie.Nomination.Routes;
 
@@ -50,8 +48,7 @@ internal sealed class NominationRoutes : INominationRoutes
 
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancelToken);
-        var merged = maybeNominations.Merge(maybeCurrentUser);
-        var result = _nominationsMapper.Map(merged);
+        var result = _nominationsMapper.Map(maybeNominations, maybeCurrentUser);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }
@@ -62,8 +59,7 @@ internal sealed class NominationRoutes : INominationRoutes
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancelToken);
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var maybeNominations = await _nominationsService.GetNominationsAsync(maybeCurrentVotingId, cancelToken);
-        var merged = maybeNominations.Merge(maybeCurrentUser);
-        var maybeNominationsDto = _nominationsMapper.Map(merged);
+        var maybeNominationsDto = _nominationsMapper.Map(maybeNominations, maybeCurrentUser);
         var result = await _nominationsEnricher.EnrichNominationsAsync(maybeNominationsDto, cancelToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
@@ -86,8 +82,7 @@ internal sealed class NominationRoutes : INominationRoutes
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancelToken);
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
 
-        var merged = maybeMovieId.Merge(maybeCurrentUser).Merge(maybeCurrentVotingId).Flatten();
-        var result = await _nominationsService.ResetNominationAsync(merged, cancelToken);
+        var result = await _nominationsService.ResetNominationAsync(maybeMovieId, maybeCurrentUser, maybeCurrentVotingId, cancelToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }
@@ -106,9 +101,9 @@ internal sealed class NominationRoutes : INominationRoutes
         var maybeValidationResult = validator.Validate(toValidate).Map(x => (x.Item1, x.Item2));
         var maybeMovie = await _filmwebHandler.GetMovieAsync(maybeValidationResult, cancelToken);
         var movieToValidate = maybeMovie.Merge(maybeCurrentUser, maybeNominations);
-        var maybeMoviePostValidation = movieValidator.Validate(movieToValidate).Map(x => (x.Item1, x.Item2)).Merge(maybeCurrentVotingId).Flatten();
+        var maybeMoviePostValidation = movieValidator.Validate(movieToValidate).Map(x => x.Item1);
 
-        var result = await _nominationsService.NominateAsync(maybeMoviePostValidation, cancelToken);
+        var result = await _nominationsService.NominateAsync(maybeMoviePostValidation, maybeCurrentUser, maybeCurrentVotingId, cancelToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }

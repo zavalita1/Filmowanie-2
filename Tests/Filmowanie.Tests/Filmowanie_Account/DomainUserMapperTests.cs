@@ -1,5 +1,6 @@
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.DTOs.Incoming;
@@ -38,10 +39,8 @@ public sealed class DomainUserMapperTests
         _dateTimeProvider.Now.Returns(now);
         _guidProvider.NewGuid().Returns(guid);
 
-        var input = new Maybe<(UserDTO, DomainUser)>((userDto, currentUser), null);
-
         // Act
-        var result = _sut.Map(input);
+        var result = _sut.Map(userDto.AsMaybe(), currentUser.AsMaybe());
 
         // Assert
         result.Result.Should().NotBeNull();
@@ -59,11 +58,10 @@ public sealed class DomainUserMapperTests
     public void Map_WhenInputHasError_ReturnsError()
     {
         // Arrange
-        var error = new Error<(UserDTO, DomainUser)>("", ErrorType.InvalidState);
-        var input = new Maybe<(UserDTO, DomainUser)>(default, error);
+        var error = new Error<UserDTO>("", ErrorType.InvalidState);
 
         // Act
-        var result = _sut.Map(input);
+        var result = _sut.Map(error, default(DomainUser).AsMaybe());
 
         // Assert
         result.Result.Should().NotBeNull();

@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.DTOs.Outgoing;
 using Filmowanie.Abstractions.Maybe;
@@ -23,11 +24,11 @@ internal sealed class VotingMappersComposite : IVotingMappersComposite
         _votingSessionIdMapper = votingSessionIdMapper;
     }
 
-    public Task<Maybe<VotingSessionId>> MapAsync(Maybe<(string, DomainUser)> input, CancellationToken cancelToken) => _votingSessionIdMapper.MapAsync(input, cancelToken);
+    public Task<Maybe<VotingSessionId>> MapAsync(Maybe<string> maybeVotingId, Maybe<DomainUser> maybeCurrentUser, CancellationToken cancelToken) => _votingSessionIdMapper.MapAsync(maybeVotingId.Merge(maybeCurrentUser), cancelToken);
 
     public Maybe<VotingSessionsDTO> Map(Maybe<VotingMetadata[]> input) => _votingSessionsDtoMapper.Map(input);
 
     public Maybe<HistoryDTO> Map(Maybe<WinnerMetadata[]> input) => _historyDtoMapper.Map(input);
 
-    public Maybe<MovieDTO[]> Map(Maybe<(IReadOnlyMovieEntity[] MoviesEntities, IReadOnlyEmbeddedMovieWithVotes[] EmbeddedMovies, DomainUser CurrentUser)> input) => _movieDtoMapper.Map(input);
+    public Maybe<MovieDTO[]> Map(Maybe<IReadOnlyMovieEntity[]> maybeMovies, Maybe<IReadOnlyEmbeddedMovieWithVotes[]> maybeMovieWithVotes, Maybe<DomainUser> maybeCurrentUser) => _movieDtoMapper.Map(maybeMovies.Merge(maybeMovieWithVotes).Merge(maybeCurrentUser).Flatten());
 }

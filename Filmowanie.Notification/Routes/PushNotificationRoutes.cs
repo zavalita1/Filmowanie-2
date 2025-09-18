@@ -31,8 +31,7 @@ internal sealed class PushNotificationRoutes : IPushNotificationRoutes
     {
         var maybeDto = _validator.Validate(dto);
         var currentUser = _userAccessor.GetDomainUser(maybeDto);
-        var merged = maybeDto.Merge(currentUser);
-        var result = await _pushNotificationService.SavePushNotification(merged, cancelToken);
+        var result = await _pushNotificationService.SavePushNotification(maybeDto, currentUser, cancelToken);
         var resultDto = result.Map(_ => new AwknowledgedDTO());
 
         return _routesResultHelper.UnwrapOperationResult(resultDto);
@@ -41,8 +40,7 @@ internal sealed class PushNotificationRoutes : IPushNotificationRoutes
     public async Task<IResult> Notify(NotifyDTO dto, CancellationToken cancelToken)
     {
         var maybeTenant = _userAccessor.GetDomainUser(VoidResult.Void).Map(x => x.Tenant);
-        var merge = maybeTenant.Merge(dto.Message.AsMaybe()); // TODO dto validation
-        var result = await _pushNotificationService.SendAllPushNotificationsAsync(merge, cancelToken);
+        var result = await _pushNotificationService.SendAllPushNotificationsAsync(maybeTenant, dto.Message.AsMaybe(), cancelToken);
 
         return _routesResultHelper.UnwrapOperationResult(result);
     }

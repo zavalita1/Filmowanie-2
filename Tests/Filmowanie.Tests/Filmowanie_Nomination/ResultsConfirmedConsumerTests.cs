@@ -1,10 +1,8 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoNSubstitute;
-using Filmowanie.Abstractions;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
-using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Filmowanie.Database.Interfaces;
 using MassTransit;
@@ -18,10 +16,10 @@ using Filmowanie.Database.Entities.Voting.Events;
 
 namespace Filmowanie.Tests.Filmowanie_Nomination;
 
-public class VotingConcludedConsumerTests
+public class ResultsConfirmedConsumerTests
 {
     private readonly ILogger<ResultsConfirmedConsumer> _logger;
-    private readonly IVotingResultsRepository _votesRepository;
+    private readonly IRepositoryInUserlessContextProvider _votesRepository;
     private readonly IMovieCommandRepository _movieCommandRepository;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -29,14 +27,14 @@ public class VotingConcludedConsumerTests
 
     private readonly IFixture _fixture = new Fixture();
 
-    public VotingConcludedConsumerTests()
+    public ResultsConfirmedConsumerTests()
     {
         _logger = Substitute.For<ILogger<ResultsConfirmedConsumer>>();
-        _votesRepository = Substitute.For<IVotingResultsRepository>();
+        _votesRepository = Substitute.For<IRepositoryInUserlessContextProvider>();
         _movieCommandRepository = Substitute.For<IMovieCommandRepository>();
         _guidProvider = Substitute.For<IGuidProvider>();
         _dateTimeProvider = Substitute.For<IDateTimeProvider>();
-        _consumer = new VotingConcludedConsumer(_logger, _votesRepository, _movieCommandRepository, _guidProvider, _dateTimeProvider);
+        _consumer = new ResultsConfirmedConsumer(_logger, _votesRepository, _movieCommandRepository, _guidProvider, _dateTimeProvider);
 
         _fixture.Customize(new AutoNSubstituteCustomization());
     }
@@ -45,7 +43,7 @@ public class VotingConcludedConsumerTests
     public async Task Consume_ShouldLogError_WhenFaultEventIsConsumed()
     {
         // Arrange
-        var context = Substitute.For<ConsumeContext<Fault<VotingConcludedEvent>>>();
+        var context = Substitute.For<ConsumeContext<Fault<ResultsConfirmedEvent>>>();
         context.Message.Exceptions.Returns([new FaultExceptionInfo(new Exception("Test exception"))]);
 
         // Act
@@ -67,10 +65,12 @@ public class VotingConcludedConsumerTests
         movieGoingByeBye2.Name.Returns("The Godfather");
         votingResult2.MoviesGoingByeBye.Returns([movieGoingByeBye1, movieGoingByeBye2]);
 
-        var context = Substitute.For<ConsumeContext<VotingConcludedEvent>>();
-        var @event = _fixture.Build<VotingConcludedEvent>().With(x => x.Tenant, new TenantId(2137)).Create();
+        var context = Substitute.For<ConsumeContext<ResultsConfirmedEvent>>();
+        var @event = _fixture.Build<ResultsConfirmedEvent>().With(x => x.Tenant, new TenantId(2137)).Create();
         context.Message.Returns(@event);
-        _votesRepository.GetLastNVotingResultsAsync(default, default)
+        var repo = Substitute.For<IVotingResultsRepository>();
+        _votesRepository.GetVotingResultsRepository(Arg.Is<TenantId>(x => x.Id == 2137)).Returns(repo);
+        repo.GetLastNVotingResultsAsync(default, default)
             .ReturnsForAnyArgs(Task.FromResult(new Maybe<IEnumerable<IReadOnlyVotingResult>>([votingResult1, votingResult2], null)));
 
         var guid1 = Guid.NewGuid();

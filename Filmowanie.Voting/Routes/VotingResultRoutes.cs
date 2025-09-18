@@ -31,10 +31,8 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
         var validator = _validatorAdapterProvider.GetAdapter<string>(KeyedServices.VotingSessionId);
         var maybeDto = validator.Validate(votingSessionId);
         var maybeCurrentUser = _currentUserAccessor.GetDomainUser(maybeDto);
-        var merge = maybeDto.Merge(maybeCurrentUser);
-        var maybeNullableVotingSessionId = await _mappersComposite.MapAsync(merge, cancelToken);
-        var merged = maybeCurrentUser.Merge(maybeNullableVotingSessionId);
-        var result = await _movieVotingResultService.GetVotingResultsAsync(merged, cancelToken);
+        var maybeNullableVotingSessionId = await _mappersComposite.MapAsync(maybeDto, maybeCurrentUser, cancelToken);
+        var result = await _movieVotingResultService.GetVotingResultsAsync(maybeCurrentUser, maybeNullableVotingSessionId, cancelToken);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
@@ -52,8 +50,7 @@ internal sealed class VotingResultRoutes : IVotingResultRoutes
     {
         var maybeTenant = _currentUserAccessor.GetDomainUser(VoidResult.Void).Map(x => x.Tenant);
         var maybeVotingMetadata = await _movieVotingResultService.GetVotingMetadataAsync(maybeTenant, cancelToken);
-        var merged = maybeVotingMetadata.Merge(maybeTenant);
-        var maybeWinnersMetadata = await _votingSessionService.GetWinnersMetadataAsync(merged, cancelToken);
+        var maybeWinnersMetadata = await _votingSessionService.GetWinnersMetadataAsync(maybeVotingMetadata, maybeTenant, cancelToken);
         var result = _mappersComposite.Map(maybeWinnersMetadata);
 
         return RoutesResultHelper.UnwrapOperationResult(result);

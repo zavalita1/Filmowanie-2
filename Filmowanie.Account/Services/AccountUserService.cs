@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
@@ -9,7 +8,6 @@ using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Models;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Filmowanie.Database.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Account.Services;

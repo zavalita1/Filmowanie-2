@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
@@ -61,8 +60,7 @@ internal sealed class AccountRoutes : IAccountRoutes
         var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuth(x.Email, x.Password));
         var maybeIdentity = await _userService.GetUserIdentity(maybeBasicAuth, cancel);
         var maybeDomainUser = _authenticationManager.GetDomainUser(maybeIdentity);
-        var merged = maybeDomainUser.Merge(maybeBasicAuth);
-        var maybeLoginData = await _signUpService.SignUp(merged, cancel);
+        var maybeLoginData = await _signUpService.SignUp(maybeDomainUser, maybeBasicAuth, cancel);
         maybeDomainUser = _authenticationManager.GetDomainUser(maybeLoginData);
         var resultDto = _userMapper.Map(maybeDomainUser);
 

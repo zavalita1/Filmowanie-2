@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
@@ -24,8 +23,8 @@ internal sealed class VoteService : IVoteService
         _log = log;
     }
 
-    public Task<Maybe<VoidResult>> VoteAsync(Maybe<(DomainUser, VotingSessionId, VoteDTO)> input, CancellationToken cancelToken) =>
-        input.AcceptAsync(VoteAsync, _log, cancelToken);
+    public Task<Maybe<VoidResult>> VoteAsync(Maybe<DomainUser> maybeCurrentUser, Maybe<VotingSessionId> maybeVotingId, Maybe<VoteDTO> maybeDto, CancellationToken cancelToken) =>
+        maybeCurrentUser.Merge(maybeVotingId).Merge(maybeDto).Flatten().AcceptAsync(VoteAsync, _log, cancelToken);
 
     public async Task<Maybe<VoidResult>> VoteAsync((DomainUser, VotingSessionId, VoteDTO) input, CancellationToken cancelToken)
     {

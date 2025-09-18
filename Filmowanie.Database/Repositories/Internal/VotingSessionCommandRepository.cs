@@ -31,26 +31,11 @@ internal sealed class VotingSessionCommandRepository : IVotingSessionCommandRepo
 
     public async Task UpdateAsync(string id, Action<VotingResult> updateAction, CancellationToken cancelToken)
     {
-        var votingResultEntity = await _ctx.VotingResults.SingleAsync(x => x.id == id, cancelToken);
-
+        var votingResultEntity = await _ctx.VotingResults.AsNoTracking().SingleAsync(x => x.id == id, cancelToken);
         updateAction.Invoke(votingResultEntity);
-        Vote v = default;
-        foreach (var movie in votingResultEntity.Movies)
-        {
-            if (v == default)
-                v = movie.Votes.First();
 
-            movie.Votes = new List<Vote>();
-
-            
-        }
-
-        await _ctx.SaveChangesAsync(cancelToken);
-        
         var cosmosClient = new CosmosClient(_options.ConnectionString);
         var c = cosmosClient.GetContainer(ServiceCollectionExtensions.DatabaseName, DbContainerNames.Entities);
-        await c.PatchItemAsync<VotingResult>(votingResultEntity.id, new PartitionKey(votingResultEntity.id), [
-            PatchOperation.Set("/Movies/0/Votes", new List<Vote> { v })]
-            );
+        await c.ReplaceItemAsync(votingResultEntity, votingResultEntity.id, new PartitionKey(votingResultEntity.id), null, cancelToken);
     }
 }

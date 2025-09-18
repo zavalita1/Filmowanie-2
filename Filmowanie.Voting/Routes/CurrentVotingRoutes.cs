@@ -43,10 +43,8 @@ internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var maybeCurrentlyVotedMovies = await _currentVotingService.GetCurrentlyVotedMoviesAsync(maybeCurrentVotingId, cancel);
         var maybeCurrentlyVotedMoviesWithVotes = await _currentVotingService.GetCurrentlyVotedMoviesWithVotesAsync(maybeCurrentVotingId, cancel);
-        var merged = maybeCurrentlyVotedMovies.Merge(maybeCurrentlyVotedMoviesWithVotes).Merge(maybeCurrentUser).Flatten();
-        var maybeDto = _movieVotingMappersComposite.Map(merged);
-        var merged2 = maybeDto.Merge(maybeCurrentVotingId);
-        var result = await _moviesForVotingSessionEnricher.EnrichWithPlaceholdersAsync(merged2, cancel);
+        var maybeDto = _movieVotingMappersComposite.Map(maybeCurrentlyVotedMovies, maybeCurrentlyVotedMoviesWithVotes, maybeCurrentUser);
+        var result = await _moviesForVotingSessionEnricher.EnrichWithPlaceholdersAsync(maybeDto, maybeCurrentVotingId, cancel);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
@@ -58,8 +56,7 @@ internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
         var maybeCurrentUser = _userAccessor.GetDomainUser(maybeDto);
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
         var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
-        var merged = maybeCurrentUser.Merge(maybeCurrentVotingId).Merge(maybeDto).Flatten();
-        var maybeVote = await _voteService.VoteAsync(merged, cancel);
+        var maybeVote = await _voteService.VoteAsync(maybeCurrentUser, maybeCurrentVotingId, maybeDto, cancel);
         var result = maybeVote.Map(_ => new AknowledgedDTO { Message = "OK" });
 
         return RoutesResultHelper.UnwrapOperationResult(result);
@@ -70,7 +67,7 @@ internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
         var maybeCurrentUser = _userAccessor.GetDomainUser(VoidResult.Void);
         var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
         var maybeVotingStatus = await _statusRetriever.GetCurrentVotingStatusAsync(maybeNullableCurrentVotingId, cancel);
-        var result = _votingStateMapper.Map(maybeVotingStatus.Merge(maybeNullableCurrentVotingId));
+        var result = _votingStateMapper.Map(maybeVotingStatus, maybeNullableCurrentVotingId);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }

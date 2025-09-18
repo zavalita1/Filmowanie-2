@@ -1,6 +1,5 @@
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Nomination.Mappers;
 using Filmowanie.Nomination.Models;
@@ -30,11 +29,8 @@ public sealed class NominationsMapperTests
             Guid.NewGuid(),
             []);
 
-        var input = (currentNominations, user);
-        var maybe = new Maybe<(CurrentNominationsData, DomainUser)>(input, null);
-
         // Act
-        var result = _sut.Map(maybe);
+        var result = _sut.Map(currentNominations.AsMaybe(), user.AsMaybe());
 
         // Assert
         result.Result.Should().NotBeNull();
@@ -63,11 +59,8 @@ public sealed class NominationsMapperTests
             Guid.NewGuid(),
             nominationData);
 
-        var input = (currentNominations, user);
-        var maybe = new Maybe<(CurrentNominationsData, DomainUser)>(input, null);
-
         // Act
-        var result = _sut.Map(maybe);
+        var result = _sut.Map(currentNominations.AsMaybe(), user.AsMaybe());
 
         // Assert
         result.Result.Should().NotBeNull();

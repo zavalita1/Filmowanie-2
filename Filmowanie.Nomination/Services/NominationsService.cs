@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
@@ -9,7 +8,6 @@ using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
-using Filmowanie.Database.Repositories;
 using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
 using Filmowanie.Nomination.Models;
@@ -40,11 +38,11 @@ internal sealed class NominationsService : INominationsService
 
     public Task<Maybe<CurrentNominationsData>> GetNominationsAsync(Maybe<VotingSessionId> maybeId, CancellationToken cancelToken) => maybeId.AcceptAsync(GetNominations, _log, cancelToken);
 
-    public Task<Maybe<AknowledgedNominationDTO>> NominateAsync(Maybe<(IReadOnlyMovieEntity Movie, DomainUser User, VotingSessionId VotingSessionId)> input,
-        CancellationToken cancelToken) => input.AcceptAsync(NominateAsync, _log, cancelToken);
+    public Task<Maybe<AknowledgedNominationDTO>> NominateAsync(Maybe<IReadOnlyMovieEntity> maybeMovie, Maybe<DomainUser> maybeUser, Maybe<VotingSessionId> maybeCurrentVotingId,
+        CancellationToken cancelToken) => maybeMovie.Merge(maybeUser).Merge(maybeCurrentVotingId).Flatten().AcceptAsync(NominateAsync, _log, cancelToken);
 
-    public Task<Maybe<AknowledgedNominationDTO>> ResetNominationAsync(Maybe<(string MovieId, DomainUser User, VotingSessionId VotingSessionId)> input,
-        CancellationToken cancelToken) => input.AcceptAsync(ResetNominationAsync, _log, cancelToken);
+    public Task<Maybe<AknowledgedNominationDTO>> ResetNominationAsync(Maybe<string> maybeMovieId, Maybe<DomainUser> maybeUser, Maybe<VotingSessionId> maybeVotingId,
+        CancellationToken cancelToken) => maybeMovieId.Merge(maybeUser).Merge(maybeVotingId).Flatten().AcceptAsync(ResetNominationAsync, _log, cancelToken);
 
     private async Task<Maybe<CurrentNominationsData>> GetNominations(VotingSessionId id, CancellationToken cancelToken)
     {

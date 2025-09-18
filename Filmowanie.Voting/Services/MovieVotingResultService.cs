@@ -1,4 +1,5 @@
-﻿using Filmowanie.Abstractions.Enums;
+﻿using Filmowanie.Abstractions.DomainModels;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities;
@@ -29,8 +30,8 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
         _currentVotingService = currentVotingService;
     }
    
-    public Task<Maybe<VotingResultDTO>> GetVotingResultsAsync(Maybe<(DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId VotingSessionId)> input, CancellationToken cancelToken) =>
-        input.AcceptAsync(GetVotingResultsAsync, _log, cancelToken);
+    public Task<Maybe<VotingResultDTO>> GetVotingResultsAsync(Maybe<DomainUser> maybeCurrentUser, Maybe<VotingSessionId> maybeVotingId, CancellationToken cancelToken) =>
+        maybeCurrentUser.Merge(maybeVotingId).AcceptAsync(GetVotingResultsAsync, _log, cancelToken);
 
     public Task<Maybe<VotingMetadata[]>> GetVotingMetadataAsync(Maybe<TenantId> input, CancellationToken cancelToken) =>
         input.AcceptAsync(GetVotingMetadata, _log, cancelToken);

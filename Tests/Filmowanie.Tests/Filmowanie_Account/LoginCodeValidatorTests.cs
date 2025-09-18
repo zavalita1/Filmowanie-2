@@ -2,8 +2,6 @@ using AutoFixture;
 using FluentAssertions;
 using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Validators;
-using FluentValidation;
-using Xunit;
 
 namespace Filmowanie.Tests.Filmowanie_Account;
 

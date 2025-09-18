@@ -1,5 +1,6 @@
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Models;
@@ -42,7 +43,6 @@ public sealed class AccountSignUpServiceTests
         
         var domainUser = new DomainUser(userId, "ext-42", false, false, new TenantId(21), created);
         var basicAuth = new BasicAuth(email, password);
-        var input = new Maybe<(DomainUser, BasicAuth)>((domainUser, basicAuth), null);
 
         var userEntity = Substitute.For<IReadOnlyUserEntity>();
         var expectedLoginResult = new LoginResultData(null!, null!);
@@ -57,7 +57,7 @@ public sealed class AccountSignUpServiceTests
         _extractor.GetIdentity(userEntity).Returns(new Maybe<LoginResultData>(expectedLoginResult, null));
 
         // Act
-        var result = await _sut.SignUp(input, CancellationToken.None);
+        var result = await _sut.SignUp(domainUser.AsMaybe(), basicAuth.AsMaybe(), CancellationToken.None);
 
         // Assert
         result.Result.Should().NotBeNull();
@@ -79,11 +79,10 @@ public sealed class AccountSignUpServiceTests
     public async Task SignUp_WhenInputHasError_ReturnsError()
     {
         // Arrange
-        var error = new Error<(DomainUser, BasicAuth)>("", ErrorType.InvalidState);
-        var input = new Maybe<(DomainUser, BasicAuth)>(default, error);
+        var error = new Error<DomainUser>("", ErrorType.InvalidState);
 
         // Act
-        var result = await _sut.SignUp(input, CancellationToken.None);
+        var result = await _sut.SignUp(error, default(BasicAuth).AsMaybe(), CancellationToken.None);
 
         // Assert
         result.Result.Should().BeNull();
@@ -104,14 +103,13 @@ public sealed class AccountSignUpServiceTests
         var created = DateTime.UtcNow;
         var domainUser = new DomainUser(userId, "ext-42", false, false, new TenantId(21), created);
         var basicAuth = new BasicAuth("mr.bean@atkinson.com", "password123");
-        var input = new Maybe<(DomainUser, BasicAuth)>((domainUser, basicAuth), null);
 
         _commandRepository
             .UpdatePasswordAndMail(Arg.Any<string>(), Arg.Any<BasicAuth>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
-        var result = await _sut.SignUp(input, CancellationToken.None);
+        var result = await _sut.SignUp(domainUser.AsMaybe(), basicAuth.AsMaybe(), CancellationToken.None);
 
         // Assert
         result.Result.Should().BeNull();

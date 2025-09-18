@@ -1,6 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
-using Filmowanie.Database.Entities;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 
 namespace Filmowanie.Database.Interfaces;

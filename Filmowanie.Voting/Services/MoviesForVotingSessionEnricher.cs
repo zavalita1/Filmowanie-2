@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
@@ -24,7 +23,7 @@ internal sealed class MoviesForVotingSessionEnricher : IMoviesForVotingSessionEn
         _log = log;
     }
 
-    public Task<Maybe<MovieDTO[]>> EnrichWithPlaceholdersAsync(Maybe<(MovieDTO[], VotingSessionId)> movies, CancellationToken cancelToken) => movies.AcceptAsync(EnrichWithPlaceholders, _log, cancelToken);
+    public Task<Maybe<MovieDTO[]>> EnrichWithPlaceholdersAsync(Maybe<MovieDTO[]> movies, Maybe<VotingSessionId> maybeVotingId, CancellationToken cancelToken) => movies.Merge(maybeVotingId).AcceptAsync(EnrichWithPlaceholders, _log, cancelToken);
 
     public async Task<Maybe<MovieDTO[]>> EnrichWithPlaceholders((MovieDTO[], VotingSessionId) movies, CancellationToken cancelToken)
     {

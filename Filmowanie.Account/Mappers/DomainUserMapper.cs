@@ -1,8 +1,8 @@
 using Filmowanie.Abstractions.DomainModels;
-using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
+using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -24,9 +24,9 @@ internal sealed class DomainUserMapper : IDomainUserMapper
         _guidProvider = guidProvider;
     }
 
-    public Maybe<DomainUser> Map(Maybe<(DTOs.Incoming.UserDTO, DomainUser CurrentUser)> maybe) => maybe.Accept(MapToDomainInternal, _log);
+    public Maybe<DomainUser> Map(Maybe<UserDTO> maybeDto, Maybe<DomainUser> maybeUser) => maybeDto.Merge(maybeUser).Accept(MapToDomainInternal, _log);
 
-    private Maybe<DomainUser> MapToDomainInternal((DTOs.Incoming.UserDTO, DomainUser CurrentUser) input)
+    private Maybe<DomainUser> MapToDomainInternal((UserDTO, DomainUser CurrentUser) input)
     {
         var now = _dateTimeProvider.Now;
         var guid = _guidProvider.NewGuid();

@@ -29,12 +29,15 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IVotingSessionService, VotingSessionService>();
         services.AddScoped<ICurrentVotingSessionIdAccessor, VotingSessionService>();
+        services.Decorate<ICurrentVotingSessionIdAccessor, CurrentVotingSessionServiceDecorator>();
         services.AddScoped<IVotingMappersComposite, VotingMappersComposite>();
         services.AddScoped<IVotingSessionIdMapper, VotingSessionIdMapper>();
         services.AddSingleton<IVotingStateMapper, VotingStateMapper>();
         services.AddSingleton<IHistoryDtoMapper, HistoryDtoMapper>();
         services.AddSingleton<IMovieDtoMapper, MovieDtoMapper>();
         services.AddSingleton<IVotingSessionsDTOMapper, VotingSessionsDTOMapper>();
+
+        services.AddSingleton<ICurrentVotingSessionCacheService, CurrentVotingSessionCacheService>();
 
         services.AddScoped<IVotingStateManager, VotingSessionStateManager>();
 

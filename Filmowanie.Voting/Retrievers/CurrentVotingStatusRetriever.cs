@@ -4,10 +4,11 @@ using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Entities.Voting.Events;
+using Filmowanie.Voting.Routes;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace Filmowanie.Voting.Routes;
+namespace Filmowanie.Voting.Retrievers;
 
 public sealed class CurrentVotingStatusRetriever : ICurrentVotingStatusRetriever
 {

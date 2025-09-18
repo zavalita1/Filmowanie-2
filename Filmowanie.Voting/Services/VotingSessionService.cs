@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
@@ -42,8 +40,8 @@ internal sealed class VotingSessionService : IVotingSessionService
     public Task<Maybe<MovieVotingStandingsListDTO>> GetMovieVotingStandingsList(Maybe<TenantId> input, CancellationToken cancelToken) =>
         input.AcceptAsync(GetMovieVotingStandingsList, _log, cancelToken);
 
-    public Task<Maybe<WinnerMetadata[]>> GetWinnersMetadataAsync(Maybe<(VotingMetadata[], TenantId)> input, CancellationToken cancelToken) =>
-        input.AcceptAsync(GetWinnersMetadataAsync, _log, cancelToken);
+    public Task<Maybe<WinnerMetadata[]>> GetWinnersMetadataAsync(Maybe<VotingMetadata[]> maybeVotingMetadata, Maybe<TenantId> maybeTenant, CancellationToken cancelToken) =>
+        maybeVotingMetadata.Merge(maybeTenant).AcceptAsync(GetWinnersMetadataAsync, _log, cancelToken);
 
     public async Task<Maybe<WinnerMetadata[]>> GetWinnersMetadataAsync((VotingMetadata[], TenantId) input, CancellationToken cancelToken)
     {

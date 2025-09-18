@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.Configuration;
+﻿using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
@@ -37,10 +36,10 @@ internal sealed class PushNotificationService : IPushNotificationService
         _options = options.Value;
     }
 
-    public Task<Maybe<VoidResult>> SavePushNotification(Maybe<(PushSubscriptionDTO, DomainUser)> input, CancellationToken cancelToken) =>
-        input.AcceptAsync(SavePushNotification, _log, cancelToken);
+    public Task<Maybe<VoidResult>> SavePushNotification(Maybe<PushSubscriptionDTO> maybeDto, Maybe<DomainUser> maybeUser, CancellationToken cancelToken) =>
+        maybeDto.Merge(maybeUser).AcceptAsync(SavePushNotification, _log, cancelToken);
 
-    public Task<Maybe<VoidResult>> SendAllPushNotificationsAsync(Maybe<(TenantId, string Message)> input, CancellationToken cancelToken) => input.AcceptAsync(SendAllPushNotificationsAsync, _log, cancelToken);
+    public Task<Maybe<VoidResult>> SendAllPushNotificationsAsync(Maybe<TenantId> maybeTenant, Maybe<string> maybeMessage, CancellationToken cancelToken) => maybeTenant.Merge(maybeMessage).AcceptAsync(SendAllPushNotificationsAsync, _log, cancelToken);
 
     private async Task<Maybe<VoidResult>> SavePushNotification((PushSubscriptionDTO, DomainUser) input, CancellationToken cancelToken)
     {

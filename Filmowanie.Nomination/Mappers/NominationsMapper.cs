@@ -17,7 +17,7 @@ internal sealed class NominationsMapper : INominationsMapper
         _log = log;
     }
 
-    public Maybe<NominationsDataDTO> Map(Maybe<(CurrentNominationsData, DomainUser)> maybe) => maybe.Accept(Map, _log);
+    public Maybe<NominationsDataDTO> Map(Maybe<CurrentNominationsData> maybeCurrentNominationsData, Maybe<DomainUser> maybeUser) => maybeCurrentNominationsData.Merge(maybeUser).Accept(Map, _log);
 
     private static Maybe<NominationsDataDTO> Map((CurrentNominationsData, DomainUser) input)
     {

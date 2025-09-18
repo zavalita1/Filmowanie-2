@@ -142,7 +142,7 @@ public sealed class NominationsEnricherTests
     private NominatedMovieEvent CreateMovieNominatedEvent(Guid movieId, int year, DateTime created)
     {
         var movie = CreateEmbeddedMovie(movieId, "Test Movie", year);
-        return new NominatedMovieEvent { Movie = movie, Created = created };
+        return new NominatedMovieEvent { MovieCreationYear = movie.MovieCreationYear, MovieId = movie.id, MovieName = movie.Name, Created = created };
     }
 
     private EmbeddedMovie CreateEmbeddedMovie(Guid id, string name, int year)

@@ -31,23 +31,23 @@ public sealed class MovieQueryRepositoryDecoratorTests
         // Arrange
         var stubbedDbEntities = new[]
         {
-            new NominatedMovieEvent { id = "loo", Movie = new() { Name = "double loo", MovieCreationYear = 3333 }, TenantId = 213 },
-            new NominatedMovieEvent { id = "loo", Movie = new() { Name = "double loo", MovieCreationYear = 1111 }, TenantId = 2137 },
-            new NominatedMovieEvent { id = "loo2", Movie = new() { id = "double loo", MovieCreationYear = 5555 }, TenantId = 2137 },
-            new NominatedMovieEvent { id = "loo2", Movie = new() { Name = "double loo", MovieCreationYear = 4444 }, TenantId = 2137 },
-            new NominatedMovieEvent { id = "loo", Movie = new() { Name = "double loo", MovieCreationYear = 2222 }, TenantId = 2137 },
+            new NominatedMovieEvent { id = "loo", MovieName = "double loo", MovieCreationYear = 3333, TenantId = 213 },
+            new NominatedMovieEvent { id = "loo", MovieName = "double loo", MovieCreationYear = 1111, TenantId = 2137 },
+            new NominatedMovieEvent { id = "loo2", MovieId = "double loo", MovieCreationYear = 5555, TenantId = 2137 },
+            new NominatedMovieEvent { id = "loo2", MovieName = "double loo", MovieCreationYear = 4444, TenantId = 2137 },
+            new NominatedMovieEvent { id = "loo", MovieName = "double loo", MovieCreationYear = 2222, TenantId = 2137 },
         };
         _movieRepo.GetMovieNominatedEventsAsync(default!, CancellationToken.None)
             .ReturnsForAnyArgs(ci => stubbedDbEntities.Where(x => ci.ArgAt<Expression<Func<IReadOnlyNominatedMovieEvent, bool>>>(0).Compile().Invoke(x)).ToArray<IReadOnlyNominatedMovieEvent>());
 
         // Act
-        var result = await _sut.GetMovieNominatedEventsAsync(x => x.id == "loo" && x.Movie.Name == "double loo", CancellationToken.None);
+        var result = await _sut.GetMovieNominatedEventsAsync(x => x.id == "loo" && x.MovieName == "double loo", CancellationToken.None);
 
 
         // Assert
         result.Should().HaveCount(2);
-        result.First().Movie.MovieCreationYear.Should().Be(1111);
-        result.Last().Movie.MovieCreationYear.Should().Be(2222);
+        result.First().MovieCreationYear.Should().Be(1111);
+        result.Last().MovieCreationYear.Should().Be(2222);
     }
 
     [Fact]

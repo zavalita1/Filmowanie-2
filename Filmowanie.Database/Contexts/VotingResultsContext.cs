@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Filmowanie.Database.Entities.Voting;
-using Filmowanie.Database.Entities;
 
 namespace Filmowanie.Database.Contexts;
 
+/// <summary>
+/// The way this data model is defined, EF core can't handle tracking these entities, as they're missing shadow-id for one-to-many relation between embedded movie and it's votes.
+/// </summary>
 internal class VotingResultsContext : DbContext
 {
     public DbSet<VotingResult> VotingResults { get; set; }
@@ -21,9 +23,6 @@ internal class VotingResultsContext : DbContext
             .ToContainer(DbContainerNames.Entities)
             .HasPartitionKey(x => x.id)
             .HasDiscriminator(x => x.Type);
-
-        //builder.Entity<EmbeddedMovieWithVotes>().OwnsMany(x => x.Votes, v => v.HasKey(y => y.id));
-        //builder.Entity<EmbeddedMovieWithVotes>().HasNoKey().OwnsOne(x => x.Movie);
 
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

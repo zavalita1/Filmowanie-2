@@ -8,7 +8,7 @@ namespace Filmowanie.Voting.Interfaces;
 
 internal interface IVotingSessionService : ICurrentVotingSessionIdAccessor
 {
-    public Task<Maybe<WinnerMetadata[]>> GetWinnersMetadataAsync(Maybe<(VotingMetadata[], TenantId)> input, CancellationToken cancelToken);
+    public Task<Maybe<WinnerMetadata[]>> GetWinnersMetadataAsync(Maybe<VotingMetadata[]> maybeVotingMetadata, Maybe<TenantId> maybeTenant, CancellationToken cancelToken);
 
     public Task<Maybe<MovieVotingStandingsListDTO>> GetMovieVotingStandingsList(Maybe<TenantId> input, CancellationToken cancelToken);
 }

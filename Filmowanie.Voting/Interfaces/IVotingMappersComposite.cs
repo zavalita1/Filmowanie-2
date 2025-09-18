@@ -8,11 +8,11 @@ namespace Filmowanie.Voting.Interfaces;
 
 internal interface IVotingMappersComposite
 {
-    Task<Maybe<VotingSessionId>> MapAsync(Maybe<(string, DomainUser)> input, CancellationToken cancelToken);
+    Task<Maybe<VotingSessionId>> MapAsync(Maybe<string> maybeVotingId, Maybe<DomainUser> maybeCurrentUser, CancellationToken cancelToken);
 
     Maybe<VotingSessionsDTO> Map(Maybe<VotingMetadata[]> input);
     
     Maybe<HistoryDTO> Map(Maybe<WinnerMetadata[]> input);
 
-    Maybe<MovieDTO[]> Map(Maybe<(IReadOnlyMovieEntity[] MoviesEntities, IReadOnlyEmbeddedMovieWithVotes[] EmbeddedMovies, DomainUser CurrentUser)> input);
+    Maybe<MovieDTO[]> Map(Maybe<IReadOnlyMovieEntity[]> maybeMovies, Maybe<IReadOnlyEmbeddedMovieWithVotes[]> maybeMovieWithVotes, Maybe<DomainUser> maybeCurrentUser);
 }

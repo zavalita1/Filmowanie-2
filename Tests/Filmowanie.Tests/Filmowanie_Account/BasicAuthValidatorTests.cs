@@ -3,8 +3,6 @@ using FluentAssertions;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Validators;
-using FluentValidation;
-using Xunit;
 
 namespace Filmowanie.Tests.Filmowanie_Account;
 

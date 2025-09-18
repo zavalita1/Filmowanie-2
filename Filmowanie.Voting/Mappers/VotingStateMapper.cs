@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions;
-using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
@@ -19,7 +18,7 @@ internal sealed class VotingStateMapper : IVotingStateMapper
         _log = log;
     }
 
-    public Maybe<VotingSessionStatusDto> Map(Maybe<(VotingState, VotingSessionId?)> input) => input.Accept(Map, _log);
+    public Maybe<VotingSessionStatusDto> Map(Maybe<VotingState> maybeVotingState, Maybe<VotingSessionId?> maybeVotingId) => maybeVotingState.Merge(maybeVotingId).Accept(Map, _log);
 
     private static Maybe<VotingSessionStatusDto> Map((VotingState, VotingSessionId?) input)
     {

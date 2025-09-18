@@ -14,9 +14,9 @@ using Microsoft.Extensions.Logging;
 namespace Filmowanie.Voting.Consumers;
 
 // TODO UTs
-public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, IConsumer<Fault<VotingConcludedEvent>>
+public sealed class ResultsConfirmedConsumer : IConsumer<VotingConcludedEvent>, IConsumer<Fault<VotingConcludedEvent>>
 {
-    private readonly ILogger<VotingConcludedConsumer> _logger;
+    private readonly ILogger<ResultsConfirmedConsumer> _logger;
     private readonly IVotingResultsCommandRepository _votingResultsCommandRepository;
     private readonly IRepositoryInUserlessContextProvider _repositoriesProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -26,7 +26,7 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
     private readonly IUsersQueryRepository _usersQueryRepository;
     private const int DecidersTimeWindow = 10;
 
-    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingResultsCommandRepository votingResultsCommandRepository, IDateTimeProvider dateTimeProvider, IRepositoryInUserlessContextProvider votingResultsRepositoryProvider, IPickUserToNominateContextRetriever pickUserToNominateContextRetriever, IVotingResultsRetriever votingResultsRetriever, INominationsRetriever nominationsRetriever, IMovieDomainRepository movieDomainRepository, IUsersQueryRepository usersQueryRepository)
+    public ResultsConfirmedConsumer(ILogger<ResultsConfirmedConsumer> logger, IVotingResultsCommandRepository votingResultsCommandRepository, IDateTimeProvider dateTimeProvider, IRepositoryInUserlessContextProvider votingResultsRepositoryProvider, IPickUserToNominateContextRetriever pickUserToNominateContextRetriever, IVotingResultsRetriever votingResultsRetriever, INominationsRetriever nominationsRetriever, IUsersQueryRepository usersQueryRepository)
     {
         _logger = logger;
         _votingResultsCommandRepository = votingResultsCommandRepository;
@@ -82,7 +82,7 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
 
     private Task PublishErrorAsync(ConsumeContext<VotingConcludedEvent> context, Exception? ex = null, Error<VoidResult>? error = null)
     {
-        var msg = "Error occurred during concluding the voting..." + error?.ToString();
+        var msg = "Error occurred during concluding the voting..." + error;
 
         if (ex == null)
             _logger.LogError(msg);

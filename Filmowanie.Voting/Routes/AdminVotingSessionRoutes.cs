@@ -34,8 +34,7 @@ internal sealed class AdminVotingSessionRoutes : IAdminVotingSessionRoutes
         var maybeCurrentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void);
         var maybeNullableVotingSessionId = await _votingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
         var maybeVotingSessionId = _votingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableVotingSessionId);
-        var merged = maybeVotingSessionId.Merge(maybeCurrentUser);
-        var result = await _votingStateManager.ConcludeVotingAsync(merged, cancel);
+        var result = await _votingStateManager.ConcludeVotingAsync(maybeVotingSessionId, maybeCurrentUser, cancel);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
