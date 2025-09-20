@@ -22,7 +22,8 @@ internal static class KeyVaultInit
         await Parallel.ForEachAsync(keys, async (k, cancel) =>
         {
             var secret = await client.GetSecretAsync(k.Name, cancellationToken: cancel);
-            keyVaultConfigurationProvider.AddOrUpdate(k.Name, secret.Value.Value, (_, _) => throw new NotSupportedException("Secret names must be unique!"));
+            var key = k.Name.Replace('-', ':');
+            keyVaultConfigurationProvider.AddOrUpdate(key, secret.Value.Value, (_, _) => throw new NotSupportedException("Secret names must be unique!"));
         });
         webApplicationBuilder.Configuration.AddInMemoryCollection(keyVaultConfigurationProvider!);
     }

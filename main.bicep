@@ -110,7 +110,7 @@ resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
     serverFarmId: ASPFilmowaniegroup.id
     hostNameSslStates: [
       {
-        name: 'filmowanie2.azurewebsites.net'
+        name: 'filmowanie.azurewebsites.net'
         sslState: 'Disabled'
         virtualIP: null
         thumbprint: null
