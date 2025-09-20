@@ -14,7 +14,7 @@ const History: React.FC<AppComponentProps> = props => {
                     { props.isMobile ? <div className='basis-full h-0'></div> : <></>} 
                     <TabsTrigger value="charts">Wykresy</TabsTrigger>
                 </TabsList>
-                <div className="min-h-[300px] relative mt-4">
+                <div className="min-h-[300px] mt-4">
                     <TabsContent value="votingResults" className="top-0 left-0 w-full">
                         <VotingResults />
                     </TabsContent>
