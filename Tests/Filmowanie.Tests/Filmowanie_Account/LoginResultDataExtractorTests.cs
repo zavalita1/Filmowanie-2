@@ -40,6 +40,7 @@ public sealed class LoginResultDataExtractorTests
         _userEntity.TenantId.Returns(tenantId);
         _userEntity.Created.Returns(created);
         _userEntity.PasswordHash.Returns(passwordHash);
+        _userEntity.Gender.Returns(gender.ToString());
 
         // Act
         var result = _sut.GetIdentity(_userEntity);

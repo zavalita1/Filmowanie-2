@@ -41,8 +41,8 @@ public sealed class AccountSignUpServiceTests
         var expectedHash = "hashedPassword";
         var salt = userId + created.Minute;
         
-        var domainUser = new DomainUser(userId, "ext-42", false, false, new TenantId(21), created);
-        var basicAuth = new BasicAuth(email, password);
+        var domainUser = new DomainUser(userId, "ext-42", false, false, new TenantId(21), created, Gender.Unspecified);
+        var basicAuth = new BasicAuthUserData(email, password);
 
         var userEntity = Substitute.For<IReadOnlyUserEntity>();
         var expectedLoginResult = new LoginResultData(null!, null!);
@@ -51,7 +51,7 @@ public sealed class AccountSignUpServiceTests
         _commandRepository
             .UpdatePasswordAndMail(
                 userId,
-                Arg.Is<BasicAuth>(b => b.Email == email && b.Password == expectedHash),
+                Arg.Is<(string Mail, string Password)>(b => b.Mail == email && b.Password == expectedHash),
                 Arg.Any<CancellationToken>())
             .Returns(userEntity);
         _extractor.GetIdentity(userEntity).Returns(new Maybe<LoginResultData>(expectedLoginResult, null));
@@ -68,7 +68,7 @@ public sealed class AccountSignUpServiceTests
             .Received(1)
             .UpdatePasswordAndMail(
                 userId,
-                Arg.Is<BasicAuth>(b => b.Email == email && b.Password == expectedHash),
+                Arg.Is<(string Mail, string Password)>(b => b.Mail == email && b.Password == expectedHash),
                 Arg.Any<CancellationToken>());
 
         _hashHelper.Received(1).GetHash(password, salt);
@@ -82,16 +82,17 @@ public sealed class AccountSignUpServiceTests
         var error = new Error<DomainUser>("", ErrorType.InvalidState);
 
         // Act
-        var result = await _sut.SignUp(error, default(BasicAuth).AsMaybe(), CancellationToken.None);
+        var result = await _sut.SignUp(error, default(BasicAuthUserData).AsMaybe(), CancellationToken.None);
 
         // Assert
-        result.Result.Should().BeNull();
+        result.Result.Identity.Should().BeNull();
+        result.Result.AuthenticationProperties.Should().BeNull();
         result.Error.Should().NotBeNull();
         result.Error!.Value.Type.Should().Be(ErrorType.InvalidState, null);
 
         await _commandRepository.DidNotReceive().UpdatePasswordAndMail(
             Arg.Any<string>(),
-            Arg.Any<BasicAuth>(),
+            Arg.Any<(string Mail, string Password)>(),
             Arg.Any<CancellationToken>());
     }
 
@@ -101,18 +102,19 @@ public sealed class AccountSignUpServiceTests
         // Arrange
         var userId = "user-2137";
         var created = DateTime.UtcNow;
-        var domainUser = new DomainUser(userId, "ext-42", false, false, new TenantId(21), created);
-        var basicAuth = new BasicAuth("mr.bean@atkinson.com", "password123");
+        var domainUser = new DomainUser(userId, "ext-42", false, false, new TenantId(21), created, Gender.Unspecified);
+        var basicAuth = new BasicAuthUserData("mr.bean@atkinson.com", "password123");
 
         _commandRepository
-            .UpdatePasswordAndMail(Arg.Any<string>(), Arg.Any<BasicAuth>(), Arg.Any<CancellationToken>())
+            .UpdatePasswordAndMail(Arg.Any<string>(), Arg.Any<(string Mail, string Password)>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new Exception("Database error"));
 
         // Act
         var result = await _sut.SignUp(domainUser.AsMaybe(), basicAuth.AsMaybe(), CancellationToken.None);
 
         // Assert
-        result.Result.Should().BeNull();
+        result.Result.Identity.Should().BeNull();
+        result.Result.AuthenticationProperties.Should().BeNull();
         result.Error.Should().NotBeNull();
         result.Error!.Value.Type.Should().Be(ErrorType.InvalidState);
         result.Error!.ToString().Should().Be("No user with such id in db");

@@ -31,7 +31,7 @@ public sealed class UserDtoMapperTests
             isAdmin,
             false,
             new TenantId(21),
-            DateTime.UtcNow)
+            DateTime.UtcNow, Gender.Unspecified)
         {
             Name = name,
             HasBasicAuthSetup = hasBasicAuth
@@ -82,7 +82,7 @@ public sealed class UserDtoMapperTests
             false,
             false,
             new TenantId(21),
-            DateTime.UtcNow)
+            DateTime.UtcNow, Gender.Unspecified)
         {
             Name = name!
         };

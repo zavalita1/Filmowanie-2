@@ -15,6 +15,7 @@ public static class RouteGroupBuilderExtensions
 
         accountRoutesBuilder.MapPost("login/code", ([FromServices] IAccountRoutes routes, [FromBody] LoginDto dto, CancellationToken ct) => routes.LoginAsync(dto, ct));
         accountRoutesBuilder.MapPost("login/basic", ([FromServices] IAccountRoutes routes, [FromBody] BasicAuthLoginDTO dto, CancellationToken ct) => routes.LoginBasicAsync(dto, ct));
+        accountRoutesBuilder.MapPost("login/google", ([FromServices] IAccountRoutes routes, [FromBody] GoogleOAuthClientDTO dto, CancellationToken ct) => routes.LoginGoogleAsync(dto, ct));
         accountRoutesBuilder.MapPost("signup", ([FromServices] IAccountRoutes routes, [FromBody] BasicAuthLoginDTO dto, CancellationToken ct) => routes.SignUpAsync(dto, ct)).RequireAuthorization();
         accountRoutesBuilder.MapPost("logout", ([FromServices] IAccountRoutes routes, CancellationToken ct) => routes.LogoutAsync(ct)).RequireAuthorization();
         accountRoutesBuilder.MapGet("", ([FromServices] IAccountRoutes routes, CancellationToken ct) => routes.Get(ct));

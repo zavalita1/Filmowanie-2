@@ -6,5 +6,5 @@ namespace Filmowanie.Account.Interfaces;
 
 internal interface ISignUpService
 {
-    Task<Maybe<LoginResultData>> SignUp(Maybe<DomainUser> user, Maybe<BasicAuth> basicAuth, CancellationToken cancellation);
+    Task<Maybe<LoginResultData>> SignUp(Maybe<DomainUser> user, Maybe<BasicAuthUserData> basicAuth, CancellationToken cancellation);
 }

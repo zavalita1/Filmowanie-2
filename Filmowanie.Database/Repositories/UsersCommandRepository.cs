@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions.DomainModels;
-using Filmowanie.Database.Contexts;
+﻿using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -16,12 +15,12 @@ internal sealed class UsersCommandRepository : IUsersCommandRepository
         _identityDbContext = identityDbContext;
     }
 
-    public async Task<IReadOnlyUserEntity> UpdatePasswordAndMail(string id, BasicAuth newData, CancellationToken cancelToken)
+    public async Task<IReadOnlyUserEntity> UpdatePasswordAndMail(string id, (string Mail, string Password) data, CancellationToken cancelToken)
     {
         var user = await _identityDbContext.Users.SingleAsync(x => x.Code == id, cancelToken);
         
-        user.PasswordHash = newData.Password;
-        user.Email = newData.Email;
+        user.PasswordHash = data.Password;
+        user.Email = data.Mail;
 
         await _identityDbContext.SaveChangesAsync(cancelToken);
         return user;

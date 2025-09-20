@@ -14,39 +14,39 @@ namespace Filmowanie.Account.Services;
 
 internal sealed class AccountUserService : IAccountUserService
 {
-    private readonly IDomainUsersRepository _usersQueryRepository;
-    private readonly IUsersCommandRepository _usersCommandRepository;
-    private readonly IGuidProvider _guidProvider;
-    private readonly ILogger<AccountUserService> _log;
-    private readonly ILoginResultDataExtractor _extractor;
-    private readonly IHashHelper _hashHelper;
+    private readonly IDomainUsersRepository usersQueryRepository;
+    private readonly IUsersCommandRepository usersCommandRepository;
+    private readonly IGuidProvider guidProvider;
+    private readonly ILogger<AccountUserService> log;
+    private readonly ILoginDataExtractorAdapterFactory extractorFactory;
 
-    public AccountUserService(IDomainUsersRepository usersQueryRepository, ILogger<AccountUserService> log, ILoginResultDataExtractor extractor, IHashHelper hashHelper, IUsersCommandRepository usersCommandRepository, IGuidProvider guidProvider)
+    public AccountUserService(IDomainUsersRepository usersQueryRepository, ILogger<AccountUserService> log, ILoginDataExtractorAdapterFactory extractorAdapterFactory, IUsersCommandRepository usersCommandRepository, IGuidProvider guidProvider)
     {
-        _usersQueryRepository = usersQueryRepository;
-        _log = log;
-        _extractor = extractor;
-        _hashHelper = hashHelper;
-        _usersCommandRepository = usersCommandRepository;
-        _guidProvider = guidProvider;
+        this.usersQueryRepository = usersQueryRepository;
+        this.log = log;
+        this.extractorFactory = extractorAdapterFactory;
+        this.usersCommandRepository = usersCommandRepository;
+        this.guidProvider = guidProvider;
     }
 
-    public Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<string> maybeCode, CancellationToken cancelToken) => maybeCode.AcceptAsync(GetLoginDataAsync, _log, cancelToken);
+    public Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<Code> maybeCode, CancellationToken cancelToken) => maybeCode.AcceptAsync(GetLoginDataAsync, this.log, cancelToken);
 
-    public Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<BasicAuth> maybeBasicAuthData, CancellationToken cancelToken) => maybeBasicAuthData.AcceptAsync(GetLoginDataAsync, _log, cancelToken);
+    public Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<BasicAuthUserData> maybeBasicAuthData, CancellationToken cancelToken) => maybeBasicAuthData.AcceptAsync(GetLoginDataAsync, this.log, cancelToken);
 
-    public Task<Maybe<IEnumerable<DomainUser>>> GetAllUsers(Maybe<VoidResult> maybe, CancellationToken cancelToken) => maybe.AcceptAsync(GetAllUsers, _log, cancelToken);
+    public Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<GoogleUserData> maybeGoogleUserData, CancellationToken cancelToken) => maybeGoogleUserData.AcceptAsync(GetLoginDataAsync, this.log, cancelToken);
 
-    public Task<Maybe<DetailedUserDTO>> GetByIdAsync(Maybe<string> maybeId, CancellationToken cancelToken) => maybeId.AcceptAsync(GetByIdAsync, _log, cancelToken);
+    public Task<Maybe<IEnumerable<DomainUser>>> GetAllUsers(Maybe<VoidResult> maybe, CancellationToken cancelToken) => maybe.AcceptAsync(GetAllUsers, this.log, cancelToken);
 
-    public Task<Maybe<VoidResult>> AddUserAsync(Maybe<DomainUser> input, CancellationToken cancelToken) => input.AcceptAsync(AddUserAsync, _log, cancelToken);
+    public Task<Maybe<DetailedUserDTO>> GetByIdAsync(Maybe<string> maybeId, CancellationToken cancelToken) => maybeId.AcceptAsync(GetByIdAsync, this.log, cancelToken);
+
+    public Task<Maybe<VoidResult>> AddUserAsync(Maybe<DomainUser> input, CancellationToken cancelToken) => input.AcceptAsync(AddUserAsync, this.log, cancelToken);
 
     private async Task<Maybe<VoidResult>> AddUserAsync(DomainUser input, CancellationToken cancelToken)
     {
         if (input == default)
             return new Error<VoidResult>("Domain user is null", ErrorType.IncomingDataIssue);
 
-        var code = _guidProvider.NewGuid().ToString();
+        var code = this.guidProvider.NewGuid().ToString();
         var userEntity = new User
         {
             Code = code,
@@ -59,13 +59,13 @@ internal sealed class AccountUserService : IAccountUserService
             DisplayName = input.Name // TODO fix this
         };
 
-        await _usersCommandRepository.Insert(userEntity, cancelToken);
+        await this.usersCommandRepository.Insert(userEntity, cancelToken);
         return new(default, null);
     }
 
     private async Task<Maybe<DetailedUserDTO>> GetByIdAsync(string input, CancellationToken cancelToken)
     {
-        var userEntity = await _usersQueryRepository.GetUserByIdAsync(input, cancelToken);
+        var userEntity = await this.usersQueryRepository.GetUserByIdAsync(input, cancelToken);
 
         if (userEntity == null)
             return new Error<DetailedUserDTO>("User not found!", ErrorType.IncomingDataIssue);
@@ -78,35 +78,28 @@ internal sealed class AccountUserService : IAccountUserService
 
     private async Task<Maybe<IEnumerable<DomainUser>>> GetAllUsers(CancellationToken cancelToken)
     {
-        var allEntities = await _usersQueryRepository.GetAllAsync(cancelToken);
+        var allEntities = await this.usersQueryRepository.GetAllAsync(cancelToken);
         var result = allEntities.Select(x => new DomainUser(x.id, x.DisplayName, x.IsAdmin, !string.IsNullOrEmpty(x.PasswordHash), new TenantId(x.TenantId), x.Created, Enum.Parse<Gender>(x.Gender)));
         var all = result;
         return new Maybe<IEnumerable<DomainUser>>(all, null);
     }
 
-    private async Task<Maybe<LoginResultData>> GetLoginDataAsync(string code, CancellationToken cancellation)
+    private async Task<Maybe<LoginResultData>> GetLoginDataAsync(Code code, CancellationToken cancellation)
     {
-        var user = await _usersQueryRepository.GetUserByCodeAsync(code, cancellation);
+        var user = await this.usersQueryRepository.GetUserByCodeAsync(code.Value, cancellation);
+        var extractor = this.extractorFactory.GetExtractor();
         return user == null
             ? GetInvalidCredentialsError()
-            : _extractor.GetIdentity(user);
+            : extractor.GetIdentity(user);
     }
 
-    private async Task<Maybe<LoginResultData>> GetLoginDataAsync(BasicAuth data, CancellationToken cancellation)
+    private async Task<Maybe<LoginResultData>> GetLoginDataAsync<T>(T data, CancellationToken cancellation) where T : IMailBasedUserData
     {
-        Maybe<LoginResultData> ret;
-        var user = await _usersQueryRepository.GetUserByMailAsync(data.Email, cancellation);
-
-        if (user == null)
-            ret = GetInvalidCredentialsError();
-        else
-        {
-            ret = !_hashHelper.DoesHashEqual(user.PasswordHash, data.Password)
-                ? GetInvalidCredentialsError()
-                : _extractor.GetIdentity(user);
-        }
-
-        return ret;
+        var user = await this.usersQueryRepository.GetUserByMailAsync(data.Email, cancellation);
+        var extractor = this.extractorFactory.GetAdapter<T>();
+        var result = extractor.GetLodingResultData(user, data);
+        
+        return result;
     }
 
     private static Maybe<LoginResultData> GetInvalidCredentialsError() => new Error<LoginResultData>("Invalid credentials", ErrorType.IncomingDataIssue);

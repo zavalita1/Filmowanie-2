@@ -1,6 +1,7 @@
-import React from 'react'
-import { Provider as ReduxStoreProvider } from 'react-redux'
-import { BrowserRouter, Routes, Route } from 'react-router'
+import React from 'react';
+import { Provider as ReduxStoreProvider } from 'react-redux';
+import { BrowserRouter, Routes, Route } from 'react-router';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import Home from './pages/Home';
 import {Login, About, Admin, Results, MoviesList, Nomination, History } from './pages';
@@ -8,8 +9,10 @@ import { store } from './store/store';
 
 const App: React.FC = () => {
   const routeProps = {} as any;
+  const googleClientId = store.getState().global.googleOAuthClientId;
   
   return (
+    <GoogleOAuthProvider clientId={googleClientId}>
     <ReduxStoreProvider store={store}>
       <BrowserRouter>
         <Routes>
@@ -30,6 +33,7 @@ const App: React.FC = () => {
         href="https://fonts.googleapis.com/css2?family=Lora:wght@300;400;500;600;700&display=swap"
       />
     </ReduxStoreProvider>
+    </GoogleOAuthProvider>
   )
 }
 

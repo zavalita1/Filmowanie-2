@@ -7,6 +7,8 @@ using Filmowanie.Nomination.Routes;
 using Filmowanie.Nomination.Services;
 using Filmowanie.Nomination.Validators;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
 using FilmwebHandler = Filmowanie.Nomination.Services.FilmwebHandler;
 
 namespace Filmowanie.Nomination.Extensions;
@@ -28,11 +30,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFluentValidatorAdapter, NominationMovieUrlValidator>();
         services.AddScoped<IFluentValidatorAdapter, NominationMovieIdValidator>();
 
+        var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError().WaitAndRetryAsync(3, x => TimeSpan.FromMilliseconds(100 * Math.Pow(2, x)));
+
         services.AddHttpClient(HttpClientNames.Filmweb, client =>
         {
             client.BaseAddress = new Uri(Urls.FilmwebUrl);
-            // TODO polly retry?
-        });
+        }).AddPolicyHandler(retryPolicy);
 
         services.AddSingleton<IFilmwebPathResolver, FilmwebPathResolver>();
         services.AddSingleton<IFilmwebPostersUrlsRetriever, FilmwebPostersUrlsRetriever>();

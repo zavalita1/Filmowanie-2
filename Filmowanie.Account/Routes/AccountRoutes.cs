@@ -5,6 +5,7 @@ using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Interfaces;
+using Filmowanie.Account.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,15 +15,17 @@ internal sealed class AccountRoutes : IAccountRoutes
 {
     private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
     private readonly IAccountUserService _userService;
+    private readonly IGoogleAuthService _googleAuthService;
     private readonly IAuthenticationManager _authenticationManager;
     private readonly IUserDtoMapper _userMapper;
     private readonly ISignUpService _signUpService;
     private readonly IRoutesResultHelper _routesResultHelper;
 
-    public AccountRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IAccountUserService userService, ISignUpService signUpService, IUserDtoMapper userMapper, IRoutesResultHelper routesResultHelper, IAuthenticationManager authenticationManager)
+    public AccountRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IAccountUserService userService, IGoogleAuthService googleAuthService, ISignUpService signUpService, IUserDtoMapper userMapper, IRoutesResultHelper routesResultHelper, IAuthenticationManager authenticationManager)
     {
         _validatorAdapterProvider = validatorAdapterProvider;
         _userService = userService;
+        _googleAuthService = googleAuthService;
         _signUpService = signUpService;
         _userMapper = userMapper;
         _routesResultHelper = routesResultHelper;
@@ -33,7 +36,7 @@ internal sealed class AccountRoutes : IAccountRoutes
     {
         var validator = _validatorAdapterProvider.GetAdapter<LoginDto>();
 
-        var maybeCode =  validator.Validate(dto).Map(x => x.Code);
+        var maybeCode =  validator.Validate(dto).Map(x => new Models.Code(x.Code));
         var maybeIdentity = await _userService.GetUserIdentity(maybeCode, cancel);
         var voidResult = await _authenticationManager.LogInAsync(maybeIdentity, cancel);
         var domainUser = _authenticationManager.GetDomainUser(voidResult);
@@ -45,8 +48,21 @@ internal sealed class AccountRoutes : IAccountRoutes
     public async Task<IResult> LoginBasicAsync([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
         var validator = _validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.LoginViaBasicAuthKey);
-        var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuth(x.Email, x.Password));
+        var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuthUserData(x.Email, x.Password));
         var maybeIdentity = await _userService.GetUserIdentity(maybeBasicAuth, cancel);
+        var voidResult = await _authenticationManager.LogInAsync(maybeIdentity, cancel);
+        var domainUser = _authenticationManager.GetDomainUser(voidResult);
+        var resultDto = _userMapper.Map(domainUser);
+
+        return _routesResultHelper.UnwrapOperationResult(resultDto);
+    }
+
+    public async Task<IResult> LoginGoogleAsync([FromBody] GoogleOAuthClientDTO dto, CancellationToken cancel)
+    {
+        var validator = _validatorAdapterProvider.GetAdapter<GoogleOAuthClientDTO>();
+        var maybeCode = validator.Validate(dto).Map(x => new GoogleCode(x.Code));
+        var maybeUserData = await _googleAuthService.GetUserData(maybeCode, cancel);
+        var maybeIdentity = await _userService.GetUserIdentity(maybeUserData, cancel);
         var voidResult = await _authenticationManager.LogInAsync(maybeIdentity, cancel);
         var domainUser = _authenticationManager.GetDomainUser(voidResult);
         var resultDto = _userMapper.Map(domainUser);
@@ -57,7 +73,7 @@ internal sealed class AccountRoutes : IAccountRoutes
     public async Task<IResult> SignUpAsync([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
         var validator = _validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.SignUpBasicAuth);
-        var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuth(x.Email, x.Password));
+        var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuthUserData(x.Email, x.Password));
         var maybeIdentity = await _userService.GetUserIdentity(maybeBasicAuth, cancel);
         var maybeDomainUser = _authenticationManager.GetDomainUser(maybeIdentity);
         var maybeLoginData = await _signUpService.SignUp(maybeDomainUser, maybeBasicAuth, cancel);

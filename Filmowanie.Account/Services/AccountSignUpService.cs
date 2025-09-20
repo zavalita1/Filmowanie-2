@@ -24,9 +24,9 @@ internal sealed class AccountSignUpService : ISignUpService
         _extractor = extractor;
     }
 
-    public Task<Maybe<LoginResultData>> SignUp(Maybe<DomainUser> user, Maybe<BasicAuth> basicAuth, CancellationToken cancellation) => user.Merge(basicAuth).AcceptAsync(SignUp, _log, cancellation);
+    public Task<Maybe<LoginResultData>> SignUp(Maybe<DomainUser> user, Maybe<BasicAuthUserData> basicAuth, CancellationToken cancellation) => user.Merge(basicAuth).AcceptAsync(SignUp, _log, cancellation);
 
-    public async Task<Maybe<LoginResultData>> SignUp((DomainUser, BasicAuth) data, CancellationToken cancellation)
+    public async Task<Maybe<LoginResultData>> SignUp((DomainUser, BasicAuthUserData) data, CancellationToken cancellation)
     {
         var incomingBasicAuth = data.Item2;
         var domainUser = data.Item1;
@@ -36,7 +36,7 @@ internal sealed class AccountSignUpService : ISignUpService
 
         try
         {
-            var userEntity = await _commandRepository.UpdatePasswordAndMail(domainUser.Id, newAuthData, cancellation);
+            var userEntity = await _commandRepository.UpdatePasswordAndMail(domainUser.Id, (newAuthData.Email, newAuthData.Password), cancellation);
             return _extractor.GetIdentity(userEntity);
         }
         catch (Exception ex)

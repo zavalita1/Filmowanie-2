@@ -9,6 +9,7 @@ using NSubstitute;
 using System.Linq.Expressions;
 using Filmowanie.Database.Entities;
 using FluentAssertions;
+using Filmowanie.Abstractions.Enums;
 
 namespace Filmowanie.Tests.Filmowanie_Database;
 
@@ -21,7 +22,7 @@ public sealed class MovieQueryRepositoryDecoratorTests
     {
         _movieRepo = Substitute.For<IMovieQueryRepository>();
         var userAccessor = Substitute.For<ICurrentUserAccessor>();
-        userAccessor.GetDomainUser(VoidResult.Void).Returns(new DomainUser("whatever", "whatever", false, false, new TenantId(2137), new DateTime(2010, 04, 10)).AsMaybe());
+        userAccessor.GetDomainUser(VoidResult.Void).Returns(new DomainUser("whatever", "whatever", false, false, new TenantId(2137), new DateTime(2010, 04, 10), Gender.Unspecified).AsMaybe());
         _sut = new MovieQueryRepositoryDecorator(_movieRepo, userAccessor);
     }
 

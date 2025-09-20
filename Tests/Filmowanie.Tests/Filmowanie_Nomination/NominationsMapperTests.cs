@@ -1,4 +1,5 @@
 using Filmowanie.Abstractions.DomainModels;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Nomination.Mappers;
@@ -23,7 +24,7 @@ public sealed class NominationsMapperTests
     public void Map_WhenUserHasNoNominations_ShouldReturnEmptyNominations()
     {
         // Arrange
-        var user = new DomainUser("user-" + Guid.NewGuid(), "Mr Bean", false, false, new TenantId(2137), DateTime.UtcNow);
+        var user = new DomainUser("user-" + Guid.NewGuid(), "Mr Bean", false, false, new TenantId(2137), DateTime.UtcNow, Gender.Unspecified);
         var currentNominations = new CurrentNominationsData(
             new VotingSessionId(Guid.NewGuid()),
             Guid.NewGuid(),
@@ -42,7 +43,7 @@ public sealed class NominationsMapperTests
     {
         // Arrange
         var userId = "user-" + Guid.NewGuid();
-        var user = new DomainUser(userId, "Mr Bean", false, false, new TenantId(2137), DateTime.UtcNow);        
+        var user = new DomainUser(userId, "Mr Bean", false, false, new TenantId(2137), DateTime.UtcNow, Gender.Unspecified);        
         var nominationData = new[]
         {
             CreateNominationData(2023, userId, concluded: null),

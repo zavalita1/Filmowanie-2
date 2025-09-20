@@ -12,7 +12,6 @@ public class EmbeddedMovieWithNominatedBy : IReadOnlyEmbeddedMovieWithNominatedB
     IReadOnlyEmbeddedUser IReadOnlyEmbeddedMovieWithNominatedBy.NominatedBy => NominatedBy;
     IReadOnlyEmbeddedMovie IReadOnlyEmbeddedMovieWithNominatedBy.Movie => Movie;
 
-    [Obsolete("do not use this")]
     public EmbeddedMovieWithNominatedBy()
     { }
 
@@ -21,7 +20,6 @@ public EmbeddedMovieWithNominatedBy(IReadOnlyEmbeddedMovieWithNominatedBy other)
         Movie = other.Movie.AsMutable();
         NominatedBy = other.NominatedBy.AsMutable();
     }
-
 }
 
 public class EmbeddedMovieWithNominationContext : EmbeddedMovieWithNominatedBy, IReadOnlyEmbeddedMovieWithNominationContext

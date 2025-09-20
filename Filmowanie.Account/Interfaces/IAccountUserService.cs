@@ -7,8 +7,11 @@ namespace Filmowanie.Account.Interfaces;
 
 internal interface IAccountUserService
 {
-    Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<string> maybeCode, CancellationToken cancelToken);
-    Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<BasicAuth> maybeBasicAuthData, CancellationToken cancelToken);
+    Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<Code> maybeCode, CancellationToken cancelToken);
+
+    Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<BasicAuthUserData> maybeBasicAuthData, CancellationToken cancelToken);
+
+    Task<Maybe<LoginResultData>> GetUserIdentity(Maybe<GoogleUserData> maybeGoogleUserData, CancellationToken cancelToken);
 
     Task<Maybe<IEnumerable<DomainUser>>> GetAllUsers(Maybe<VoidResult> maybe, CancellationToken cancelToken);
 

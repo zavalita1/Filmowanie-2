@@ -1,7 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger, Input, Label, Button } from "../components/ui";
 import { BasicLogin } from "../components/BasicLogin";
-import { useLoginWithCodeMutation, useLoginWithBasicAuthMutation, useGetUserQuery } from "../store/apis/1-User/userApi";
-import { LoginWithBasicAuthOutgoingDTO, LoginWithCodeOutgoingDTO } from "../store/apis/1-User/types";
+import { GoogleLoginButton } from "../components/GoogleLogin";
+import { useLoginWithCodeMutation, useLoginWithBasicAuthMutation, useLoginWithGoogleMutation, useGetUserQuery } from "../store/apis/1-User/userApi";
+import { LoginWithBasicAuthOutgoingDTO, LoginWithCodeOutgoingDTO, LoginWithGoogleOutgoingDTO } from "../store/apis/1-User/types";
 import { useNavigate } from "react-router";
 
 import { AppComponentProps, Layout } from './Layout';
@@ -15,7 +16,8 @@ const Login: React.FC = () => {
         if (!error && !isLoading && !!data?.username)
             navigate('/');
     }, [data, error, isLoading]);
-    const [useLogin, result] = useLoginWithBasicAuthMutation();
+    const [useBasicLogin] = useLoginWithBasicAuthMutation();
+    const [useGoogleLogin] = useLoginWithGoogleMutation();
 
     return (
         <div className="flex min-h-svh flex-col items-center justify-center">
@@ -23,6 +25,7 @@ const Login: React.FC = () => {
                 <TabsList className="w-full">
                     <TabsTrigger value="account">Logowanie kodem</TabsTrigger>
                     <TabsTrigger value="password">Logowanie hasłem</TabsTrigger>
+                    <TabsTrigger value="google">Logowanie z Google</TabsTrigger>
                 </TabsList>
                 <div className="min-h-[300px] relative mt-4">
                     <TabsContent value="account" className="absolute top-0 left-0 w-full">
@@ -31,6 +34,14 @@ const Login: React.FC = () => {
                     <TabsContent value="password" className="absolute top-0 left-0 w-full">
                         <BasicLogin submitText="Zaloguj" onSubmit={basicAuthLogin} pwdPlaceholderText="Ustawione hasło" />
                     </TabsContent>
+                    <TabsContent value="google" className="absolute top-0 left-0 w-full">
+                        <div className="w-full max-w-3xl items-center">
+                            <GoogleLoginButton 
+                                onSuccess={ googleLogin }
+                                onError={() => { console.error("Google login failed");}}
+                            />
+                        </div>
+                    </TabsContent>
                 </div>
             </Tabs>
         </div>
@@ -38,7 +49,12 @@ const Login: React.FC = () => {
 
     function basicAuthLogin(email: string, password: string) {
         const dto: LoginWithBasicAuthOutgoingDTO = { email, password };
-        useLogin(dto);
+        useBasicLogin(dto);
+    }
+
+    function googleLogin(code: string, scope: string) {
+        const dto: LoginWithGoogleOutgoingDTO = { code, scope };
+        useGoogleLogin(dto);
     }
 };
 

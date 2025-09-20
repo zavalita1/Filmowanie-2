@@ -25,3 +25,8 @@ export type LoginWithBasicAuthOutgoingDTO = {
     email: string;
     password: string;
 }
+
+export type LoginWithGoogleOutgoingDTO = {
+    code: string;
+    scope: string;
+}

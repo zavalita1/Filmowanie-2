@@ -3,4 +3,4 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace Filmowanie.Account.Models;
 
-internal sealed record LoginResultData(ClaimsIdentity Identity, AuthenticationProperties AuthenticationProperties);
+internal readonly record struct LoginResultData(ClaimsIdentity Identity, AuthenticationProperties AuthenticationProperties);

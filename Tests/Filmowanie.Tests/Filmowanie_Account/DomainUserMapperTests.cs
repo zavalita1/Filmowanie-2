@@ -34,7 +34,7 @@ public sealed class DomainUserMapperTests
         var expectedUserId = $"user-{guid}";
         var tenantId = new TenantId(2137);
         var userDto = new UserDTO("external-id-42", "whatever");
-        var currentUser = new DomainUser("current-user-id", "current-external-id", false, true, tenantId, DateTime.UtcNow);
+        var currentUser = new DomainUser("current-user-id", "current-external-id", false, true, tenantId, DateTime.UtcNow, Gender.Unspecified);
         
         _dateTimeProvider.Now.Returns(now);
         _guidProvider.NewGuid().Returns(guid);
