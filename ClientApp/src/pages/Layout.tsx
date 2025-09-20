@@ -103,7 +103,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
           <LuMenu className='w-5 text-black dark:text-white' />
         </div>
       </div>
-      <ul className={!isNavMenuVisible ? 'hidden' : 'absolute bg-zinc-200 w-full px-8'}>
+      <ul className={!isNavMenuVisible ? 'hidden' : 'absolute bg-gradient-to-tr from-emerald-50 to-sky-100 dark:from-pink-900 dark:to-black w-full px-8'}>
        <MenuLink isMobile={true} text='Home' url='/'/>
        <MenuLink isMobile={true} text='About' url='/about'/>
        <MenuLink isMobile={true} text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
@@ -148,7 +148,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       'min-h-screen',
        (props as DisableCenterVertically)?.disableCenterVertically ? "" : "items-center",
       addOpacity ? 'opacity-15' : '',
-      isMobile? 'ml-5 mr-5' :''
+      isMobile ? 'ml-5 mr-5' : ''
     )
 
     const userDataForProps = userData === null ? null : {...userData!, nominations: nominations.currentData! };

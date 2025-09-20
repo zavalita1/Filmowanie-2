@@ -43,8 +43,7 @@ export const userApi = apiSlice
       query: dto => ({ url: '/account/login/code', method: 'POST', body: dto}),
       transformResponse: (response: UserIncomingDTO, meta, arg) => response as UserState,
       transformErrorResponse: (response, meta, arg) => {
-        // TODO
-        debugger;
+        return response.data;
       },
       async onQueryStarted(params, { dispatch, queryFulfilled }) {
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);

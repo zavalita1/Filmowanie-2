@@ -135,3 +135,7 @@ div.large-dialog {
 .max-w-inherit {
   max-width: inherit;
 }
+
+.table-cell-wrap-long {
+  text-wrap: auto;
+}

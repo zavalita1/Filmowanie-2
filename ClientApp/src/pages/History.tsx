@@ -113,18 +113,18 @@ const WatchedMovies: React.FC = () => {
             </h1></TableCaption>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="md:w-2/5">Tytuł</TableHead>
-                    <TableHead className="md:w-2/5">Tytuł oryginalny</TableHead>
-                    <TableHead>Obejrzany</TableHead>
+                    <TableHead className="max-w-[160px] md:max-w-xl md:w-2/5">Tytuł</TableHead>
+                    <TableHead className="max-w-[160px] md:max-w-xl md:w-2/5">Tytuł oryginalny</TableHead>
+                    <TableHead className='max-w-[80px]'>Obejrzany</TableHead>
                     <TableHead className="text-right">Nominowany przez</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 { data!.map((x, index) => (
                 <TableRow key={index}>
-                    <TableCell className="font-medium text-blue-700 dark:text-pink-300 hover:cursor-pointer"><a href={x.filmwebUrl} target="_blank">{x.title}</a></TableCell>
-                    <TableCell>{x.originalTitle}</TableCell>
-                    <TableCell>{x.watched}</TableCell>
+                    <TableCell className="max-w-[160px] md:max-w-xl table-cell-wrap-long font-medium text-blue-700 dark:text-pink-300 hover:cursor-pointer"><a href={x.filmwebUrl} target="_blank">{x.title}</a></TableCell>
+                    <TableCell className='max-w-[160px] md:max-w-xl table-cell-wrap-long'>{x.originalTitle}</TableCell>
+                    <TableCell className='max-w-[80px]'>{x.watched}</TableCell>
                     <TableCell className="text-right">{x.nominatedBy}</TableCell>
                 </TableRow>))
                 }
@@ -139,6 +139,6 @@ const Charts: React.FC = () => {
     )
 }
 
-const wrappedHistory: React.FC<AppComponentProps> = (props) => { return <Layout><History {...props}/></Layout>}
+const wrappedHistory: React.FC<AppComponentProps> = (props) => { return <Layout><History {...props} /></Layout>}
 
 export default wrappedHistory;

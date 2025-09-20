@@ -21,11 +21,11 @@ const Login: React.FC = () => {
 
     return (
         <div className="flex min-h-svh flex-col items-center justify-center">
-            <Tabs defaultValue="account" className="w-full max-w-3xl">
-                <TabsList className="w-full">
-                    <TabsTrigger value="account">Logowanie kodem</TabsTrigger>
-                    <TabsTrigger value="password">Logowanie hasłem</TabsTrigger>
-                    <TabsTrigger value="google">Logowanie z Google</TabsTrigger>
+            <Tabs defaultValue="account" className="w-3/4 md:w-full max-w-3xl">
+                <TabsList className="w-full flex flex-wrap">
+                    <TabsTrigger className="grow-0" value="account">Logowanie kodem</TabsTrigger>
+                    <TabsTrigger className="flex-1/3" value="password">Logowanie hasłem</TabsTrigger>
+                    <TabsTrigger className="grow-0" value="google">Logowanie z Google</TabsTrigger>
                 </TabsList>
                 <div className="min-h-[300px] relative mt-4">
                     <TabsContent value="account" className="absolute top-0 left-0 w-full">
