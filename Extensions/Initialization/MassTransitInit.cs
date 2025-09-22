@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Database.Contants;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Notification.Consumers;
@@ -15,6 +16,8 @@ internal static class MassTransitInit
 {
     public static void ConfigureMassTransit(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<ICosmosClientFactory, MassTransitClientFactory>();
+
         services.AddMassTransit(x =>
         {
             x.AddConfigureEndpointsCallback((context, name, cfg) =>
@@ -23,11 +26,12 @@ internal static class MassTransitInit
             });
 
             x.SetKebabCaseEndpointNameFormatter();
-            var dbConnectionString = configuration["dbConnectionString"]!; // TODO cosmos options 
+            var dbConnectionString = configuration[CosmosOptions.ConnectionStringConfigKeyName]!;
             x.SetCosmosSagaRepositoryProvider(dbConnectionString, cosmosConfig =>
             {
                 cosmosConfig.DatabaseId = "db-filmowanie2";
                 cosmosConfig.CollectionId = DbContainerNames.Events;
+                cosmosConfig.UseClientFactory("VotingSagaClient");
             });
 
             var entryAssembly = new[]

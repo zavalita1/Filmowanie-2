@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
 using Filmowanie.Abstractions.Constants;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
@@ -35,6 +36,6 @@ internal sealed class LoginResultDataExtractor : ILoginResultDataExtractor
             IssuedUtc = DateTimeOffset.UtcNow,
         };
 
-        return new Maybe<LoginResultData>(new LoginResultData(claimsIdentity, authProps), null);
+        return new LoginResultData(claimsIdentity, authProps).AsMaybe();
     }
 }

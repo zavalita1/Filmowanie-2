@@ -15,11 +15,14 @@ internal sealed class VotingSessionCommandRepository : IVotingSessionCommandRepo
 {
     private readonly VotingResultsContext _ctx;
     private readonly CosmosOptions _options;
+    private readonly ICosmosClientOptionsProvider cosmosClientOptionsProvider;
 
-    public VotingSessionCommandRepository(VotingResultsContext ctx, IOptions<CosmosOptions> options)
+
+    public VotingSessionCommandRepository(VotingResultsContext ctx, IOptions<CosmosOptions> options, ICosmosClientOptionsProvider cosmosClientOptionsProvider)
     {
         _ctx = ctx;
         _options = options.Value;
+        this.cosmosClientOptionsProvider = cosmosClientOptionsProvider;
     }
 
     public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancelToken)
@@ -34,8 +37,26 @@ internal sealed class VotingSessionCommandRepository : IVotingSessionCommandRepo
         var votingResultEntity = await _ctx.VotingResults.AsNoTracking().SingleAsync(x => x.id == id, cancelToken);
         updateAction.Invoke(votingResultEntity);
 
-        var cosmosClient = new CosmosClient(_options.ConnectionString);
-        var c = cosmosClient.GetContainer(ServiceCollectionExtensions.DatabaseName, DbContainerNames.Entities);
+        var cosmosClientOptions = this.cosmosClientOptionsProvider.Get();
+        var cosmosClient = ClientInstance.GetClient(_options.ConnectionString, cosmosClientOptions.ClientOptions);
+        var c = cosmosClient.GetContainer(_options.DbName, DbContainerNames.Entities);
         await c.ReplaceItemAsync(votingResultEntity, votingResultEntity.id, new PartitionKey(votingResultEntity.id), null, cancelToken);
+    }
+
+    private static class ClientInstance
+    {
+        private static CosmosClient? client;
+        private static object locker = new();
+
+        public static CosmosClient GetClient(string connectionString, CosmosClientOptions options)
+        {
+            if (client != null) return client;
+
+            lock (locker)
+            {
+                client = new CosmosClient(connectionString, options);
+                return client;
+            }
+        }
     }
 }

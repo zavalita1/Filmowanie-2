@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Filmowanie.Database.Contexts;
+using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,9 @@ internal sealed class UsersQueryRepository : IUsersQueryRepository
 
     public async Task<IReadOnlyUserEntity[]> GetAllAsync(CancellationToken cancelToken)
     {
-        var result = await _identityDbContext.Users.ToArrayAsync(cancelToken);
+        var result = await _identityDbContext.Users
+            .Where(x => x.Type == nameof(UserEntity)) // cosmos emulator incorrectly handles types discrimination, this helps.
+            .ToArrayAsync(cancelToken);
         return result.Cast<IReadOnlyUserEntity>().ToArray();
     }
 }

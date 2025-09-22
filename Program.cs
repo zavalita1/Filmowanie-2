@@ -13,14 +13,15 @@ using Microsoft.Extensions.Logging;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.SetStartupMode();
-builder.SetupConfiguration();
+
+await builder.SetupConfigurationAsync();
 builder.ConfigureLogging();
 
 builder.Services.AddSignalR();
 
 EnvironmentDependent.Invoke(new ()
 {
-    [StartupMode.Local] = () => builder.Services.AddCors(o => o.AddPolicy("ViteLocalDevServer", p => p.WithOrigins(builder.Configuration["FrontendDevServer"]!)))
+    [StartupMode.LocalWithDevFrontend] = () => builder.Services.AddCors(o => o.AddPolicy("ViteLocalDevServer", p => p.WithOrigins(builder.Configuration["FrontendDevServer"]!)))
 });
 
 builder.Services
@@ -42,10 +43,10 @@ await EnvironmentDependent.InvokeAsync(new()
 builder.Services.AddMemoryCache();
 builder.Services.RegisterPolicies();
 builder.Services.RegisterCustomServices(builder.Configuration);
-builder.Services.RegisterDatabaseServices(builder.Configuration);
+await builder.Services.RegisterDatabaseServicesAsync(builder.Configuration);
 EnvironmentDependent.Invoke(new()
 {
-    [StartupMode.Local | StartupMode.LocalWithCompiledFrontend] = () => builder.Services.PersistDataProtectionKeysLocal(),
+    [StartupMode.Local] = builder.Services.PersistDataProtectionKeysLocal,
     [StartupMode.Production] = () =>
     {
         builder.Services.PersistDataProtectionKeysBlob(builder.Configuration);
@@ -63,8 +64,8 @@ log.LogInformation($"Starting the app in mode: {Environment.Mode}...");
 
 EnvironmentDependent.Invoke(new ()
 {
-    [StartupMode.Local] = () => app.UseCors("ViteLocalDevServer"),
-    [StartupMode.LocalWithCompiledFrontend | StartupMode.Production] = () => app.UseStaticFiles() 
+    [StartupMode.LocalWithDevFrontend] = () => app.UseCors("ViteLocalDevServer"),
+    [StartupMode.CopiledFrontend] = () => app.UseStaticFiles() 
 });
 
 app.ConfigureEndpoints();

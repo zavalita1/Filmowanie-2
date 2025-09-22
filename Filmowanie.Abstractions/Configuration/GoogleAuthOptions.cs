@@ -8,4 +8,6 @@ public sealed class GoogleAuthOptions
     public string ClientSecret { get; set; }
     public string RedirectUri { get; set; }
     public string DiscoveryUri { get; set; }
+
+    public bool Enabled { get; set; }
 }

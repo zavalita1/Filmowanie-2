@@ -1,0 +1,1880 @@
+[
+    {
+        "id": "4323b30e-5b68-4d29-84b3-cc217ff955ce",
+        "currentState": "NominationsConcluded",
+        "movies": [
+            {
+                "votes": [
+                    {
+                        "user": {
+                            "id": "user-2b54e304-c73d-4769-8546-3e3abc25831e",
+                            "name": "O L A",
+                            "tenantId": 1
+                        },
+                        "voteType": 3
+                    }
+                ],
+                "movie": {
+                    "id": "movie-34375db1-ebc9-46ca-9d7b-4298c080fc5b",
+                    "name": "Wytłumaczenie wszystkiego",
+                    "movieCreationYear": 2023
+                },
+                "votingScore": 3
+            },
+            {
+                "votes": [],
+                "movie": {
+                    "id": "movie-51dda789-9867-400d-b10d-917476157815",
+                    "name": "Koyaanisqatsi",
+                    "movieCreationYear": 1982
+                },
+                "votingScore": 0
+            },
+            {
+                "votes": [
+                    {
+                        "user": {
+                            "id": "user-2b54e304-c73d-4769-8546-3e3abc25831e",
+                            "name": "O L A",
+                            "tenantId": 1
+                        },
+                        "voteType": 1
+                    }
+                ],
+                "movie": {
+                    "id": "movie-c53d230c-1b07-4fce-9bba-258662113406",
+                    "name": "Tôkyô!",
+                    "movieCreationYear": 2008
+                },
+                "votingScore": 1
+            },
+            {
+                "votes": [],
+                "movie": {
+                    "id": "movie-e6233c3e-3707-49a3-84bc-1fcdd8ccc1bf",
+                    "name": "Niepotrzebni mogą odejść",
+                    "movieCreationYear": 1947
+                },
+                "votingScore": 0
+            },
+            {
+                "votes": [],
+                "movie": {
+                    "id": "movie-1ec7b6a2-ad4c-4ef4-b358-940b91322cb4",
+                    "name": "Syndykat zbrodni",
+                    "movieCreationYear": 1974
+                },
+                "votingScore": 0
+            },
+            {
+                "votes": [],
+                "movie": {
+                    "id": "movie-d829fe1b-9030-481d-8247-0063d379dbfd",
+                    "name": "W pełnym słońcu",
+                    "movieCreationYear": 1960
+                },
+                "votingScore": 0
+            },
+            {
+                "votes": [],
+                "movie": {
+                    "id": "movie-3b3b7b7d-593c-4204-8476-3fa03803a829",
+                    "name": "Eroica",
+                    "movieCreationYear": 1957
+                },
+                "votingScore": 0
+            },
+            {
+                "votes": [],
+                "movie": {
+                    "id": "movie-a561b5a6-4401-463c-9f13-614954bba55a",
+                    "name": "W objęciach węża",
+                    "movieCreationYear": 2015
+                },
+                "votingScore": 0
+            },
+            {
+                "votes": [],
+                "movie": {
+                    "id": "movie-eb2b231e-e9ff-4fd0-b0f5-b6ed478da208",
+                    "name": "Myszy i ludzie",
+                    "movieCreationYear": 1992
+                },
+                "votingScore": 0
+            }
+        ],
+        "nominations": [
+            {
+                "user": {
+                    "displayName": "Lavinia Abrams",
+                    "id": "user-f91d277a-0fa1-4a37-aa02-11914f7e7c3d"
+                },
+                "year": 2010,
+                "concluded": "2025-09-16T18:30:20.1723532Z",
+                "movieId": "movie-a561b5a6-4401-463c-9f13-614954bba55a"
+            },
+            {
+                "user": {
+                    "displayName": "Maciejka",
+                    "id": "user-5ae06295-969b-46e2-b736-2c88e51c841e"
+                },
+                "year": 1990,
+                "concluded": "2025-09-16T18:35:38.2334413Z",
+                "movieId": "movie-eb2b231e-e9ff-4fd0-b0f5-b6ed478da208"
+            },
+            {
+                "user": {
+                    "displayName": "Cepiga",
+                    "id": "user-4e545f69-8afa-48ed-a0f2-a11bc48a6cc1"
+                },
+                "year": 1950,
+                "concluded": "2025-09-10T09:53:06.4216265Z",
+                "movieId": "movie-3b3b7b7d-593c-4204-8476-3fa03803a829"
+            }
+        ],
+        "eTag": null,
+        "tenantId": 1,
+        "created": "2025-09-10T20:00:00",
+        "error": null,
+        "_rid": "siVSAJsGHhtcAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtcAAAAAAAAAA==/",
+        "_etag": "0200df0b-0000-5600-0000-68c9ca1d0000",
+        "_attachments": "attachments/",
+        "_ts": 1758054941
+    },
+    {
+        "Movie": {
+            "id": "movie-eec8edb6-fbe7-4be7-a79b-6f9fe092a511",
+            "Name": "Świnia",
+            "MovieCreationYear": 2021
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "ae61063a-8dd7-4b4f-bbf1-b9983c70ee0a",
+        "_rid": "siVSAJsGHhtdAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtdAAAAAAAAAA==/",
+        "_etag": "0000e811-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-29f73d49-51a0-4e5d-8402-c15b077a8436",
+            "Name": "Siedzący Słoń",
+            "MovieCreationYear": 2018
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "24337012-ff30-4038-9712-fbf8abae9a2a",
+        "_rid": "siVSAJsGHhteAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhteAAAAAAAAAA==/",
+        "_etag": "0000e911-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-5f1841bd-b48e-40d3-b77e-98161319d702",
+            "Name": "Lawrence z Arabii",
+            "MovieCreationYear": 1962
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "8f573e70-ebd3-4618-8300-c141336c5ae0",
+        "_rid": "siVSAJsGHhtfAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtfAAAAAAAAAA==/",
+        "_etag": "0000ea11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-8197e440-4312-422d-bd79-6e7833c62858",
+            "Name": "Wygnanie",
+            "MovieCreationYear": 2007
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "35cf6189-1061-4d5f-86f3-5c04dbf4cef4",
+        "_rid": "siVSAJsGHhtgAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtgAAAAAAAAAA==/",
+        "_etag": "0000eb11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-796e76f2-bfca-4da6-8a50-b1f30a04a956",
+            "Name": "Okręt",
+            "MovieCreationYear": 1981
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "176de088-41fd-40d9-a5b3-fa762b9b4627",
+        "_rid": "siVSAJsGHhthAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhthAAAAAAAAAA==/",
+        "_etag": "0000ec11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-67c826df-9ddb-41a2-af58-6067ff8410f3",
+            "Name": "Gasnący płomień",
+            "MovieCreationYear": 1944
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "6b48133d-b995-4b2e-88f3-d7700bda67ae",
+        "_rid": "siVSAJsGHhtiAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtiAAAAAAAAAA==/",
+        "_etag": "0000ed11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-de51c115-ba0d-4b8d-a94f-c71e0c2028e5",
+            "Name": "Amatorski gang",
+            "MovieCreationYear": 1964
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "d69a0cb6-fc38-4eb6-b6ae-df4860c0e087",
+        "_rid": "siVSAJsGHhtjAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtjAAAAAAAAAA==/",
+        "_etag": "0000ee11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-4d65061f-87f7-42c7-9155-46107cdfc63f",
+            "Name": "Girlfriends",
+            "MovieCreationYear": 1978
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "5ba76482-125f-4707-99c5-318406a945fd",
+        "_rid": "siVSAJsGHhtkAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtkAAAAAAAAAA==/",
+        "_etag": "0000ef11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-e8216061-c071-471d-8840-767af393c27a",
+            "Name": "Nauczycielka",
+            "MovieCreationYear": 2016
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "aaf766a6-3bd7-4c36-8ce2-66923785eb2c",
+        "_rid": "siVSAJsGHhtlAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtlAAAAAAAAAA==/",
+        "_etag": "0000f011-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-da86d2b0-2e34-4a2b-b062-1273119f04dd",
+            "Name": "Drabina Jakubowa",
+            "MovieCreationYear": 1990
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "819b469e-d73e-4df1-bdcc-bdbdb5b451e0",
+        "_rid": "siVSAJsGHhtmAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtmAAAAAAAAAA==/",
+        "_etag": "0000f111-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-ab68720b-cd97-4f6b-8294-0d796b7d01e5",
+            "Name": "Prawo pożądania",
+            "MovieCreationYear": 1987
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "74ffa258-d0e0-4a9f-a703-fdc7e8f0765c",
+        "_rid": "siVSAJsGHhtnAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtnAAAAAAAAAA==/",
+        "_etag": "0000f211-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-b038c532-3ed8-4a28-b89a-1b5b35edb29d",
+            "Name": "Wulkan miłości",
+            "MovieCreationYear": 2022
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "fdd99168-c26e-4f63-87f3-3d1586b20af2",
+        "_rid": "siVSAJsGHhtoAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtoAAAAAAAAAA==/",
+        "_etag": "0000f311-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-4584d5a9-b7f5-4016-96df-2c4d93ee1ada",
+            "Name": "Angelus",
+            "MovieCreationYear": 2001
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "19b78d72-15cd-4bd2-bee0-b8265b6b7337",
+        "_rid": "siVSAJsGHhtpAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtpAAAAAAAAAA==/",
+        "_etag": "0000f411-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-a4cbbee7-ed47-4935-96fc-bd74ac856c1c",
+            "Name": "Walka o ogień",
+            "MovieCreationYear": 1981
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "9e4797ec-3f48-420e-ba6c-e9eeca6c3ded",
+        "_rid": "siVSAJsGHhtqAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtqAAAAAAAAAA==/",
+        "_etag": "0000f511-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-561330f8-995b-4094-a808-ade374266f40",
+            "Name": "Biała wstążka",
+            "MovieCreationYear": 2009
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "d71d1211-028e-4739-bb8b-436a5e4e06b8",
+        "_rid": "siVSAJsGHhtrAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtrAAAAAAAAAA==/",
+        "_etag": "0000f611-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-61e8b699-c1a7-490e-99a8-75526bd0ff8c",
+            "Name": "Sciuscià (Ragazzi)",
+            "MovieCreationYear": 1946
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "b4d68dfe-bf5f-4bc9-9b83-4025d24c9aef",
+        "_rid": "siVSAJsGHhtsAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtsAAAAAAAAAA==/",
+        "_etag": "0000f711-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-a5b24b40-bc85-42bf-ba0d-3744e6e2edab",
+            "Name": "Smażone zielone pomidory",
+            "MovieCreationYear": 1991
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "853041f4-2ac7-41b7-926d-f9f3eb666939",
+        "_rid": "siVSAJsGHhttAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhttAAAAAAAAAA==/",
+        "_etag": "0000f811-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-d14b07f2-ef69-4c47-bfd4-dfd785a008c5",
+            "Name": "Transfer",
+            "MovieCreationYear": 2007
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "e5476523-70d0-4126-91c9-94fb32f8a152",
+        "_rid": "siVSAJsGHhtuAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtuAAAAAAAAAA==/",
+        "_etag": "0000f911-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-379da5c0-2555-42c9-b45b-76ffd510469a",
+            "Name": "Krakatit",
+            "MovieCreationYear": 1948
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "86d78f56-43a3-45ea-914a-e7095fa94b63",
+        "_rid": "siVSAJsGHhtvAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtvAAAAAAAAAA==/",
+        "_etag": "0000fa11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-1ce9f958-2d49-463c-93e3-88647e2e38c5",
+            "Name": "Król Staten Island",
+            "MovieCreationYear": 2020
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "0179e5a0-6444-41db-8933-fb81d85d3e5b",
+        "_rid": "siVSAJsGHhtyAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtyAAAAAAAAAA==/",
+        "_etag": "0000fd11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-5c33b6e1-9372-45d5-ae7f-ecc9e28ecc51",
+            "Name": "Casablanca",
+            "MovieCreationYear": 1942
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "61031925-47bf-42cb-a6dc-a4a71668d7ce",
+        "_rid": "siVSAJsGHhtzAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhtzAAAAAAAAAA==/",
+        "_etag": "0000fe11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-50966c8e-cda7-4e27-9e38-89c0df672330",
+            "Name": "Brazil",
+            "MovieCreationYear": 1985
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "6ed34fe7-8d0a-47b0-a534-842f10bccd57",
+        "_rid": "siVSAJsGHht0AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht0AAAAAAAAAA==/",
+        "_etag": "0000ff11-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-2ec4a9d1-ba65-41b9-8c47-4d041e3ed370",
+            "Name": "Bad Boy Bubby",
+            "MovieCreationYear": 1993
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "57bc1b1e-82da-4c31-a46f-2054d94395bb",
+        "_rid": "siVSAJsGHht1AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht1AAAAAAAAAA==/",
+        "_etag": "00000012-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-c87ebb4a-9a92-413e-8a05-d528c7280e1e",
+            "Name": "Późna wiosna",
+            "MovieCreationYear": 1949
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "455e235c-fcb2-4096-aef7-593f41fde8e7",
+        "_rid": "siVSAJsGHht2AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht2AAAAAAAAAA==/",
+        "_etag": "00000112-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-52f604a0-8eba-4161-a3ee-dd21c9deacea",
+            "Name": "Duża ryba",
+            "MovieCreationYear": 2003
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "4f1ea125-d73c-419b-8022-775b616fdbf2",
+        "_rid": "siVSAJsGHht3AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht3AAAAAAAAAA==/",
+        "_etag": "00000212-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-895781b2-aa46-4772-89e9-bbf6055a42ee",
+            "Name": "Bilardzista",
+            "MovieCreationYear": 1961
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "d22ca80e-bc6f-440d-b52e-cb6fd84d535d",
+        "_rid": "siVSAJsGHht4AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht4AAAAAAAAAA==/",
+        "_etag": "00000312-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-f4132919-ed05-4675-a48f-be8b2cd3c90f",
+            "Name": "Pół żartem, pół serio",
+            "MovieCreationYear": 1959
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "9cec99d1-12c2-4699-8d0f-480b900d6f5e",
+        "_rid": "siVSAJsGHht5AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht5AAAAAAAAAA==/",
+        "_etag": "00000412-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-85e4b0ba-1bbf-4456-9246-72ad6688cc2f",
+            "Name": "Kobiety nocy",
+            "MovieCreationYear": 1948
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "006b7c36-2690-4bee-8c83-f200da263402",
+        "_rid": "siVSAJsGHht6AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht6AAAAAAAAAA==/",
+        "_etag": "00000512-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-a1e96d97-81ce-4c38-a263-f485e6d5d521",
+            "Name": "Anioły grzechu",
+            "MovieCreationYear": 1943
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "ec9a4416-0afb-4fac-b5b5-34f5fce4e818",
+        "_rid": "siVSAJsGHht7AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht7AAAAAAAAAA==/",
+        "_etag": "00000612-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-d154444a-60a1-425a-8a86-138943b7cafb",
+            "Name": "Pasażerka",
+            "MovieCreationYear": 1963
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "2fd2871f-b108-4da0-a187-c22ef90e7b90",
+        "_rid": "siVSAJsGHht8AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht8AAAAAAAAAA==/",
+        "_etag": "00000712-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-a81f40e4-f228-4c97-af33-89009d23920d",
+            "Name": "Scena zbrodni",
+            "MovieCreationYear": 2012
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "77f35514-5abd-480f-9384-79de13ddbfc2",
+        "_rid": "siVSAJsGHht9AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht9AAAAAAAAAA==/",
+        "_etag": "00000812-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-a3fafba9-9651-4018-83f5-73621ca00fee",
+            "Name": "Zawrót głowy",
+            "MovieCreationYear": 1958
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "385bc816-737c-4993-85ec-16f80a53e78f",
+        "_rid": "siVSAJsGHht+AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht+AAAAAAAAAA==/",
+        "_etag": "00000912-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-f2719c97-4166-4b91-84c3-df5bc5e517d1",
+            "Name": "Wszyscy albo nikt",
+            "MovieCreationYear": 1999
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "836cfa5c-ddac-4495-b71f-2c4dd0eee63f",
+        "_rid": "siVSAJsGHht-AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHht-AAAAAAAAAA==/",
+        "_etag": "00000a12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-679dd0a3-23f2-47f4-b3b2-df2e23fec972",
+            "Name": "Trzeci człowiek",
+            "MovieCreationYear": 1949
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "147c10da-15c2-4dfb-b44d-b104bc683ed9",
+        "_rid": "siVSAJsGHhuAAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuAAAAAAAAAAA==/",
+        "_etag": "00000b12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-f7333c27-f464-4a67-a7ea-dfaa8ccd23fd",
+            "Name": "Na nabrzeżach",
+            "MovieCreationYear": 1954
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "468a719b-2ce1-4fa9-b192-c597d0ff9827",
+        "_rid": "siVSAJsGHhuBAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuBAAAAAAAAAA==/",
+        "_etag": "00000c12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-8f9e2a1b-2a45-4e1a-9eca-0d753654df92",
+            "Name": "La chimera",
+            "MovieCreationYear": 2023
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "b7786c6a-b0a9-431c-9a5d-907256534fa3",
+        "_rid": "siVSAJsGHhuCAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuCAAAAAAAAAA==/",
+        "_etag": "00000d12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-f0285536-d885-4414-998f-dc03e6f4f74e",
+            "Name": "Porozmawiaj z nią",
+            "MovieCreationYear": 2002
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "8a5d8c29-499e-4c91-b439-858d165fe3c8",
+        "_rid": "siVSAJsGHhuDAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuDAAAAAAAAAA==/",
+        "_etag": "00000e12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-43633895-395d-402e-88d6-338609342c1a",
+            "Name": "Fremont",
+            "MovieCreationYear": 2023
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "1c2105b3-c6e3-430c-97c5-d9593d28d596",
+        "_rid": "siVSAJsGHhuEAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuEAAAAAAAAAA==/",
+        "_etag": "00000f12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-c168683e-6871-42f3-80ff-2564b09e45eb",
+            "Name": "Stalag 17",
+            "MovieCreationYear": 1953
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "9e07419e-34b8-4f6f-bfbf-495d9dbaff60",
+        "_rid": "siVSAJsGHhuFAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuFAAAAAAAAAA==/",
+        "_etag": "00001012-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-6003fe62-6375-40ae-bda4-59e57c21dc44",
+            "Name": "Guillermo del Toro: Pinokio",
+            "MovieCreationYear": 2022
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "c1018fdf-43a6-4c78-ac85-69dc59334c8b",
+        "_rid": "siVSAJsGHhuGAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuGAAAAAAAAAA==/",
+        "_etag": "00001112-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-9e28210e-e3d6-447e-903e-333390429908",
+            "Name": "Przeszłość",
+            "MovieCreationYear": 2013
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "fef21a97-6e64-470c-a242-6d769d213158",
+        "_rid": "siVSAJsGHhuHAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuHAAAAAAAAAA==/",
+        "_etag": "00001212-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-6e52832f-0000-4431-a47c-f184b0c6a2b6",
+            "Name": "Mały Otik",
+            "MovieCreationYear": 2000
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "3600f93f-9fd1-4b94-9cee-3f50f33187b2",
+        "_rid": "siVSAJsGHhuIAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuIAAAAAAAAAA==/",
+        "_etag": "00001312-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-9f670243-db78-497e-8535-b827414b4f80",
+            "Name": "Znikający punkt",
+            "MovieCreationYear": 1971
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "b8573f2e-8869-441b-ac12-0e6988a4d1e1",
+        "_rid": "siVSAJsGHhuJAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuJAAAAAAAAAA==/",
+        "_etag": "00001412-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-a7289d8d-9104-46c3-b711-50e998d580e5",
+            "Name": "Bałkański szpieg",
+            "MovieCreationYear": 1984
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "af9ecd11-4bb5-4f9e-8304-79e65307e7d3",
+        "_rid": "siVSAJsGHhuKAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuKAAAAAAAAAA==/",
+        "_etag": "00001512-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-541f6dab-f8d9-4feb-97ed-5480369cc66d",
+            "Name": "Dear Zachary: A Letter to a Son About His Father",
+            "MovieCreationYear": 2008
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "bbe3a50b-4e03-40c4-a2f6-32535a350c9b",
+        "_rid": "siVSAJsGHhuLAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuLAAAAAAAAAA==/",
+        "_etag": "00001612-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-f62d0bb4-370f-4942-9083-e15fce6e1a4c",
+            "Name": "Mężczyźni wolą blondynki",
+            "MovieCreationYear": 1953
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "3e3e64e1-6ad8-4e36-83d7-4adfae12c6e6",
+        "_rid": "siVSAJsGHhuMAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuMAAAAAAAAAA==/",
+        "_etag": "00001712-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-89032020-357c-4947-b3f0-38d454811742",
+            "Name": "Biegnąca kobieta",
+            "MovieCreationYear": 2020
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "90a761b3-de3e-48d7-9e29-ed23c7903d16",
+        "_rid": "siVSAJsGHhuNAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuNAAAAAAAAAA==/",
+        "_etag": "00001812-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-7e54d5d3-b518-44b3-9e91-020f5161efa0",
+            "Name": "Hachikô monogatari",
+            "MovieCreationYear": 1987
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "27319d59-190c-4f08-bd7f-40b3135e3780",
+        "_rid": "siVSAJsGHhuOAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuOAAAAAAAAAA==/",
+        "_etag": "00001912-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-d3468eaf-9112-453e-8826-ff24d9c5595d",
+            "Name": "Taki piękny dzień",
+            "MovieCreationYear": 2012
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "65371d24-3dc0-4207-af9a-9902f04c63cd",
+        "_rid": "siVSAJsGHhuPAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuPAAAAAAAAAA==/",
+        "_etag": "00001a12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-cfc98911-92d8-4e59-ae28-ccfb9a8112cb",
+            "Name": "Zdarzenie w Ox-Bow",
+            "MovieCreationYear": 1943
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "a51edafe-280a-47a6-9396-3c5ce9bdf1ba",
+        "_rid": "siVSAJsGHhuQAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuQAAAAAAAAAA==/",
+        "_etag": "00001b12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-3960dd7b-e079-4782-a1e2-d8c57c9f441a",
+            "Name": "Powodzenia, Leo Grande",
+            "MovieCreationYear": 2022
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "9e2e3b68-7277-4cc8-8669-5d1b39feb667",
+        "_rid": "siVSAJsGHhuRAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuRAAAAAAAAAA==/",
+        "_etag": "00001c12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-cd55725e-7ff4-4e0a-94fc-c58644f0462b",
+            "Name": "Wyznania",
+            "MovieCreationYear": 2010
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "1062bae9-9453-4b5c-8120-261d8b7e3214",
+        "_rid": "siVSAJsGHhuSAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuSAAAAAAAAAA==/",
+        "_etag": "00001d12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-46f98c2b-9225-4139-8c60-2ea3c34d6bec",
+            "Name": "Kwiat granatu",
+            "MovieCreationYear": 1968
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "c672e0c3-1cc9-4732-9a21-22f6f86a1a24",
+        "_rid": "siVSAJsGHhuTAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuTAAAAAAAAAA==/",
+        "_etag": "00001e12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-55f06791-54c2-4de1-88b3-fe531e130b32",
+            "Name": "Przystanek - Ziemia",
+            "MovieCreationYear": 2021
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "500a1838-2e4a-4179-b404-1d408b81bad7",
+        "_rid": "siVSAJsGHhuUAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuUAAAAAAAAAA==/",
+        "_etag": "00001f12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-d8ad7561-9027-48fb-af63-99111ffcbf62",
+            "Name": "Fletch",
+            "MovieCreationYear": 1985
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "c6d7fb8c-902f-4599-89ff-508329a85888",
+        "_rid": "siVSAJsGHhuVAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuVAAAAAAAAAA==/",
+        "_etag": "00002012-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-349df7b2-e0da-473a-9341-d5cd77c69ce7",
+            "Name": "Pięć łatwych utworów",
+            "MovieCreationYear": 1970
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "0afe865a-27c4-4bde-b1ff-2f3f83cd99f1",
+        "_rid": "siVSAJsGHhuWAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuWAAAAAAAAAA==/",
+        "_etag": "00002112-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-b1361785-6acc-462a-bfc1-e44c924f9325",
+            "Name": "Bambi",
+            "MovieCreationYear": 1942
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "d2021983-a320-455f-a186-edf96797b18d",
+        "_rid": "siVSAJsGHhuXAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuXAAAAAAAAAA==/",
+        "_etag": "00002212-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-afd5d68e-269a-4855-b101-337115f48683",
+            "Name": "Samuraj - Zmierzch",
+            "MovieCreationYear": 2002
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "c15a3540-1578-42b5-b71a-bc6aca7dc7f5",
+        "_rid": "siVSAJsGHhuYAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuYAAAAAAAAAA==/",
+        "_etag": "00002312-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-5b347721-7a00-4433-b0df-20a9cf34216e",
+            "Name": "Iron Sky",
+            "MovieCreationYear": 2012
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "0c412561-4366-4c44-b5ce-25678b70cf1d",
+        "_rid": "siVSAJsGHhuZAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuZAAAAAAAAAA==/",
+        "_etag": "00002412-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-b02529d2-ac41-409a-a32b-2a0d0364d1c5",
+            "Name": "Coś z Alicji",
+            "MovieCreationYear": 1988
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "7746ca3f-e5bd-46a7-9f82-930bd3dffc7c",
+        "_rid": "siVSAJsGHhuaAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuaAAAAAAAAAA==/",
+        "_etag": "00002512-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-e1ce491d-070f-4684-8d8a-3b0331cf4b08",
+            "Name": "Celine i Julie odpływają",
+            "MovieCreationYear": 1974
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "4d127313-6513-4ce6-abe7-621ce10acac2",
+        "_rid": "siVSAJsGHhubAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhubAAAAAAAAAA==/",
+        "_etag": "00002612-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-8b642697-980d-432e-82c7-458dc3dca8c0",
+            "Name": "Igrzyska śmierci: Ballada ptaków i węży",
+            "MovieCreationYear": 2023
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "54ed97a4-352d-4805-8609-e35c0797e501",
+        "_rid": "siVSAJsGHhucAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhucAAAAAAAAAA==/",
+        "_etag": "00002712-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-cb825f87-9008-491c-b5ff-7fb8e79bb131",
+            "Name": "Pieta",
+            "MovieCreationYear": 2012
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "f8954a56-252e-4b9a-8df3-cd369bbffb9b",
+        "_rid": "siVSAJsGHhudAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhudAAAAAAAAAA==/",
+        "_etag": "00002812-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-7259c74a-dd6c-4afd-9280-9a39a1c3e65b",
+            "Name": "Chwasty",
+            "MovieCreationYear": 1987
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "f6dd684c-0d19-4fdd-a3a5-147cd46805ce",
+        "_rid": "siVSAJsGHhueAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhueAAAAAAAAAA==/",
+        "_etag": "00002912-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-a39134cf-3fa3-4544-a76a-9f5f4783c72c",
+            "Name": "Wilcze echa",
+            "MovieCreationYear": 1968
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "3756a9b6-101a-444f-892e-87ccc9c651ca",
+        "_rid": "siVSAJsGHhufAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhufAAAAAAAAAA==/",
+        "_etag": "00002a12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-1cb7acfd-18ff-41c0-90a3-c1f0913ea2f8",
+            "Name": "Kontrolerzy",
+            "MovieCreationYear": 2003
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "64502ced-5bfb-4fc4-aaaa-bbb26a0591d6",
+        "_rid": "siVSAJsGHhugAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhugAAAAAAAAAA==/",
+        "_etag": "00002b12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-836511ad-f6e5-4533-b3c3-b7386c7b6e60",
+            "Name": "Człowiek pogryzł psa",
+            "MovieCreationYear": 1992
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "2c19a466-ca91-4bb2-ab9f-83f0c7273591",
+        "_rid": "siVSAJsGHhuhAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuhAAAAAAAAAA==/",
+        "_etag": "00002c12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-02caaa8d-1de7-46ab-b72a-b01d3bcefea9",
+            "Name": "Monkey Man",
+            "MovieCreationYear": 2024
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "52377faa-228c-463a-bba1-d48861d1b9ad",
+        "_rid": "siVSAJsGHhuiAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuiAAAAAAAAAA==/",
+        "_etag": "00002d12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-bb54a65d-78bf-4a92-ab43-8d8dd119f699",
+            "Name": "Mózg",
+            "MovieCreationYear": 1969
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "93520faa-6a19-42da-b59e-3905bb6c7093",
+        "_rid": "siVSAJsGHhujAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhujAAAAAAAAAA==/",
+        "_etag": "00002e12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-c50639c1-56e4-47c4-88d0-9ffe1189a449",
+            "Name": "Kolekcjonerka",
+            "MovieCreationYear": 1967
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "e1ea7a95-250f-4ae9-b260-02091b696b12",
+        "_rid": "siVSAJsGHhukAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhukAAAAAAAAAA==/",
+        "_etag": "00002f12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-6fa7c600-c3b8-4a58-9571-3047e633db62",
+            "Name": "Wszystko o Ewie",
+            "MovieCreationYear": 1950
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "2d67961a-7335-4c5a-a9a9-2ea4b31f61c2",
+        "_rid": "siVSAJsGHhulAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhulAAAAAAAAAA==/",
+        "_etag": "00003012-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-2703b54f-4bc7-4abf-8548-7ba540913766",
+            "Name": "O dwóch takich, co ukradli Księżyc",
+            "MovieCreationYear": 1962
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "b0536602-87d4-4373-8df6-b99132e28041",
+        "_rid": "siVSAJsGHhumAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhumAAAAAAAAAA==/",
+        "_etag": "00003112-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-d7ed0725-9ab8-48c9-95dc-bf4f33a0bead",
+            "Name": "Sekai daisenso",
+            "MovieCreationYear": 1961
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "f3e7c784-cb35-44ca-9175-e3364ebe1ce9",
+        "_rid": "siVSAJsGHhunAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhunAAAAAAAAAA==/",
+        "_etag": "00003212-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-7c8e6511-094f-4a1e-83a0-ac3e7edfe45b",
+            "Name": "R100",
+            "MovieCreationYear": 2013
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "018723ec-8833-4073-91be-3bffdefef840",
+        "_rid": "siVSAJsGHhuoAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuoAAAAAAAAAA==/",
+        "_etag": "00003312-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-de83f781-aa49-4a4d-aae7-4e770d3fc3df",
+            "Name": "Mrugnij dwa razy",
+            "MovieCreationYear": 2024
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "8771c286-0f18-4bab-8bbb-0a822afb33af",
+        "_rid": "siVSAJsGHhupAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhupAAAAAAAAAA==/",
+        "_etag": "00003412-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-f379b1e9-f004-488f-827c-9fe4e289fb07",
+            "Name": "Garsoniera",
+            "MovieCreationYear": 1960
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "694be096-ef18-40ce-883f-5c61ec1e52fc",
+        "_rid": "siVSAJsGHhuqAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuqAAAAAAAAAA==/",
+        "_etag": "00003512-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-bec0ee29-a312-4fe3-a67f-84a0ffe86629",
+            "Name": "Adela jeszcze nie jadła kolacji",
+            "MovieCreationYear": 1977
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "2c90e57e-08e5-4f19-b178-d6882cf3edba",
+        "_rid": "siVSAJsGHhurAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhurAAAAAAAAAA==/",
+        "_etag": "00003612-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-fc1212c3-628e-4077-b0d1-3280f59afe45",
+            "Name": "Brudne pieniądze",
+            "MovieCreationYear": 1996
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "40927c33-88ca-4378-8143-bc80412466b5",
+        "_rid": "siVSAJsGHhusAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhusAAAAAAAAAA==/",
+        "_etag": "00003712-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-316b1fb7-52a9-4770-9f98-8a6270dff0dc",
+            "Name": "Stokrotki",
+            "MovieCreationYear": 1966
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "cee01d51-6590-418c-b423-9b731ada78ca",
+        "_rid": "siVSAJsGHhutAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhutAAAAAAAAAA==/",
+        "_etag": "00003812-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-f7544b9f-2c22-4b17-9157-7dca89df0102",
+            "Name": "W obręczy marzeń",
+            "MovieCreationYear": 1994
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "8bcc2e48-7bd8-4b2e-945b-533372e82d21",
+        "_rid": "siVSAJsGHhuuAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuuAAAAAAAAAA==/",
+        "_etag": "00003912-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-477c7f2e-af9c-41a8-a2c0-f30b452d6491",
+            "Name": "Ssang-hwa-jeom",
+            "MovieCreationYear": 2008
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "b5b61128-861d-462c-bda0-ecafd4ee46b7",
+        "_rid": "siVSAJsGHhuvAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuvAAAAAAAAAA==/",
+        "_etag": "00003a12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-f75f2a90-33ef-4507-b6ec-3023cb76dbfb",
+            "Name": "Interkosmos",
+            "MovieCreationYear": 1987
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "a0474d9b-50e0-45aa-8574-3add00dc0031",
+        "_rid": "siVSAJsGHhuwAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuwAAAAAAAAAA==/",
+        "_etag": "00003b12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-7def7b5f-5822-446b-ad6d-f3bacedcbc2f",
+            "Name": "Element zbrodni",
+            "MovieCreationYear": 1984
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "264204b9-4084-4e51-93ec-8f4527a39a76",
+        "_rid": "siVSAJsGHhuxAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuxAAAAAAAAAA==/",
+        "_etag": "00003c12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-42a189ef-47f1-423c-b821-33d4895082d4",
+            "Name": "Trzynastu",
+            "MovieCreationYear": 2022
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "c3fd0afc-a483-4a0e-8852-d0099cdbd6be",
+        "_rid": "siVSAJsGHhuyAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuyAAAAAAAAAA==/",
+        "_etag": "00003d12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-2674844d-a868-477a-a04e-3ffcf6943db0",
+            "Name": "Sznur",
+            "MovieCreationYear": 1948
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "bf1a4c95-a3d2-4ff5-a052-eb700848a465",
+        "_rid": "siVSAJsGHhuzAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhuzAAAAAAAAAA==/",
+        "_etag": "00003e12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-7fe3f2ee-a214-4620-8a6f-98f1da4752c7",
+            "Name": "Zaproszenie",
+            "MovieCreationYear": 2015
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "b1b12d55-3ca1-4b89-8524-c7eb6d80072b",
+        "_rid": "siVSAJsGHhu0AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu0AAAAAAAAAA==/",
+        "_etag": "00003f12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-ccf7a30a-997e-4ff0-89d1-6cbc2c330cac",
+            "Name": "Gilda",
+            "MovieCreationYear": 1946
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "4e149b0e-ef10-4ad2-9a55-62d94dd51c1a",
+        "_rid": "siVSAJsGHhu1AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu1AAAAAAAAAA==/",
+        "_etag": "00004012-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-63ebdf15-7434-4bb5-a0cb-3fb0d72e5444",
+            "Name": "Vera Drake",
+            "MovieCreationYear": 2004
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "9bd8ebff-91b1-436f-b041-0c06bb23d98c",
+        "_rid": "siVSAJsGHhu2AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu2AAAAAAAAAA==/",
+        "_etag": "00004112-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-d414a9bb-cdbc-4e29-868f-ae547066ad75",
+            "Name": "Kamasutra",
+            "MovieCreationYear": 1996
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "179bf99d-9916-44dc-a58c-6a251f2b601d",
+        "_rid": "siVSAJsGHhu3AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu3AAAAAAAAAA==/",
+        "_etag": "00004212-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-8841e43d-ca04-4d21-97db-3a2366750fa5",
+            "Name": "Podbój kosmosu",
+            "MovieCreationYear": 1955
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "341b6d54-de75-4e04-912f-130312458998",
+        "_rid": "siVSAJsGHhu4AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu4AAAAAAAAAA==/",
+        "_etag": "00004312-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-cdd2eed9-2e61-4828-b791-82f1de59ebc8",
+            "Name": "Metamorfoza ptaków",
+            "MovieCreationYear": 2020
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "bd31b48b-ad04-410b-a1a1-b1287a3ec73c",
+        "_rid": "siVSAJsGHhu5AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu5AAAAAAAAAA==/",
+        "_etag": "00004412-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-7062e74b-faef-4a2d-ada2-c81035561874",
+            "Name": "Milczenie",
+            "MovieCreationYear": 2016
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "c29401a3-b786-4e0c-8d67-48faf1bc4c0c",
+        "_rid": "siVSAJsGHhu6AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu6AAAAAAAAAA==/",
+        "_etag": "00004512-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-0b96ff06-0ef3-476c-a252-fd43f51eb86a",
+            "Name": "Ostrożnie, pożądanie",
+            "MovieCreationYear": 2007
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "53b341fc-f9fc-42ee-88a7-d158d4ba2384",
+        "_rid": "siVSAJsGHhu7AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu7AAAAAAAAAA==/",
+        "_etag": "00004612-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-8fc8e403-4741-469e-98cf-2bc7b2564884",
+            "Name": "W kręgu zła",
+            "MovieCreationYear": 1970
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "2fc25460-59ea-4078-ad4c-18808d6ae85b",
+        "_rid": "siVSAJsGHhu8AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu8AAAAAAAAAA==/",
+        "_etag": "00004712-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-fb2f9b9b-ca89-4833-9f85-ba1f84e67fb2",
+            "Name": "Andriej Rublow",
+            "MovieCreationYear": 1966
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "9d4fc3a7-f1da-45d4-8a90-cdb6d76eae28",
+        "_rid": "siVSAJsGHhu9AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu9AAAAAAAAAA==/",
+        "_etag": "00004812-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-0da61f83-0f86-41d0-8350-d1e20d323715",
+            "Name": "Dom, który zbudował Jack",
+            "MovieCreationYear": 2018
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "fc888415-1585-4fb9-8e2e-2924024db408",
+        "_rid": "siVSAJsGHhu+AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu+AAAAAAAAAA==/",
+        "_etag": "00004912-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-d829fe1b-9030-481d-8247-0063d379dbfd",
+            "Name": "W pełnym słońcu",
+            "MovieCreationYear": 1960
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "a46ca478-75d1-453e-a8b1-108f8b19e991",
+        "_rid": "siVSAJsGHhu-AAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhu-AAAAAAAAAA==/",
+        "_etag": "00004a12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-6c956ff4-6c1a-451c-bf05-6ee1d7de4eea",
+            "Name": "Baader-Meinhof",
+            "MovieCreationYear": 2008
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "3f83a460-d8e9-4c65-a3e8-6f867d2cfc37",
+        "_rid": "siVSAJsGHhvAAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvAAAAAAAAAAA==/",
+        "_etag": "00004b12-0000-5600-0000-68c00a8f0000",
+        "_attachments": "attachments/",
+        "_ts": 1757416079
+    },
+    {
+        "Movie": {
+            "id": "movie-540f6356-9c21-4269-b048-fa8785e56d12",
+            "Name": "Siekierezada",
+            "MovieCreationYear": 1985
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "7038d030-9a77-46a6-8408-40ffb7a5b9f9",
+        "_rid": "siVSAJsGHhvBAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvBAAAAAAAAAA==/",
+        "_etag": "00004c12-0000-5600-0000-68c00a900000",
+        "_attachments": "attachments/",
+        "_ts": 1757416080
+    },
+    {
+        "Movie": {
+            "id": "movie-976db7f3-faa2-49f4-8d6b-2beb26c3e8be",
+            "Name": "Hardware",
+            "MovieCreationYear": 1990
+        },
+        "Type": "CanNominateMovieAgainEvent",
+        "Created": "2025-09-09",
+        "TenantId": 1,
+        "id": "3d71ac9e-bb99-470b-8ceb-9e951b43deb5",
+        "_rid": "siVSAJsGHhvCAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvCAAAAAAAAAA==/",
+        "_etag": "00004d12-0000-5600-0000-68c00a900000",
+        "_attachments": "attachments/",
+        "_ts": 1757416080
+    },
+    {
+        "id": "nominated-event-movie-3b3b7b7d-593c-4204-8476-3fa03803a829",
+        "Created": "2025-09-10T09:53:06.1541075Z",
+        "TenantId": 1,
+        "Type": "NominatedMovieEvent",
+        "UserId": "user-4e545f69-8afa-48ed-a0f2-a11bc48a6cc1",
+        "_rid": "siVSAJsGHhvGAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvGAAAAAAAAAA==/",
+        "_etag": "0000e618-0000-5600-0000-68c14a820000",
+        "_attachments": "attachments/",
+        "_ts": 1757497986,
+        "MovieCreationYear": 1957,
+        "MovieName": "Eroica",
+        "MovieId": "movie-3b3b7b7d-593c-4204-8476-3fa03803a829"
+    },
+    {
+        "id": "nominated-event-movie-a561b5a6-4401-463c-9f13-614954bba55a",
+        "Created": "2025-09-16T18:30:20.0856954Z",
+        "TenantId": 1,
+        "Type": "NominatedMovieEvent",
+        "UserId": "user-f91d277a-0fa1-4a37-aa02-11914f7e7c3d",
+        "_rid": "siVSAJsGHhvIAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvIAAAAAAAAAA==/",
+        "_etag": "0200b505-0000-5600-0000-68c9acbc0000",
+        "_attachments": "attachments/",
+        "_ts": 1758047420,
+        "MovieCreationYear": 2015,
+        "MovieName": "W objęciach węża",
+        "MovieId": "movie-a561b5a6-4401-463c-9f13-614954bba55a"
+    },
+    {
+        "id": "nominated-event-movie-eb2b231e-e9ff-4fd0-b0f5-b6ed478da208",
+        "Created": "2025-09-16T18:35:38.2071805Z",
+        "TenantId": 1,
+        "Type": "NominatedMovieEvent",
+        "UserId": "user-5ae06295-969b-46e2-b736-2c88e51c841e",
+        "_rid": "siVSAJsGHhvJAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvJAAAAAAAAAA==/",
+        "_etag": "02003406-0000-5600-0000-68c9adfa0000",
+        "_attachments": "attachments/",
+        "_ts": 1758047738,
+        "MovieCreationYear": 1992,
+        "MovieName": "Myszy i ludzie",
+        "MovieId": "movie-eb2b231e-e9ff-4fd0-b0f5-b6ed478da208"
+    },
+      {
+        "id": "nominated-event-movie-3b3b7b7d-593c-4204-8476-3fa03703a829",
+        "Created": "2025-09-10T09:53:06.1541075Z",
+        "TenantId": 1,
+        "Type": "NominatedMovieEvent",
+        "UserId": "user-4e545f69-8afa-48ed-a0f2-a11bc48a6cc1",
+        "_rid": "siVSAJsGHhvGAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvGAAAAAAAAAA==/",
+        "_etag": "0000e618-0000-5600-0000-68c14a820000",
+        "_attachments": "attachments/",
+        "_ts": 1757497986,
+        "MovieCreationYear": 1957,
+        "MovieName": "Wytłumaczenie wszystkiego",
+        "MovieId": "movie-34375db1-ebc9-46ca-9d7b-4298c080fc5b"
+    },
+     {
+        "id": "nominated-event-movie-3b3b7b7d-593c-4204-8476-3fa03703a827",
+        "Created": "2025-09-10T09:53:06.1541075Z",
+        "TenantId": 1,
+        "Type": "NominatedMovieEvent",
+        "UserId": "user-4e545f69-8afa-48ed-a0f2-a11bc48a6cc1",
+        "_rid": "siVSAJsGHhvGAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvGAAAAAAAAAA==/",
+        "_etag": "0000e618-0000-5600-0000-68c14a820000",
+        "_attachments": "attachments/",
+        "_ts": 1757497986,
+        "MovieCreationYear": 2008,
+        "MovieName": "Tôkyô",
+        "MovieId": "movie-34375db1-ebc9-46ca-9d7b-4298c080fc5b"
+    },
+     {
+        "id": "nominated-event-movie-3b3b7b7d-593c-4204-8476-3fa03703a828",
+        "Created": "2025-09-10T09:53:06.1541075Z",
+        "TenantId": 1,
+        "Type": "NominatedMovieEvent",
+        "UserId": "user-4e545f69-8afa-48ed-a0f2-a11bc48a6cc1",
+        "_rid": "siVSAJsGHhvGAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvGAAAAAAAAAA==/",
+        "_etag": "0000e618-0000-5600-0000-68c14a820000",
+        "_attachments": "attachments/",
+        "_ts": 1757497986,
+        "MovieCreationYear": 1982,
+        "MovieName": "Koyaanisqatsi",
+        "MovieId": "movie-51dda789-9867-400d-b10d-917476157815"
+    },
+     {
+        "id": "nominated-event-movie-3b3b7b7d-593c-4204-8476-3fa03703a929",
+        "Created": "2025-09-10T09:53:06.1541075Z",
+        "TenantId": 1,
+        "Type": "NominatedMovieEvent",
+        "UserId": "user-4e545f69-8afa-48ed-a0f2-a11bc48a6cc1",
+        "_rid": "siVSAJsGHhvGAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvGAAAAAAAAAA==/",
+        "_etag": "0000e618-0000-5600-0000-68c14a820000",
+        "_attachments": "attachments/",
+        "_ts": 1757497986,
+        "MovieCreationYear": 1974,
+        "MovieName": "Syndykat zbrodni",
+        "MovieId": "movie-1ec7b6a2-ad4c-4ef4-b358-940b91322cb4"
+    },
+     {
+        "id": "nominated-event-movie-3b3b7b7d-593c-4204-8476-3fb03703a929",
+        "Created": "2025-09-10T09:53:06.1541075Z",
+        "TenantId": 1,
+        "Type": "NominatedMovieEvent",
+        "UserId": "user-4e545f69-8afa-48ed-a0f2-a11bc48a6cc1",
+        "_rid": "siVSAJsGHhvGAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvGAAAAAAAAAA==/",
+        "_etag": "0000e618-0000-5600-0000-68c14a820000",
+        "_attachments": "attachments/",
+        "_ts": 1757497986,
+        "MovieCreationYear": 1960,
+        "MovieName": "W pełnym słońcu",
+        "MovieId": "movie-d829fe1b-9030-481d-8247-0063d379dbfd"
+    },
+     {
+        "id": "nominated-event-movie-3b3b7b7d-593c-4204-8476-4fb03703a929",
+        "Created": "2025-09-10T09:53:06.1541075Z",
+        "TenantId": 1,
+        "Type": "NominatedMovieEvent",
+        "UserId": "user-4e545f69-8afa-48ed-a0f2-a11bc48a6cc1",
+        "_rid": "siVSAJsGHhvGAAAAAAAAAA==",
+        "_self": "dbs/siVSAA==/colls/siVSAJsGHhs=/docs/siVSAJsGHhvGAAAAAAAAAA==/",
+        "_etag": "0000e618-0000-5600-0000-68c14a820000",
+        "_attachments": "attachments/",
+        "_ts": 1757497986,
+        "MovieCreationYear": 1947,
+        "MovieName": "Niepotrzebni mogą odejść",
+        "MovieId": "movie-e6233c3e-3707-49a3-84bc-1fcdd8ccc1bf"
+    }
+]

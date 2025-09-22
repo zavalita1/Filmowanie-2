@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Filmowanie.Abstractions.Enums;
+﻿using Filmowanie.Abstractions.Enums;
 
 namespace Filmowanie.Extensions.Initialization;
 
@@ -15,7 +11,7 @@ public static class EnvironmentDependent
         if (mode == null)
             ArgumentNullException.ThrowIfNull(mode);
 
-        var actionsToInvoke = actions.Where(x => (x.Key & mode) != 0);
+        var actionsToInvoke = actions.Where(x => (x.Key & mode) == x.Key);
 
         foreach (var action in actionsToInvoke)
         {

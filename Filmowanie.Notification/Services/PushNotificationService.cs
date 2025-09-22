@@ -43,6 +43,9 @@ internal sealed class PushNotificationService : IPushNotificationService
 
     private async Task<Maybe<VoidResult>> SavePushNotification((PushSubscriptionDTO, DomainUser) input, CancellationToken cancelToken)
     {
+        if (!_options.Enabled)
+            return VoidResult.Void;
+
         var id = _guidProvider.NewGuid();
         var user = input.Item2;
         var tenant = user.Tenant;

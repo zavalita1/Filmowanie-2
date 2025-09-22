@@ -3,7 +3,7 @@
 public enum VoteType
 {
     OnePoint = 1,
-    TwoPoint = 2, 
+    TwoPoints = 2, 
     ThreePoints = 3,
     Thrash = -1
 }
