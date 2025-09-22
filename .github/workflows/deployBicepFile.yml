@@ -71,6 +71,14 @@ jobs:
           az bicep install
           az bicep upgrade
 
+      - name: Run Bicep What-If
+        run: |
+          az deployment group what-if \
+            --name WhatIfDeployment \
+            --resource-group ${{ secrets.AZURE_RG }} \
+            --template-file ./main.bicep \
+            --parameters env=Development
+
       - name: Deploy Bicep file
         uses: azure/arm-deploy@v2
         with:
