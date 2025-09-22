@@ -128,6 +128,8 @@ ipch/
 # TFS 2012 Local Workspace
 $tf/
 
+appsettings.Development.json
+
 # Guidance Automation Toolkit
 *.gpState
 
