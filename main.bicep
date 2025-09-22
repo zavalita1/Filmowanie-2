@@ -2,30 +2,32 @@
 param env string = 'Undefined'
 
 
-var appServicePlanName = toLower('AppServicePlan-${webAppName}')
-var appInsightsName = toLower('appins-${webAppName}')
-var serviceBusName = toLower('sb-${webAppName}')
-var dbAccountName = toLower('dba-${webAppName}')
-var dbName = toLower('db-${webAppName}')
-var keyVaultName = toLower('kv-${webAppName}')
-var storageAccountName = toLower('storage${webAppName}')
-var blobKeysContainerName = toLower('dpk-${webAppName}')
+var appServicePlanName = toLower('AppServicePlan-${wepAppName}')
+var appInsightsName = toLower('appins-${defaultNameSuffix}')
+var serviceBusName = toLower('sb-${defaultNameSuffix}')
+var dbAccountName = toLower('dba-${defaultNameSuffix}')
+var dbName = toLower('db-${defaultNameSuffix}')
+var keyVaultName = toLower('kv-${defaultNameSuffix}')
+var storageAccountName = toLower('storage${defaultNameSuffix}')
+var blobKeysContainerName = toLower('dpk-${defaultNameSuffix}')
 
 var storageBlobDataOwnerRoleId  = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b' // built-in azure 'Storage Blob Data Owner' RBAC
 
 var environments = {
   Development: {
-    webAppName: 'filmowanie2'
+    defaultNameSuffix: 'filmowanie2'
+    webAppName: 'filmowanie'
   }
 }
 
-var webAppName = environments[env].webAppName
+var defaultNameSuffix = environments[env].defaultNameSuffix
+var wepAppName = environments[env].webAppName
 
 param tenantId string = subscription().tenantId
 param location string = resourceGroup().location
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
-  name: 'filmowanie2'
+  name: defaultNameSuffix
   location: location
   sku: {
     name: 'Basic'
@@ -41,7 +43,7 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-pr
 
 resource appInsightsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   location: location
-  name: 'appsworkspace${webAppName}'
+  name: 'appsworkspace${defaultNameSuffix}'
   properties: {
     sku: {
       name: 'PerGB2018'
@@ -67,7 +69,7 @@ resource appInsightsComponents 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 resource ASPFilmowaniegroup 'Microsoft.Web/serverfarms@2023-12-01' = {
-  name: appServicePlanName
+  name: defaultNameSuffix
   kind: 'app'
   location: location
   tags: {}
@@ -98,7 +100,7 @@ resource ASPFilmowaniegroup 'Microsoft.Web/serverfarms@2023-12-01' = {
 }
 
 resource filmowanie 'Microsoft.Web/sites@2023-12-01' = {
-  name: webAppName
+  name: wepAppName
   kind: 'app'
   location: location
   tags: {}
