@@ -11,5 +11,5 @@ public enum StartupMode
     WithCosmosEmulator = 0x00001000,
     LocalWithCosmosEmulator = 0x00001011,
     LocalWithCosmosEmulatorAndCompiledFrontend = 0x00001101,
-    Production = 0x10001000
+    Production = 0x10000100
 }
