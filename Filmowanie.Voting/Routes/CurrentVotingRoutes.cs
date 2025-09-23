@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.Interfaces;
+﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Voting.DTOs.Incoming;
 using Filmowanie.Voting.DTOs.Outgoing;
@@ -12,51 +11,51 @@ namespace Filmowanie.Voting.Routes;
 // TODO UTs
 internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
 {
-    private readonly ICurrentUserAccessor _userAccessor;
-    private readonly ICurrentVotingSessionIdAccessor _currentVotingSessionIdAccessor;
-    private readonly ICurrentVotingService _currentVotingService;
-    private readonly IVotingMappersComposite _movieVotingMappersComposite;
-    private readonly IVotingStateMapper _votingStateMapper;
-    private readonly ICurrentVotingStatusRetriever _statusRetriever;
+    private readonly ICurrentUserAccessor userAccessor;
+    private readonly ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor;
+    private readonly ICurrentVotingService currentVotingService;
+    private readonly IVotingMappersComposite movieVotingMappersComposite;
+    private readonly IVotingStateMapper votingStateMapper;
+    private readonly ICurrentVotingStatusRetriever statusRetriever;
 
-    private readonly IMoviesForVotingSessionEnricher _moviesForVotingSessionEnricher;
-    private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
-    private readonly IVoteService _voteService;
+    private readonly IMoviesForVotingSessionEnricher moviesForVotingSessionEnricher;
+    private readonly IFluentValidatorAdapterProvider validatorAdapterProvider;
+    private readonly IVoteService voteService;
 
     public CurrentVotingRoutes(IMoviesForVotingSessionEnricher moviesForVotingSessionEnricher, IFluentValidatorAdapterProvider validatorAdapterProvider, IVoteService voteService, ICurrentUserAccessor userAccessor, ICurrentVotingSessionIdAccessor currentVotingSessionIdAccessor, ICurrentVotingService currentVotingService, IVotingMappersComposite movieVotingMappersComposite, IVotingStateMapper votingStateMapper, ICurrentVotingStatusRetriever statusRetriever)
     {
-        _moviesForVotingSessionEnricher = moviesForVotingSessionEnricher;
-        _validatorAdapterProvider = validatorAdapterProvider;
-        _voteService = voteService;
-        _userAccessor = userAccessor;
-        _currentVotingSessionIdAccessor = currentVotingSessionIdAccessor;
-        _currentVotingService = currentVotingService;
-        _movieVotingMappersComposite = movieVotingMappersComposite;
-        _votingStateMapper = votingStateMapper;
-        _statusRetriever = statusRetriever;
+        this.moviesForVotingSessionEnricher = moviesForVotingSessionEnricher;
+        this.validatorAdapterProvider = validatorAdapterProvider;
+        this.voteService = voteService;
+        this.userAccessor = userAccessor;
+        this.currentVotingSessionIdAccessor = currentVotingSessionIdAccessor;
+        this.currentVotingService = currentVotingService;
+        this.movieVotingMappersComposite = movieVotingMappersComposite;
+        this.votingStateMapper = votingStateMapper;
+        this.statusRetriever = statusRetriever;
     }
 
     public async Task<IResult> GetCurrentVotingSessionMoviesAsync(CancellationToken cancel)
     {
-        var maybeCurrentUser = _userAccessor.GetDomainUser(VoidResult.Void);
-        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
-        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
-        var maybeCurrentlyVotedMovies = await _currentVotingService.GetCurrentlyVotedMoviesAsync(maybeCurrentVotingId, cancel);
-        var maybeCurrentlyVotedMoviesWithVotes = await _currentVotingService.GetCurrentlyVotedMoviesWithVotesAsync(maybeCurrentVotingId, cancel);
-        var maybeDto = _movieVotingMappersComposite.Map(maybeCurrentlyVotedMovies, maybeCurrentlyVotedMoviesWithVotes, maybeCurrentUser);
-        var result = await _moviesForVotingSessionEnricher.EnrichWithPlaceholdersAsync(maybeDto, maybeCurrentVotingId, cancel);
+        var maybeCurrentUser = this.userAccessor.GetDomainUser(VoidResult.Void);
+        var maybeNullableCurrentVotingId = await this.currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
+        var maybeCurrentVotingId = this.currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
+        var maybeCurrentlyVotedMovies = await this.currentVotingService.GetCurrentlyVotedMoviesAsync(maybeCurrentVotingId, cancel);
+        var maybeCurrentlyVotedMoviesWithVotes = await this.currentVotingService.GetCurrentlyVotedMoviesWithVotesAsync(maybeCurrentVotingId, cancel);
+        var maybeDto = this.movieVotingMappersComposite.Map(maybeCurrentlyVotedMovies, maybeCurrentlyVotedMoviesWithVotes, maybeCurrentUser);
+        var result = await this.moviesForVotingSessionEnricher.EnrichWithPlaceholdersAsync(maybeDto, maybeCurrentVotingId, cancel);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }
 
     public async Task<IResult> VoteAsync(VoteDTO dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterProvider.GetAdapter<VoteDTO>();
+        var validator = this.validatorAdapterProvider.GetAdapter<VoteDTO>();
         var maybeDto = validator.Validate(dto);
-        var maybeCurrentUser = _userAccessor.GetDomainUser(maybeDto);
-        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
-        var maybeCurrentVotingId = _currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
-        var maybeVote = await _voteService.VoteAsync(maybeCurrentUser, maybeCurrentVotingId, maybeDto, cancel);
+        var maybeCurrentUser = this.userAccessor.GetDomainUser(maybeDto);
+        var maybeNullableCurrentVotingId = await this.currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
+        var maybeCurrentVotingId = this.currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
+        var maybeVote = await this.voteService.VoteAsync(maybeCurrentUser, maybeCurrentVotingId, maybeDto, cancel);
         var result = maybeVote.Map(_ => new AknowledgedDTO { Message = "OK" });
 
         return RoutesResultHelper.UnwrapOperationResult(result);
@@ -64,10 +63,10 @@ internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
 
     public async Task<IResult> GetVotingSessionStatus(CancellationToken cancel)
     {
-        var maybeCurrentUser = _userAccessor.GetDomainUser(VoidResult.Void);
-        var maybeNullableCurrentVotingId = await _currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
-        var maybeVotingStatus = await _statusRetriever.GetCurrentVotingStatusAsync(maybeNullableCurrentVotingId, cancel);
-        var result = _votingStateMapper.Map(maybeVotingStatus, maybeNullableCurrentVotingId);
+        var maybeCurrentUser = this.userAccessor.GetDomainUser(VoidResult.Void);
+        var maybeNullableCurrentVotingId = await this.currentVotingSessionIdAccessor.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancel);
+        var maybeVotingStatus = await this.statusRetriever.GetCurrentVotingStatusAsync(maybeNullableCurrentVotingId, cancel);
+        var result = this.votingStateMapper.Map(maybeVotingStatus, maybeNullableCurrentVotingId);
 
         return RoutesResultHelper.UnwrapOperationResult(result);
     }

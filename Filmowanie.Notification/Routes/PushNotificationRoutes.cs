@@ -1,5 +1,4 @@
 ﻿using Filmowanie.Abstractions.Configuration;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Notification.DTOs.Incoming;
@@ -12,38 +11,38 @@ namespace Filmowanie.Notification.Routes;
 
 internal sealed class PushNotificationRoutes : IPushNotificationRoutes
 {
-    private readonly ICurrentUserAccessor _userAccessor;
-    private readonly IPushNotificationService _pushNotificationService;
-    private readonly IRoutesResultHelper _routesResultHelper;
-    private readonly PushNotificationOptions _options;
-    private readonly IFluentValidatorAdapter<PushSubscriptionDTO> _validator;
+    private readonly ICurrentUserAccessor userAccessor;
+    private readonly IPushNotificationService pushNotificationService;
+    private readonly IRoutesResultHelper routesResultHelper;
+    private readonly PushNotificationOptions options;
+    private readonly IFluentValidatorAdapter<PushSubscriptionDTO> validator;
     
     public PushNotificationRoutes(IFluentValidatorAdapterProvider factory, IOptions<PushNotificationOptions> options, IPushNotificationService pushNotificationService, IRoutesResultHelper routesResultHelper, ICurrentUserAccessor userAccessor)
     {
-        _pushNotificationService = pushNotificationService;
-        _routesResultHelper = routesResultHelper;
-        _userAccessor = userAccessor;
-        _options = options.Value;
-        _validator = factory.GetAdapter<PushSubscriptionDTO>();
+        this.pushNotificationService = pushNotificationService;
+        this.routesResultHelper = routesResultHelper;
+        this.userAccessor = userAccessor;
+        this.options = options.Value;
+        validator = factory.GetAdapter<PushSubscriptionDTO>();
     }
 
     public async Task<IResult> Add(PushSubscriptionDTO dto, CancellationToken cancelToken)
     {
-        var maybeDto = _validator.Validate(dto);
-        var currentUser = _userAccessor.GetDomainUser(maybeDto);
-        var result = await _pushNotificationService.SavePushNotification(maybeDto, currentUser, cancelToken);
+        var maybeDto = this.validator.Validate(dto);
+        var currentUser = this.userAccessor.GetDomainUser(maybeDto);
+        var result = await this.pushNotificationService.SavePushNotification(maybeDto, currentUser, cancelToken);
         var resultDto = result.Map(_ => new AwknowledgedDTO());
 
-        return _routesResultHelper.UnwrapOperationResult(resultDto);
+        return this.routesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> Notify(NotifyDTO dto, CancellationToken cancelToken)
     {
-        var maybeTenant = _userAccessor.GetDomainUser(VoidResult.Void).Map(x => x.Tenant);
-        var result = await _pushNotificationService.SendAllPushNotificationsAsync(maybeTenant, dto.Message.AsMaybe(), cancelToken);
+        var maybeTenant = this.userAccessor.GetDomainUser(VoidResult.Void).Map(x => x.Tenant);
+        var result = await this.pushNotificationService.SendAllPushNotificationsAsync(maybeTenant, dto.Message.AsMaybe(), cancelToken);
 
-        return _routesResultHelper.UnwrapOperationResult(result);
+        return this.routesResultHelper.UnwrapOperationResult(result);
     }
 
-    public Task<IResult> GetVapidPublicKey(CancellationToken cancelToken) => Task.FromResult<IResult>(TypedResults.Ok(new VapidKeyDTO { Key = _options.PublicKey }));
+    public Task<IResult> GetVapidPublicKey(CancellationToken cancelToken) => Task.FromResult<IResult>(TypedResults.Ok(new VapidKeyDTO { Key = this.options.PublicKey }));
 }

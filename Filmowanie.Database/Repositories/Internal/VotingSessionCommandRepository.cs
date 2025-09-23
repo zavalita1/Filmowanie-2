@@ -13,49 +13,49 @@ namespace Filmowanie.Database.Repositories.Internal;
 
 internal sealed class VotingSessionCommandRepository : IVotingSessionCommandRepository
 {
-    private readonly VotingResultsContext _ctx;
-    private readonly CosmosOptions _options;
+    private readonly VotingResultsContext ctx;
+    private readonly CosmosOptions options;
     private readonly ICosmosClientOptionsProvider cosmosClientOptionsProvider;
 
 
     public VotingSessionCommandRepository(VotingResultsContext ctx, IOptions<CosmosOptions> options, ICosmosClientOptionsProvider cosmosClientOptionsProvider)
     {
-        _ctx = ctx;
-        _options = options.Value;
+        this.ctx = ctx;
+        this.options = options.Value;
         this.cosmosClientOptionsProvider = cosmosClientOptionsProvider;
     }
 
     public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancelToken)
     {
         var votingResultEntity = votingResult.AsMutable();
-        _ctx.VotingResults.Add(votingResultEntity);
-        return _ctx.SaveChangesAsync(cancelToken);
+        ctx.VotingResults.Add(votingResultEntity);
+        return ctx.SaveChangesAsync(cancelToken);
     }
 
     public async Task UpdateAsync(string id, Action<VotingResult> updateAction, CancellationToken cancelToken)
     {
-        var votingResultEntity = await _ctx.VotingResults.AsNoTracking().SingleAsync(x => x.id == id, cancelToken);
+        var votingResultEntity = await ctx.VotingResults.AsNoTracking().SingleAsync(x => x.id == id, cancelToken);
         updateAction.Invoke(votingResultEntity);
 
         var cosmosClientOptions = this.cosmosClientOptionsProvider.Get();
-        var cosmosClient = ClientInstance.GetClient(_options.ConnectionString, cosmosClientOptions.ClientOptions);
-        var c = cosmosClient.GetContainer(_options.DbName, DbContainerNames.Entities);
+        var cosmosClient = ClientInstance.GetClient(this.options.ConnectionString, cosmosClientOptions.ClientOptions);
+        var c = cosmosClient.GetContainer(this.options.DbName, DbContainerNames.Entities);
         await c.ReplaceItemAsync(votingResultEntity, votingResultEntity.id, new PartitionKey(votingResultEntity.id), null, cancelToken);
     }
 
     private static class ClientInstance
     {
-        private static CosmosClient? client;
-        private static object locker = new();
+        private static CosmosClient? _client;
+        private static readonly object Locker = new();
 
         public static CosmosClient GetClient(string connectionString, CosmosClientOptions options)
         {
-            if (client != null) return client;
+            if (_client != null) return _client;
 
-            lock (locker)
+            lock (Locker)
             {
-                client = new CosmosClient(connectionString, options);
-                return client;
+                _client = new CosmosClient(connectionString, options);
+                return _client;
             }
         }
     }

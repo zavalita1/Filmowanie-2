@@ -9,11 +9,11 @@ namespace Filmowanie.Voting.Deciders.PickUserNomination;
 // TODO UTs
 public sealed class PickUserToNominateStrategy : IPickUserToNominateStrategy
 {
-    private readonly ILogger<PickUserToNominateStrategy> _log;
+    private readonly ILogger<PickUserToNominateStrategy> log;
 
     public PickUserToNominateStrategy(ILogger<PickUserToNominateStrategy> log)
     {
-        _log = log;
+        this.log = log;
     }
 
     public IReadOnlyEmbeddedUser GetUserToNominate(IReadOnlyEmbeddedMovie movieToReplace, IDictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> userContexts)
@@ -32,7 +32,7 @@ public sealed class PickUserToNominateStrategy : IPickUserToNominateStrategy
             if (pickUserToNominateContext.Value.Votes.Any(x => x.Item2 == VoteType.Thrash && x.MovieId == movieToReplace.id))
             {
                 userScores[pickUserToNominateContext.Key] += userContexts.Count / 2;
-                _log.LogInformation("{type} User: {user} get bonus for voting for trash.",
+                this.log.LogInformation("{type} User: {user} get bonus for voting for trash.",
                     nameof(PickUserToNominateStrategy), pickUserToNominateContext.Key.Name);
             }
 
@@ -48,7 +48,7 @@ public sealed class PickUserToNominateStrategy : IPickUserToNominateStrategy
         var previousNominationsLength = context.Value.NominationsCount;
         var result = -1 * previousNominationsLength * nominationPendingComponent * participationComponent;
 
-        _log.LogInformation("{type}: user: {user} participation percent: {percent}, previous nominations: {prev}, avg. nomination pending time: {pending} giving score: {score}."
+        this.log.LogInformation("{type}: user: {user} participation percent: {percent}, previous nominations: {prev}, avg. nomination pending time: {pending} giving score: {score}."
             , nameof(PickUserToNominateStrategy),
             context.Key.Name, context.Value.ParticipationFactor, context.Value.NominationsCount, context.Value.AverageNominationPendingTimeInDays, result);
         return (context.Key, result);

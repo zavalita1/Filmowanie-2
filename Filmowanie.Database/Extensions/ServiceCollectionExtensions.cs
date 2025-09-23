@@ -11,8 +11,9 @@ using Filmowanie.Database.Repositories.Internal;
 using Azure.Identity;
 using System.Configuration;
 using Filmowanie.Abstractions.Configuration;
-using Filmowanie.Extensions.Initialization;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
+using Filmowanie.Database.OptionsProviders;
 using Filmowanie.Database.TestData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -53,13 +54,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPushSubscriptionQueryRepository, PushSubscriptionQueryRepository>();
         services.Decorate<IPushSubscriptionQueryRepository, PushSubscriptionQueryDecorator>();
 
-        if (!services.Any(s => s.ServiceType == typeof(ICosmosClientOptionsProvider)))
+        if (services.All(s => s.ServiceType != typeof(ICosmosClientOptionsProvider)))
             services.AddSingleton<ICosmosClientOptionsProvider, DefaultCosmosClientOptionsProvider>();
 
         await EnvironmentDependent.InvokeAsync(new()
         {
             [StartupMode.WithCosmosEmulator] = () => TestDataDbHydrator.HydrateDbWithMockedDataAsync(databaseName, dbConnectionString, configuration[CosmosOptions.ExtensiveEFLoggingEnabledKeyName]!)
         });
+        return;
 
         void ConfigureContext(IServiceProvider sp, DbContextOptionsBuilder options)
         {

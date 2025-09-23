@@ -1,6 +1,4 @@
-﻿using Filmowanie.Abstractions.Maybe;
-
-namespace Filmowanie.Abstractions.Extensions;
+﻿namespace Filmowanie.Abstractions.Maybe;
 
 public static class ErrorExtensions
 {

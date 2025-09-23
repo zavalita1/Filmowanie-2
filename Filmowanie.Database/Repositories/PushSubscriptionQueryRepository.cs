@@ -9,20 +9,20 @@ namespace Filmowanie.Database.Repositories;
 
 internal sealed class PushSubscriptionQueryRepository : IPushSubscriptionQueryRepository
 {
-    private readonly PushSubscriptionsContext _ctx;
+    private readonly PushSubscriptionsContext ctx;
 
     public PushSubscriptionQueryRepository(PushSubscriptionsContext ctx)
     {
-        _ctx = ctx;
+        this.ctx = ctx;
     }
 
     public async Task<IReadOnlyPushSubscriptionEntity[]> GetAllAsync(TenantId tenant, CancellationToken cancelToken)
     {
-        return await _ctx.Subscriptions.AsNoTracking().ToArrayAsync(cancelToken);
+        return await this.ctx.Subscriptions.AsNoTracking().ToArrayAsync(cancelToken);
     }
 
     public async Task<IReadOnlyPushSubscriptionEntity[]> GetAsync(Expression<Func<IReadOnlyPushSubscriptionEntity, bool>> predicate, TenantId tenant, CancellationToken cancelToken)
     {
-        return await _ctx.Subscriptions.Where(predicate).AsNoTracking().ToArrayAsync(cancelToken);
+        return await this.ctx.Subscriptions.Where(predicate).AsNoTracking().ToArrayAsync(cancelToken);
     }
 }

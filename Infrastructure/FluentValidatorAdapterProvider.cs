@@ -1,27 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using Filmowanie.Abstractions.Interfaces;
-using Filmowanie.Interfaces;
 using FluentValidation;
 
 namespace Filmowanie.Infrastructure;
 
-public sealed class FluentValidatorAdapterProvider : IFluentValidatorAdapterProvider
+internal sealed class FluentValidatorAdapterProvider : IFluentValidatorAdapterProvider
 {
-    private readonly IEnumerable<IFluentValidatorAdapter> _validators;
-    private readonly IFluentValidationAdapterFactory _factory;
+    private readonly IEnumerable<IFluentValidatorAdapter> validators;
+    private readonly IFluentValidationAdapterFactory factory;
 
     public FluentValidatorAdapterProvider(IEnumerable<IFluentValidatorAdapter> validators, IFluentValidationAdapterFactory factory)
     {
-        _validators = validators;
-        _factory = factory;
+        this.validators = validators;
+        this.factory = factory;
     }
 
     public IFluentValidatorAdapter<TInput> GetAdapter<TInput>(string keyedInstance)
     {
-        var typedValidator = (IValidator<TInput>)null!;
+        IValidator<TInput>? typedValidator = null!;
 
-        foreach (var validator in _validators)
+        foreach (var validator in this.validators)
         {
             if (validator.CanHandle(keyedInstance, out typedValidator))
                 break;
@@ -30,7 +29,7 @@ public sealed class FluentValidatorAdapterProvider : IFluentValidatorAdapterProv
         if (typedValidator == null)
             throw new InvalidOperationException($"No registered validator found for type: {typeof(TInput).Name} and key: {keyedInstance}");
 
-        var adapter = _factory.Create(typedValidator);
+        var adapter = this.factory.Create(typedValidator);
         return adapter;
     }
 

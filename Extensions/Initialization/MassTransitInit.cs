@@ -3,6 +3,7 @@ using System.Reflection;
 using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Database.Contants;
 using Filmowanie.Database.Entities.Voting;
+using Filmowanie.Infrastructure;
 using Filmowanie.Notification.Consumers;
 using Filmowanie.Voting.Consumers;
 using Filmowanie.Voting.Sagas;
@@ -20,9 +21,9 @@ internal static class MassTransitInit
 
         services.AddMassTransit(x =>
         {
-            x.AddConfigureEndpointsCallback((context, name, cfg) =>
+            x.AddConfigureEndpointsCallback((_, _, cfg) =>
             {
-                cfg.UseMessageRetry(r => r.Incremental(5, TimeSpan.Zero, TimeSpan.FromMilliseconds(250)));
+                cfg.UseMessageRetry(r => r.Incremental(5, TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250)));
             });
 
             x.SetKebabCaseEndpointNameFormatter();
@@ -41,7 +42,7 @@ internal static class MassTransitInit
                 typeof(Nomination.Consumers.ResultsConfirmedConsumer).Assembly,
                 typeof(ConcludeVotingEventConsumer).Assembly,
                 typeof(ResultsConfirmedConsumer).Assembly,
-            }; // TODO
+            };
 
             x.AddConsumers(entryAssembly);
             x.AddSagaStateMachine<VotingStateMachine, VotingStateInstance>();

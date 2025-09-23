@@ -1,6 +1,5 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.DTOs.Outgoing;
@@ -97,7 +96,7 @@ internal sealed class AccountUserService : IAccountUserService
     {
         var user = await this.usersQueryRepository.GetUserByMailAsync(data.Email, cancellation);
         var extractor = this.extractorFactory.GetAdapter<T>();
-        var result = extractor.GetLodingResultData(user, data);
+        var result = extractor.GetLoginResultData(user, data);
         
         return result;
     }

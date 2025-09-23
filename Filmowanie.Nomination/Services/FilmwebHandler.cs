@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
@@ -19,11 +18,11 @@ namespace Filmowanie.Nomination.Services;
 // TODO refactor to ditch regexes, write UTs
 internal sealed partial class FilmwebHandler : IFilmwebHandler
 {
-    private readonly IHttpClientFactory _clientFactory;
-    private readonly IGuidProvider _guidProvider;
-    private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IFilmwebPathResolver _filmwebPathResolver;
-    private ILogger<FilmwebHandler> _log;
+    private readonly IHttpClientFactory clientFactory;
+    private readonly IGuidProvider guidProvider;
+    private readonly IDateTimeProvider dateTimeProvider;
+    private readonly IFilmwebPathResolver filmwebPathResolver;
+    private ILogger<FilmwebHandler> log;
 
     // TODO move away from regexes
     // TODO add validation against movie being in cinemas
@@ -53,21 +52,21 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
 
     public FilmwebHandler(IHttpClientFactory clientFactory, IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider, IFilmwebPathResolver filmwebPathResolver, ILogger<FilmwebHandler> log)
     {
-        _clientFactory = clientFactory;
-        _guidProvider = guidProvider;
-        _dateTimeProvider = dateTimeProvider;
-        _filmwebPathResolver = filmwebPathResolver;
-        _log = log;
+        this.clientFactory = clientFactory;
+        this.guidProvider = guidProvider;
+        this.dateTimeProvider = dateTimeProvider;
+        this.filmwebPathResolver = filmwebPathResolver;
+        this.log = log;
     }
 
     public Task<Maybe<IReadOnlyMovieEntity>> GetMovieAsync(Maybe<(NominationDTO NominationDto, DomainUser CurrentUser)> input, CancellationToken cancel) =>
-        input.AcceptAsync(GetMovieAsync, _log, cancel);
+        input.AcceptAsync(GetMovieAsync, this.log, cancel);
 
 
     public async Task<Maybe<IReadOnlyMovieEntity>> GetMovieAsync((NominationDTO NominationDto, DomainUser CurrentUser) input, CancellationToken cancel)
     {
-        var metadata = _filmwebPathResolver.GetMetadata(input.NominationDto.MovieFilmwebUrl);
-        var client = _clientFactory.CreateClient(HttpClientNames.Filmweb);
+        var metadata = this.filmwebPathResolver.GetMetadata(input.NominationDto.MovieFilmwebUrl);
+        var client = this.clientFactory.CreateClient(HttpClientNames.Filmweb);
         var metadataRoute = $"{Urls.FilmwebApiUrl}{metadata.MovieId}/info";
         using var apiRequest = new HttpRequestMessage(HttpMethod.Get, metadataRoute);
         apiRequest.Headers.Add("x-locale", "pl");
@@ -82,7 +81,7 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
             return new Error<IReadOnlyMovieEntity>("Cannot access filmweb. Check if the link provided is correct. If it is, try again. If this issue persists, contact admin.", ErrorType.Network);
 
         var responsesContentTask = responses[0].Content.ReadAsStringAsync(cancel);
-        var responsesContent2Task = responses[1].Content.ReadFromJsonAsync<FilmwebInfoDTO>(cancellationToken: cancel);
+        var responsesContent2Task = responses[1].Content.ReadFromJsonAsync<FilmwebInfoDto>(cancellationToken: cancel);
 
         var responseContent = await responsesContentTask;
         var responseContent2 = await responsesContent2Task;
@@ -119,7 +118,7 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
 
         movieBuilder = movieBuilder.WithTenant(input.CurrentUser.Tenant);
 
-        return movieBuilder.Build(_guidProvider, _dateTimeProvider).AsMaybe();
+        return movieBuilder.Build(this.guidProvider, this.dateTimeProvider).AsMaybe();
     }
 
     private static void ExtractDataImage(string responseContent, FilmwebUriMetadata metadata, ref MovieBuilder movieBuilder)
@@ -275,7 +274,7 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
         }
     }
 
-    public sealed class FilmwebInfoDTO
+    public sealed class FilmwebInfoDto
     {
         public string Title { get; set; } = null!;
         public string OriginalTitle { get; set; } = null!;

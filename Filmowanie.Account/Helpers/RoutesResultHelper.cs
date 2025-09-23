@@ -18,8 +18,8 @@ internal class RoutesResultHelper : IRoutesResultHelper
 
         IResult? unwrapped = result.Error!.Value.Type switch
         {
-            ErrorType.IncomingDataIssue => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.Concat(separator)),
-            ErrorType.ValidationError => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.Concat(separator)),
+            ErrorType.IncomingDataIssue => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.JoinStrings(separator)),
+            ErrorType.ValidationError => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.JoinStrings(separator)),
             ErrorType.AuthorizationIssue => TypedResults.Forbid(),
             ErrorType.AuthenticationIssue => TypedResults.Unauthorized(),
             ErrorType.Canceled => TypedResults.StatusCode(499),
@@ -38,6 +38,6 @@ internal class RoutesResultHelper : IRoutesResultHelper
         if (unwrapped != null)
             return unwrapped;
 
-        throw new InvalidOperationException($"Erroneous result! {result.Error.Value.ErrorMessages.Concat(separator)}.");
+        throw new InvalidOperationException($"Erroneous result! {result.Error.Value.ErrorMessages.JoinStrings(separator)}.");
     }
 }

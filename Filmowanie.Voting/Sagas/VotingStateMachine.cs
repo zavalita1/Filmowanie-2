@@ -17,14 +17,14 @@ namespace Filmowanie.Voting.Sagas;
 public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInstance>
 {
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    private readonly ILogger<VotingStateMachine> _logger;
+    private readonly ILogger<VotingStateMachine> logger;
     // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IDateTimeProvider dateTimeProvider;
 
     public VotingStateMachine(ILogger<VotingStateMachine> logger, IDateTimeProvider dateTimeProvider)
     {
-        _logger = logger;
-        _dateTimeProvider = dateTimeProvider;
+        this.logger = logger;
+        this.dateTimeProvider = dateTimeProvider;
 
         InstanceState(x => x.CurrentState);
 
@@ -47,12 +47,12 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 .Activity(x => x.OfType<CreateVotingSessionEntryActivity>())
                 .Then(ctx =>
                 {
-                    _logger.LogInformation("Voting is starting...");
+                    this.logger.LogInformation("Voting is starting...");
                     var movies = ctx.Message.Movies.Select(x => new EmbeddedMovieWithVotes { Movie = x, Votes = [] }).ToArray();
                     ctx.Saga.Movies = movies;
                     ctx.Saga.Nominations = ctx.Message.NominationsData;
                     ctx.Saga.TenantId = ctx.Message.TenantId.Id;
-                    ctx.Saga.Created = _dateTimeProvider.Now;
+                    ctx.Saga.Created = this.dateTimeProvider.Now;
                 })
                 .ThenAsync(async ctx =>
                 {
@@ -66,14 +66,14 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During(WaitingForNominations,
             When(AddMovieEvent)
-                .Then(ctx => _logger.LogInformation("Adding movie.."))
+                .Then(ctx => this.logger.LogInformation("Adding movie.."))
                 .ThenAsync(ctx =>
                 {
                     var movieWithVotes = new EmbeddedMovieWithVotes(ctx.Message.Movie);
                     ctx.Saga.Movies = ctx.Saga.Movies.Concat([movieWithVotes]);
 
                     var nominationToConclude = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
-                    nominationToConclude.Concluded = _dateTimeProvider.Now;
+                    nominationToConclude.Concluded = this.dateTimeProvider.Now;
                     nominationToConclude.MovieId = ctx.Message.Movie.id;
 
                     var result = ctx.Saga.Nominations.All(x => x.Concluded != null) ? ctx.TransitionToState(NominationsConcluded) : Task.CompletedTask;
@@ -82,7 +82,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During([WaitingForNominations, NominationsConcluded],
             When(RemoveMovieEvent)
-                .Then(ctx => _logger.LogInformation("Removing movie..."))
+                .Then(ctx => this.logger.LogInformation("Removing movie..."))
                 .ThenAsync(async ctx =>
                 {
                     if (ctx.Saga.Movies.All(x => x.Movie.id != ctx.Message.Movie.id))
@@ -102,7 +102,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During([WaitingForNominations, NominationsConcluded],
             When(AddVoteEvent)
-                .Then(ctx => _logger.LogInformation("Adding a vote..."))
+                .Then(ctx => this.logger.LogInformation("Adding a vote..."))
                 .Then(ctx =>
                 {
                     var movie = ctx.Saga.Movies.Single(x => x.Movie.id == ctx.Message.Movie.id);
@@ -119,7 +119,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During([WaitingForNominations, NominationsConcluded],
             When(RemoveVoteEvent)
-                .Then(ctx => _logger.LogInformation("Removing a vote..."))
+                .Then(ctx => this.logger.LogInformation("Removing a vote..."))
                 .Then(ctx =>
                 {
                     var movie = ctx.Saga.Movies.Single(x => x.Movie.id == ctx.Message.Movie.id);
@@ -136,7 +136,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During(NominationsConcluded,
             When(ConcludeVoting)
-                .Then(ctx => _logger.LogInformation("Voting ending..."))
+                .Then(ctx => this.logger.LogInformation("Voting ending..."))
                 .Publish(ctx =>
                 {
                     var movies = ctx.Saga.Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();

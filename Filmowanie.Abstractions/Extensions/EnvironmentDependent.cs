@@ -1,6 +1,6 @@
 ﻿using Filmowanie.Abstractions.Enums;
 
-namespace Filmowanie.Extensions.Initialization;
+namespace Filmowanie.Abstractions.Extensions;
 
 public static class EnvironmentDependent
 {

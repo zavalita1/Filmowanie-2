@@ -1,5 +1,4 @@
 using Filmowanie.Abstractions.DomainModels;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.DTOs.Outgoing;
 using Filmowanie.Account.Interfaces;
@@ -9,14 +8,14 @@ namespace Filmowanie.Account.Mappers;
 
 internal sealed class UserDtoMapper : IUserDtoMapper
 {
-    private readonly ILogger<UserDtoMapper> _log;
+    private readonly ILogger<UserDtoMapper> log;
 
     public UserDtoMapper(ILogger<UserDtoMapper> log)
     {
-        _log = log;
+        this.log = log;
     }
 
-    public Maybe<UserDTO> Map(Maybe<DomainUser> maybeUser) => maybeUser.Accept(MapToDtoInternal, _log);
+    public Maybe<UserDTO> Map(Maybe<DomainUser> maybeUser) => maybeUser.Accept(MapToDtoInternal, this.log);
 
     private static Maybe<UserDTO> MapToDtoInternal(DomainUser user)
     {

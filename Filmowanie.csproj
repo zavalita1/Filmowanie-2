@@ -76,6 +76,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Filmowanie.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="Filmowanie.Abstractions\Filmowanie.Abstractions.csproj" />
 	  <ProjectReference Include="Filmowanie.Account\Filmowanie.Account.csproj" />
 	  <ProjectReference Include="Filmowanie.Database\Filmowanie.Database.csproj" />

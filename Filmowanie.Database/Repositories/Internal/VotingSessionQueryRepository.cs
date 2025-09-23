@@ -8,23 +8,23 @@ namespace Filmowanie.Database.Repositories.Internal;
 
 internal class VotingSessionQueryRepository : IVotingSessionQueryRepositoryInUserlessContext
 {
-    private readonly VotingResultsContext _ctx;
+    private readonly VotingResultsContext ctx;
 
     public VotingSessionQueryRepository(VotingResultsContext ctx)
     {
-        _ctx = ctx;
+        this.ctx = ctx;
     }
 
     public async Task<IReadOnlyVotingResult?> Get(Expression<Func<IReadOnlyVotingResult, bool>> predicate,
         CancellationToken cancelToken)
     {
-        var currentVotingSession = await _ctx.VotingResults.AsNoTracking().SingleOrDefaultAsync(predicate, cancelToken);
+        var currentVotingSession = await this.ctx.VotingResults.AsNoTracking().SingleOrDefaultAsync(predicate, cancelToken);
         return currentVotingSession;
     } 
 
     public async Task<IEnumerable<IReadOnlyVotingResult>> GetAll(Expression<Func<IReadOnlyVotingResult, bool>> predicate, CancellationToken cancelToken)
     {
-        return await _ctx.VotingResults.AsNoTracking().Where(predicate).ToArrayAsync(cancelToken);
+        return await this.ctx.VotingResults.AsNoTracking().Where(predicate).ToArrayAsync(cancelToken);
     }
 
     public async Task<IEnumerable<IReadOnlyVotingResult>> GetVotingResultAsync(Expression<Func<IReadOnlyVotingResult, bool>> predicate, Expression<Func<IReadOnlyVotingResult, object>> sortBy,
@@ -33,7 +33,7 @@ internal class VotingSessionQueryRepository : IVotingSessionQueryRepositoryInUse
     {
         Func<IQueryable<IReadOnlyVotingResult>, IOrderedQueryable<IReadOnlyVotingResult>> sortFunction = take > 0 ? x => x.OrderBy(sortBy) : x => x.OrderByDescending(sortBy);
         
-        var query = _ctx.VotingResults.Where(predicate);
+        var query = this.ctx.VotingResults.Where(predicate);
         var currentVotingSession = await sortFunction.Invoke(query).Take(Math.Abs(take)).AsNoTracking().ToArrayAsync(cancelToken);
         return currentVotingSession;
     }

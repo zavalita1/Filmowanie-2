@@ -1,5 +1,4 @@
-﻿using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.Maybe;
+﻿using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -9,23 +8,23 @@ namespace Filmowanie.Nomination.Services;
 // TODO UTs
 internal sealed class MoviePostersService : IMoviePostersService
 {
-    private readonly ILogger<MoviePostersService> _log;
-    private readonly IFilmwebPathResolver _filmwebPathResolver;
-    private readonly IFilmwebPostersUrlsRetriever _filmwebHandler;
+    private readonly ILogger<MoviePostersService> log;
+    private readonly IFilmwebPathResolver filmwebPathResolver;
+    private readonly IFilmwebPostersUrlsRetriever filmwebHandler;
 
     public MoviePostersService(ILogger<MoviePostersService> log, IFilmwebPathResolver filmwebPathResolver, IFilmwebPostersUrlsRetriever filmwebHandler)
     {
-        _log = log;
-        _filmwebPathResolver = filmwebPathResolver;
-        _filmwebHandler = filmwebHandler;
+        this.log = log;
+        this.filmwebPathResolver = filmwebPathResolver;
+        this.filmwebHandler = filmwebHandler;
     }
 
-    public Task<Maybe<PostersDTO>> GetPosters(Maybe<string> input, CancellationToken cancelToken) => input.AcceptAsync(GetPosters, _log, cancelToken);
+    public Task<Maybe<PostersDTO>> GetPosters(Maybe<string> input, CancellationToken cancelToken) => input.AcceptAsync(GetPosters, this.log, cancelToken);
 
     private async Task<Maybe<PostersDTO>> GetPosters(string movieUrl, CancellationToken cancelToken)
     {
-        var metadata = _filmwebPathResolver.GetMetadata(movieUrl);
-        var posters = await _filmwebHandler.GetPosterUrlsAsync(metadata, cancelToken);
+        var metadata = this.filmwebPathResolver.GetMetadata(movieUrl);
+        var posters = await this.filmwebHandler.GetPosterUrlsAsync(metadata, cancelToken);
         var result = new PostersDTO { PosterUrls = posters };
         return new Maybe<PostersDTO>(result, null);
     }

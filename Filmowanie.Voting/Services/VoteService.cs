@@ -1,6 +1,5 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting.Events;
@@ -14,17 +13,17 @@ namespace Filmowanie.Voting.Services;
 // TODO UTs
 internal sealed class VoteService : IVoteService
 {
-    private readonly IBus _bus;
-    private readonly ILogger<VoteService> _log;
+    private readonly IBus bus;
+    private readonly ILogger<VoteService> log;
 
     public VoteService(IBus bus, ILogger<VoteService> log)
     {
-        _bus = bus;
-        _log = log;
+        this.bus = bus;
+        this.log = log;
     }
 
     public Task<Maybe<VoidResult>> VoteAsync(Maybe<DomainUser> maybeCurrentUser, Maybe<VotingSessionId> maybeVotingId, Maybe<VoteDTO> maybeDto, CancellationToken cancelToken) =>
-        maybeCurrentUser.Merge(maybeVotingId).Merge(maybeDto).Flatten().AcceptAsync(VoteAsync, _log, cancelToken);
+        maybeCurrentUser.Merge(maybeVotingId).Merge(maybeDto).Flatten().AcceptAsync(VoteAsync, this.log, cancelToken);
 
     public async Task<Maybe<VoidResult>> VoteAsync((DomainUser, VotingSessionId, VoteDTO) input, CancellationToken cancelToken)
     {
@@ -34,12 +33,12 @@ internal sealed class VoteService : IVoteService
         if (voteDto.Votes == 0)
         {
             var removeVoteEvent = new RemoveVoteEvent(votingSessionId, movie, user);
-            await _bus.Publish(removeVoteEvent, cancelToken);
+            await this.bus.Publish(removeVoteEvent, cancelToken);
         }
         else
         {
             var @event = new AddVoteEvent(votingSessionId, movie, user, (VoteType)voteDto.Votes);
-            await _bus.Publish(@event, cancelToken);
+            await this.bus.Publish(@event, cancelToken);
         }
 
         return VoidResult.Void;

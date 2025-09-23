@@ -10,46 +10,46 @@ namespace Filmowanie.Database.Repositories;
 // TODO db tests
 internal sealed class MovieCommandRepository : IMovieCommandRepository
 {
-    private readonly MoviesContext _ctx;
+    private readonly MoviesContext ctx;
 
     public MovieCommandRepository(MoviesContext ctx)
     {
-        _ctx = ctx;
+        this.ctx = ctx;
     }
 
     public async Task InsertCanBeNominatedAgainAsync(IEnumerable<IReadOnlyCanNominateMovieAgainEvent> canNominateMovieAgainEvents, CancellationToken cancelToken)
     {
         var entity = canNominateMovieAgainEvents.Select(x => new CanNominateMovieAgainEvent(x));
-        await _ctx.CanNominateMovieAgainEvents.AddRangeAsync(entity, cancelToken);
-        await _ctx.SaveChangesAsync(cancelToken);
+        await this.ctx.CanNominateMovieAgainEvents.AddRangeAsync(entity, cancelToken);
+        await this.ctx.SaveChangesAsync(cancelToken);
     }
 
     public async Task InsertNominatedAsync(IReadOnlyNominatedMovieEvent nominatedEvent, CancellationToken cancelToken)
     {
         var entity = nominatedEvent.AsMutable();
-        await _ctx.NominatedMovieEvents.AddAsync(entity, cancelToken);
-        await _ctx.SaveChangesAsync(cancelToken);
+        await this.ctx.NominatedMovieEvents.AddAsync(entity, cancelToken);
+        await this.ctx.SaveChangesAsync(cancelToken);
     }
 
     public Task InsertMovieAsync(IReadOnlyMovieEntity movieEntity, CancellationToken cancelToken)
     {
         var entity = movieEntity.AsMutable();
-        _ctx.Movies.Add(entity);
-        return _ctx.SaveChangesAsync(cancelToken);
+        this.ctx.Movies.Add(entity);
+        return this.ctx.SaveChangesAsync(cancelToken);
     }
 
     public async Task UpdateMovieAsync(string entityId, string posterUrl, CancellationToken cancelToken)
     {
-        var movie = await _ctx.Movies.SingleAsync(x => x.id == entityId, cancelToken);
+        var movie = await this.ctx.Movies.SingleAsync(x => x.id == entityId, cancelToken);
         movie.PosterUrl = posterUrl;
-        await _ctx.SaveChangesAsync(cancelToken);
+        await this.ctx.SaveChangesAsync(cancelToken);
     }
 
     public async Task<IReadOnlyMovieEntity> MarkMovieAsRejectedAsync(string entityId, CancellationToken cancelToken)
     {
-        var movie = await _ctx.Movies.AsNoTracking().SingleAsync(x => x.id == entityId, cancelToken);
+        var movie = await this.ctx.Movies.AsNoTracking().SingleAsync(x => x.id == entityId, cancelToken);
         movie.IsRejected = true;
-        await _ctx.SaveChangesAsync(cancelToken);
+        await this.ctx.SaveChangesAsync(cancelToken);
         return movie;
     }
 }

@@ -1,4 +1,3 @@
-using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Interfaces;
@@ -19,7 +18,7 @@ internal sealed class BasicAuthDataExtractorAdapter : ILoginDataExtractorAdapter
         this.loginResultDataExtractor = loginResultDataExtractor;
     }
 
-    public Maybe<LoginResultData> GetLodingResultData(IReadOnlyUserEntity? dbUser, BasicAuthUserData mailBasedUserData)
+    public Maybe<LoginResultData> GetLoginResultData(IReadOnlyUserEntity? dbUser, BasicAuthUserData mailBasedUserData)
     {
         if (dbUser == null)
             return GetInvalidCredentialsError();

@@ -1,6 +1,5 @@
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Infrastructure;
-using Filmowanie.Interfaces;
 using FluentAssertions;
 using FluentValidation;
 using NSubstitute;

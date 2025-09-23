@@ -9,11 +9,11 @@ namespace Filmowanie.Voting.Deciders.PickUserNomination;
 // TODO UTs
 public sealed class PickUserToNominateTrashStrategy : IPickUserToNominateStrategy
 {
-    private readonly ILogger<PickUserToNominateTrashStrategy> _log;
+    private readonly ILogger<PickUserToNominateTrashStrategy> log;
 
     public PickUserToNominateTrashStrategy(ILogger<PickUserToNominateTrashStrategy> log)
     {
-        _log = log;
+        this.log = log;
     }
 
     public IReadOnlyEmbeddedUser GetUserToNominate(IReadOnlyEmbeddedMovie movieToReplace, IDictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> userContexts)
@@ -47,7 +47,7 @@ public sealed class PickUserToNominateTrashStrategy : IPickUserToNominateStrateg
         var previousNominationsLength = context.Value.NominationsCount;
         var result = -1 * previousNominationsLength * nominationPendingComponent * participationComponent;
 
-        _log.LogInformation("{type}: user: {user} participation percent: {percent}, previous nominations: {prev}, giving score: {score}."
+        this.log.LogInformation("{type}: user: {user} participation percent: {percent}, previous nominations: {prev}, giving score: {score}."
             , nameof(PickUserToNominateTrashStrategy),
             context.Key.Name, context.Value.ParticipationFactor, context.Value.NominationsCount, result);
         return (context.Key, result);

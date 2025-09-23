@@ -1,17 +1,14 @@
-using DotNet.Testcontainers.Containers;
 using Filmowanie.Database.Extensions;
 using MassTransit;
 using Microsoft.Azure.Cosmos;
-using System;
-using Testcontainers.CosmosDb;
 
-namespace Filmowanie;
+namespace Filmowanie.Infrastructure;
 
 internal sealed class MassTransitClientFactory : ICosmosClientFactory
 {
     private static CosmosClient? CosmosClient { get; set; }
 
-    private readonly static object locker = new();
+    private static readonly object Locker = new();
 
     private readonly ICosmosClientOptionsProvider cosmosClientOptionsProvider;
 
@@ -22,30 +19,16 @@ internal sealed class MassTransitClientFactory : ICosmosClientFactory
 
     public CosmosClient GetCosmosClient<T>(string clientName) where T : class, ISaga
     {
-        try
-        {
-            Console.WriteLine("CALLED WITH : " + clientName);
-            if (CosmosClient != null)
-                return CosmosClient;
+        if (CosmosClient != null)
+            return CosmosClient;
 
-            lock (locker)
-            {
-                Console.WriteLine("CALLED2 WITH : " + clientName);
-                if (CosmosClient != null) return CosmosClient;
-
-                Console.WriteLine("CALLED3 WITH : " + clientName);
-                var options = this.cosmosClientOptionsProvider.Get();
-                //options.ClientOptions.HttpClientFactory = null;
-                CosmosClient = new CosmosClient(options.CosmosOptions.ConnectionString, options.ClientOptions);
-                Console.WriteLine("CALLED4 WITH : " + clientName);
-                return CosmosClient;
-            }
-        }
-        catch (Exception e)
+        lock (Locker)
         {
-            Console.WriteLine("looo 5");
-            Console.WriteLine(e);
-            throw;
+            if (CosmosClient != null) return CosmosClient;
+
+            var options = this.cosmosClientOptionsProvider.Get();
+            CosmosClient = new CosmosClient(options.CosmosOptions.ConnectionString, options.ClientOptions);
+            return CosmosClient;
         }
     }
 }

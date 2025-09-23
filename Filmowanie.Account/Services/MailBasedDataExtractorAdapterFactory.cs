@@ -1,4 +1,3 @@
-using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Models;
 
@@ -20,9 +19,9 @@ internal sealed class LoginDataExtractorFactory : ILoginDataExtractorAdapterFact
     public ILoginDataExtractorAdapter<T> GetAdapter<T>() where T : IMailBasedUserData
     {
         if (typeof(T) == typeof(GoogleUserData))
-            return new GoogleDataExtractorAdapter(this.loginResultDataExtractorDecorator) as ILoginDataExtractorAdapter<T>;
+            return (new GoogleDataExtractorAdapter(this.loginResultDataExtractorDecorator) as ILoginDataExtractorAdapter<T>)!;
         else if (typeof(T) == typeof(BasicAuthUserData))
-            return new BasicAuthDataExtractorAdapter(this.hashHelper, this.loginResultDataExtractor) as ILoginDataExtractorAdapter<T>;
+            return (new BasicAuthDataExtractorAdapter(this.hashHelper, this.loginResultDataExtractor) as ILoginDataExtractorAdapter<T>)!;
 
         throw new NotImplementedException("Unknown type requested! " + typeof(T).Name);
     }

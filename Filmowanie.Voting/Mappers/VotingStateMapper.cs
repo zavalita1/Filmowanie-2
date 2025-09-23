@@ -1,6 +1,5 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Voting.DTOs.Outgoing;
 using Filmowanie.Voting.Interfaces;
@@ -11,14 +10,14 @@ namespace Filmowanie.Voting.Mappers;
 // TODO UTs
 internal sealed class VotingStateMapper : IVotingStateMapper
 {
-    private readonly ILogger<VotingStateMapper> _log;
+    private readonly ILogger<VotingStateMapper> log;
 
     public VotingStateMapper(ILogger<VotingStateMapper> log)
     {
-        _log = log;
+        this.log = log;
     }
 
-    public Maybe<VotingSessionStatusDto> Map(Maybe<VotingState> maybeVotingState, Maybe<VotingSessionId?> maybeVotingId) => maybeVotingState.Merge(maybeVotingId).Accept(Map, _log);
+    public Maybe<VotingSessionStatusDto> Map(Maybe<VotingState> maybeVotingState, Maybe<VotingSessionId?> maybeVotingId) => maybeVotingState.Merge(maybeVotingId).Accept(Map, this.log);
 
     private static Maybe<VotingSessionStatusDto> Map((VotingState, VotingSessionId?) input)
     {

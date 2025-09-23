@@ -7,24 +7,24 @@ namespace Filmowanie.Database.Repositories;
 
 internal sealed class PushSubscriptionCommandRepository : IPushSubscriptionCommandRepository
 {
-    private readonly PushSubscriptionsContext _ctx;
+    private readonly PushSubscriptionsContext ctx;
 
     public PushSubscriptionCommandRepository(PushSubscriptionsContext ctx)
     {
-        _ctx = ctx;
+        this.ctx = ctx;
     }
 
     public async Task InsertAsync(IReadOnlyPushSubscriptionEntity entity, CancellationToken cancelToken)
     {
         var dbEntity = new ReadOnlyPushSubscriptionEntity(entity);
-        await _ctx.Subscriptions.AddAsync(dbEntity, cancelToken);
-        await _ctx.SaveChangesAsync(cancelToken);
+        await this.ctx.Subscriptions.AddAsync(dbEntity, cancelToken);
+        await this.ctx.SaveChangesAsync(cancelToken);
     }
 
     public async Task DeleteAsync(IEnumerable<IReadOnlyPushSubscriptionEntity> entities, CancellationToken cancelToken)
     {
         var dbEntities = entities.Select(x => new ReadOnlyPushSubscriptionEntity(x));
-        _ctx.Subscriptions.RemoveRange(dbEntities);
-        await _ctx.SaveChangesAsync(cancelToken);
+        this.ctx.Subscriptions.RemoveRange(dbEntities);
+        await this.ctx.SaveChangesAsync(cancelToken);
     }
 }

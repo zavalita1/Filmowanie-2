@@ -1,4 +1,5 @@
-﻿using Filmowanie.Database.Entities.Voting.Events;
+﻿using Filmowanie.Abstractions.Extensions;
+using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Notification.Services;
 using MassTransit;
 using Microsoft.AspNetCore.SignalR;
@@ -9,28 +10,28 @@ namespace Filmowanie.Notification.Consumers;
 // TODO UTs
 public sealed class MovieAddedConsumer : IConsumer<AddMovieEvent>, IConsumer<Fault<AddMovieEvent>>
 {
-    private readonly ILogger<MovieAddedConsumer> _logger;
-    private readonly IHubContext<VotingStateHub> _votingHubContext;
+    private readonly ILogger<MovieAddedConsumer> logger;
+    private readonly IHubContext<VotingStateHub> votingHubContext;
 
     public MovieAddedConsumer(ILogger<MovieAddedConsumer> logger, IHubContext<VotingStateHub> votingHubContext)
     {
-        _logger = logger;
-        _votingHubContext = votingHubContext;
+        this.logger = logger;
+        this.votingHubContext = votingHubContext;
     }
 
     public Task Consume(ConsumeContext<Fault<AddMovieEvent>> context)
     {
-        var message = string.Join(",", context.Message.Exceptions.Select(x => x.Message));
-        var callStacks = string.Join(";;;;;;;;;;;;", context.Message.Exceptions.Select(x => x.StackTrace));
+        var message = context.Message.Exceptions.Select(x => x.Message).JoinStrings();
+        var callStacks = context.Message.Exceptions.Select(x => x.StackTrace).JoinStrings(";;;;;;;;;;;;");
         return context.Publish(new ErrorEvent(context.Message.Message.VotingSessionId, message, callStacks));
     }
 
     public async Task Consume(ConsumeContext<AddMovieEvent> context)
     {
-        _logger.LogInformation($"Consuming {nameof(AddMovieEvent)}...");
+        this.logger.LogInformation($"Consuming {nameof(AddMovieEvent)}...");
 
         var user = context.Message.User;
-        await _votingHubContext.Clients.All.SendAsync("movie nominated", new { user.Name, Gender = user.Gender.ToString() } , context.CancellationToken);
-        _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
+        await this.votingHubContext.Clients.All.SendAsync("movie nominated", new { user.Name, Gender = user.Gender.ToString() } , context.CancellationToken);
+        this.logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
     }
 }

@@ -8,28 +8,28 @@ namespace Filmowanie.Database.Repositories;
 
 internal sealed class MovieQueryRepository : IMovieQueryRepository
 {
-    private readonly MoviesContext _ctx;
+    private readonly MoviesContext ctx;
 
     public MovieQueryRepository(MoviesContext ctx)
     {
-        _ctx = ctx;
+        this.ctx = ctx;
     }
 
     public async Task<IReadOnlyMovieEntity[]> GetMoviesAsync(Expression<Func<IReadOnlyMovieEntity, bool>> predicate, CancellationToken cancelToken)
     {
-        return await _ctx.Movies.Where(predicate).ToArrayAsync(cancelToken);
+        return await this.ctx.Movies.Where(predicate).ToArrayAsync(cancelToken);
     }
 
     public async Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEventsAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate,
         CancellationToken cancelToken)
     {
-        return await _ctx.CanNominateMovieAgainEvents.Where(predicate).ToArrayAsync(cancelToken);
+        return await this.ctx.CanNominateMovieAgainEvents.Where(predicate).ToArrayAsync(cancelToken);
     }
 
     public async Task<IReadOnlyNominatedMovieEvent[]> GetMovieNominatedEventsAsync(Expression<Func<IReadOnlyNominatedMovieEvent, bool>> predicate,
         CancellationToken cancelToken)
     {
-        var res = await _ctx.NominatedMovieEvents.Where(predicate).ToArrayAsync(cancelToken);
+        var res = await this.ctx.NominatedMovieEvents.Where(predicate).ToArrayAsync(cancelToken);
         return res;
     }
 }

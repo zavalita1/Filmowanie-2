@@ -1,6 +1,5 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Interfaces;
@@ -17,35 +16,35 @@ namespace Filmowanie.Voting.Services;
 // TODO UTs
 internal sealed class MovieVotingResultService : IMovieVotingResultService
 {
-    private readonly ICurrentVotingService _currentVotingService;
-    private readonly IMovieDomainRepository _movieQueryRepository;
-    private readonly IVotingResultsRepository _votingResultsRepository;
-    private readonly ILogger<MovieVotingResultService> _log;
+    private readonly ICurrentVotingService currentVotingService;
+    private readonly IMovieDomainRepository movieQueryRepository;
+    private readonly IVotingResultsRepository votingResultsRepository;
+    private readonly ILogger<MovieVotingResultService> log;
 
     public MovieVotingResultService(IMovieDomainRepository movieQueryRepository, ILogger<MovieVotingResultService> log, IVotingResultsRepository votingResultsRepository, ICurrentVotingService currentVotingService)
     {
-        _movieQueryRepository = movieQueryRepository;
-        _log = log;
-        _votingResultsRepository = votingResultsRepository;
-        _currentVotingService = currentVotingService;
+        this.movieQueryRepository = movieQueryRepository;
+        this.log = log;
+        this.votingResultsRepository = votingResultsRepository;
+        this.currentVotingService = currentVotingService;
     }
    
     public Task<Maybe<VotingResultDTO>> GetVotingResultsAsync(Maybe<DomainUser> maybeCurrentUser, Maybe<VotingSessionId> maybeVotingId, CancellationToken cancelToken) =>
-        maybeCurrentUser.Merge(maybeVotingId).AcceptAsync(GetVotingResultsAsync, _log, cancelToken);
+        maybeCurrentUser.Merge(maybeVotingId).AcceptAsync(GetVotingResultsAsync, this.log, cancelToken);
 
     public Task<Maybe<VotingMetadata[]>> GetVotingMetadataAsync(Maybe<TenantId> input, CancellationToken cancelToken) =>
-        input.AcceptAsync(GetVotingMetadata, _log, cancelToken);
+        input.AcceptAsync(GetVotingMetadata, this.log, cancelToken);
 
     private async Task<Maybe<VotingMetadata[]>> GetVotingMetadata(TenantId input, CancellationToken cancelToken)
     {
-        var maybeVotingSessions = await _votingResultsRepository.GetAllVotingResultsMetadataAsync(cancelToken);
+        var maybeVotingSessions = await this.votingResultsRepository.GetAllVotingResultsMetadataAsync(cancelToken);
 
         if (maybeVotingSessions.Error.HasValue)
             return maybeVotingSessions.Error.Value.ChangeResultType<IEnumerable<IReadOnlyVotingResultMetadata>, VotingMetadata[]>();
 
         var votingSessions = maybeVotingSessions.RequireResult().ToArray();
         var moviesIds = votingSessions.Select(x => x.WinnerMovieId.Id).ToArray();
-        var movies = await _movieQueryRepository.GetManyByIdAsync(moviesIds, cancelToken);
+        var movies = await this.movieQueryRepository.GetManyByIdAsync(moviesIds, cancelToken);
 
         if (movies.Error.HasValue)
             return movies.Error.Value.ChangeResultType<IReadOnlyMovieEntity[], VotingMetadata[]>();
@@ -97,7 +96,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
 
     private async Task<Maybe<IReadOnlyVotingResult>> GetReadonlyVotingResultAsync((DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId? VotingSessionId) input, CancellationToken cancelToken)
     {
-        var result = await _votingResultsRepository.GetByIdAsync(input.VotingSessionId!.Value, cancelToken);
+        var result = await this.votingResultsRepository.GetByIdAsync(input.VotingSessionId!.Value, cancelToken);
 
         if (result.Result == null)
             return new Error<IReadOnlyVotingResult>("No such vote found!", ErrorType.IncomingDataIssue);
@@ -108,7 +107,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
                 return new Error<IReadOnlyVotingResult>("Only admin can view current voting's results!", ErrorType.AuthorizationIssue);
 
             // for admin only
-            var movies = await _currentVotingService.GetCurrentlyVotedMoviesWithVotesAsync(input.VotingSessionId!.Value.AsMaybe(), cancelToken);
+            var movies = await this.currentVotingService.GetCurrentlyVotedMoviesWithVotesAsync(input.VotingSessionId!.Value.AsMaybe(), cancelToken);
 
             if (movies.Error.HasValue)
                 return movies.Error.Value.ChangeResultType<IReadOnlyEmbeddedMovieWithVotes[], IReadOnlyVotingResult>();

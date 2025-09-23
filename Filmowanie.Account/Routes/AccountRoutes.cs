@@ -1,6 +1,4 @@
-﻿using Filmowanie.Abstractions.DomainModels;
-using Filmowanie.Abstractions.Extensions;
-using Filmowanie.Abstractions.Interfaces;
+﻿using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.DTOs.Incoming;
@@ -13,87 +11,87 @@ namespace Filmowanie.Account.Routes;
 
 internal sealed class AccountRoutes : IAccountRoutes
 {
-    private readonly IFluentValidatorAdapterProvider _validatorAdapterProvider;
-    private readonly IAccountUserService _userService;
-    private readonly IGoogleAuthService _googleAuthService;
-    private readonly IAuthenticationManager _authenticationManager;
-    private readonly IUserDtoMapper _userMapper;
-    private readonly ISignUpService _signUpService;
-    private readonly IRoutesResultHelper _routesResultHelper;
+    private readonly IFluentValidatorAdapterProvider validatorAdapterProvider;
+    private readonly IAccountUserService userService;
+    private readonly IGoogleAuthService googleAuthService;
+    private readonly IAuthenticationManager authenticationManager;
+    private readonly IUserDtoMapper userMapper;
+    private readonly ISignUpService signUpService;
+    private readonly IRoutesResultHelper routesResultHelper;
 
     public AccountRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IAccountUserService userService, IGoogleAuthService googleAuthService, ISignUpService signUpService, IUserDtoMapper userMapper, IRoutesResultHelper routesResultHelper, IAuthenticationManager authenticationManager)
     {
-        _validatorAdapterProvider = validatorAdapterProvider;
-        _userService = userService;
-        _googleAuthService = googleAuthService;
-        _signUpService = signUpService;
-        _userMapper = userMapper;
-        _routesResultHelper = routesResultHelper;
-        _authenticationManager = authenticationManager;
+        this.validatorAdapterProvider = validatorAdapterProvider;
+        this.userService = userService;
+        this.googleAuthService = googleAuthService;
+        this.signUpService = signUpService;
+        this.userMapper = userMapper;
+        this.routesResultHelper = routesResultHelper;
+        this.authenticationManager = authenticationManager;
     }
 
     public async Task<IResult> LoginAsync([FromBody] LoginDto dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterProvider.GetAdapter<LoginDto>();
+        var validator = this.validatorAdapterProvider.GetAdapter<LoginDto>();
 
-        var maybeCode =  validator.Validate(dto).Map(x => new Models.Code(x.Code));
-        var maybeIdentity = await _userService.GetUserIdentity(maybeCode, cancel);
-        var voidResult = await _authenticationManager.LogInAsync(maybeIdentity, cancel);
-        var domainUser = _authenticationManager.GetDomainUser(voidResult);
-        var resultDto = _userMapper.Map(domainUser);
+        var maybeCode =  validator.Validate(dto).Map(x => new Code(x.Code));
+        var maybeIdentity = await this.userService.GetUserIdentity(maybeCode, cancel);
+        var voidResult = await this.authenticationManager.LogInAsync(maybeIdentity, cancel);
+        var domainUser = this.authenticationManager.GetDomainUser(voidResult);
+        var resultDto = userMapper.Map(domainUser);
 
-        return _routesResultHelper.UnwrapOperationResult(resultDto);
+        return routesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> LoginBasicAsync([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.LoginViaBasicAuthKey);
+        var validator = this.validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.LoginViaBasicAuthKey);
         var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuthUserData(x.Email, x.Password));
-        var maybeIdentity = await _userService.GetUserIdentity(maybeBasicAuth, cancel);
-        var voidResult = await _authenticationManager.LogInAsync(maybeIdentity, cancel);
-        var domainUser = _authenticationManager.GetDomainUser(voidResult);
-        var resultDto = _userMapper.Map(domainUser);
+        var maybeIdentity = await this.userService.GetUserIdentity(maybeBasicAuth, cancel);
+        var voidResult = await this.authenticationManager.LogInAsync(maybeIdentity, cancel);
+        var domainUser = this.authenticationManager.GetDomainUser(voidResult);
+        var resultDto = this.userMapper.Map(domainUser);
 
-        return _routesResultHelper.UnwrapOperationResult(resultDto);
+        return routesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> LoginGoogleAsync([FromBody] GoogleOAuthClientDTO dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterProvider.GetAdapter<GoogleOAuthClientDTO>();
+        var validator = this.validatorAdapterProvider.GetAdapter<GoogleOAuthClientDTO>();
         var maybeCode = validator.Validate(dto).Map(x => new GoogleCode(x.Code));
-        var maybeUserData = await _googleAuthService.GetUserData(maybeCode, cancel);
-        var maybeIdentity = await _userService.GetUserIdentity(maybeUserData, cancel);
-        var voidResult = await _authenticationManager.LogInAsync(maybeIdentity, cancel);
-        var domainUser = _authenticationManager.GetDomainUser(voidResult);
-        var resultDto = _userMapper.Map(domainUser);
+        var maybeUserData = await this.googleAuthService.GetUserData(maybeCode, cancel);
+        var maybeIdentity = await this.userService.GetUserIdentity(maybeUserData, cancel);
+        var voidResult = await authenticationManager.LogInAsync(maybeIdentity, cancel);
+        var domainUser = this.authenticationManager.GetDomainUser(voidResult);
+        var resultDto = this.userMapper.Map(domainUser);
 
-        return _routesResultHelper.UnwrapOperationResult(resultDto);
+        return routesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> SignUpAsync([FromBody] BasicAuthLoginDTO dto, CancellationToken cancel)
     {
-        var validator = _validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.SignUpBasicAuth);
+        var validator = this.validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.SignUpBasicAuth);
         var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuthUserData(x.Email, x.Password));
-        var maybeIdentity = await _userService.GetUserIdentity(maybeBasicAuth, cancel);
-        var maybeDomainUser = _authenticationManager.GetDomainUser(maybeIdentity);
-        var maybeLoginData = await _signUpService.SignUp(maybeDomainUser, maybeBasicAuth, cancel);
-        maybeDomainUser = _authenticationManager.GetDomainUser(maybeLoginData);
-        var resultDto = _userMapper.Map(maybeDomainUser);
+        var maybeIdentity = await this.userService.GetUserIdentity(maybeBasicAuth, cancel);
+        var maybeDomainUser = this.authenticationManager.GetDomainUser(maybeIdentity);
+        var maybeLoginData = await signUpService.SignUp(maybeDomainUser, maybeBasicAuth, cancel);
+        maybeDomainUser = this.authenticationManager.GetDomainUser(maybeLoginData);
+        var resultDto = this.userMapper.Map(maybeDomainUser);
 
-        return _routesResultHelper.UnwrapOperationResult(resultDto);
+        return this.routesResultHelper.UnwrapOperationResult(resultDto);
     }
 
     public async Task<IResult> LogoutAsync(CancellationToken cancel)
     {
-        var result = await _authenticationManager.LogOutAsync(VoidResult.Void, cancel);
-        return _routesResultHelper.UnwrapOperationResult(result);
+        var result = await this.authenticationManager.LogOutAsync(VoidResult.Void, cancel);
+        return this.routesResultHelper.UnwrapOperationResult(result);
     }
 
     public IResult Get(CancellationToken cancel)
     {
-        var maybeDomainUser = _authenticationManager.GetDomainUser(VoidResult.Void);
-        var resultDto = _userMapper.Map(maybeDomainUser);
+        var maybeDomainUser = this.authenticationManager.GetDomainUser(VoidResult.Void);
+        var resultDto = this.userMapper.Map(maybeDomainUser);
 
-        return _routesResultHelper.UnwrapOperationResult(resultDto);
+        return this.routesResultHelper.UnwrapOperationResult(resultDto);
     }
 }

@@ -1,8 +1,7 @@
 ﻿using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Maybe;
 using Microsoft.Extensions.Logging;
 
-namespace Filmowanie.Abstractions.Extensions;
+namespace Filmowanie.Abstractions.Maybe;
 
 public static class MaybeExtensions
 {

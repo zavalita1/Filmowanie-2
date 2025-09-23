@@ -1,6 +1,5 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces;
@@ -15,33 +14,33 @@ namespace Filmowanie.Voting.Services;
 // TODO UTs
 internal sealed class CurrentVotingService : ICurrentVotingService
 {
-    private readonly IRequestClient<MoviesListRequestedEvent> _getMoviesListRequestClient;
-    private readonly IMovieDomainRepository _movieQueryRepository;
-    private readonly ILogger<CurrentVotingService> _log;
+    private readonly IRequestClient<MoviesListRequestedEvent> getMoviesListRequestClient;
+    private readonly IMovieDomainRepository movieQueryRepository;
+    private readonly ILogger<CurrentVotingService> log;
 
     public CurrentVotingService(IRequestClient<MoviesListRequestedEvent> getMoviesListRequestClient, IMovieDomainRepository movieQueryRepository, ILogger<CurrentVotingService> log)
     {
-        _getMoviesListRequestClient = getMoviesListRequestClient;
-        _movieQueryRepository = movieQueryRepository;
-        _log = log;
+        this.getMoviesListRequestClient = getMoviesListRequestClient;
+        this.movieQueryRepository = movieQueryRepository;
+        this.log = log;
     }
 
-    public Task<Maybe<IReadOnlyMovieEntity[]>> GetCurrentlyVotedMoviesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken) => input.AcceptAsync(GetCurrentlyVotedMoviesAsync, _log, cancelToken);
-    public Task<Maybe<IReadOnlyEmbeddedMovieWithVotes[]>> GetCurrentlyVotedMoviesWithVotesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken) => input.AcceptAsync(GetCurrentlyVotedMoviesWithVotesAsync, _log, cancelToken);
+    public Task<Maybe<IReadOnlyMovieEntity[]>> GetCurrentlyVotedMoviesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken) => input.AcceptAsync(GetCurrentlyVotedMoviesAsync, log, cancelToken);
+    public Task<Maybe<IReadOnlyEmbeddedMovieWithVotes[]>> GetCurrentlyVotedMoviesWithVotesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken) => input.AcceptAsync(GetCurrentlyVotedMoviesWithVotesAsync, log, cancelToken);
 
     private async Task<Maybe<IReadOnlyEmbeddedMovieWithVotes[]>> GetCurrentlyVotedMoviesWithVotesAsync(VotingSessionId input, CancellationToken cancelToken)
     {
         try
         {
             var embeddedMovies1 =
-                await _getMoviesListRequestClient.GetResponse<CurrentVotingListResponse>(new MoviesListRequestedEvent(input), cancelToken, TimeSpan.FromSeconds(30));
+                await this.getMoviesListRequestClient.GetResponse<CurrentVotingListResponse>(new MoviesListRequestedEvent(input), cancelToken, TimeSpan.FromSeconds(30));
             var movies = embeddedMovies1.Message.Movies;
             var embeddedMovies = movies.ToArray();
             return embeddedMovies.AsMaybe();
         }
         catch (Exception ex)
         {
-            _log.LogError(ex, "Error when trying to get voted movies!");
+            this.log.LogError(ex, "Error when trying to get voted movies!");
             return new Error<IReadOnlyEmbeddedMovieWithVotes[]>(ex.Message, ErrorType.Unknown);
         }
     }
@@ -54,7 +53,7 @@ internal sealed class CurrentVotingService : ICurrentVotingService
             return embeddedMovies.Error.Value.ChangeResultType<IReadOnlyEmbeddedMovieWithVotes[], IReadOnlyMovieEntity[]>();
 
         var moviesIds = embeddedMovies.Result!.Select(x => x.Movie.id).ToArray();
-        var moviesEntities = await _movieQueryRepository.GetManyByIdAsync(moviesIds, cancelToken);
+        var moviesEntities = await this.movieQueryRepository.GetManyByIdAsync(moviesIds, cancelToken);
 
         if (moviesEntities.Error.HasValue)
             return moviesEntities.Error.Value;

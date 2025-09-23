@@ -11,15 +11,15 @@ namespace Filmowanie.Voting.Activities;
 // TODO UTs
 public class CreateVotingSessionEntryActivity : IStateMachineActivity<VotingStateInstance, StartVotingEvent>
 {
-    private readonly ILogger<VotingStateMachine> _logger;
-    private readonly IVotingResultsCommandRepository _votingSessionCommandRepository;
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly ILogger<VotingStateMachine> logger;
+    private readonly IVotingResultsCommandRepository votingSessionCommandRepository;
+    private readonly IDateTimeProvider dateTimeProvider;
 
     public CreateVotingSessionEntryActivity(ILogger<VotingStateMachine> logger, IVotingResultsCommandRepository votingSessionCommandRepository, IDateTimeProvider dateTimeProvider)
     {
-        _logger = logger;
-        _votingSessionCommandRepository = votingSessionCommandRepository;
-        _dateTimeProvider = dateTimeProvider;
+        this.logger = logger;
+        this.votingSessionCommandRepository = votingSessionCommandRepository;
+        this.dateTimeProvider = dateTimeProvider;
     }
 
     public void Probe(ProbeContext context)
@@ -34,9 +34,9 @@ public class CreateVotingSessionEntryActivity : IStateMachineActivity<VotingStat
 
     public async Task Execute(BehaviorContext<VotingStateInstance, StartVotingEvent> context, IBehavior<VotingStateInstance, StartVotingEvent> next)
     {
-        _logger.LogInformation("Adding Voting Session entry in db..");
-        var votingResult = new VotingResult { Created = _dateTimeProvider.Now, id = context.Saga.CorrelationId.ToString(), TenantId = context.Message.TenantId.Id, Movies = [], UsersAwardedWithNominations = [] };
-        await _votingSessionCommandRepository.InsertAsync(votingResult, context.CancellationToken);
+        this.logger.LogInformation("Adding Voting Session entry in db..");
+        var votingResult = new VotingResult { Created = this.dateTimeProvider.Now, id = context.Saga.CorrelationId.ToString(), TenantId = context.Message.TenantId.Id, Movies = [], UsersAwardedWithNominations = [] };
+        await this.votingSessionCommandRepository.InsertAsync(votingResult, context.CancellationToken);
         await next.Execute(context).ConfigureAwait(false);
     }
 

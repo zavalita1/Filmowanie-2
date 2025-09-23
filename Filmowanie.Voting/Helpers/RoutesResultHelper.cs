@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Microsoft.AspNetCore.Http;
 
@@ -16,8 +17,8 @@ internal static class RoutesResultHelper
 
         IResult? unwrapped = result.Error!.Value.Type switch
         {
-            ErrorType.IncomingDataIssue => TypedResults.BadRequest(string.Join(separator, result.Error!.Value.ErrorMessages)),
-            ErrorType.ValidationError => TypedResults.BadRequest(string.Join(separator, result.Error!.Value.ErrorMessages)),
+            ErrorType.IncomingDataIssue => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.JoinStrings(separator)),
+            ErrorType.ValidationError => TypedResults.BadRequest(result.Error!.Value.ErrorMessages.JoinStrings(separator)),
             ErrorType.AuthorizationIssue => TypedResults.Forbid(),
             ErrorType.AuthenticationIssue => TypedResults.Unauthorized(),
             ErrorType.Canceled => TypedResults.StatusCode(499),
@@ -30,6 +31,6 @@ internal static class RoutesResultHelper
         if (unwrapped != null)
             return unwrapped;
 
-        throw new InvalidOperationException($"Erroneous result! {string.Join(separator, result.Error.Value.ErrorMessages)}.");
+        throw new InvalidOperationException($"Erroneous result! {result.Error.Value.ErrorMessages.JoinStrings(separator)}.");
     }
 }

@@ -1,9 +1,10 @@
 using Filmowanie.Abstractions.Configuration;
+using Filmowanie.Database.Extensions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 
-namespace Filmowanie.Database.Extensions;
+namespace Filmowanie.Database.OptionsProviders;
 
 internal sealed class EmulatedCosmosClientOptionsProvider : ICosmosClientOptionsProvider
 {
@@ -23,8 +24,8 @@ internal sealed class EmulatedCosmosClientOptionsProvider : ICosmosClientOptions
             ConnectionMode = ConnectionMode.Gateway,
             HttpClientFactory = () =>
             {
-                var handler = typeof(HttpMessageInvoker).GetField("_handler", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this.client);
-                var typedHandler = (HttpMessageHandler)handler;
+                var handler = typeof(HttpMessageInvoker).GetField("_handler", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(this.client);
+                var typedHandler = (HttpMessageHandler)handler!;
                 var result = new HttpClient(typedHandler); // tcp port exhaustion is not a concern for local env.
                 return result;
             }

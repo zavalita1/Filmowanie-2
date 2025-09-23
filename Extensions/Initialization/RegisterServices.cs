@@ -2,7 +2,6 @@
 using Filmowanie.Abstractions.Wrappers;
 using Filmowanie.Account.Extensions;
 using Filmowanie.Infrastructure;
-using Filmowanie.Interfaces;
 using Filmowanie.Nomination.Extensions;
 using Filmowanie.Notification.Extensions;
 using Filmowanie.Voting.Extensions;
@@ -13,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Filmowanie.Extensions.Initialization;
 
-public static class RegisterServices
+internal static class RegisterServices
 {
     public static void RegisterCustomServices(this IServiceCollection services, IConfiguration configuration)
     {

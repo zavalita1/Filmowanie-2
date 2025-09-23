@@ -9,36 +9,36 @@ namespace Filmowanie.Database.Decorators
 {
     internal sealed class MovieQueryRepositoryDecorator : IMovieQueryRepository
     {
-        private readonly IMovieQueryRepository _decorated;
-        private readonly ICurrentUserAccessor _currentUserAccessor;
+        private readonly IMovieQueryRepository decorated;
+        private readonly ICurrentUserAccessor currentUserAccessor;
 
         public MovieQueryRepositoryDecorator(IMovieQueryRepository decorated, ICurrentUserAccessor currentUserAccessor)
         {
-            _decorated = decorated;
-            _currentUserAccessor = currentUserAccessor;
+            this.decorated = decorated;
+            this.currentUserAccessor = currentUserAccessor;
         }
 
         public Task<IReadOnlyMovieEntity[]> GetMoviesAsync(Expression<Func<IReadOnlyMovieEntity, bool>> predicate, CancellationToken cancelToken)
         {
-            var currentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
+            var currentUser = this.currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
             var newPredicate = GetPredicateWithTenantFilter(predicate, currentUser.Tenant);
-            return _decorated.GetMoviesAsync(newPredicate, cancelToken);
+            return this.decorated.GetMoviesAsync(newPredicate, cancelToken);
         }
 
         public Task<IReadOnlyCanNominateMovieAgainEvent[]> GetMoviesThatCanBeNominatedAgainEventsAsync(Expression<Func<IReadOnlyCanNominateMovieAgainEvent, bool>> predicate,
             CancellationToken cancelToken)
         {
-            var currentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
+            var currentUser = this.currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
             var newPredicate = GetPredicateWithTenantFilter(predicate, currentUser.Tenant);
-            return _decorated.GetMoviesThatCanBeNominatedAgainEventsAsync(newPredicate, cancelToken);
+            return this.decorated.GetMoviesThatCanBeNominatedAgainEventsAsync(newPredicate, cancelToken);
         }
 
         public Task<IReadOnlyNominatedMovieEvent[]> GetMovieNominatedEventsAsync(Expression<Func<IReadOnlyNominatedMovieEvent, bool>> predicate,
             CancellationToken cancelToken)
         {
-            var currentUser = _currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
+            var currentUser = this.currentUserAccessor.GetDomainUser(VoidResult.Void).Result;
             var newPredicate = GetPredicateWithTenantFilter(predicate, currentUser.Tenant);
-            return _decorated.GetMovieNominatedEventsAsync(newPredicate, cancelToken);
+            return this.decorated.GetMovieNominatedEventsAsync(newPredicate, cancelToken);
         }
 
         private static Expression<Func<T, bool>> GetPredicateWithTenantFilter<T>(Expression<Func<T, bool>> predicate, TenantId user) where T: IReadOnlyEntity

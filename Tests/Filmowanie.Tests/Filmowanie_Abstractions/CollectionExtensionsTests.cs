@@ -14,7 +14,7 @@ public sealed class CollectionExtensionsTests
         string[] collection = [one, two!, three];
 
         // Act
-        var result = Abstractions.Extensions.CollectionExtensions.Concat(collection, separator);
+        var result = Abstractions.Extensions.CollectionExtensions.JoinStrings(collection, separator);
 
         // Assert
         result.Should().Be(expectedResult);

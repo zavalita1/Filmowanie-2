@@ -1,6 +1,6 @@
 ﻿namespace Filmowanie.Account.Constants;
 
-public class Authorization
+internal class Authorization
 {
     public const int AuthorizationExpirationTimeInDays = 30;
 }

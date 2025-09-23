@@ -10,23 +10,23 @@ namespace Filmowanie.Nomination.Mappers;
 
 internal sealed class NominationsEnricher : INominationsEnricher
 {
-    private readonly ILogger<NominationsEnricher> _log;
-    private readonly IMovieDomainRepository _movieQueryRepository;
+    private readonly ILogger<NominationsEnricher> log;
+    private readonly IMovieDomainRepository movieQueryRepository;
 
     public NominationsEnricher(ILogger<NominationsEnricher> log, IMovieDomainRepository movieQueryRepository)
     {
-        _log = log;
-        _movieQueryRepository = movieQueryRepository;
+        this.log = log;
+        this.movieQueryRepository = movieQueryRepository;
     }
 
     public Task<Maybe<NominationsFullDataDTO>> EnrichNominationsAsync(Maybe<NominationsDataDTO> input, CancellationToken cancelToken) =>
-        input.AcceptAsync(EnrichNominationsAsync, _log, cancelToken);
+        input.AcceptAsync(EnrichNominationsAsync, this.log, cancelToken);
 
     // TODO add cron job that cleans old events
     public async Task<Maybe<NominationsFullDataDTO>> EnrichNominationsAsync(NominationsDataDTO input, CancellationToken cancelToken)
     {
-        var movieCanBeNominatedAgainEvents = await _movieQueryRepository.GetMoviesThatCanBeNominatedAgainEventsAsync(cancelToken);
-        var movieNominatedAgainEvents = await _movieQueryRepository.GetMovieNominatedEventsAsync(cancelToken);
+        var movieCanBeNominatedAgainEvents = await this.movieQueryRepository.GetMoviesThatCanBeNominatedAgainEventsAsync(cancelToken);
+        var movieNominatedAgainEvents = await this.movieQueryRepository.GetMovieNominatedEventsAsync(cancelToken);
 
         var userNominationsDecades = input.Nominations.Select(StringExtensions.ToDecade).ToArray();
         var filteredMoviesThatCanBeNominatedAgainEvents = movieCanBeNominatedAgainEvents
@@ -43,7 +43,7 @@ internal sealed class NominationsEnricher : INominationsEnricher
             .Where(x => !filteredMovieNominatedAgainEvents.ContainsKey(x.Key) || filteredMovieNominatedAgainEvents[x.Key] < x.Value)
             .Select(x => x.Key);
 
-        var moviesThatCanBeNominatedAgain = await _movieQueryRepository.GetManyByIdAsync(moviesThatCanBeNominatedAgainIds, cancelToken, false);
+        var moviesThatCanBeNominatedAgain = await this.movieQueryRepository.GetManyByIdAsync(moviesThatCanBeNominatedAgainIds, cancelToken, false);
 
         if (moviesThatCanBeNominatedAgain.Error.HasValue)
             return moviesThatCanBeNominatedAgain.Error.Value.ChangeResultType<IReadOnlyMovieEntity[], NominationsFullDataDTO>();

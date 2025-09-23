@@ -8,28 +8,28 @@ namespace Filmowanie.Database.Repositories;
 
 internal sealed class UsersCommandRepository : IUsersCommandRepository
 {
-    private readonly IdentityDbContext _identityDbContext;
+    private readonly IdentityDbContext identityDbContext;
 
     public UsersCommandRepository(IdentityDbContext identityDbContext)
     {
-        _identityDbContext = identityDbContext;
+        this.identityDbContext = identityDbContext;
     }
 
     public async Task<IReadOnlyUserEntity> UpdatePasswordAndMail(string id, (string Mail, string Password) data, CancellationToken cancelToken)
     {
-        var user = await _identityDbContext.Users.SingleAsync(x => x.Code == id, cancelToken);
+        var user = await this.identityDbContext.Users.SingleAsync(x => x.Code == id, cancelToken);
         
         user.PasswordHash = data.Password;
         user.Email = data.Mail;
 
-        await _identityDbContext.SaveChangesAsync(cancelToken);
+        await this.identityDbContext.SaveChangesAsync(cancelToken);
         return user;
     }
 
     public async Task Insert(IReadOnlyUserEntity entity, CancellationToken cancellation)
     {
         var userEntity = entity.AsMutable();
-        _identityDbContext.Users.Add(userEntity);
-        await _identityDbContext.SaveChangesAsync(cancellation);
+        this.identityDbContext.Users.Add(userEntity);
+        await this.identityDbContext.SaveChangesAsync(cancellation);
     }
 }

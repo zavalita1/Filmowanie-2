@@ -12,13 +12,13 @@ namespace Filmowanie.Database.Repositories;
 
 internal sealed class VotingResultsCommandRepository : IVotingResultsCommandRepository
 {
-    private readonly IVotingSessionCommandRepository _repository;
-    private readonly ILogger<VotingResultsCommandRepository> _logger;
+    private readonly IVotingSessionCommandRepository repository;
+    private readonly ILogger<VotingResultsCommandRepository> logger;
 
     public VotingResultsCommandRepository(IVotingSessionCommandRepository repository, ILogger<VotingResultsCommandRepository> logger)
     {
-        _repository = repository;
-        _logger = logger;
+        this.repository = repository;
+        this.logger = logger;
     }
 
     public async Task<Maybe<VoidResult>> UpdateAsync(VotingSessionId id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards, DateTime concluded,
@@ -36,17 +36,17 @@ internal sealed class VotingResultsCommandRepository : IVotingResultsCommandRepo
 
         try
         {
-            await _repository.UpdateAsync(id.CorrelationId.ToString(), updateFunc, cancelToken);
+            await this.repository.UpdateAsync(id.CorrelationId.ToString(), updateFunc, cancelToken);
             return VoidResult.Void;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error when updating voting result entity!");
+            this.logger.LogError(e, "Error when updating voting result entity!");
             return new Error<VoidResult>(e.Message, ErrorType.Unknown);
         }
     }
 
-    public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancelToken) => _repository.InsertAsync(votingResult, cancelToken);
+    public Task InsertAsync(IReadOnlyVotingResult votingResult, CancellationToken cancelToken) => this.repository.InsertAsync(votingResult, cancelToken);
 
     public async Task<Maybe<VoidResult>> ResetAsync(VotingSessionId id, CancellationToken cancelToken)
     {
@@ -62,12 +62,12 @@ internal sealed class VotingResultsCommandRepository : IVotingResultsCommandRepo
 
         try
         {
-            await _repository.UpdateAsync(id.CorrelationId.ToString(), updateFunc, cancelToken);
+            await this.repository.UpdateAsync(id.CorrelationId.ToString(), updateFunc, cancelToken);
             return VoidResult.Void;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error when updating voting result entity!");
+            this.logger.LogError(e, "Error when updating voting result entity!");
             return new Error<VoidResult>(e.Message, ErrorType.Unknown);
         }
     }

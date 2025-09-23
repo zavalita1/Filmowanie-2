@@ -1,4 +1,4 @@
-namespace Filmowanie.Abstractions.DomainModels;
+namespace Filmowanie.Account.Interfaces;
 
 public interface IMailBasedUserData
 {

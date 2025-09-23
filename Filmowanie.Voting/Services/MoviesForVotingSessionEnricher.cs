@@ -1,6 +1,5 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Entities.Voting.Events;
@@ -14,21 +13,21 @@ namespace Filmowanie.Voting.Services;
 // TODO UTs
 internal sealed class MoviesForVotingSessionEnricher : IMoviesForVotingSessionEnricher
 {
-    private readonly IRequestClient<NominationsRequestedEvent> _getNominationsRequestClient;
-    private readonly ILogger<MoviesForVotingSessionEnricher> _log;
+    private readonly IRequestClient<NominationsRequestedEvent> getNominationsRequestClient;
+    private readonly ILogger<MoviesForVotingSessionEnricher> log;
 
     public MoviesForVotingSessionEnricher(IRequestClient<NominationsRequestedEvent> getNominationsRequestClient, ILogger<MoviesForVotingSessionEnricher> log)
     {
-        _getNominationsRequestClient = getNominationsRequestClient;
-        _log = log;
+        this.getNominationsRequestClient = getNominationsRequestClient;
+        this.log = log;
     }
 
-    public Task<Maybe<MovieDTO[]>> EnrichWithPlaceholdersAsync(Maybe<MovieDTO[]> movies, Maybe<VotingSessionId> maybeVotingId, CancellationToken cancelToken) => movies.Merge(maybeVotingId).AcceptAsync(EnrichWithPlaceholders, _log, cancelToken);
+    public Task<Maybe<MovieDTO[]>> EnrichWithPlaceholdersAsync(Maybe<MovieDTO[]> movies, Maybe<VotingSessionId> maybeVotingId, CancellationToken cancelToken) => movies.Merge(maybeVotingId).AcceptAsync(EnrichWithPlaceholders, this.log, cancelToken);
 
     public async Task<Maybe<MovieDTO[]>> EnrichWithPlaceholders((MovieDTO[], VotingSessionId) movies, CancellationToken cancelToken)
     {
         var nominationsRequested = new NominationsRequestedEvent(movies.Item2);
-        var nominations = await _getNominationsRequestClient.GetResponse<CurrentNominationsResponse>(nominationsRequested, cancelToken);
+        var nominations = await this.getNominationsRequestClient.GetResponse<CurrentNominationsResponse>(nominationsRequested, cancelToken);
 
         var placeHolders = nominations.Message.Nominations.Where(x => x.Concluded == null).Select(GetPlaceholderDTO);
         var result = movies.Item1.Concat(placeHolders).ToArray();

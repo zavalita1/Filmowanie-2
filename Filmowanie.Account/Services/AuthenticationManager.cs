@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
@@ -14,28 +13,28 @@ namespace Filmowanie.Account.Services;
 
 internal sealed class AuthenticationManager : IAuthenticationManager
 {
-    private readonly ILogger<AuthenticationManager> _log;
-    private readonly IHttpContextWrapper _httpContextWrapper;
+    private readonly ILogger<AuthenticationManager> log;
+    private readonly IHttpContextWrapper httpContextWrapper;
 
     public AuthenticationManager(ILogger<AuthenticationManager> log, IHttpContextWrapper httpContextWrapper)
     {
-        _log = log;
-        _httpContextWrapper = httpContextWrapper;
+        this.log = log;
+        this.httpContextWrapper = httpContextWrapper;
     }
 
-    public Task<Maybe<VoidResult>> LogInAsync(Maybe<LoginResultData> maybeLoginData, CancellationToken cancelToken) => maybeLoginData.AcceptAsync(LogInAsync, _log, cancelToken);
-    public Task<Maybe<VoidResult>> LogOutAsync(Maybe<VoidResult> maybe, CancellationToken cancelToken) => maybe.AcceptAsync(LogOutAsync, _log, cancelToken);
+    public Task<Maybe<VoidResult>> LogInAsync(Maybe<LoginResultData> maybeLoginData, CancellationToken cancelToken) => maybeLoginData.AcceptAsync(LogInAsync, this.log, cancelToken);
+    public Task<Maybe<VoidResult>> LogOutAsync(Maybe<VoidResult> maybe, CancellationToken cancelToken) => maybe.AcceptAsync(LogOutAsync, this.log, cancelToken);
 
-    public Maybe<DomainUser> GetDomainUser(Maybe<VoidResult> maybe) => maybe.Accept(GetDomainUser, _log);
+    public Maybe<DomainUser> GetDomainUser(Maybe<VoidResult> maybe) => maybe.Accept(GetDomainUser, this.log);
 
 
     private Maybe<DomainUser> GetDomainUser()
     {
-        var user = _httpContextWrapper.User;
+        var user = this.httpContextWrapper.User;
 
         if (user == null || user.Identity?.IsAuthenticated != true)
         {
-            var errors = _httpContextWrapper.Request!.Cookies.ContainsKey(".AspNetCore.cookie")
+            var errors = this.httpContextWrapper.Request!.Cookies.ContainsKey(".AspNetCore.cookie")
                 ? (string[])[Messages.CookieExpired, Messages.UserNotLoggerIn]
                 : [Messages.UserNotLoggerIn];
 
@@ -62,16 +61,16 @@ internal sealed class AuthenticationManager : IAuthenticationManager
 
     private async Task<Maybe<VoidResult>> LogInAsync(LoginResultData loginData, CancellationToken cancelToken)
     {
-        _log.LogInformation("Logging in...");
+        log.LogInformation("Logging in...");
         var claimsPrincipal = new ClaimsPrincipal(loginData.Identity);
-        await _httpContextWrapper.SignInAsync(Schemes.Cookie, claimsPrincipal, loginData.AuthenticationProperties);
-        _log.LogInformation("Logged in!");
+        await this.httpContextWrapper.SignInAsync(Schemes.Cookie, claimsPrincipal, loginData.AuthenticationProperties);
+        log.LogInformation("Logged in!");
         return VoidResult.Void;
     }
 
     private async Task<Maybe<VoidResult>> LogOutAsync(CancellationToken cancelToken)
     {
-        await _httpContextWrapper.SignOutAsync(Schemes.Cookie);
+        await this.httpContextWrapper.SignOutAsync(Schemes.Cookie);
         return VoidResult.Void;
     }
 }

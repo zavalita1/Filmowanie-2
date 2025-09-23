@@ -5,15 +5,15 @@ namespace Filmowanie.Database.Repositories;
 
 internal sealed class DomainUsersRepository : IDomainUsersRepository
 {
-    private readonly IUsersQueryRepository _usersQueryRepository;
+    private readonly IUsersQueryRepository usersQueryRepository;
 
     public DomainUsersRepository(IUsersQueryRepository usersQueryRepository)
     {
-        _usersQueryRepository = usersQueryRepository;
+        this.usersQueryRepository = usersQueryRepository;
     }
 
-    public Task<IReadOnlyUserEntity?> GetUserByIdAsync(string id, CancellationToken cancelToken) => _usersQueryRepository.GetUserAsync(x => x.id == id, cancelToken);
-    public Task<IReadOnlyUserEntity?> GetUserByCodeAsync(string code, CancellationToken cancelToken) => _usersQueryRepository.GetUserAsync(x => x.Code == code, cancelToken);
-    public Task<IReadOnlyUserEntity?> GetUserByMailAsync(string mail, CancellationToken cancelToken) => _usersQueryRepository.GetUserAsync(x => x.Email == mail, cancelToken);
-    public Task<IReadOnlyUserEntity[]> GetAllAsync(CancellationToken cancelToken) => _usersQueryRepository.GetAllAsync(cancelToken);
+    public Task<IReadOnlyUserEntity?> GetUserByIdAsync(string id, CancellationToken cancelToken) => this.usersQueryRepository.GetUserAsync(x => x.id == id, cancelToken);
+    public Task<IReadOnlyUserEntity?> GetUserByCodeAsync(string code, CancellationToken cancelToken) => this.usersQueryRepository.GetUserAsync(x => x.Code == code, cancelToken);
+    public Task<IReadOnlyUserEntity?> GetUserByMailAsync(string mail, CancellationToken cancelToken) => this.usersQueryRepository.GetUserAsync(x => x.Email == mail, cancelToken);
+    public Task<IReadOnlyUserEntity[]> GetAllAsync(CancellationToken cancelToken) => this.usersQueryRepository.GetAllAsync(cancelToken);
 }

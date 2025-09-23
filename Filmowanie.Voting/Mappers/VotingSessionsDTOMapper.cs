@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Voting.DomainModels;
 using Filmowanie.Voting.DTOs.Outgoing;
@@ -11,14 +10,14 @@ namespace Filmowanie.Voting.Mappers;
 // TODO UTs
 internal sealed class VotingSessionsDTOMapper : IVotingSessionsDTOMapper
 {
-    private readonly ILogger<VotingSessionsDTOMapper> _log;
+    private readonly ILogger<VotingSessionsDTOMapper> log;
 
     public VotingSessionsDTOMapper(ILogger<VotingSessionsDTOMapper> log)
     {
-        _log = log;
+        this.log = log;
     }
 
-    public Maybe<VotingSessionsDTO> Map(Maybe<VotingMetadata[]> input) => input.Accept(VotingSessionsDTOMapper.Map, _log);
+    public Maybe<VotingSessionsDTO> Map(Maybe<VotingMetadata[]> input) => input.Accept(Map, this.log);
 
     private static Maybe<VotingSessionsDTO> Map(VotingMetadata[] input)
     {

@@ -1,8 +1,6 @@
-using DotNet.Testcontainers.Containers;
 using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
-using Filmowanie.Database.Extensions;
 using Filmowanie.Database.OptionsProviders;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
@@ -12,7 +10,7 @@ using System.Text.Json;
 
 namespace Filmowanie.Database.TestData;
 
-public static class TestDataDbHydrator
+internal static class TestDataDbHydrator
 {
     public static async Task HydrateDbWithMockedDataAsync(string databaseName, string dbConnectionString, string extensiveLoggingEnabled)
     {
@@ -73,94 +71,90 @@ public static class TestDataDbHydrator
 
         var entityDocs = JsonDocument.Parse(entities);
         var entityCounter = 0;
-        if (entityDocs != null)
+        
+        foreach (var doc in entityDocs.RootElement.EnumerateArray())
         {
-            foreach (var doc in entityDocs.RootElement.EnumerateArray())
+            Console.WriteLine($"Writing entity: {++entityCounter}.");
+            try
             {
-                Console.WriteLine($"Writing entity: {++entityCounter}.");
-                try
+                var type = doc.GetProperty("Type");
+                if (type.GetString() == "UserEntity")
                 {
-                    var type = doc.GetProperty("Type");
-                    if (type.GetString() == "UserEntity")
-                    {
-                        Console.WriteLine($"user entity found ({doc.GetProperty("id").GetString()}). Writing...");
-                        var obj = doc.Deserialize<UserEntity>();
-                        await entitiesContainer.Container.CreateItemAsync(obj);
-                        Console.WriteLine("user entity written.");
-                    }
-                    else if (type.GetString() == "VotingResult")
-                    {
-                        Console.WriteLine($"voting result entity found ({doc.GetProperty("id").GetString()}). Writing...");
-                        var obj = doc.Deserialize<VotingResult>();
-                        await entitiesContainer.Container.CreateItemAsync(obj);
-                        Console.WriteLine("voting result entity written.");
-                    }
-                    else if (type.GetString() == "MovieEntity")
-                    {
-                        Console.WriteLine($"movie entity found ({doc.GetProperty("id").GetString()}). Writing...");
-                        var obj = doc.Deserialize<MovieEntity>();
-                        await entitiesContainer.Container.CreateItemAsync(obj);
-                        Console.WriteLine("movie entity written.");
-                    }
-                    else
-                        throw new Exception("Unknown type among entities!");
+                    Console.WriteLine($"user entity found ({doc.GetProperty("id").GetString()}). Writing...");
+                    var obj = doc.Deserialize<UserEntity>();
+                    await entitiesContainer.Container.CreateItemAsync(obj);
+                    Console.WriteLine("user entity written.");
                 }
-                catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                else if (type.GetString() == "VotingResult")
                 {
-                    Console.WriteLine("Document already exists, skip");
-                    continue;
+                    Console.WriteLine($"voting result entity found ({doc.GetProperty("id").GetString()}). Writing...");
+                    var obj = doc.Deserialize<VotingResult>();
+                    await entitiesContainer.Container.CreateItemAsync(obj);
+                    Console.WriteLine("voting result entity written.");
                 }
-                Console.WriteLine($"Wrote entity: {++entityCounter}.");
+                else if (type.GetString() == "MovieEntity")
+                {
+                    Console.WriteLine($"movie entity found ({doc.GetProperty("id").GetString()}). Writing...");
+                    var obj = doc.Deserialize<MovieEntity>();
+                    await entitiesContainer.Container.CreateItemAsync(obj);
+                    Console.WriteLine("movie entity written.");
+                }
+                else
+                    throw new Exception("Unknown type among entities!");
             }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                Console.WriteLine("Document already exists, skip");
+                continue;
+            }
+            Console.WriteLine($"Wrote entity: {++entityCounter}.");
         }
 
         var eventDocs = JsonDocument.Parse(events);
         entityCounter = 0;
-        if (eventDocs != null)
+        
+        foreach (var doc in eventDocs.RootElement.EnumerateArray())
         {
-            foreach (var doc in eventDocs.RootElement.EnumerateArray())
+            Console.WriteLine($"Writing event: {++entityCounter}.");
+            try
             {
-                Console.WriteLine($"Writing event: {++entityCounter}.");
-                try
+                if (!doc.TryGetProperty("Type", out var type))
                 {
-                    if (!doc.TryGetProperty("Type", out var type))
-                    {
-                        Console.WriteLine("saga instance found. Writing...");
-                        var obj = doc.ToString();
-                        var idProp = doc.GetProperty("id");
-                        using var ms = new MemoryStream();
-                        using var w = new StreamWriter(ms);
-                        await w.WriteAsync(obj);
-                        await w.FlushAsync();
-                        ms.Position = 0;
+                    Console.WriteLine("saga instance found. Writing...");
+                    var obj = doc.ToString();
+                    var idProp = doc.GetProperty("id");
+                    using var ms = new MemoryStream();
+                    using var w = new StreamWriter(ms);
+                    await w.WriteAsync(obj);
+                    await w.FlushAsync();
+                    ms.Position = 0;
 
-                        await eventsContainer.Container.CreateItemStreamAsync(ms, new PartitionKey(idProp.GetString()));
-                        Console.WriteLine("sava instance written.");
-                    }
-                    else if (type.GetString() == "CanNominateMovieAgainEvent")
-                    {
-                        Console.WriteLine($"can re-nominate event found ({doc.GetProperty("id").GetString()}). Writing...");
-                        var obj = doc.Deserialize<CanNominateMovieAgainEvent>();
-                        await eventsContainer.Container.CreateItemAsync(obj);
-                        Console.WriteLine("can re-nominate event written.");
-                    }
-                    else if (type.GetString() == "NominatedMovieEvent")
-                    {
-                        Console.WriteLine($"nominated event found ({doc.GetProperty("id").GetString()}). Writing...");
-                        var obj = doc.Deserialize<NominatedMovieEvent>();
-                        await eventsContainer.Container.CreateItemAsync(obj);
-                        Console.WriteLine("nominated event entity written.");
-                    }
-                    else
-                        throw new Exception("Unknown type among events!");
+                    await eventsContainer.Container.CreateItemStreamAsync(ms, new PartitionKey(idProp.GetString()));
+                    Console.WriteLine("sava instance written.");
                 }
-                catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                else if (type.GetString() == "CanNominateMovieAgainEvent")
                 {
-                    Console.WriteLine("Document already exists, skip");
-                    continue;
+                    Console.WriteLine($"can re-nominate event found ({doc.GetProperty("id").GetString()}). Writing...");
+                    var obj = doc.Deserialize<CanNominateMovieAgainEvent>();
+                    await eventsContainer.Container.CreateItemAsync(obj);
+                    Console.WriteLine("can re-nominate event written.");
                 }
-                Console.WriteLine($"Writed entity: {++entityCounter}.");
+                else if (type.GetString() == "NominatedMovieEvent")
+                {
+                    Console.WriteLine($"nominated event found ({doc.GetProperty("id").GetString()}). Writing...");
+                    var obj = doc.Deserialize<NominatedMovieEvent>();
+                    await eventsContainer.Container.CreateItemAsync(obj);
+                    Console.WriteLine("nominated event entity written.");
+                }
+                else
+                    throw new Exception("Unknown type among events!");
             }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                Console.WriteLine("Document already exists, skip");
+                continue;
+            }
+            Console.WriteLine($"Wrote entity: {++entityCounter}.");
         }
     }
     

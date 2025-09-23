@@ -15,7 +15,7 @@ internal sealed class GoogleDataExtractorAdapter : ILoginDataExtractorAdapter<Go
         this.loginResultDataExtractor = loginResultDataExtractor;
     }
 
-    public Maybe<LoginResultData> GetLodingResultData(IReadOnlyUserEntity? dbUser, GoogleUserData mailBasedUserData)
+    public Maybe<LoginResultData> GetLoginResultData(IReadOnlyUserEntity? dbUser, GoogleUserData mailBasedUserData)
     {
         if (dbUser == null)
             return GetInvalidCredentialsError();

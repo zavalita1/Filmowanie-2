@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Constants;
 using Filmowanie.Account.Interfaces;
@@ -7,7 +6,7 @@ using Filmowanie.Account.Models;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.Extensions.Logging;
 
-namespace Filmowanie.Account.Helpers;
+namespace Filmowanie.Account.Services;
 
 internal sealed class TokenLoginResultDataExtractorDecorator : ILoginResultDataExtractorDecorator
 {

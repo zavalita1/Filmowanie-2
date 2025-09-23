@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Database.OptionsProviders;
 using Microsoft.AspNetCore.Builder;
@@ -15,7 +16,7 @@ using Testcontainers.CosmosDb;
 
 namespace Filmowanie.Extensions.Initialization;
 
-public static class Configuration
+internal static class Configuration
 {
     public static async Task SetupConfigurationAsync(this WebApplicationBuilder builder)
     {
@@ -64,6 +65,5 @@ public static class Configuration
         });
 
         builder.Services.ConfigureCosmosClientForEmulatedDb(cosmosDbContainer.HttpClient);
-        //builder.Services.ConfigureCosmosClientForEmulatedDb(new HttpClient());
     }
 }

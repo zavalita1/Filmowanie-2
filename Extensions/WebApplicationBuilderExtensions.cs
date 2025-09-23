@@ -2,10 +2,11 @@
 using Filmowanie.Abstractions.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using Environment = Filmowanie.Abstractions.Extensions.Environment;
 
 namespace Filmowanie.Extensions;
 
-public static class WebApplicationBuilderExtensions
+internal static class WebApplicationBuilderExtensions
 {
     private static StartupMode GetStartupMode(this WebApplicationBuilder builder)
     {

@@ -8,22 +8,22 @@ using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Infrastructure;
 
-public sealed class FluentValidatorAdapter<TInput> : IFluentValidatorAdapter<TInput>
+internal sealed class FluentValidatorAdapter<TInput> : IFluentValidatorAdapter<TInput>
 {
-    private readonly IValidator<TInput> _validator;
-    private readonly ILogger<FluentValidatorAdapter<TInput>> _log;
+    private readonly IValidator<TInput> validator;
+    private readonly ILogger<FluentValidatorAdapter<TInput>> log;
 
     public FluentValidatorAdapter(IValidator<TInput> validator, ILogger<FluentValidatorAdapter<TInput>> log)
     {
-        _validator = validator;
-        _log = log;
+        this.validator = validator;
+        this.log = log;
     }
 
-    public Maybe<TInput> Validate(Maybe<TInput> maybeInput) => maybeInput.Accept(Validate, _log);
+    public Maybe<TInput> Validate(Maybe<TInput> maybeInput) => maybeInput.Accept(Validate, this.log);
 
     public Maybe<TInput> Validate(TInput input)
     {
-        var fluentResult = _validator.Validate(input);
+        var fluentResult = this.validator.Validate(input);
 
         if (fluentResult.IsValid)
             return new Maybe<TInput>(input, null);

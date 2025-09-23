@@ -1,6 +1,4 @@
-﻿using Filmowanie.Abstractions.Extensions;
-
-namespace Filmowanie.Abstractions.Maybe;
+﻿namespace Filmowanie.Abstractions.Maybe;
 
 public readonly record struct Maybe<T>(T? Result, Error<T>? Error)
 {

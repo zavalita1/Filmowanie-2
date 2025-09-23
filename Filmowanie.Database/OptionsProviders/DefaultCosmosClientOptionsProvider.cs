@@ -1,9 +1,10 @@
 using Filmowanie.Abstractions.Configuration;
+using Filmowanie.Database.Extensions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 
-namespace Filmowanie.Database.Extensions;
+namespace Filmowanie.Database.OptionsProviders;
 
 internal sealed class DefaultCosmosClientOptionsProvider : ICosmosClientOptionsProvider
 {

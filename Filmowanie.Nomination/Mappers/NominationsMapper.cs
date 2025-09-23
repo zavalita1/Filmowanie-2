@@ -1,5 +1,4 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Nomination.DTOs.Outgoing;
 using Filmowanie.Nomination.Interfaces;
@@ -10,14 +9,14 @@ namespace Filmowanie.Nomination.Mappers;
 
 internal sealed class NominationsMapper : INominationsMapper
 {
-    private readonly ILogger<NominationsEnricher> _log;
+    private readonly ILogger<NominationsEnricher> log;
 
     public NominationsMapper(ILogger<NominationsEnricher> log)
     {
-        _log = log;
+        this.log = log;
     }
 
-    public Maybe<NominationsDataDTO> Map(Maybe<CurrentNominationsData> maybeCurrentNominationsData, Maybe<DomainUser> maybeUser) => maybeCurrentNominationsData.Merge(maybeUser).Accept(Map, _log);
+    public Maybe<NominationsDataDTO> Map(Maybe<CurrentNominationsData> maybeCurrentNominationsData, Maybe<DomainUser> maybeUser) => maybeCurrentNominationsData.Merge(maybeUser).Accept(Map, this.log);
 
     private static Maybe<NominationsDataDTO> Map((CurrentNominationsData, DomainUser) input)
     {

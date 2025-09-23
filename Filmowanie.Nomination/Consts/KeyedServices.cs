@@ -1,6 +1,6 @@
 ﻿namespace Filmowanie.Nomination.Consts;
 
-public static class KeyedServices
+internal static class KeyedServices
 {
     public const string MovieUrl = "movieUrl";
     public const string MovieId = "movieId";

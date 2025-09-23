@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Filmowanie.Account.Interfaces;
 
-public interface IHttpContextWrapper
+internal interface IHttpContextWrapper
 {
     Task SignInAsync(string scheme, ClaimsPrincipal claimsPrincipal, AuthenticationProperties properties);
     Task SignOutAsync(string scheme);

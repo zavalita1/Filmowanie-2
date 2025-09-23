@@ -7,20 +7,20 @@ namespace Filmowanie.Voting.Retrievers;
 // TODO UTs
 internal sealed class VotingResultsRetriever : IVotingResultsRetriever
 {
-    private readonly IVotingDeciderFactory _votingDeciderFactory;
+    private readonly IVotingDeciderFactory votingDeciderFactory;
 
     public VotingResultsRetriever(IVotingDeciderFactory votingDeciderFactory)
     {
-        _votingDeciderFactory = votingDeciderFactory;
+        this.votingDeciderFactory = votingDeciderFactory;
     }
 
     public VotingResults GetVotingResults(IReadOnlyEmbeddedMovieWithVotes[] currentMovies, IReadOnlyVotingResult? previous)
     {
-        var regularDecider = _votingDeciderFactory.ForRegularVoting();
+        var regularDecider = this.votingDeciderFactory.ForRegularVoting();
         var previousMovies = previous?.Movies.ToArray() ?? [];
         var moviesWithScores = regularDecider.AssignScores(currentMovies, previousMovies).ToArray();
 
-        var trashVotingDecider = _votingDeciderFactory.ForTrashVoting();
+        var trashVotingDecider = this.votingDeciderFactory.ForTrashVoting();
         var moviesWithTrashScore = trashVotingDecider.AssignScores(currentMovies, previousMovies);
 
         var moviesGoingByeBye = moviesWithTrashScore.Where(x => x.IsWinner).Select(IReadOnlyEmbeddedMovie (x) => x.Movie.Movie).ToArray();

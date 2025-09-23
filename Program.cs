@@ -3,6 +3,7 @@ using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Filmowanie;
 using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Extensions;
 using Filmowanie.Extensions.Initialization;
@@ -16,7 +17,6 @@ builder.SetStartupMode();
 
 await builder.SetupConfigurationAsync();
 builder.ConfigureLogging();
-
 builder.Services.AddSignalR();
 
 EnvironmentDependent.Invoke(new ()

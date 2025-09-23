@@ -1,7 +1,6 @@
-﻿using Filmowanie.Abstractions.Interfaces;
-using FluentValidation;
+﻿using FluentValidation;
 
-namespace Filmowanie.Interfaces;
+namespace Filmowanie.Abstractions.Interfaces;
 
 public interface IFluentValidationAdapterFactory
 {

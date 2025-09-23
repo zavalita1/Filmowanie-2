@@ -11,14 +11,14 @@ namespace Filmowanie.Voting.Mappers;
 // TODO UTs
 internal sealed class MovieDtoMapper : IMovieDtoMapper
 {
-    private readonly ILogger<MovieDtoMapper> _log;
+    private readonly ILogger<MovieDtoMapper> log;
 
     public MovieDtoMapper(ILogger<MovieDtoMapper> log)
     {
-        _log = log;
+        this.log = log;
     }
 
-    public Maybe<MovieDTO[]> Map(Maybe<(IReadOnlyMovieEntity[] MoviesEntities, IReadOnlyEmbeddedMovieWithVotes[] EmbeddedMovies, DomainUser CurrentUser)> input) => input.Accept(Map, _log);
+    public Maybe<MovieDTO[]> Map(Maybe<(IReadOnlyMovieEntity[] MoviesEntities, IReadOnlyEmbeddedMovieWithVotes[] EmbeddedMovies, DomainUser CurrentUser)> input) => input.Accept(Map, this.log);
 
     private Maybe<MovieDTO[]> Map((IReadOnlyMovieEntity[] MoviesEntities, IReadOnlyEmbeddedMovieWithVotes[] EmbeddedMovies, DomainUser CurrentUser) input)
     {
@@ -28,7 +28,7 @@ internal sealed class MovieDtoMapper : IMovieDtoMapper
 
         foreach (var movie in movies)
         {
-            _log.LogInformation($"Mapping movie: {movie.Movie.Name}");
+            log.LogInformation($"Mapping movie: {movie.Movie.Name}");
             var votes = (int?)movie.Votes.SingleOrDefault(x => x.User.id == input.CurrentUser.Id)?.VoteType ?? 0;
             var duration = movie.Movie.DurationInMinutes.GetDurationString();
             var movieDto = new MovieDTO(movie.Movie.id, movie.Movie.Name, votes, movie.Movie.PosterUrl, movie.Movie.BigPosterUrl, movie.Movie.Description, movie.Movie.FilmwebUrl, movie.Movie.CreationYear, duration, movie.Movie.Genres, movie.Movie.Actors,

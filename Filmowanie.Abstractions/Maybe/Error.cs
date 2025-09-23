@@ -1,11 +1,12 @@
 ﻿using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 
 namespace Filmowanie.Abstractions.Maybe;
 
 public readonly record struct Error<T>(IEnumerable<string> ErrorMessages, ErrorType Type)
 {
     public Error(string errorMessage, ErrorType type) : this([errorMessage], type) { }
-    public override string ToString() => string.Join(',', ErrorMessages ?? []);
+    public override string ToString() => (ErrorMessages ?? []).JoinStrings();
 
     public static implicit operator Maybe<T>(Error<T> error) => new (default, error);
 }

@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Account.Extensions;
 using Filmowanie.Filters;
 using Filmowanie.Nomination.Extensions;

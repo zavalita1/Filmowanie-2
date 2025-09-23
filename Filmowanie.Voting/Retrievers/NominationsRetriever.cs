@@ -10,23 +10,23 @@ namespace Filmowanie.Voting.Retrievers;
 // TODO UTs
 internal sealed class NominationsRetriever : INominationsRetriever
 {
-    private readonly IPickUserToNominateStrategyFactory _pickUserToNominateStrategyFactory;
+    private readonly IPickUserToNominateStrategyFactory pickUserToNominateStrategyFactory;
 
     public NominationsRetriever(IPickUserToNominateStrategyFactory pickUserToNominateStrategyFactory)
     {
-        _pickUserToNominateStrategyFactory = pickUserToNominateStrategyFactory;
+        this.pickUserToNominateStrategyFactory = pickUserToNominateStrategyFactory;
     }
 
     public List<IReadOnlyEmbeddedUserWithNominationAward> GetNominations(Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> assignNominationsUserContexts, VotingConcludedEvent message, VotingResults votingResults)
     {
-        var pickUserNominationStrategy = _pickUserToNominateStrategyFactory.ForRegularVoting();
+        var pickUserNominationStrategy = this.pickUserToNominateStrategyFactory.ForRegularVoting();
         var userToNominate = pickUserNominationStrategy.GetUserToNominate(votingResults.Winner, assignNominationsUserContexts);
 
         var list = new List<IReadOnlyEmbeddedUserWithNominationAward>();
         var winnerAward = new ReadOnlyEmbeddedUserWithNominationAward(userToNominate, "TODO", votingResults.Winner.MovieCreationYear.ToDecade());
         list.Add(winnerAward);
 
-        var trashDecider = _pickUserToNominateStrategyFactory.ForTrashVoting();
+        var trashDecider = this.pickUserToNominateStrategyFactory.ForTrashVoting();
         foreach (var trashMovie in votingResults.MoviesGoingByeBye)
         {
             var trashNominator = trashDecider.GetUserToNominate(trashMovie, assignNominationsUserContexts);

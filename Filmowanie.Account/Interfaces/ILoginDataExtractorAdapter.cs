@@ -7,5 +7,5 @@ namespace Filmowanie.Account.Interfaces;
 
 internal interface ILoginDataExtractorAdapter<T> where T : IMailBasedUserData
 {
-    public Maybe<LoginResultData> GetLodingResultData(IReadOnlyUserEntity? dbUser, T mailBasedUserData);
+    public Maybe<LoginResultData> GetLoginResultData(IReadOnlyUserEntity? dbUser, T mailBasedUserData);
 }

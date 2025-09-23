@@ -1,4 +1,4 @@
-using Filmowanie.Abstractions.DomainModels;
+using Filmowanie.Account.Interfaces;
 
 namespace Filmowanie.Account.Models;
 

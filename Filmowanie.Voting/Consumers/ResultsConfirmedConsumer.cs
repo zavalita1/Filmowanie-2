@@ -16,63 +16,63 @@ namespace Filmowanie.Voting.Consumers;
 // TODO UTs
 public sealed class ResultsConfirmedConsumer : IConsumer<VotingConcludedEvent>, IConsumer<Fault<VotingConcludedEvent>>
 {
-    private readonly ILogger<ResultsConfirmedConsumer> _logger;
-    private readonly IVotingResultsCommandRepository _votingResultsCommandRepository;
-    private readonly IRepositoryInUserlessContextProvider _repositoriesProvider;
-    private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IPickUserToNominateContextRetriever _pickUserToNominateContextRetriever;
-    private readonly IVotingResultsRetriever _votingResultsRetriever;
-    private readonly INominationsRetriever _nominationsRetriever;
-    private readonly IUsersQueryRepository _usersQueryRepository;
+    private readonly ILogger<ResultsConfirmedConsumer> logger;
+    private readonly IVotingResultsCommandRepository votingResultsCommandRepository;
+    private readonly IRepositoryInUserlessContextProvider repositoriesProvider;
+    private readonly IDateTimeProvider dateTimeProvider;
+    private readonly IPickUserToNominateContextRetriever pickUserToNominateContextRetriever;
+    private readonly IVotingResultsRetriever votingResultsRetriever;
+    private readonly INominationsRetriever nominationsRetriever;
+    private readonly IUsersQueryRepository usersQueryRepository;
     private const int DecidersTimeWindow = 10;
 
     public ResultsConfirmedConsumer(ILogger<ResultsConfirmedConsumer> logger, IVotingResultsCommandRepository votingResultsCommandRepository, IDateTimeProvider dateTimeProvider, IRepositoryInUserlessContextProvider votingResultsRepositoryProvider, IPickUserToNominateContextRetriever pickUserToNominateContextRetriever, IVotingResultsRetriever votingResultsRetriever, INominationsRetriever nominationsRetriever, IUsersQueryRepository usersQueryRepository)
     {
-        _logger = logger;
-        _votingResultsCommandRepository = votingResultsCommandRepository;
-        _dateTimeProvider = dateTimeProvider;
-        _repositoriesProvider = votingResultsRepositoryProvider;
-        _pickUserToNominateContextRetriever = pickUserToNominateContextRetriever;
-        _votingResultsRetriever = votingResultsRetriever;
-        _nominationsRetriever = nominationsRetriever;
-        _usersQueryRepository = usersQueryRepository;
+        this.logger = logger;
+        this.votingResultsCommandRepository = votingResultsCommandRepository;
+        this.dateTimeProvider = dateTimeProvider;
+        this.repositoriesProvider = votingResultsRepositoryProvider;
+        this.pickUserToNominateContextRetriever = pickUserToNominateContextRetriever;
+        this.votingResultsRetriever = votingResultsRetriever;
+        this.nominationsRetriever = nominationsRetriever;
+        this.usersQueryRepository = usersQueryRepository;
     }
 
     public Task Consume(ConsumeContext<Fault<VotingConcludedEvent>> context)
     {
-        var message = string.Join(",", context.Message.Exceptions.Select(x => x.Message));
-        var callStacks = string.Join(";;;;;;;;;;;;", context.Message.Exceptions.Select(x => x.StackTrace));
+        var message = context.Message.Exceptions.Select(x => x.Message).JoinStrings();
+        var callStacks = context.Message.Exceptions.Select(x => x.StackTrace).JoinStrings(";;;;;;;;;;;;");
         return context.Publish(new ErrorEvent(context.Message.Message.VotingSessionId, message, callStacks));
     }
 
     public async Task Consume(ConsumeContext<VotingConcludedEvent> context)
     {
-        _logger.LogInformation($"Consuming {nameof(VotingConcludedEvent)}...");
+        this.logger.LogInformation($"Consuming {nameof(VotingConcludedEvent)}...");
 
         try
         {
-            var now = _dateTimeProvider.Now;
+            var now = dateTimeProvider.Now;
             var message = context.Message;
 
-            var repo = _repositoriesProvider.GetVotingResultsRepository(message.Tenant);
+            var repo = this.repositoriesProvider.GetVotingResultsRepository(message.Tenant);
             var lastFewVotingResults = (await repo.GetLastNVotingResultsAsync(DecidersTimeWindow, context.CancellationToken)).RequireResult().ToArray();
             var lastVotingResult = lastFewVotingResults.FirstOrDefault(); // null only if it's initial voting
-            var votingResults = _votingResultsRetriever.GetVotingResults(message.MoviesWithVotes, lastVotingResult);
+            var votingResults = this.votingResultsRetriever.GetVotingResults(message.MoviesWithVotes, lastVotingResult);
 
             var moviesAdded = GetMoviesAddedDuringSession(message);
 
-            var assignNominationsUserContexts = _pickUserToNominateContextRetriever.GetPickUserToNominateContexts(lastFewVotingResults, moviesAdded, message);
-            var nominations = _nominationsRetriever.GetNominations(assignNominationsUserContexts, message, votingResults);
+            var assignNominationsUserContexts = this.pickUserToNominateContextRetriever.GetPickUserToNominateContexts(lastFewVotingResults, moviesAdded, message);
+            var nominations = this.nominationsRetriever.GetNominations(assignNominationsUserContexts, message, votingResults);
 
             var currentVotingSessionId = context.Message.VotingSessionId;
 
             var enrichedWinnerEntity = await EnrichWinnerEntityAsync(message.Tenant, votingResults, context.CancellationToken);
-            var updateResult = await _votingResultsCommandRepository.UpdateAsync(currentVotingSessionId, votingResults.Movies, nominations, now, moviesAdded, enrichedWinnerEntity, votingResults.MoviesGoingByeBye, context.CancellationToken);
+            var updateResult = await this.votingResultsCommandRepository.UpdateAsync(currentVotingSessionId, votingResults.Movies, nominations, now, moviesAdded, enrichedWinnerEntity, votingResults.MoviesGoingByeBye, context.CancellationToken);
 
             if (updateResult.Error.HasValue)
                 await PublishErrorAsync(context, error: updateResult.Error);
 
-            _logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
+            this.logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
         }
         catch (Exception ex)
         {
@@ -85,9 +85,9 @@ public sealed class ResultsConfirmedConsumer : IConsumer<VotingConcludedEvent>, 
         var msg = "Error occurred during concluding the voting..." + error;
 
         if (ex == null)
-            _logger.LogError(msg);
+            this.logger.LogError(msg);
         else
-            _logger.LogError(ex, msg);
+            this.logger.LogError(ex, msg);
 
         var errorEvent = new ErrorEvent(context.Message.VotingSessionId, msg, ex?.StackTrace ?? "Unknown");
         return context.Publish(errorEvent, context.CancellationToken);
@@ -96,10 +96,10 @@ public sealed class ResultsConfirmedConsumer : IConsumer<VotingConcludedEvent>, 
     private async Task<EmbeddedMovieWithNominationContext> EnrichWinnerEntityAsync(TenantId tenant, VotingResults votingResults, CancellationToken cancelToken)
     {
         var movieId = new MovieId(votingResults.Winner.id);
-        var repo = _repositoriesProvider.GetMovieDomainRepository(tenant);
+        var repo = this.repositoriesProvider.GetMovieDomainRepository(tenant);
         var nominatedEvents = await repo.GetMovieNominatedEventsAsync(movieId, cancelToken);
         var mostRecentNominatedAgainEvent = nominatedEvents.MaxBy(x => x.Created);
-        var nominatingUser = await _usersQueryRepository.GetUserAsync(x => x.id == mostRecentNominatedAgainEvent!.UserId, cancelToken);
+        var nominatingUser = await this.usersQueryRepository.GetUserAsync(x => x.id == mostRecentNominatedAgainEvent!.UserId, cancelToken);
         return new EmbeddedMovieWithNominationContext(votingResults.Winner) { NominatedBy = new EmbeddedUser(nominatingUser!) };
     }
 

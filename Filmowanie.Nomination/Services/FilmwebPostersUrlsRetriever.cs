@@ -7,17 +7,17 @@ namespace Filmowanie.Nomination.Services;
 
 internal sealed class FilmwebPostersUrlsRetriever : IFilmwebPostersUrlsRetriever
 {
-    private readonly IHttpClientFactory _clientFactory;
+    private readonly IHttpClientFactory clientFactory;
     private static string GetPostersPattern(int movieId) => $@"src=""(https:\/\/fwcdn\.pl.*?\/{movieId}\/.*?\.10\..*?)""";
 
     public FilmwebPostersUrlsRetriever(IHttpClientFactory clientFactory)
     {
-        _clientFactory = clientFactory;
+        this.clientFactory = clientFactory;
     }
 
     public async Task<IEnumerable<string>> GetPosterUrlsAsync(FilmwebUriMetadata metadata, CancellationToken cancel)
     {
-        var client = _clientFactory.CreateClient(HttpClientNames.Filmweb);
+        var client = this.clientFactory.CreateClient(HttpClientNames.Filmweb);
         var postersUrl = $"{metadata.MovieAbsolutePath}/posters";
 
         using var apiRequest = new HttpRequestMessage(HttpMethod.Get, postersUrl);

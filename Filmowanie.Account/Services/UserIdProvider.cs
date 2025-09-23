@@ -1,7 +1,7 @@
 ﻿using Filmowanie.Account.Constants;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Filmowanie.Account;
+namespace Filmowanie.Account.Services;
 
 public sealed class UserIdProvider : IUserIdProvider
 {
