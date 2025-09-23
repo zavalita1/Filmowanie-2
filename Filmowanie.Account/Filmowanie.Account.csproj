@@ -12,7 +12,7 @@
     <ProjectReference Include="..\Filmowanie.Abstractions\Filmowanie.Abstractions.csproj" />
     <ProjectReference Include="..\Filmowanie.Database\Filmowanie.Database.csproj" />
 	<PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
-	<PackageReference Include="MassTransit.Azure.Cosmos" Version="8.3.2" />
+	<PackageReference Include="MassTransit.Azure.Cosmos" Version="8.5.2" />
   </ItemGroup>
 
 	<ItemGroup>

@@ -26,8 +26,8 @@
 		<PackageReference Include="Microsoft.AspNetCore.SpaProxy">
 			<Version>9.0.9</Version>
 		</PackageReference>
-		<PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.10" />
-		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.17" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.20" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.20" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
 		<PackageReference Include="ZLogger" Version="2.5.10" />
