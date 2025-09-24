@@ -2,7 +2,6 @@
 param env string = 'Undefined'
 
 
-var appServicePlanName = toLower('AppServicePlan-${wepAppName}')
 var appInsightsName = toLower('appins-${defaultNameSuffix}')
 var serviceBusName = toLower('sb-${defaultNameSuffix}')
 var dbAccountName = toLower('dba-${defaultNameSuffix}')
@@ -26,20 +25,20 @@ var wepAppName = environments[env].webAppName
 param tenantId string = subscription().tenantId
 param location string = resourceGroup().location
 
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
-  name: defaultNameSuffix
-  location: location
-  sku: {
-    name: 'Basic'
-  }
-  properties: {
-    adminUserEnabled: true
-    dataEndpointEnabled: false
-    encryption: {
-      status: 'disabled'
-    }
-  }
-}
+// resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
+//   name: defaultNameSuffix
+//   location: location
+//   sku: {
+//     name: 'Basic'
+//   }
+//   properties: {
+//     adminUserEnabled: true
+//     dataEndpointEnabled: false
+//     encryption: {
+//       status: 'disabled'
+//     }
+//   }
+// }
 
 resource appInsightsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   location: location

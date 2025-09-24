@@ -65,7 +65,7 @@ This mode uses compiled frontend assets. To run the application:
 ```json
 "StartupMode": "LocalWithCosmosEmulator"
 ```
-This mode automatically starts Azure Cosmos DB emulator in a container and populates it with test data.
+This mode automatically starts Azure Cosmos DB emulator in a container and populates it with test data. You'll need to run this with elevated privilege as this will try to add emulator container's cert to trusted ones in cert store.
 
 Prerequisites:
 - Docker must be running on your machine
@@ -97,7 +97,7 @@ The application will automatically:
 ```json
 "StartupMode": "LocalWithCosmosEmulator"
 ```
-This mode automatically starts Azure Cosmos DB emulator in a container and populates it with test data.
+This mode automatically starts Azure Cosmos DB emulator in a container and populates it with test data. You'll need to run this with elevated privilege as this will try to add emulator container's cert to trusted ones in cert store.
 
 Prerequisites:
 - Docker must be running on your machine

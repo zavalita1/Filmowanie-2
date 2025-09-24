@@ -10,7 +10,7 @@ import { ResultRow, Results } from '../../../models/Results';
 import { mapVotingResults } from '../../../mappers/mapVotingResults';
 
 export const votingApi = userApi
-.enhanceEndpoints({ addTagTypes: ['MoviesList', 'VotingStatus'], endpoints: { logout: { invalidatesTags: ['MoviesList', 'UserData']}}})
+.enhanceEndpoints({ addTagTypes: ['MoviesList', 'VotingStatus', 'Results'], endpoints: { logout: { invalidatesTags: ['MoviesList', 'UserData']}}})
 .injectEndpoints({
   endpoints: (builder) => ({
     getCurrentVoting: builder.query<VotableOrPlaceholderMovie[], void>({
@@ -51,13 +51,15 @@ export const votingApi = userApi
           }));
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, params?.votes === 0 ? "Głos usunięty" : "Zagłosowane!", true, async () => patchResult.undo());
       },
+      invalidatesTags: ['Results'],
     }),
     getResults: builder.query<Results, string>({
       query: votingSessionId => ({ url: `voting/results?votingSessionId=${votingSessionId}`, method: 'GET'}),
       async onQueryStarted(params, { dispatch, queryFulfilled }) {
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
       },
-      transformResponse: mapVotingResults
+      transformResponse: mapVotingResults,
+      providesTags: ['Results']
     })
   })
 });

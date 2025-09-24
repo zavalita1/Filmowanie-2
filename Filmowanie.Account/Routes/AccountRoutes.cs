@@ -15,11 +15,12 @@ internal sealed class AccountRoutes : IAccountRoutes
     private readonly IAccountUserService userService;
     private readonly IGoogleAuthService googleAuthService;
     private readonly IAuthenticationManager authenticationManager;
+    private readonly ICurrentUserAccessor currentUserAccessor;
     private readonly IUserDtoMapper userMapper;
     private readonly ISignUpService signUpService;
     private readonly IRoutesResultHelper routesResultHelper;
 
-    public AccountRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IAccountUserService userService, IGoogleAuthService googleAuthService, ISignUpService signUpService, IUserDtoMapper userMapper, IRoutesResultHelper routesResultHelper, IAuthenticationManager authenticationManager)
+    public AccountRoutes(IFluentValidatorAdapterProvider validatorAdapterProvider, IAccountUserService userService, IGoogleAuthService googleAuthService, ISignUpService signUpService, IUserDtoMapper userMapper, IRoutesResultHelper routesResultHelper, IAuthenticationManager authenticationManager, ICurrentUserAccessor currentUserAccessor)
     {
         this.validatorAdapterProvider = validatorAdapterProvider;
         this.userService = userService;
@@ -28,6 +29,7 @@ internal sealed class AccountRoutes : IAccountRoutes
         this.userMapper = userMapper;
         this.routesResultHelper = routesResultHelper;
         this.authenticationManager = authenticationManager;
+        this.currentUserAccessor = currentUserAccessor;
     }
 
     public async Task<IResult> LoginAsync([FromBody] LoginDto dto, CancellationToken cancel)
@@ -72,8 +74,7 @@ internal sealed class AccountRoutes : IAccountRoutes
     {
         var validator = this.validatorAdapterProvider.GetAdapter<BasicAuthLoginDTO>(KeyedServices.SignUpBasicAuth);
         var maybeBasicAuth = validator.Validate(dto).Map(x => new BasicAuthUserData(x.Email, x.Password));
-        var maybeIdentity = await this.userService.GetUserIdentity(maybeBasicAuth, cancel);
-        var maybeDomainUser = this.authenticationManager.GetDomainUser(maybeIdentity);
+        var maybeDomainUser = this.currentUserAccessor.GetDomainUser(maybeBasicAuth);
         var maybeLoginData = await signUpService.SignUp(maybeDomainUser, maybeBasicAuth, cancel);
         maybeDomainUser = this.authenticationManager.GetDomainUser(maybeLoginData);
         var resultDto = this.userMapper.Map(maybeDomainUser);

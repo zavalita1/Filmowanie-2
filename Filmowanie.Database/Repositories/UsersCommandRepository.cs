@@ -17,7 +17,7 @@ internal sealed class UsersCommandRepository : IUsersCommandRepository
 
     public async Task<IReadOnlyUserEntity> UpdatePasswordAndMail(string id, (string Mail, string Password) data, CancellationToken cancelToken)
     {
-        var user = await this.identityDbContext.Users.SingleAsync(x => x.Code == id, cancelToken);
+        var user = await this.identityDbContext.Users.SingleAsync(x => x.id == id, cancelToken);
         
         user.PasswordHash = data.Password;
         user.Email = data.Mail;

@@ -23,7 +23,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Filmowanie.Tests" />
+		<InternalsVisibleTo Include="Filmowanie.UnitTests" />
 	</ItemGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />

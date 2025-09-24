@@ -15,6 +15,7 @@
     "dev-mocked": "vite -m mockedBackend",
     "build": "vite build --emptyOutDir",
     "buildLocal": "vite build --emptyOutDir --config vite.config.local.ts",
+    "builde2e": "vite build --emptyOutDir --config vite.config.e2e.ts",
     "serve": "serve dist",
     "test": "vitest --run",
     "test:watch": "vitest",
@@ -104,5 +105,6 @@
   },
   "volta": {
     "node": "22.16.0"
-  }
+  },
+  "packageManager": "pnpm@10.16.1"
 }

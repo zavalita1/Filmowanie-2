@@ -1,0 +1,56 @@
+# Git
+.git
+.gitignore
+.gitattributes
+.github
+
+# VS Code
+.vscode/
+
+# Visual Studio
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# Node/npm/pnpm
+node_modules/
+npm-debug.log
+.pnpm-debug.log
+
+# Frontend build output
+wwwroot/
+ClientApp/dist/
+
+# Environment files
+*.env
+.env.*
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

@@ -1,4 +1,5 @@
-﻿using Filmowanie.Abstractions.Extensions;
+﻿using Filmowanie.Abstractions.DomainModels;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities;
@@ -48,6 +49,9 @@ public sealed class ResultsConfirmedConsumer : IConsumer<ResultsConfirmedEvent>,
 
             var newMoviesToAdd = lastVotingResult.MoviesGoingByeBye.Select(x => GetReadOnlyCanNominateMovieAgainEvent(x, message));
             await this.movieCommandRepository.InsertCanBeNominatedAgainAsync(newMoviesToAdd, context.CancellationToken);
+
+            var winnerId = new MovieId(lastVotingResult.Winner!.Movie.id);
+            await this.movieCommandRepository.DeleteEventsForMovieAsync(winnerId, context.CancellationToken);
         }
         catch (Exception ex)
         {

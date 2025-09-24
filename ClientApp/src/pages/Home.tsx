@@ -26,7 +26,7 @@ const LoggedView: React.FC<AppComponentProps> = props => {
   return (<>
     <p className='text-3xl'>{`Witaj ${props.userData!.username}!`}</p>
 
-    {props.userData!.hasBasicAuthSetup === false ? <></> :
+    {props.userData!.hasRegisteredBasicAuth === true ? <></> :
       <>
         <Separator className='mt-10 mb-10' />
         <div> Strudzeni szukaniem kodu za każdym razem? Możecie wstukać mail + hasło, co by łatwiej pamiętać.</div>

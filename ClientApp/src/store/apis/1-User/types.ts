@@ -3,13 +3,13 @@ import { Decade } from "../../../consts/Decade";
 export type UserIncomingDTO = {
     username: string;
     isAdmin: boolean;
-    hasBasicAuthSetup: boolean;
+    hasRegisteredBasicAuth: boolean;
 };
 
 export type UserState = {
     username: string;
     isAdmin: boolean;
-    hasBasicAuthSetup: boolean;
+    hasRegisteredBasicAuth: boolean;
     useFemaleSuffixes: boolean;
 };
 

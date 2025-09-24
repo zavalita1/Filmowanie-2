@@ -19,7 +19,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Notification", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7427800D-1D46-4761-8A40-1ED9E368CF17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.Tests", "Tests\Filmowanie.Tests\Filmowanie.Tests.csproj", "{450669BE-613F-4BA8-9D25-DA61B7B11892}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.UnitTests", "Tests\Filmowanie.UnitTests\Filmowanie.UnitTests.csproj", "{450669BE-613F-4BA8-9D25-DA61B7B11892}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmowanie.E2E", "Tests\Filmowanie.E2E\Filmowanie.E2E.csproj", "{C6B40EDF-1658-425C-AF3B-EAF5C2FEA1B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,12 +78,19 @@ Global
 		{450669BE-613F-4BA8-9D25-DA61B7B11892}.DebugAndFrontend|Any CPU.Build.0 = Debug|Any CPU
 		{450669BE-613F-4BA8-9D25-DA61B7B11892}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{450669BE-613F-4BA8-9D25-DA61B7B11892}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6B40EDF-1658-425C-AF3B-EAF5C2FEA1B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6B40EDF-1658-425C-AF3B-EAF5C2FEA1B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6B40EDF-1658-425C-AF3B-EAF5C2FEA1B3}.DebugAndFrontend|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6B40EDF-1658-425C-AF3B-EAF5C2FEA1B3}.DebugAndFrontend|Any CPU.Build.0 = Debug|Any CPU
+		{C6B40EDF-1658-425C-AF3B-EAF5C2FEA1B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6B40EDF-1658-425C-AF3B-EAF5C2FEA1B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{450669BE-613F-4BA8-9D25-DA61B7B11892} = {7427800D-1D46-4761-8A40-1ED9E368CF17}
+		{C6B40EDF-1658-425C-AF3B-EAF5C2FEA1B3} = {7427800D-1D46-4761-8A40-1ED9E368CF17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A8B75422-61AD-4E75-A7F5-8359F36C8126}

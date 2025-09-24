@@ -1,4 +1,5 @@
-﻿using Filmowanie.Database.Contexts;
+﻿using Filmowanie.Abstractions.DomainModels;
+using Filmowanie.Database.Contexts;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Extensions;
 using Filmowanie.Database.Interfaces;
@@ -51,5 +52,15 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
         movie.IsRejected = true;
         await this.ctx.SaveChangesAsync(cancelToken);
         return movie;
+    }
+
+    public async Task DeleteEventsForMovieAsync(MovieId movieId, CancellationToken cancelToken)
+    {
+        var nominatedMovieEvents = await this.ctx.NominatedMovieEvents.Where(x => x.MovieId == movieId.Id).ToArrayAsync(cancelToken);
+        var canNominateAgainEvents = await this.ctx.CanNominateMovieAgainEvents.Where(x => x.Movie.id == movieId.Id).ToArrayAsync(cancelToken);
+
+        this.ctx.NominatedMovieEvents.RemoveRange(nominatedMovieEvents);
+        this.ctx.CanNominateMovieAgainEvents.RemoveRange(canNominateAgainEvents);
+        await this.ctx.SaveChangesAsync(cancelToken);
     }
 }

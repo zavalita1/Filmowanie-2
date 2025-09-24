@@ -69,7 +69,8 @@ export const userApi = apiSlice
       },
       async onQueryStarted(params, { dispatch, queryFulfilled }) {
         await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true);
-      }
+      },
+      invalidatesTags: ['UserData']
     }),
     loginWithGoogle: builder.mutation<UserState, LoginWithGoogleOutgoingDTO, UserState>({
       query: dto => ({ url: '/account/login/google', method: 'POST', body: dto}),
