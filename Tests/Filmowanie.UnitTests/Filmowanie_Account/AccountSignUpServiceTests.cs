@@ -27,7 +27,8 @@ public sealed class AccountSignUpServiceTests
         _hashHelper = Substitute.For<IHashHelper>();
         var logger = Substitute.For<ILogger<AccountSignUpService>>();
         _extractor = Substitute.For<ILoginResultDataExtractor>();
-        _sut = new AccountSignUpService(_commandRepository, _hashHelper, logger, _extractor);
+        var httpContextWrapper = Substitute.For<IHttpContextWrapper>();
+        _sut = new AccountSignUpService(_commandRepository, _hashHelper, logger, _extractor, httpContextWrapper);
     }
 
     [Fact]
