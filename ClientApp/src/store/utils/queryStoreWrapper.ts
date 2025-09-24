@@ -43,7 +43,7 @@ export const commonOnQueryStarted = async (
             await additionalErrorHandlingCallback();
         }
 
-        if (showError) {
+        if (showError && err?.error?.status !== 401) {
             let errorMessage = err?.error?.message;
             if (!errorMessage) errorMessage = err?.error?.data;
             if (!errorMessage && typeof err?.error === "string") errorMessage = err?.error;

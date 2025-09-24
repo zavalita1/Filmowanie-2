@@ -32,12 +32,12 @@ RUN dotnet restore Filmowanie.sln
 # Copy everything else
 COPY . ./
 # Substitute config for E2E one.
-COPY appsettings.E2E.json appsettings.Development.json
+COPY appsettings.E2E.json appsettings.json
 # Copy the built frontend files to wwwroot
 # COPY --from=frontend-builder app/dist ./wwwroot
 
 # Build the application
-RUN dotnet publish Filmowanie.csproj -c Release -o out
+RUN dotnet publish Filmowanie.csproj -c Development -o out -p:SkipFrontendBuild=Skip
 
 # Stage 3: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime

@@ -101,7 +101,7 @@
 		<Message Importance="high" Text="Restoring dependencies using 'pnpm'. This may take several minutes..." />
 		<Exec WorkingDirectory="$(SpaRoot)" Command="pnpm install" />
 	</Target>
-	<Target Name="PublishRunVite" AfterTargets="ComputeFilesToPublish">
+	<Target Name="PublishRunVite" AfterTargets="ComputeFilesToPublish" Condition="'$(SkipFrontendBuild)' != 'Skip'">
 		<Message Importance="High" Text="Building frontend with vite..." />
 		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
 		<Exec WorkingDirectory="$(SpaRoot)" Command="cmd /c pnpm build" />

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -34,9 +35,9 @@ internal static class Configuration
     private static async Task SetupCosmosDbEmulator(WebApplicationBuilder builder)
     {
         var cosmosDbContainer = new CosmosDbBuilder()
-          .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
-          .WithReuse(true)
-          .Build();
+       .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
+       .WithReuse(true)
+       .Build();
 
         await cosmosDbContainer.StartAsync();
 

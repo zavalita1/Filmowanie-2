@@ -5,6 +5,7 @@ import { AppComponentProps, Layout } from './Layout';
 import { BasicLogin } from '../components/BasicLogin';
 import { useSignUpMutation } from "../store/apis/1-User/userApi";
 import { LoginWithBasicAuthOutgoingDTO } from '../store/apis/1-User/types';
+import { useNavigate } from 'react-router';
 
 const Home: React.FC<AppComponentProps> = (props) => {
   return (
@@ -22,6 +23,7 @@ const Home: React.FC<AppComponentProps> = (props) => {
 
 const LoggedView: React.FC<AppComponentProps> = props => {
   const [useSignUp, result] = useSignUpMutation();
+  const navigate = useNavigate();
 
   return (<>
     <p className='text-3xl'>{`Witaj ${props.userData!.username}!`}</p>
@@ -36,9 +38,10 @@ const LoggedView: React.FC<AppComponentProps> = props => {
     }
   </>);
 
-  function signUp(email: string, password: string) {
+  async function signUp(email: string, password: string) {
     const dto: LoginWithBasicAuthOutgoingDTO = { email, password };
-    useSignUp(dto);
+    await useSignUp(dto).unwrap();
+    navigate('/login');
   }
 }
 
