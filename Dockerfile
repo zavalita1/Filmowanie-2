@@ -34,7 +34,7 @@ COPY . ./
 # Substitute config for E2E one.
 COPY appsettings.E2E.json appsettings.Development.json
 # Copy the built frontend files to wwwroot
-COPY --from=frontend-builder app/dist ./wwwroot
+# COPY --from=frontend-builder app/dist ./wwwroot
 
 # Build the application
 RUN dotnet publish Filmowanie.csproj -c Release -o out
