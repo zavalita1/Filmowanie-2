@@ -1,11 +1,14 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.Nomination.Builders;
 
 internal sealed class MovieBuilder
 {
+    private readonly ILogger log;
+
     private string? movieName;
     private string? posterUrl;
     private string? bigPosterUrl;
@@ -19,6 +22,14 @@ internal sealed class MovieBuilder
     private readonly List<string> writers = new(4);
     private string? originalTitle;
     private TenantId tenant;
+    
+    public MovieBuilder(ILogger log)
+    {
+        this.log = log;
+    }
+
+    private const string FallbackMoviePosterUrl = "https://fwcdn.pl/fpo/41/72/4172/7050857_1.10.webp";
+    private const string FallbackMovieBigPosterUrl = "https://fwcdn.pl/fpo/41/72/4172/7050857_1.8.webp";
 
     public MovieBuilder WithName(string name)
     {
@@ -101,10 +112,15 @@ internal sealed class MovieBuilder
 
     public IReadOnlyMovieEntity Build(IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider)
     {
-        if (string.IsNullOrEmpty(this.posterUrl) || string.IsNullOrEmpty(bigPosterUrl) || string.IsNullOrEmpty(this.description) || string.IsNullOrEmpty(this.description) || string.IsNullOrEmpty(this.movieName) || duration == default || year == default || string.IsNullOrEmpty(this.filmwebUrl) || this.tenant == default)
+        if (string.IsNullOrEmpty(this.posterUrl) || string.IsNullOrEmpty(this.bigPosterUrl))
         {
-            throw new ArgumentException("Cannot construct this!");
+            this.log.LogWarning("Falling back on poster url. We've got a hipster over there!");
+            this.posterUrl = FallbackMoviePosterUrl;
+            this.bigPosterUrl = FallbackMovieBigPosterUrl;
         }
+
+        if (string.IsNullOrEmpty(this.description) || string.IsNullOrEmpty(this.description) || string.IsNullOrEmpty(this.movieName) || duration == default || year == default || string.IsNullOrEmpty(this.filmwebUrl) || this.tenant == default)
+            throw new ArgumentException("Cannot construct this!");
 
         var originalTitle = this.originalTitle ?? this.movieName;
         var description = this.description.StartsWith($"{this.movieName} (")

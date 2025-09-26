@@ -26,7 +26,7 @@ internal sealed class EmulatedCosmosClientOptionsProvider : ICosmosClientOptions
             {
                 var handler = typeof(HttpMessageInvoker).GetField("_handler", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(this.client);
                 var typedHandler = (HttpMessageHandler)handler!;
-                var result = new HttpClient(typedHandler); // tcp port exhaustion is not a concern for local env.
+                var result = new HttpClient(typedHandler); // tcp port exhaustion is not a concern for local env. This bs is needed cause masstransit tries to set timeout crap on httpclient
                 return result;
             }
         };

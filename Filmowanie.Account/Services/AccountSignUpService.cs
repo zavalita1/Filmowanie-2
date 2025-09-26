@@ -2,13 +2,10 @@
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Maybe;
-using Filmowanie.Account.Constants;
-using Filmowanie.Account.DTOs.Incoming;
 using Filmowanie.Account.Interfaces;
 using Filmowanie.Account.Models;
 using Filmowanie.Database.Interfaces;
 using Microsoft.Extensions.Logging;
-using System.Security.Claims;
 
 namespace Filmowanie.Account.Services;
 

@@ -4,6 +4,7 @@ using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Nomination.Builders;
 using FluentAssertions;
 using NSubstitute;
+using Microsoft.Extensions.Logging;
 
 namespace Filmowanie.UnitTests.Filmowanie_Nomination;
 
@@ -17,7 +18,8 @@ public class MovieBuilderTests
         // Arrange
         var guidProvider = Substitute.For<IGuidProvider>();
         var dateTimeProvider = Substitute.For<IDateTimeProvider>();
-        var builder = new MovieBuilder();
+        var log = Substitute.For<ILogger>();
+        var builder = new MovieBuilder(log);
 
         // Act
         Action act = () => builder.Build(guidProvider, dateTimeProvider);
@@ -38,8 +40,9 @@ public class MovieBuilderTests
 
         var now = _fixture.Create<DateTime>();
         dateTimeProvider.Now.Returns(now);
+        var log = Substitute.For<ILogger>();
 
-        var builder = new MovieBuilder()
+        var builder = new MovieBuilder(log)
             .WithName("Inception")
             .WithTenant(new TenantId(1))
             .WithOriginalTitle("Inception")

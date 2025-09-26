@@ -86,7 +86,7 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
         var responseContent = await responsesContentTask;
         var responseContent2 = await responsesContent2Task;
 
-        var movieBuilder = new MovieBuilder().WithFilmwebUrl(metadata.MovieAbsolutePath);
+        var movieBuilder = new MovieBuilder(this.log).WithFilmwebUrl(metadata.MovieAbsolutePath);
         var web = new HtmlDocument();
         web.LoadHtml(responseContent);
 

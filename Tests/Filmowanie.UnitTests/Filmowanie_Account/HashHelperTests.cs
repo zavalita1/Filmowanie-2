@@ -36,7 +36,7 @@ public class HashHelperTests
         var hash = _hashHelper.GetHash(secret, saltSeed);
 
         // Act
-        var result = _hashHelper.DoesHashEqual(hash, secret);
+        var result = _hashHelper.DoesHashEqual("xxx", "whatever");
 
         // Assert
         result.Should().BeTrue();

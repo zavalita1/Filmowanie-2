@@ -79,7 +79,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   );
 
   function Header() {
-    return <div className='w-screen bg-gradient-to-tr from-emerald-50 to-sky-100 dark:from-pink-900 dark:to-black h-[70px] drop-shadow-lg relative'>
+    return <div className='w-screen bg-gradient-to-tr from-emerald-50 to-sky-100 dark:from-pink-900 dark:to-black h-[70px] drop-shadow-lg'>
       <div className='px-2 flex justify-between items-center w-full h-full'>
         <div className='flex items-center'>
           <h1 className='text-3xl font-bold text-black dark:text-white mr-4 sm:text-4xl'>Filmowanie.</h1>
@@ -161,7 +161,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   }
 
   function DisplayFatalError() {
-    return (<div className="flex flex-row justify-center items-center relative min-h-screen">Coś się zesrało w fatalny sposób. Strona jest do wyjebania, prosze odświeżyć.</div>);
+    return (<div className="flex flex-row justify-center items-center min-h-screen">Coś się zesrało w fatalny sposób. Strona jest do wyjebania, prosze odświeżyć.</div>);
   }
 
   function Footer() {

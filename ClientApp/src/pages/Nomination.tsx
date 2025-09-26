@@ -145,6 +145,10 @@ const PosterPicker: React.FC<PosterPickerProps> = props => {
         return <div>Loading...</div>
     }
 
+    if (data!.length === 0) {
+        return <div className="text-2xl font-extrabold">Wygląda na to, że chcesz nominować film, który nie ma dostępnych plakatów na filmwebie. Brawo, prawdziwy hipster.</div>
+    }
+
     if (props.isMobile) {
         return (
             <div className="flex justify-center">
