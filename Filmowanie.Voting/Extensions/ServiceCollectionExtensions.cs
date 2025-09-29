@@ -43,6 +43,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IVoteService, VoteService>();
         services.AddScoped<IVotingResultsRetriever, VotingResultsRetriever>();
+        services.AddSingleton<IVotingResultInterpreter, VotingResultInterpreter>();
         services.AddScoped<INominationsRetriever, NominationsRetriever>();
         services.AddScoped<ICurrentVotingStatusRetriever, CurrentVotingStatusRetriever>();
 

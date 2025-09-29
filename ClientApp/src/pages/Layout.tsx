@@ -51,7 +51,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const handleClose = () => setIsNavMenuVisible(false);
 
   const isHistoryEnabled = isUserLogged;
-  const isMovieListEnabled = (isUserLogged && votingState?.currentData === VotingStatus.Voting) || userData?.isAdmin;
+  const isMovieListEnabled = (isUserLogged && [VotingStatus.ExtraVoting, VotingStatus.Voting].includes(votingState?.currentData ?? VotingStatus.Loading)) || userData?.isAdmin;
   const isResultsEnabled = (isUserLogged && votingState?.currentData === VotingStatus.Results) || userData?.isAdmin;
   const isNominateEnabled = (isUserLogged && (nominations.currentData?.length ?? 0) > 0) || userData?.isAdmin;
 

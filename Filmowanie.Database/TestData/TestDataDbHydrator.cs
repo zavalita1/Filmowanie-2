@@ -54,8 +54,6 @@ internal static class TestDataDbHydrator
         var events = await File.ReadAllTextAsync($"{currentDir}/TestData/Events.json");
         Console.WriteLine("Read events file.");
 
-        Console.WriteLine("Created db");
-
         var entitiesContainer = await database.Database.CreateContainerIfNotExistsAsync(
             "Entities",
             "/id"

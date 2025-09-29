@@ -17,7 +17,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
     if (!props.userData)
       navigate('/');
 
-    if (props.votingStatus !== VotingStatus.Voting)
+    if (props.votingStatus !== VotingStatus.Voting || props.votingStatus !== VotingStatus.ExtraVoting)
       navigate('/');
 
   }, [props.userData, props.votingStatus]);
@@ -27,7 +27,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   const [vote, result] = useVoteMutation();
   const [acknowledgedPopup, setAcknowledgedPopup] = useState(false);
 
-  useEffect(() => setAvailableVotes(getInitialAvailableVotes(data)), [data]);
+  useEffect(() => setAvailableVotes(getInitialAvailableVotes(data, props.votingStatus)), [data]);
 
   if (isLoading)
     return (
@@ -114,9 +114,13 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
   // }
 }
 
-function getInitialAvailableVotes(movies?: VotableOrPlaceholderMovie[]) {
+function getInitialAvailableVotes(movies?: VotableOrPlaceholderMovie[], votingStatus?: VotingStatus) {
   if (movies === undefined) {
     return Vote.allVoteTypes;
+  }
+
+  if (votingStatus === VotingStatus.ExtraVoting) {
+    return [Vote.Vote.OnePoint, Vote.Vote.TwoPoints, Vote.Vote.ThreePoints];
   }
 
   const usedVotes = movies

@@ -14,19 +14,21 @@ using Microsoft.Extensions.Logging;
 namespace Filmowanie.Voting.Consumers;
 
 // TODO UTs
-public sealed class ResultsConfirmedConsumer : IConsumer<VotingConcludedEvent>, IConsumer<Fault<VotingConcludedEvent>>
+public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, IConsumer<Fault<VotingConcludedEvent>>
 {
-    private readonly ILogger<ResultsConfirmedConsumer> logger;
+    private readonly ILogger<VotingConcludedConsumer> logger;
     private readonly IVotingResultsCommandRepository votingResultsCommandRepository;
     private readonly IRepositoryInUserlessContextProvider repositoriesProvider;
     private readonly IDateTimeProvider dateTimeProvider;
     private readonly IPickUserToNominateContextRetriever pickUserToNominateContextRetriever;
     private readonly IVotingResultsRetriever votingResultsRetriever;
+    private readonly IVotingResultInterpreter votingResultInterpreter;
     private readonly INominationsRetriever nominationsRetriever;
     private readonly IUsersQueryRepository usersQueryRepository;
+    private readonly IBus bus;
     private const int DecidersTimeWindow = 10;
 
-    public ResultsConfirmedConsumer(ILogger<ResultsConfirmedConsumer> logger, IVotingResultsCommandRepository votingResultsCommandRepository, IDateTimeProvider dateTimeProvider, IRepositoryInUserlessContextProvider votingResultsRepositoryProvider, IPickUserToNominateContextRetriever pickUserToNominateContextRetriever, IVotingResultsRetriever votingResultsRetriever, INominationsRetriever nominationsRetriever, IUsersQueryRepository usersQueryRepository)
+    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingResultsCommandRepository votingResultsCommandRepository, IDateTimeProvider dateTimeProvider, IRepositoryInUserlessContextProvider votingResultsRepositoryProvider, IPickUserToNominateContextRetriever pickUserToNominateContextRetriever, IVotingResultsRetriever votingResultsRetriever, INominationsRetriever nominationsRetriever, IUsersQueryRepository usersQueryRepository, IVotingResultInterpreter votingResultInterpreter, IBus bus)
     {
         this.logger = logger;
         this.votingResultsCommandRepository = votingResultsCommandRepository;
@@ -36,6 +38,8 @@ public sealed class ResultsConfirmedConsumer : IConsumer<VotingConcludedEvent>, 
         this.votingResultsRetriever = votingResultsRetriever;
         this.nominationsRetriever = nominationsRetriever;
         this.usersQueryRepository = usersQueryRepository;
+        this.votingResultInterpreter = votingResultInterpreter;
+        this.bus = bus;
     }
 
     public Task Consume(ConsumeContext<Fault<VotingConcludedEvent>> context)
@@ -68,6 +72,8 @@ public sealed class ResultsConfirmedConsumer : IConsumer<VotingConcludedEvent>, 
 
             var enrichedWinnerEntity = await EnrichWinnerEntityAsync(message.Tenant, votingResults, context.CancellationToken);
             var updateResult = await this.votingResultsCommandRepository.UpdateAsync(currentVotingSessionId, votingResults.Movies, nominations, now, moviesAdded, enrichedWinnerEntity, votingResults.MoviesGoingByeBye, context.CancellationToken);
+
+            updateResult = await currentVotingSessionId.AsMaybe().Merge(updateResult).Merge(votingResults.AsMaybe()).AcceptAsync(InterpretResults, this.logger, context.CancellationToken);
 
             if (updateResult.Error.HasValue)
                 await PublishErrorAsync(context, error: updateResult.Error);
@@ -112,6 +118,16 @@ public sealed class ResultsConfirmedConsumer : IConsumer<VotingConcludedEvent>, 
             x.Concluded!.Value,
             message.VotingStarted
         )).ToArray();
+    }
+
+    private async Task<Maybe<VoidResult>> InterpretResults((VotingSessionId, VotingResults) data, CancellationToken cancelToken)
+    {
+        if (!this.votingResultInterpreter.IsExtraVotingNecessary(data.Item2, out var qualifiedMovies))
+            return VoidResult.Void;
+
+        var @event = new StartExtraVotingEvent(data.Item1, qualifiedMovies);
+        await this.bus.Send(@event, cancelToken);
+        return VoidResult.Void;
     }
 
     private readonly record struct ReadOnlyEmbeddedMovieWithNominationContext(IReadOnlyEmbeddedMovie Movie, IReadOnlyEmbeddedUser NominatedBy, DateTime NominationConcluded, DateTime NominationStarted)

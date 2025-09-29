@@ -12,10 +12,10 @@ export const votingSlice = createSlice({
     initialState,
     reducers: {
         votingStarted: (state, action: Action) => {
-            votingApi.util.invalidateTags(['VotingStatus']);
+            votingApi.util.invalidateTags(['VotingStatus', 'MoviesList', 'Results']);
         },
         votingEnded: (state, action: Action) => {
-            votingApi.util.invalidateTags(['VotingStatus']);
+            votingApi.util.invalidateTags(['VotingStatus', 'MoviesList', 'Results']);
         },
         reloadMovies: (state, action: Action) => {
             votingApi.util.invalidateTags(['MoviesList']);
