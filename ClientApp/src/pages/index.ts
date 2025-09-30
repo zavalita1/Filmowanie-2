@@ -1,4 +1,4 @@
-export { default as About } from './About';
+export { default as Preferences } from './Preferences';
 export { default as Admin } from './Admin';
 export { default as History } from './History';
 export { default as Home } from './Home';

@@ -17,7 +17,6 @@ internal sealed class VotingSessionCommandRepository : IVotingSessionCommandRepo
     private readonly CosmosOptions options;
     private readonly ICosmosClientOptionsProvider cosmosClientOptionsProvider;
 
-
     public VotingSessionCommandRepository(VotingResultsContext ctx, IOptions<CosmosOptions> options, ICosmosClientOptionsProvider cosmosClientOptionsProvider)
     {
         this.ctx = ctx;

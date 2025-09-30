@@ -10,6 +10,9 @@ public interface IMovieCommandRepository
     public Task InsertNominatedAsync(IReadOnlyNominatedMovieEvent nominatedEvent, CancellationToken cancelToken);
     public Task InsertMovieAsync(IReadOnlyMovieEntity movieEntity, CancellationToken cancelToken);
 
-    public Task UpdateMovieAsync(string entityId, string posterUrl, CancellationToken cancelToken);
+    public Task UpdatePosterAsync(string entityId, string posterUrl, string bigPosterUrl, CancellationToken cancelToken);
+
+    public Task<IReadOnlyMovieEntity> UpdateAltDescriptionAsync(string entityId, string altDescription, CancellationToken cancelToken);
+
     public Task<IReadOnlyMovieEntity> MarkMovieAsRejectedAsync(string entityId, CancellationToken cancelToken);
 }

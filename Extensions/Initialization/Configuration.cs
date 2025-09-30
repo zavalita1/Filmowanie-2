@@ -25,6 +25,9 @@ internal static class Configuration
         builder.Services.Configure<PushNotificationOptions>(builder.Configuration.GetSection("Vapid"));
         builder.Services.Configure<GoogleAuthOptions>(builder.Configuration.GetSection("GoogleOAuth"));
         builder.Services.Configure<CosmosOptions>(builder.Configuration);
+        builder.Services.Configure<OpenAIOptions>(builder.Configuration.GetSection("OpenAI"));
+        builder.Services.Configure<ImdbOptions>(builder.Configuration.GetSection("Imdb"));
+        builder.Services.Configure<FilmwebOptions>(builder.Configuration.GetSection("Filmweb"));
 
         await EnvironmentDependent.InvokeAsync(new()
         {

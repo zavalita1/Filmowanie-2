@@ -6,6 +6,7 @@ namespace Filmowanie.Database.Entities.Voting;
 public class VotingResult : Entity, IReadOnlyVotingResult
 {
     public IEnumerable<EmbeddedMovieWithVotes> Movies { get; set; } = new List<EmbeddedMovieWithVotes>();
+    public IEnumerable<EmbeddedMovieWithVotes>? ExtraVotingMovies { get; set; } = null;
     public IEnumerable<EmbeddedUserWithNominationAward> UsersAwardedWithNominations { get; set; } = new List<EmbeddedUserWithNominationAward>();
     public IEnumerable<EmbeddedMovie> MoviesGoingByeBye { get; set; } = new List<EmbeddedMovie>();
     public IEnumerable<EmbeddedMovieWithNominationContext> MoviesAdded { get; set; } = new List<EmbeddedMovieWithNominationContext>();
@@ -13,6 +14,8 @@ public class VotingResult : Entity, IReadOnlyVotingResult
     public virtual EmbeddedMovieWithNominatedBy? Winner { get; set; }
 
     IReadOnlyEmbeddedMovieWithVotes[] IReadOnlyVotingResult.Movies => Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
+
+    IReadOnlyEmbeddedMovieWithVotes[]? IReadOnlyVotingResult.ExtraVotingMovies => ExtraVotingMovies?.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
     IReadOnlyEmbeddedUserWithNominationAward[] IReadOnlyVotingResult.UsersAwardedWithNominations => UsersAwardedWithNominations.Cast<IReadOnlyEmbeddedUserWithNominationAward>().ToArray();
     IReadOnlyEmbeddedMovie[] IReadOnlyVotingResult.MoviesGoingByeBye => MoviesGoingByeBye.Cast<IReadOnlyEmbeddedMovie>().ToArray();
     IReadOnlyEmbeddedMovieWithNominationContext[] IReadOnlyVotingResult.MoviesAdded => MoviesAdded.Cast<IReadOnlyEmbeddedMovieWithNominationContext>().ToArray();

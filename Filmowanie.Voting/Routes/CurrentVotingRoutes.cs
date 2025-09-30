@@ -42,7 +42,7 @@ internal sealed class CurrentVotingRoutes : IVotingSessionRoutes
         var maybeCurrentVotingId = this.currentVotingSessionIdAccessor.GetRequiredVotingSessionId(maybeNullableCurrentVotingId);
         var maybeCurrentlyVotedMovies = await this.currentVotingService.GetCurrentlyVotedMoviesAsync(maybeCurrentVotingId, cancel);
         var maybeCurrentlyVotedMoviesWithVotes = await this.currentVotingService.GetCurrentlyVotedMoviesWithVotesAsync(maybeCurrentVotingId, cancel);
-        var maybeDto = this.movieVotingMappersComposite.Map(maybeCurrentlyVotedMovies, maybeCurrentlyVotedMoviesWithVotes, maybeCurrentUser);
+        var maybeDto = this.movieVotingMappersComposite.Map(maybeCurrentlyVotedMovies, maybeCurrentlyVotedMoviesWithVotes.Map(x => x.Item1), maybeCurrentUser);
         var result = await this.moviesForVotingSessionEnricher.EnrichWithPlaceholdersAsync(maybeDto, maybeCurrentVotingId, cancel);
 
         return RoutesResultHelper.UnwrapOperationResult(result);

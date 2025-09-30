@@ -1,6 +1,10 @@
 ﻿using FluentAssertions;
 using Filmowanie.Nomination.Services;
 using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
+using NSubstitute;
+using MassTransit.Configuration;
+using Filmowanie.Abstractions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Filmowanie.UnitTests.Filmowanie_Nomination;
 
@@ -10,7 +14,8 @@ public class FilmwebPathResolverTests
 
     public FilmwebPathResolverTests()
     {
-        _resolver = new FilmwebPathResolver();
+        var options = Substitute.For<IOptions<FilmwebOptions>>();
+        _resolver = new FilmwebPathResolver(options);
     }
 
     [Fact]

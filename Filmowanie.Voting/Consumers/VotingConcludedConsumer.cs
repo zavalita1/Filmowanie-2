@@ -22,13 +22,12 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
     private readonly IDateTimeProvider dateTimeProvider;
     private readonly IPickUserToNominateContextRetriever pickUserToNominateContextRetriever;
     private readonly IVotingResultsRetriever votingResultsRetriever;
-    private readonly IVotingResultInterpreter votingResultInterpreter;
     private readonly INominationsRetriever nominationsRetriever;
     private readonly IUsersQueryRepository usersQueryRepository;
     private readonly IBus bus;
     private const int DecidersTimeWindow = 10;
 
-    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingResultsCommandRepository votingResultsCommandRepository, IDateTimeProvider dateTimeProvider, IRepositoryInUserlessContextProvider votingResultsRepositoryProvider, IPickUserToNominateContextRetriever pickUserToNominateContextRetriever, IVotingResultsRetriever votingResultsRetriever, INominationsRetriever nominationsRetriever, IUsersQueryRepository usersQueryRepository, IVotingResultInterpreter votingResultInterpreter, IBus bus)
+    public VotingConcludedConsumer(ILogger<VotingConcludedConsumer> logger, IVotingResultsCommandRepository votingResultsCommandRepository, IDateTimeProvider dateTimeProvider, IRepositoryInUserlessContextProvider votingResultsRepositoryProvider, IPickUserToNominateContextRetriever pickUserToNominateContextRetriever, IVotingResultsRetriever votingResultsRetriever, INominationsRetriever nominationsRetriever, IUsersQueryRepository usersQueryRepository, IBus bus)
     {
         this.logger = logger;
         this.votingResultsCommandRepository = votingResultsCommandRepository;
@@ -38,7 +37,6 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         this.votingResultsRetriever = votingResultsRetriever;
         this.nominationsRetriever = nominationsRetriever;
         this.usersQueryRepository = usersQueryRepository;
-        this.votingResultInterpreter = votingResultInterpreter;
         this.bus = bus;
     }
 
@@ -61,19 +59,16 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
             var repo = this.repositoriesProvider.GetVotingResultsRepository(message.Tenant);
             var lastFewVotingResults = (await repo.GetLastNVotingResultsAsync(DecidersTimeWindow, context.CancellationToken)).RequireResult().ToArray();
             var lastVotingResult = lastFewVotingResults.FirstOrDefault(); // null only if it's initial voting
-            var votingResults = this.votingResultsRetriever.GetVotingResults(message.MoviesWithVotes, lastVotingResult);
-
-            var moviesAdded = GetMoviesAddedDuringSession(message);
-
-            var assignNominationsUserContexts = this.pickUserToNominateContextRetriever.GetPickUserToNominateContexts(lastFewVotingResults, moviesAdded, message);
-            var nominations = this.nominationsRetriever.GetNominations(assignNominationsUserContexts, message, votingResults);
-
             var currentVotingSessionId = context.Message.VotingSessionId;
 
-            var enrichedWinnerEntity = await EnrichWinnerEntityAsync(message.Tenant, votingResults, context.CancellationToken);
-            var updateResult = await this.votingResultsCommandRepository.UpdateAsync(currentVotingSessionId, votingResults.Movies, nominations, now, moviesAdded, enrichedWinnerEntity, votingResults.MoviesGoingByeBye, context.CancellationToken);
+            var currentVotingResults = GetCurrentVotingResults(message, lastVotingResult);
 
-            updateResult = await currentVotingSessionId.AsMaybe().Merge(updateResult).Merge(votingResults.AsMaybe()).AcceptAsync(InterpretResults, this.logger, context.CancellationToken);
+            var moviesAdded = GetMoviesAddedDuringSession(message);
+            var assignNominationsUserContexts = this.pickUserToNominateContextRetriever.GetPickUserToNominateContexts(lastFewVotingResults, moviesAdded, message);
+            var nominations = this.nominationsRetriever.GetNominations(assignNominationsUserContexts, message, currentVotingResults);
+            var enrichedWinnerEntity = await EnrichWinnerEntityAsync(message.Tenant, currentVotingResults.Winner, context.CancellationToken);
+
+            var updateResult = await this.votingResultsCommandRepository.UpdateAsync(currentVotingSessionId, currentVotingResults.Movies, nominations, now, moviesAdded, enrichedWinnerEntity, currentVotingResults.MoviesGoingByeBye, context.CancellationToken);
 
             if (updateResult.Error.HasValue)
                 await PublishErrorAsync(context, error: updateResult.Error);
@@ -84,6 +79,20 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         {
             await PublishErrorAsync(context, ex);
         }
+    }
+
+    private VotingResults GetCurrentVotingResults(VotingConcludedEvent message, IReadOnlyVotingResult? lastVotingResult)
+    {
+        var votingResults = this.votingResultsRetriever.GetVotingResults(message.MoviesWithVotes, lastVotingResult);
+
+        if (message.ExtraVotingMoviesWithVotes != null)
+        {
+            var extraVotingResults = this.votingResultsRetriever.GetVotingResults(message.ExtraVotingMoviesWithVotes, lastVotingResult);
+            var winner = votingResults.Movies.Single(x => x.Movie.id == extraVotingResults.Winner.id);
+            votingResults = votingResults with { Movies = [winner, .. votingResults.Movies.Except([winner])], Winner = extraVotingResults.Winner };
+        }
+
+        return votingResults;
     }
 
     private Task PublishErrorAsync(ConsumeContext<VotingConcludedEvent> context, Exception? ex = null, Error<VoidResult>? error = null)
@@ -99,14 +108,14 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
         return context.Publish(errorEvent, context.CancellationToken);
     }
 
-    private async Task<EmbeddedMovieWithNominationContext> EnrichWinnerEntityAsync(TenantId tenant, VotingResults votingResults, CancellationToken cancelToken)
+    private async Task<EmbeddedMovieWithNominationContext> EnrichWinnerEntityAsync(TenantId tenant, IReadOnlyEmbeddedMovie winner, CancellationToken cancelToken)
     {
-        var movieId = new MovieId(votingResults.Winner.id);
+        var movieId = new MovieId(winner.id);
         var repo = this.repositoriesProvider.GetMovieDomainRepository(tenant);
         var nominatedEvents = await repo.GetMovieNominatedEventsAsync(movieId, cancelToken);
         var mostRecentNominatedAgainEvent = nominatedEvents.MaxBy(x => x.Created);
         var nominatingUser = await this.usersQueryRepository.GetUserAsync(x => x.id == mostRecentNominatedAgainEvent!.UserId, cancelToken);
-        return new EmbeddedMovieWithNominationContext(votingResults.Winner) { NominatedBy = new EmbeddedUser(nominatingUser!) };
+        return new EmbeddedMovieWithNominationContext(winner) { NominatedBy = new EmbeddedUser(nominatingUser!) };
     }
 
     private static IReadOnlyEmbeddedMovieWithNominationContext[] GetMoviesAddedDuringSession(VotingConcludedEvent message)
@@ -118,16 +127,6 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
             x.Concluded!.Value,
             message.VotingStarted
         )).ToArray();
-    }
-
-    private async Task<Maybe<VoidResult>> InterpretResults((VotingSessionId, VotingResults) data, CancellationToken cancelToken)
-    {
-        if (!this.votingResultInterpreter.IsExtraVotingNecessary(data.Item2, out var qualifiedMovies))
-            return VoidResult.Void;
-
-        var @event = new StartExtraVotingEvent(data.Item1, qualifiedMovies);
-        await this.bus.Send(@event, cancelToken);
-        return VoidResult.Void;
     }
 
     private readonly record struct ReadOnlyEmbeddedMovieWithNominationContext(IReadOnlyEmbeddedMovie Movie, IReadOnlyEmbeddedUser NominatedBy, DateTime NominationConcluded, DateTime NominationStarted)

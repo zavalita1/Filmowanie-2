@@ -5,5 +5,5 @@ public enum VoteType
     OnePoint = 1,
     TwoPoints = 2, 
     ThreePoints = 3,
-    Thrash = -1
+    Trash = -1
 }

@@ -4,6 +4,7 @@ using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Voting.Routes;
+using Filmowanie.Voting.Sagas;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -32,11 +33,12 @@ public sealed class CurrentVotingStatusRetriever : ICurrentVotingStatusRetriever
 
         return state.Message.State switch
         {
-            "WaitingForNominations" => VotingState.Voting.AsMaybe(),
-            "NominationsConcluded" => VotingState.Voting.AsMaybe(),
-            "ExtraVoting" => VotingState.ExtraVoting.AsMaybe(),
-            "CalculatingResults" => VotingState.Results.AsMaybe(),
-            "Final" => VotingState.Results.AsMaybe(),
+            nameof(VotingStateMachine.WaitingForNominations) => VotingState.Voting.AsMaybe(),
+            nameof(VotingStateMachine.NominationsConcluded) => VotingState.Voting.AsMaybe(),
+            nameof(VotingStateMachine.ExtraVoting) => VotingState.ExtraVoting.AsMaybe(),
+            nameof(VotingStateMachine.CalculatingResults) => VotingState.Results.AsMaybe(),
+            nameof(VotingStateMachine.CalculatingExtraResults) => VotingState.Results.AsMaybe(),
+            nameof(VotingStateMachine.Final) => VotingState.Results.AsMaybe(),
             _ => new Error<VotingState>($"Unknown voting state: {state}!", ErrorType.InvalidState)
         };
     }

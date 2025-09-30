@@ -39,10 +39,11 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
         return this.ctx.SaveChangesAsync(cancelToken);
     }
 
-    public async Task UpdateMovieAsync(string entityId, string posterUrl, CancellationToken cancelToken)
+    public async Task UpdatePosterAsync(string entityId, string posterUrl, string bigPosterUrl, CancellationToken cancelToken)
     {
         var movie = await this.ctx.Movies.SingleAsync(x => x.id == entityId, cancelToken);
         movie.PosterUrl = posterUrl;
+        movie.BigPosterUrl = bigPosterUrl;
         await this.ctx.SaveChangesAsync(cancelToken);
     }
 
@@ -62,5 +63,13 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
         this.ctx.NominatedMovieEvents.RemoveRange(nominatedMovieEvents);
         this.ctx.CanNominateMovieAgainEvents.RemoveRange(canNominateAgainEvents);
         await this.ctx.SaveChangesAsync(cancelToken);
+    }
+
+    public async Task<IReadOnlyMovieEntity> UpdateAltDescriptionAsync(string entityId, string altDescription, CancellationToken cancelToken)
+    {
+        var movie = await this.ctx.Movies.SingleAsync(x => x.id == entityId, cancelToken);
+        movie.AltDescription = altDescription;
+        await this.ctx.SaveChangesAsync(cancelToken);
+        return movie;
     }
 }

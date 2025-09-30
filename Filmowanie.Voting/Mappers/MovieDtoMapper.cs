@@ -31,7 +31,7 @@ internal sealed class MovieDtoMapper : IMovieDtoMapper
             log.LogInformation($"Mapping movie: {movie.Movie.Name}");
             var votes = (int?)movie.Votes.SingleOrDefault(x => x.User.id == input.CurrentUser.Id)?.VoteType ?? 0;
             var duration = movie.Movie.DurationInMinutes.GetDurationString();
-            var movieDto = new MovieDTO(movie.Movie.id, movie.Movie.Name, votes, movie.Movie.PosterUrl, movie.Movie.BigPosterUrl, movie.Movie.Description, movie.Movie.FilmwebUrl, movie.Movie.CreationYear, duration, movie.Movie.Genres, movie.Movie.Actors,
+            var movieDto = new MovieDTO(movie.Movie.id, movie.Movie.Name, votes, movie.Movie.PosterUrl, movie.Movie.BigPosterUrl, movie.Movie.Description, movie.Movie.AltDescription, movie.Movie.FilmwebUrl, movie.Movie.CreationYear, duration, movie.Movie.Genres, movie.Movie.Actors,
                 movie.Movie.Directors, movie.Movie.Writers, movie.Movie.OriginalTitle);
 
             resultMovies.Add(movieDto);

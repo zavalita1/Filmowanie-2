@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { Skeleton } from "../components/ui";
+import { Button, Skeleton } from "../components/ui";
 import { Layout, AppComponentProps } from "./Layout";
 import Confetti from "../components/Confetti";
 import { useVoteMutation, useGetCurrentVotingQuery } from '../store/apis/2-Voting/votingApi';
@@ -10,6 +10,7 @@ import { MovieCard, PlaceholderMovieCardProps, VoteableMovieCardProps } from "..
 import { VoteableMovie, VotableOrPlaceholderMovie, PlaceholderMovie } from "../models/Movie";
 import { VotingStatus } from "../consts/votingStatus";
 import * as Vote from "../consts/vote";
+import { useAppSelector } from "../hooks/redux";
 
 const MoviesList: React.FC<AppComponentProps> = (props) => {
   const navigate = useNavigate();
@@ -17,15 +18,15 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
     if (!props.userData)
       navigate('/');
 
-    if (props.votingStatus !== VotingStatus.Voting || props.votingStatus !== VotingStatus.ExtraVoting)
+    if (props.votingStatus !== VotingStatus.Voting && props.votingStatus !== VotingStatus.ExtraVoting)
       navigate('/');
 
   }, [props.userData, props.votingStatus]);
-  const [displayMode, setDisplayMode] = useState<'Cards' | 'Carousel'>('Cards'); // TODO
   const { data, error, isLoading } = useGetCurrentVotingQuery();
   const [availableVotes, setAvailableVotes] = useState(Vote.allVoteTypes);
   const [vote, result] = useVoteMutation();
   const [acknowledgedPopup, setAcknowledgedPopup] = useState(false);
+  const userPreferences = useAppSelector(s => s.userPreferences);
 
   useEffect(() => setAvailableVotes(getInitialAvailableVotes(data, props.votingStatus)), [data]);
 
@@ -77,7 +78,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
 
   const getCardProps = (movie: VotableOrPlaceholderMovie) => {
     if ((movie as VoteableMovie)?.votes === undefined) {
-      return {...props, movie: movie as PlaceholderMovie, isPlaceholder: true} satisfies PlaceholderMovieCardProps
+      return {...props, movie: movie as PlaceholderMovie, isPlaceholder: true, simplifiedView: userPreferences.preferSimplifiedCardView, useAltDescription: userPreferences.preferAltMovieDescriptions } satisfies PlaceholderMovieCardProps
     }
 
     const votableMovie = movie as VoteableMovie;
@@ -87,7 +88,7 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
     : [[Vote.fromNumber(movieVotes)], [Vote.fromNumber(movieVotes)]];
     const onVoteCallback = (vote: Vote.Vote) => voteCallback(vote, votableMovie);
 
-    return {...props, movie: votableMovie, votesAvailable, votesActive, onVoteCallback} satisfies VoteableMovieCardProps;
+    return {...props, movie: votableMovie, votesAvailable, votesActive, onVoteCallback, simplifiedView: userPreferences.preferSimplifiedCardView, useAltDescription: userPreferences.preferAltMovieDescriptions } satisfies VoteableMovieCardProps;
   }
 
   let counter = 0;
@@ -100,18 +101,11 @@ const MoviesList: React.FC<AppComponentProps> = (props) => {
         dialogContent="Winszuję, wszystkie głosy zostały przydzielone. Możesz je jeszcze zmienić, dopóki admin nie zakończy głosowania podczas następnego filmowania."
         dialogTitle="You're simply the best, better than all the rest."
       />
-      <div className="mt-10 ml-auto mr-25">
-        {/* <Button onClick={onCarouselClick}>Set to carousel!</Button>  */}
-      </div>
       <div className="flex flex-row flex-wrap justify-center mt-10">
         {data!.map(d => <MovieCard {...getCardProps(d)} key={counter++}></MovieCard>)}
       </div>
     </>
   );
-
-  // function onCarouselClick() {
-  //   displayMode === 'Carousel' ? setDisplayMode('Cards') : setDisplayMode('Carousel');
-  // }
 }
 
 function getInitialAvailableVotes(movies?: VotableOrPlaceholderMovie[], votingStatus?: VotingStatus) {

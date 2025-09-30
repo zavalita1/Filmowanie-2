@@ -2,7 +2,6 @@
 using Filmowanie.Database.Entities.Voting;
 using Filmowanie.Database.Entities.Voting.Events;
 using Filmowanie.Database.Interfaces;
-using Filmowanie.Voting.Sagas;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -11,11 +10,11 @@ namespace Filmowanie.Voting.Activities;
 // TODO UTs
 public class CreateVotingSessionEntryActivity : IStateMachineActivity<VotingStateInstance, StartVotingEvent>
 {
-    private readonly ILogger<VotingStateMachine> logger;
+    private readonly ILogger<CreateVotingSessionEntryActivity> logger;
     private readonly IVotingResultsCommandRepository votingSessionCommandRepository;
     private readonly IDateTimeProvider dateTimeProvider;
 
-    public CreateVotingSessionEntryActivity(ILogger<VotingStateMachine> logger, IVotingResultsCommandRepository votingSessionCommandRepository, IDateTimeProvider dateTimeProvider)
+    public CreateVotingSessionEntryActivity(ILogger<CreateVotingSessionEntryActivity> logger, IVotingResultsCommandRepository votingSessionCommandRepository, IDateTimeProvider dateTimeProvider)
     {
         this.logger = logger;
         this.votingSessionCommandRepository = votingSessionCommandRepository;

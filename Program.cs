@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Filmowanie;
 using Filmowanie.Abstractions.Constants;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Extensions;

@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import Home from './pages/Home';
-import {Login, About, Admin, Results, MoviesList, Nomination, History } from './pages';
+import {Login, Preferences, Admin, Results, MoviesList, Nomination, History } from './pages';
 import { store } from './store/store';
 
 const App: React.FC = () => {
@@ -17,7 +17,7 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home {...routeProps}/>} />
-          <Route path="/about" element={<About {...routeProps}/>} />
+          <Route path="/preferences" element={<Preferences {...routeProps}/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/movieslist" element={<MoviesList {...routeProps}/>} />
           <Route path="/results" element={<Results {...routeProps}/>} />

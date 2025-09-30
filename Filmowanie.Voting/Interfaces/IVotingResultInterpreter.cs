@@ -5,5 +5,5 @@ namespace Filmowanie.Voting.Interfaces;
 
 public interface IVotingResultInterpreter
 {
-    bool IsExtraVotingNecessary(VotingResults results, out IReadOnlyEmbeddedMovie[] qualifiedMovies);
+    bool IsExtraVotingNecessary(IReadOnlyEmbeddedMovieWithVotes[] moviesWithVotes, out IReadOnlyEmbeddedMovie[] qualifiedMovies);
 }

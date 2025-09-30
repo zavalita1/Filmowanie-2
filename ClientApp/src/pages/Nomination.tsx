@@ -7,6 +7,7 @@ import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { MovieCard, ReadOnlyMovieCardProps } from "../components/MovieCard";
 import { Movie } from "../models/Movie";
 import { useGetMoviesThatCanBeNominatedAgainQuery, useGetPostersQuery, useNominateMutation } from "../store/apis/4-Nomination/api";
+import { useAppSelector } from "../hooks/redux";
 
 const Nomination: React.FC<AppComponentProps> = (props) => {
     const navigate = useNavigate();
@@ -16,6 +17,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
     const [showDialog, setShowDialog] = useState(false);
     const { data, error, isLoading } = useGetMoviesThatCanBeNominatedAgainQuery();
     const [ nominate ] = useNominateMutation();
+    const userPreferences = useAppSelector(s => s.userPreferences);
     useEffect(() => {
         if ((props.userData?.nominations?.length ?? 0) === 0) {
             navigate('/');
@@ -93,7 +95,7 @@ const Nomination: React.FC<AppComponentProps> = (props) => {
     }
 
     function renderMovieCard(movie: Movie, key: number) {
-        const cardProps = {...props, movie } satisfies ReadOnlyMovieCardProps;
+        const cardProps = {...props, movie, simplifiedView: userPreferences.preferSimplifiedCardView, useAltDescription: userPreferences.preferAltMovieDescriptions } satisfies ReadOnlyMovieCardProps;
         const cardFooter = <div className="self-center" onClick={(e) => {
             setUrl(movie.filmwebUrl);
             e.preventDefault();
