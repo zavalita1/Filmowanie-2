@@ -94,7 +94,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
       setTimeout(() => setIsLoading(false), 1000);
   });
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const movieDescription = props.useAltDescription && props.movie.altDescription !== undefined && props.movie.altDescription !== '' ? props.movie.altDescription : props.movie.description;
+  const movieDescription = props.useAltDescription && !!props.movie.altDescription ? props.movie.altDescription : props.movie.description;
   const customizer = getMovieCardCustomizer(props);
 
   const cardClassName = clsx([
