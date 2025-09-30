@@ -11,6 +11,7 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
     public virtual string Description { get; set; } = null!;
 
     public virtual string PosterUrl { get; set; } = null!;
+    public virtual string AltDescription { get; set; } = null!;
     public virtual string BigPosterUrl { get; set; } = null!;
 
     public virtual string FilmwebUrl { get; set; } = null!;
@@ -34,6 +35,7 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
         Description = other.Description;
         PosterUrl = other.PosterUrl;
         BigPosterUrl = other.BigPosterUrl;
+        AltDescription = other.AltDescription;
         FilmwebUrl = other.FilmwebUrl;
         Actors = other.Actors;
         Writers = other.Writers;
@@ -41,7 +43,7 @@ internal class MovieEntity : Entity, IReadOnlyMovieEntity
         Genres = other.Genres;
         CreationYear = other.CreationYear;
         DurationInMinutes = other.DurationInMinutes;
-        id = ((IReadOnlyEntity)other).id;
+        id = other.id;
         Created = other.Created;
         TenantId = other.TenantId;
         IsRejected = other.IsRejected;

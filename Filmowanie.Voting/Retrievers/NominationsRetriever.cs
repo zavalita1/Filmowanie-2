@@ -20,6 +20,8 @@ internal sealed class NominationsRetriever : INominationsRetriever
     public List<IReadOnlyEmbeddedUserWithNominationAward> GetNominations(Dictionary<IReadOnlyEmbeddedUser, PickUserToNominateContext> assignNominationsUserContexts, VotingConcludedEvent message, VotingResults votingResults)
     {
         var pickUserNominationStrategy = this.pickUserToNominateStrategyFactory.ForRegularVoting();
+        var onlyCurrentVotes = votingResults.Movies.SelectMany(x => x.Votes).Select(x => x.User.id).Distinct().ToArray();
+        assignNominationsUserContexts = assignNominationsUserContexts.Where(kvp => onlyCurrentVotes.Contains(kvp.Key.id)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         var userToNominate = pickUserNominationStrategy.GetUserToNominate(votingResults.Winner, assignNominationsUserContexts);
 
         var list = new List<IReadOnlyEmbeddedUserWithNominationAward>();

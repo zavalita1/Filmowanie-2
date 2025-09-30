@@ -29,7 +29,7 @@ public sealed class PickUserToNominateStrategy : IPickUserToNominateStrategy
             var pickUserToNominateContext = userContexts.ElementAt(index);
             userScores[pickUserToNominateContext.Key] = rankingsFromNominationsCounts[pickUserToNominateContext.Key];
 
-            if (pickUserToNominateContext.Value.Votes.Any(x => x.Item2 == VoteType.Thrash && x.MovieId == movieToReplace.id))
+            if (pickUserToNominateContext.Value.Votes.Any(x => x.Item2 == VoteType.Trash && x.MovieId == movieToReplace.id))
             {
                 userScores[pickUserToNominateContext.Key] += userContexts.Count / 2;
                 this.log.LogInformation("{type} User: {user} get bonus for voting for trash.",

@@ -42,6 +42,7 @@ export const ConfirmationDialog: React.FC<DialogProps> = props => {
     "md:max-w-100",
     "bg-emerald-50",
     "dark:bg-pink-800",
+    "min-h-fit",
     props.isMobile ? "self-center w-4/5" : ""
   ]);
 

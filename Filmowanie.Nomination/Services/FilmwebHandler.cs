@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Json;
-using System.Text.RegularExpressions;
-using System.Web;
+﻿using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Interfaces;
@@ -11,7 +9,13 @@ using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.DTOs.Incoming;
 using Filmowanie.Nomination.Interfaces;
 using HtmlAgilityPack;
+using MassTransit.Internals.GraphValidation;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Filmowanie.Nomination.Services;
 
@@ -22,7 +26,8 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
     private readonly IGuidProvider guidProvider;
     private readonly IDateTimeProvider dateTimeProvider;
     private readonly IFilmwebPathResolver filmwebPathResolver;
-    private ILogger<FilmwebHandler> log;
+    private readonly IOptions<FilmwebOptions> options;
+    private readonly ILogger<FilmwebHandler> log;
 
     // TODO move away from regexes
     // TODO add validation against movie being in cinemas
@@ -50,13 +55,14 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
     private static string GetDataImagePattern(int movieId) => $@"data-image=""([^""]*?\/{movieId}\/.*?)""";
 
 
-    public FilmwebHandler(IHttpClientFactory clientFactory, IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider, IFilmwebPathResolver filmwebPathResolver, ILogger<FilmwebHandler> log)
+    public FilmwebHandler(IHttpClientFactory clientFactory, IGuidProvider guidProvider, IDateTimeProvider dateTimeProvider, IFilmwebPathResolver filmwebPathResolver, ILogger<FilmwebHandler> log, IOptions<FilmwebOptions> options)
     {
         this.clientFactory = clientFactory;
         this.guidProvider = guidProvider;
         this.dateTimeProvider = dateTimeProvider;
         this.filmwebPathResolver = filmwebPathResolver;
         this.log = log;
+        this.options = options;
     }
 
     public Task<Maybe<IReadOnlyMovieEntity>> GetMovieAsync(Maybe<(NominationDTO NominationDto, DomainUser CurrentUser)> input, CancellationToken cancel) =>
@@ -67,12 +73,14 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
     {
         var metadata = this.filmwebPathResolver.GetMetadata(input.NominationDto.MovieFilmwebUrl);
         var client = this.clientFactory.CreateClient(HttpClientNames.Filmweb);
-        var metadataRoute = $"{Urls.FilmwebApiUrl}{metadata.MovieId}/info";
+        var metadataRoute = $"{this.options.Value.FilmApiUrl}{metadata.MovieId}/info";
         using var apiRequest = new HttpRequestMessage(HttpMethod.Get, metadataRoute);
         apiRequest.Headers.Add("x-locale", "pl");
+        var baseUrl = new Uri(this.options.Value.BaseUrl, UriKind.Absolute);
+        var moviePath = new Uri(baseUrl, metadata.MovieRelativePath);
         
         var tasks = new [] { 
-            client.GetAsync(metadata.MovieRelativePath, cancel),
+            client.GetAsync(moviePath, cancel),
             client.SendAsync(apiRequest, cancel)};
 
         var responses = await Task.WhenAll(tasks);
@@ -86,14 +94,14 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
         var responseContent = await responsesContentTask;
         var responseContent2 = await responsesContent2Task;
 
-        var movieBuilder = new MovieBuilder(this.log).WithFilmwebUrl(metadata.MovieAbsolutePath);
+        var movieBuilder = new MovieBuilder(this.options, this.log).WithFilmwebUrl(metadata.MovieAbsolutePath);
         var web = new HtmlDocument();
         web.LoadHtml(responseContent);
 
         ExtractDataFromMetaElements(responseContent, ref movieBuilder);
         ExtractDataFromTitleDetailsElements(responseContent, ref movieBuilder);
         ExtractDataDuration(responseContent, ref movieBuilder);
-        ExtractLongDescription(responseContent, ref movieBuilder);
+        ExtractLongDescription(ref movieBuilder, web);
         ExtractGenres(ref movieBuilder, web);
         ExtractActors(responseContent, ref movieBuilder, web);
         ExtractDirectors(responseContent, ref movieBuilder);
@@ -202,15 +210,18 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
         movieBuilder.WithDuration(match.Groups[1].Value);
     }
 
-    private static void ExtractLongDescription(string responseContent, ref MovieBuilder movieBuilder)
+    private void ExtractLongDescription(ref MovieBuilder movieBuilder, HtmlDocument web)
     {
-        var matches = GetLongDescriptionPatternRegex().Matches(responseContent);
-
-        if (matches.Count == 1 && !string.IsNullOrEmpty(matches[0].Groups[1].Value))
+        var nodes = web.DocumentNode.SelectNodes("//div/span[@itemprop='description']");
+         
+        if (nodes.Count() != 1)
         {
-            var value = matches[0].Groups[1].Value;
-            movieBuilder.WithDescription(HttpUtility.HtmlDecode(value));
+            this.log.LogWarning("Unexcpected elements found when trying to fetch description!");
+            return;
         }
+
+        var description = HttpUtility.HtmlDecode(nodes.Single().InnerText).Trim();
+        movieBuilder.WithDescription(description);
     }
 
     private static void ExtractGenres(ref MovieBuilder movieBuilder, HtmlDocument web)

@@ -5,6 +5,7 @@ public interface IReadOnlyVotingResult : IReadOnlyEntity
     DateTime? Concluded { get; }
 
     IReadOnlyEmbeddedMovieWithVotes[] Movies { get; }
+    IReadOnlyEmbeddedMovieWithVotes[]? ExtraVotingMovies { get; }
     IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations { get; }
 
     IReadOnlyEmbeddedMovie[] MoviesGoingByeBye { get; }

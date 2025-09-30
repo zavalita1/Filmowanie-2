@@ -83,7 +83,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
         var trashRows = new List<TrashVotingResultRowDTO>(votingResult.Result!.Movies.Length);
         foreach (var movie in votingResult.Result!.Movies)
         {
-            var voters = movie.Votes.Where(x => x.VoteType == VoteType.Thrash).Select(x => x.User.Name).ToArray();
+            var voters = movie.Votes.Where(x => x.VoteType == VoteType.Trash).Select(x => x.User.Name).ToArray();
             var isAwarded = votingResult.Result!.MoviesGoingByeBye.Any(x => string.Equals(x.Name, movie.Movie.Name, StringComparison.OrdinalIgnoreCase));
             var row = new TrashVotingResultRowDTO(movie.Movie.Name, voters, isAwarded);
             trashRows.Add(row);
@@ -94,7 +94,7 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
         return new Maybe<VotingResultDTO>(result, null);
     }
 
-    private async Task<Maybe<IReadOnlyVotingResult>> GetReadonlyVotingResultAsync((DomainUser CurrentUser, Abstractions.DomainModels.VotingSessionId? VotingSessionId) input, CancellationToken cancelToken)
+    private async Task<Maybe<IReadOnlyVotingResult>> GetReadonlyVotingResultAsync((DomainUser CurrentUser, VotingSessionId? VotingSessionId) input, CancellationToken cancelToken)
     {
         var result = await this.votingResultsRepository.GetByIdAsync(input.VotingSessionId!.Value, cancelToken);
 
@@ -103,23 +103,26 @@ internal sealed class MovieVotingResultService : IMovieVotingResultService
 
         if (result.Result.Concluded == null)
         {
-            if (!input.CurrentUser.IsAdmin)
-                return new Error<IReadOnlyVotingResult>("Only admin can view current voting's results!", ErrorType.AuthorizationIssue);
-
+           
             // for admin only
             var movies = await this.currentVotingService.GetCurrentlyVotedMoviesWithVotesAsync(input.VotingSessionId!.Value.AsMaybe(), cancelToken);
 
             if (movies.Error.HasValue)
-                return movies.Error.Value.ChangeResultType<IReadOnlyEmbeddedMovieWithVotes[], IReadOnlyVotingResult>();
+                return movies.Error.Value.ChangeResultType<(IReadOnlyEmbeddedMovieWithVotes[], bool), IReadOnlyVotingResult>();
 
-            var readOnlyEmbeddedMovie = movies.Result!.First().Movie;
+            var readOnlyEmbeddedMovie = movies.Result!.Item1.First().Movie;
             var readOnlyEmbeddedMovieWithNominatedBy = new EmbeddedMovieWithNominationContext(readOnlyEmbeddedMovie);
-            IReadOnlyVotingResult votingResult = new VotingResult(input.VotingSessionId!.Value.CorrelationId.ToString(), DateTime.Now, 1, DateTime.Now, movies.Result, [], [], [], readOnlyEmbeddedMovieWithNominatedBy);
+            var (resultMovies, extraMovies) = movies.Result.IsExtraVoting ? (movies.Result.Item1, movies.Result.Item1) : (movies.Result.Item1, null);
+            IReadOnlyVotingResult votingResult = new VotingResult(input.VotingSessionId!.Value.CorrelationId.ToString(), DateTime.Now, 1, DateTime.Now, resultMovies, [], [], [], readOnlyEmbeddedMovieWithNominatedBy, extraMovies);
+
+            if (!input.CurrentUser.IsAdmin && !movies.Result.IsExtraVoting)
+                return new Error<IReadOnlyVotingResult>("Only admin can view current voting's results!", ErrorType.AuthorizationIssue);
+
             return votingResult.AsMaybe();
         }
 
         return result.Result!.AsMaybe();
     }
 
-    private readonly record struct VotingResult(string id, DateTime Created, int TenantId, DateTime? Concluded, IReadOnlyEmbeddedMovieWithVotes[] Movies, IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations, IReadOnlyEmbeddedMovie[] MoviesGoingByeBye, IReadOnlyEmbeddedMovieWithNominationContext[] MoviesAdded, IReadOnlyEmbeddedMovieWithNominatedBy Winner) : IReadOnlyVotingResult;
+    private readonly record struct VotingResult(string id, DateTime Created, int TenantId, DateTime? Concluded, IReadOnlyEmbeddedMovieWithVotes[] Movies, IReadOnlyEmbeddedUserWithNominationAward[] UsersAwardedWithNominations, IReadOnlyEmbeddedMovie[] MoviesGoingByeBye, IReadOnlyEmbeddedMovieWithNominationContext[] MoviesAdded, IReadOnlyEmbeddedMovieWithNominatedBy Winner, IReadOnlyEmbeddedMovieWithVotes[]? ExtraVotingMovies) : IReadOnlyVotingResult;
 }

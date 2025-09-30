@@ -69,6 +69,7 @@ function mapVotingStatus(dto: VotingSessionStatusIncomingDTO) {
     case "Loading": return VotingStatus.Loading;
     case "Results": return VotingStatus.Results;
     case "Voting": return VotingStatus.Voting;
+    case "ExtraVoting": return VotingStatus.ExtraVoting;
     case "VotingEnding": return VotingStatus.VotingEnding;
     case "VotingStarting": return VotingStatus.VotingStarting;
     default: throw new Error("Unknown status!")

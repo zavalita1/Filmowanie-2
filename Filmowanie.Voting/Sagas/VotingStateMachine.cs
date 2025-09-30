@@ -31,6 +31,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
         Event(() => StartVotingEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => InitNominationsEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => AddMovieEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
+        Event(() => MovieAddedEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => RemoveMovieEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => AddVoteEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
         Event(() => RemoveVoteEvent, x => x.CorrelateById(y => y.Message.VotingSessionId.CorrelationId));
@@ -64,21 +65,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 .Publish(ctx => new VotingStartingEvent(new VotingSessionId(ctx.Saga.CorrelationId)))
                 .TransitionTo(WaitingForNominations));
 
-        During(WaitingForNominations,
-            When(AddMovieEvent)
-                .Then(ctx => this.logger.LogInformation("Adding movie.."))
-                .ThenAsync(ctx =>
-                {
-                    var movieWithVotes = new EmbeddedMovieWithVotes(ctx.Message.Movie);
-                    ctx.Saga.Movies = ctx.Saga.Movies.Concat([movieWithVotes]);
-
-                    var nominationToConclude = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Decade);
-                    nominationToConclude.Concluded = this.dateTimeProvider.Now;
-                    nominationToConclude.MovieId = ctx.Message.Movie.id;
-
-                    var result = ctx.Saga.Nominations.All(x => x.Concluded != null) ? ctx.TransitionToState(NominationsConcluded) : Task.CompletedTask;
-                    return result;
-                }));
+        During(WaitingForNominations, When(AddMovieEvent).Activity(x => x.OfType<AddMovieActivity>()));
 
         During([WaitingForNominations, NominationsConcluded],
             When(RemoveMovieEvent)
@@ -100,12 +87,12 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 })
         );
 
-        During([WaitingForNominations, NominationsConcluded],
+        During([WaitingForNominations, NominationsConcluded, ExtraVoting],
             When(AddVoteEvent)
                 .Then(ctx => this.logger.LogInformation("Adding a vote..."))
                 .Then(ctx =>
                 {
-                    var movie = ctx.Saga.Movies.Single(x => x.Movie.id == ctx.Message.Movie.id);
+                    var movie = GetMovie(ctx.Saga, ctx.Message.Movie.id);
                     var messageUser = ctx.Message.User;
 
                     if (movie.Votes.Any(x => x.User.id == messageUser.Id))
@@ -117,12 +104,12 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 })
                 .Publish(ctx => new VoteAddedEvent(ctx.Message.VotingSessionId, ctx.Message.Movie, ctx.Message.User)));
 
-        During([WaitingForNominations, NominationsConcluded],
+        During([WaitingForNominations, NominationsConcluded, ExtraVoting],
             When(RemoveVoteEvent)
                 .Then(ctx => this.logger.LogInformation("Removing a vote..."))
                 .Then(ctx =>
                 {
-                    var movie = ctx.Saga.Movies.Single(x => x.Movie.id == ctx.Message.Movie.id);
+                    var movie = GetMovie(ctx.Saga, ctx.Message.Movie.id);
                     var messageUser = ctx.Message.User;
 
                     if (movie.Votes.All(x => x.User.id != messageUser.Id))
@@ -134,34 +121,31 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
                 })
                 .Publish(ctx => new VoteAddedEvent(ctx.Message.VotingSessionId, ctx.Message.Movie, ctx.Message.User)));
 
-        During(NominationsConcluded,
-            When(ConcludeVoting)
-                .Then(ctx => this.logger.LogInformation("Voting ending..."))
-                .Publish(ctx =>
-                {
-                    var movies = ctx.Saga.Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray();
-                    var nominations = ctx.Saga.Nominations.ToArray();
-                    return new VotingConcludedEvent(ctx.Message.VotingSessionId, ctx.Message.Tenant, movies, nominations, ctx.Saga.Created);
-                })
-                .TransitionTo(CalculatingResults)
-        );
+        During([NominationsConcluded, ExtraVoting], When(ConcludeVoting).Activity(x => x.OfType<ConcludeVotingActivity>()));
 
-        During(CalculatingResults, When(ResumeVotingEvent).TransitionTo(NominationsConcluded));
+        During(CalculatingExtraResults, When(ResumeVotingEvent).TransitionTo(ExtraVoting));
+        During(CalculatingExtraResults, When(ResultsConfirmedEvent).Finalize());
+
+        During([CalculatingResults, ExtraVoting], When(ResumeVotingEvent).TransitionTo(NominationsConcluded));
         During(CalculatingResults, When(ResultsConfirmedEvent).Finalize());
-        During([CalculatingResults, Final], When(GetNominationsEvent).Respond(ctx => new CurrentNominationsResponse { Nominations = [], CorrelationId = ctx.Saga.CorrelationId }));
+        During([ExtraVoting, CalculatingResults, CalculatingExtraResults, Final], When(GetNominationsEvent).Respond(ctx => new CurrentNominationsResponse { Nominations = [], CorrelationId = ctx.Saga.CorrelationId }));
         During([CalculatingResults, NominationsConcluded], When(Error)
             .Then(ctx => ctx.Saga.Error = new ErrorData { ErrorMessage = ctx.Message.Message, CallStack = ctx.Message.CallStack })
             .TransitionTo(NominationsConcluded));
 
         During([WaitingForNominations, NominationsConcluded, CalculatingResults, Final],
             When(GetMovieListEvent)
-                .Respond(ctx => new CurrentVotingListResponse { Movies = ctx.Saga.Movies.Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray() }));
+                .Respond(ctx => new CurrentVotingListResponse { Movies = GetMovies(ctx.Saga).Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray(), IsExtraVoting = false }));
+
+        During([CalculatingExtraResults, ExtraVoting],
+            When(GetMovieListEvent)
+                .Respond(ctx => new CurrentVotingListResponse { Movies = GetMovies(ctx.Saga).Cast<IReadOnlyEmbeddedMovieWithVotes>().ToArray(), IsExtraVoting = true }));
 
         During([WaitingForNominations, NominationsConcluded],
             When(GetNominationsEvent)
                 .Respond(ctx => new CurrentNominationsResponse { Nominations = ctx.Saga.Nominations.ToArray(), CorrelationId = ctx.Saga.CorrelationId }));
 
-        During([WaitingForNominations, NominationsConcluded, CalculatingResults, Final], When(GetVotingStatusEvent)
+        During([WaitingForNominations, NominationsConcluded, ExtraVoting, CalculatingResults, CalculatingExtraResults, Final], When(GetVotingStatusEvent)
             .Respond(ctx => new CurrentVotingStatusResponse { State = ctx.Saga.CurrentState! }));
     }
 
@@ -171,6 +155,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
     public Event<AddNominationsEvent> InitNominationsEvent { get; private set; } = null!;
 
     public Event<AddMovieEvent> AddMovieEvent { get; private set; } = null!;
+    public Event<MovieAddedEvent> MovieAddedEvent { get; private set; } = null!;
 
     public Event<RemoveMovieEvent> RemoveMovieEvent { get; private set; } = null!;
 
@@ -194,4 +179,21 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
     public State NominationsConcluded { get; private set; } = null!;
 
     public State CalculatingResults { get; private set; } = null!;
+    public State CalculatingExtraResults { get; private set; } = null!;
+    public State ExtraVoting { get; private set; } = null!;
+
+    // helpers
+    private static EmbeddedMovieWithVotes GetMovie(VotingStateInstance stateInstance, string movieId)
+    {
+        var moviesToPick = GetMovies(stateInstance);
+        return moviesToPick!.Single(x => x.Movie.id == movieId);
+    }
+
+    private static IEnumerable<EmbeddedMovieWithVotes> GetMovies(VotingStateInstance stateInstance)
+    {
+        string[] extraVotingStates = [nameof(ExtraVoting), nameof(CalculatingExtraResults)];
+        return extraVotingStates.Contains(stateInstance.CurrentState, StringComparer.OrdinalIgnoreCase) 
+            ? stateInstance.ExtraVotingMovies! 
+            : stateInstance.Movies;
+    }
 }

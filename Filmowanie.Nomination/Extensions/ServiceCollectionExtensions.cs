@@ -32,10 +32,7 @@ public static class ServiceCollectionExtensions
 
         var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError().WaitAndRetryAsync(3, x => TimeSpan.FromMilliseconds(100 * Math.Pow(2, x)));
 
-        services.AddHttpClient(HttpClientNames.Filmweb, client =>
-        {
-            client.BaseAddress = new Uri(Urls.FilmwebUrl);
-        }).AddPolicyHandler(retryPolicy);
+        services.AddHttpClient(HttpClientNames.Filmweb).AddPolicyHandler(retryPolicy);
 
         services.AddSingleton<IFilmwebPathResolver, FilmwebPathResolver>();
         services.AddSingleton<IFilmwebPostersUrlsRetriever, FilmwebPostersUrlsRetriever>();

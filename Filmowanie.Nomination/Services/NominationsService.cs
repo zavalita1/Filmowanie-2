@@ -100,7 +100,7 @@ internal sealed class NominationsService : INominationsService
             embeddedMovie.id = movieId;
             var nominatedEvent = new NominatedEventRecord(embeddedMovie, "nominated-event-" + movieId, this.dateTimeProvider.Now, user.Tenant.Id, user.Id);
             await this.movieCommandRepository.InsertNominatedAsync(nominatedEvent, cancelToken);
-            await this.movieCommandRepository.UpdateMovieAsync(movieId, movie.PosterUrl, cancelToken);
+            await this.movieCommandRepository.UpdatePosterAsync(movieId, movie.PosterUrl, movie.BigPosterUrl, cancelToken);
         }
         else
         {

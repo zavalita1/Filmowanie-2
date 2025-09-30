@@ -26,9 +26,9 @@ internal sealed class CurrentVotingService : ICurrentVotingService
     }
 
     public Task<Maybe<IReadOnlyMovieEntity[]>> GetCurrentlyVotedMoviesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken) => input.AcceptAsync(GetCurrentlyVotedMoviesAsync, log, cancelToken);
-    public Task<Maybe<IReadOnlyEmbeddedMovieWithVotes[]>> GetCurrentlyVotedMoviesWithVotesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken) => input.AcceptAsync(GetCurrentlyVotedMoviesWithVotesAsync, log, cancelToken);
+    public Task<Maybe<(IReadOnlyEmbeddedMovieWithVotes[], bool IsExtraVoting)>> GetCurrentlyVotedMoviesWithVotesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken) => input.AcceptAsync(GetCurrentlyVotedMoviesWithVotesAsync, log, cancelToken);
 
-    private async Task<Maybe<IReadOnlyEmbeddedMovieWithVotes[]>> GetCurrentlyVotedMoviesWithVotesAsync(VotingSessionId input, CancellationToken cancelToken)
+    private async Task<Maybe<(IReadOnlyEmbeddedMovieWithVotes[], bool IsExtraVoting)>> GetCurrentlyVotedMoviesWithVotesAsync(VotingSessionId input, CancellationToken cancelToken)
     {
         try
         {
@@ -36,12 +36,13 @@ internal sealed class CurrentVotingService : ICurrentVotingService
                 await this.getMoviesListRequestClient.GetResponse<CurrentVotingListResponse>(new MoviesListRequestedEvent(input), cancelToken, TimeSpan.FromSeconds(30));
             var movies = embeddedMovies1.Message.Movies;
             var embeddedMovies = movies.ToArray();
-            return embeddedMovies.AsMaybe();
+            var result = (embeddedMovies, embeddedMovies1.Message.IsExtraVoting);
+            return result.AsMaybe();
         }
         catch (Exception ex)
         {
             this.log.LogError(ex, "Error when trying to get voted movies!");
-            return new Error<IReadOnlyEmbeddedMovieWithVotes[]>(ex.Message, ErrorType.Unknown);
+            return new Error<(IReadOnlyEmbeddedMovieWithVotes[], bool)>(ex.Message, ErrorType.Unknown);
         }
     }
 
@@ -50,9 +51,9 @@ internal sealed class CurrentVotingService : ICurrentVotingService
         var embeddedMovies = await GetCurrentlyVotedMoviesWithVotesAsync(input, cancelToken);
 
         if (embeddedMovies.Error.HasValue)
-            return embeddedMovies.Error.Value.ChangeResultType<IReadOnlyEmbeddedMovieWithVotes[], IReadOnlyMovieEntity[]>();
+            return embeddedMovies.Error.Value.ChangeResultType<(IReadOnlyEmbeddedMovieWithVotes[], bool), IReadOnlyMovieEntity[]>();
 
-        var moviesIds = embeddedMovies.Result!.Select(x => x.Movie.id).ToArray();
+        var moviesIds = embeddedMovies.Result!.Item1.Select(x => x.Movie.id).ToArray();
         var moviesEntities = await this.movieQueryRepository.GetManyByIdAsync(moviesIds, cancelToken);
 
         if (moviesEntities.Error.HasValue)

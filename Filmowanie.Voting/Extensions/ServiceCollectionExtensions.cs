@@ -1,4 +1,5 @@
 ﻿using Filmowanie.Abstractions.Interfaces;
+using Filmowanie.Voting.Constants;
 using Filmowanie.Voting.Deciders;
 using Filmowanie.Voting.Deciders.PickUserNomination;
 using Filmowanie.Voting.Interfaces;
@@ -8,6 +9,8 @@ using Filmowanie.Voting.Routes;
 using Filmowanie.Voting.Services;
 using Filmowanie.Voting.Validators;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace Filmowanie.Voting.Extensions;
 
@@ -24,6 +27,7 @@ public static class ServiceCollectionExtensions
         
         services.AddScoped<IMovieVotingResultService, MovieVotingResultService>();
         services.AddScoped<ICurrentVotingService, CurrentVotingService>();
+        services.AddScoped<IOpenAIClient, OpenAIClient>();
 
         services.AddScoped<IMoviesForVotingSessionEnricher, MoviesForVotingSessionEnricher>();
 
@@ -43,12 +47,16 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IVoteService, VoteService>();
         services.AddScoped<IVotingResultsRetriever, VotingResultsRetriever>();
+        services.AddSingleton<IVotingResultInterpreter, VotingResultInterpreter>();
         services.AddScoped<INominationsRetriever, NominationsRetriever>();
         services.AddScoped<ICurrentVotingStatusRetriever, CurrentVotingStatusRetriever>();
 
         services.AddSingleton<IVotingDeciderFactory, VotingDeciderFactory>();
         services.AddSingleton<IPickUserToNominateStrategyFactory, PickUserToNominateStrategyFactory>();
         services.AddSingleton<IPickUserToNominateContextRetriever, PickUserToNominateContextRetriever>();
+
+        var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError().WaitAndRetryAsync(3, x => TimeSpan.FromMilliseconds(100 * Math.Pow(2, x)));
+        services.AddHttpClient(HttpClientNames.Imdb).AddPolicyHandler(retryPolicy);
 
         return services;
     }

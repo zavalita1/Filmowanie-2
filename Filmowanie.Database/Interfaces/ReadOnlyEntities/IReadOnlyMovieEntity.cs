@@ -2,18 +2,19 @@
 
 public interface IReadOnlyMovieEntity : IReadOnlyEntity
 {
-    string Name { get;  }
-    string OriginalTitle { get;  }
-    string Description { get;  }
-    string PosterUrl { get;  }
-    string BigPosterUrl { get;  }
-    string FilmwebUrl { get;  }
-    string[] Actors { get;  }
-    string[] Writers { get;  }
-    string[] Directors { get;  }
-    string[] Genres { get;  }
-    int CreationYear { get;  }
-    int DurationInMinutes { get;  }
+    string Name { get; }
+    string OriginalTitle { get; }
+    string Description { get; }
+    string PosterUrl { get; }
+    string BigPosterUrl { get; }
+    string AltDescription{ get; }
+    string FilmwebUrl { get; }
+    string[] Actors { get; }
+    string[] Writers { get; }
+    string[] Directors { get; }
+    string[] Genres { get; }
+    int CreationYear { get; }
+    int DurationInMinutes { get; }
     string Type { get; }
 
     /// <summary>

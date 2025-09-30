@@ -3,8 +3,8 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { combineReducers } from 'redux';
 
 import { globalConfigSlice } from './slices/globalConfigSlice';
+import { userPreferencesSlice } from './slices/userPreferencesSlice';
 import { notificationsSlice } from './slices/notificationsSlice';
-import { votingSlice } from './slices/votingSlice';
 import { historyApi as api } from './apis/5-History/api';
 
 export const store = configureStore({
@@ -14,7 +14,7 @@ export const store = configureStore({
   reducer: combineReducers({
     global: globalConfigSlice.reducer,
     notification: notificationsSlice.reducer,
-    voting: votingSlice.reducer,
+    userPreferences: userPreferencesSlice.reducer,
     [api.reducerPath]: api.reducer,
   }),
 })

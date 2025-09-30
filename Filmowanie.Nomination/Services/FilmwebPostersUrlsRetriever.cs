@@ -1,23 +1,29 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using Filmowanie.Abstractions.Configuration;
 using Filmowanie.Nomination.Consts;
 using Filmowanie.Nomination.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace Filmowanie.Nomination.Services;
 
 internal sealed class FilmwebPostersUrlsRetriever : IFilmwebPostersUrlsRetriever
 {
     private readonly IHttpClientFactory clientFactory;
+    private readonly IOptions<FilmwebOptions> options;
+
     private static string GetPostersPattern(int movieId) => $@"src=""(https:\/\/fwcdn\.pl.*?\/{movieId}\/.*?\.10\..*?)""";
 
-    public FilmwebPostersUrlsRetriever(IHttpClientFactory clientFactory)
+    public FilmwebPostersUrlsRetriever(IHttpClientFactory clientFactory, IOptions<FilmwebOptions> options)
     {
         this.clientFactory = clientFactory;
+        this.options = options;
     }
 
     public async Task<IEnumerable<string>> GetPosterUrlsAsync(FilmwebUriMetadata metadata, CancellationToken cancel)
     {
         var client = this.clientFactory.CreateClient(HttpClientNames.Filmweb);
+        client.BaseAddress = new Uri(this.options.Value.BaseUrl, UriKind.Absolute);
         var postersUrl = $"{metadata.MovieAbsolutePath}/posters";
 
         using var apiRequest = new HttpRequestMessage(HttpMethod.Get, postersUrl);

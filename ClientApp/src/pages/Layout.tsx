@@ -1,17 +1,18 @@
 import clsx from 'clsx';
-import React, { createContext, ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { LuLogIn, LuMenu, LuLogOut } from 'react-icons/lu';
 import { Moon, Sun } from "lucide-react"
 import { NavLink, useNavigate } from 'react-router';
 import penguinSvg from '../components/ui/footerIcon.svg';
-import { Toaster, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Button } from '../components/ui';
+import { Toaster, Button } from '../components/ui';
 import { ThemeProvider, useTheme } from '../components/ThemeProvider';
 import { useGetUserQuery, useLogoutMutation } from '../store/apis/1-User/userApi';
 import { useLazyGetStateQuery } from '../store/apis/2-Voting/votingApi';
 import { useLazyGetNominationsQuery } from '../store/apis/4-Nomination/api'
+import { userPreferencesSlice } from "../store/slices/userPreferencesSlice";
 import Spinner from '../components/Spinner';
 import { UserStateWithNominations } from '@/store/apis/1-User/types';
-import { useAppSelector } from '../hooks/redux';
+import { useAppSelector, useAppDispatch } from '../hooks/redux';
 import { VotingStatus } from '../consts/votingStatus';
 
 export type BaseLayoutProps = {
@@ -51,7 +52,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
   const handleClose = () => setIsNavMenuVisible(false);
 
   const isHistoryEnabled = isUserLogged;
-  const isMovieListEnabled = (isUserLogged && votingState?.currentData === VotingStatus.Voting) || userData?.isAdmin;
+  const isMovieListEnabled = (isUserLogged && [VotingStatus.ExtraVoting, VotingStatus.Voting].includes(votingState?.currentData ?? VotingStatus.Loading)) || userData?.isAdmin;
   const isResultsEnabled = (isUserLogged && votingState?.currentData === VotingStatus.Results) || userData?.isAdmin;
   const isNominateEnabled = (isUserLogged && (nominations.currentData?.length ?? 0) > 0) || userData?.isAdmin;
 
@@ -85,7 +86,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
           <h1 className='text-3xl font-bold text-black dark:text-white mr-4 sm:text-4xl'>Filmowanie.</h1>
           <ul className='hidden md:flex items-center gap-1'>
             <MenuLink text='Home' url='/'/>
-            <MenuLink text='About' url='/about'/>
+            <MenuLink text='Ustawienia' url='/preferences'/>
             <MenuLink text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
             <MenuLink text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
             <MenuLink text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
@@ -105,7 +106,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
       </div>
       <ul className={!isNavMenuVisible ? 'hidden' : 'absolute bg-gradient-to-tr from-emerald-50 to-sky-100 dark:from-pink-900 dark:to-black w-full px-8'}>
        <MenuLink isMobile={true} text='Home' url='/'/>
-       <MenuLink isMobile={true} text='About' url='/about'/>
+       <MenuLink isMobile={true} text='Ustawienia' url='/preferences'/>
        <MenuLink isMobile={true} text='Lista filmów' url='/moviesList' isDisabled={!isMovieListEnabled}/>
        <MenuLink isMobile={true} text='Wyniki' url='/results' isDisabled={!isResultsEnabled}/>
        <MenuLink isMobile={true} text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
@@ -155,7 +156,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
     const childProps = { userData: userDataForProps, votingStatus: votingState!.currentData!, isMobile: isMobile } satisfies AppComponentProps;
 
     return (
-      <div id="container" className={containerClassName}>
+      <div id="container-inner" className={containerClassName}>
         {React.cloneElement(props.children, childProps)}
       </div>);
   }
@@ -190,14 +191,28 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
 };
 
 export function ModeToggle() {
+  const preferDarkMode = useAppSelector(s => s.userPreferences.preferDarkMode);
+  const dispatch = useAppDispatch();
   const { setTheme, theme } = useTheme()
+  useEffect(() => {
+    if (preferDarkMode) {
+      setTheme("dark");
+    }
+  }, []);
  
   return (
-        <Button variant="outline" size="icon" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
-          <Sun  className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-          <Moon onClick={() => setTheme("light")} className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+        <Button variant="outline" size="icon" onClick={onSetTheme}>
+          <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
         </Button>
   )
+
+  function onSetTheme() {
+    const wasLight = theme === "light";
+    const action = userPreferencesSlice.actions.setPreferDarkMode(wasLight);
+    dispatch(action);
+    setTheme(wasLight ? "dark" : "light")
+  }
 }
 
 type MenuLinkProps = {

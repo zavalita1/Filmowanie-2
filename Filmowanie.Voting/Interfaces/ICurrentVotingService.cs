@@ -8,5 +8,5 @@ internal interface ICurrentVotingService
 {
     Task<Maybe<IReadOnlyMovieEntity[]>> GetCurrentlyVotedMoviesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken);
 
-    Task<Maybe<IReadOnlyEmbeddedMovieWithVotes[]>> GetCurrentlyVotedMoviesWithVotesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken);
+    Task<Maybe<(IReadOnlyEmbeddedMovieWithVotes[], bool IsExtraVoting)>> GetCurrentlyVotedMoviesWithVotesAsync(Maybe<VotingSessionId> input, CancellationToken cancelToken);
 }

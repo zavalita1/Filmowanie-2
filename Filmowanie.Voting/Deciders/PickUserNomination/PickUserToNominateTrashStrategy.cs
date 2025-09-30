@@ -20,7 +20,7 @@ public sealed class PickUserToNominateTrashStrategy : IPickUserToNominateStrateg
     {
         var userScores = new Dictionary<IReadOnlyEmbeddedUser, int>(userContexts.Count);
         var userContextToConsider = userContexts
-            .Where(x => x.Value.Votes.Any(y => y.Item2 == VoteType.Thrash && y.MovieId == movieToReplace.id))
+            .Where(x => x.Value.Votes.Any(y => y.Item2 == VoteType.Trash && y.MovieId == movieToReplace.id))
             .Select(GetScore)
             .ToArray();
 

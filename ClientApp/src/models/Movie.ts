@@ -12,6 +12,7 @@ export type Movie = {
     posterUrl: string;
     bigPosterUrl: string;
     description: string;
+    altDescription?: string;
     filmwebUrl: string;
     createdYear: number;
     duration: string;

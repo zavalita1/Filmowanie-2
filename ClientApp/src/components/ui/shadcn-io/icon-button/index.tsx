@@ -25,6 +25,7 @@ type IconButtonProps = Omit<HTMLMotionProps<'button'>, 'color'> & {
   size?: keyof typeof sizes;
   color?: [number, number, number];
   transition?: Transition;
+  dataTest?: string
 };
  
 function IconButton({
@@ -40,6 +41,7 @@ function IconButton({
   return (
     <motion.button
       data-slot="icon-button"
+      data-testid={props.dataTest}
       className={cn(
         `group/icon-button cursor-pointer relative inline-flex size-10 shrink-0 rounded-full hover:bg-[var(--icon-button-color)]/10 active:bg-[var(--icon-button-color)]/20 text-[var(--icon-button-color)]`,
         sizes[size],

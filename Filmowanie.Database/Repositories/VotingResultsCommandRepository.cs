@@ -1,5 +1,6 @@
 ﻿using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
+using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Database.Entities;
 using Filmowanie.Database.Entities.Voting;
@@ -21,7 +22,7 @@ internal sealed class VotingResultsCommandRepository : IVotingResultsCommandRepo
         this.logger = logger;
     }
 
-    public async Task<Maybe<VoidResult>> UpdateAsync(VotingSessionId id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards, DateTime concluded,
+    public async Task<Maybe<VoidResult>> UpdateAsync(VotingSessionId id, IEnumerable<IReadOnlyEmbeddedMovieWithVotes> movies, IEnumerable<IReadOnlyEmbeddedUserWithNominationAward> usersAwards, DateTime? concluded,
         IEnumerable<IReadOnlyEmbeddedMovieWithNominationContext> moviesAdded, IReadOnlyEmbeddedMovieWithNominatedBy winner, IEnumerable<IReadOnlyEmbeddedMovie> moviesToRemove, CancellationToken cancelToken)
     {
         var updateFunc = (VotingResult votingResultEntity) =>
@@ -58,6 +59,7 @@ internal sealed class VotingResultsCommandRepository : IVotingResultsCommandRepo
             votingResultEntity.MoviesAdded = new List<EmbeddedMovieWithNominationContext>();
             votingResultEntity.Winner = null;
             votingResultEntity.MoviesGoingByeBye = new List<EmbeddedMovie>();
+            votingResultEntity.ExtraVotingMovies = new List<EmbeddedMovieWithVotes>();
         };
 
         try
@@ -71,4 +73,5 @@ internal sealed class VotingResultsCommandRepository : IVotingResultsCommandRepo
             return new Error<VoidResult>(e.Message, ErrorType.Unknown);
         }
     }
+
 }

@@ -11,6 +11,7 @@ public class VotingStateInstance : SagaStateMachineInstance
     public string? CurrentState { get; set; }
 
     public IEnumerable<EmbeddedMovieWithVotes> Movies { get; set; } = [];
+    public IEnumerable<EmbeddedMovieWithVotes>? ExtraVotingMovies { get; set; } = null;
 
     public IEnumerable<NominationData> Nominations { get; set; } = [];
 

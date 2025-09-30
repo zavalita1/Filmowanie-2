@@ -33,7 +33,7 @@ public sealed class TrashVotingDecider : IVotingDecider
         }
     }
 
-    private static int GetTrashVotesCount(IEnumerable<IReadOnlyVote> votes) => votes.Count(x => x.VoteType == VoteType.Thrash);
+    private static int GetTrashVotesCount(IEnumerable<IReadOnlyVote> votes) => votes.Count(x => x.VoteType == VoteType.Trash);
     
     private readonly record struct ReadOnlyEmbeddedMovieWithVotes(IReadOnlyEmbeddedMovie Movie, IEnumerable<IReadOnlyVote> Votes, int VotingScore) : IReadOnlyEmbeddedMovieWithVotes;
 }

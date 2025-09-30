@@ -41,7 +41,7 @@ internal static class MassTransitInit
                 typeof(VotingStateInstance).Assembly,
                 typeof(Nomination.Consumers.ResultsConfirmedConsumer).Assembly,
                 typeof(ConcludeVotingEventConsumer).Assembly,
-                typeof(ResultsConfirmedConsumer).Assembly,
+                typeof(VotingConcludedConsumer).Assembly,
             };
 
             x.AddConsumers(entryAssembly);

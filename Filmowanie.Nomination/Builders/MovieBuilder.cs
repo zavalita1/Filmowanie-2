@@ -1,13 +1,17 @@
-﻿using Filmowanie.Abstractions.DomainModels;
+﻿using Filmowanie.Abstractions.Configuration;
+using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Database.Interfaces.ReadOnlyEntities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Filmowanie.Nomination.Builders;
 
 internal sealed class MovieBuilder
 {
     private readonly ILogger log;
+    private readonly string FallbackMoviePosterUrl;
+    private readonly string FallbackMovieBigPosterUrl;
 
     private string? movieName;
     private string? posterUrl;
@@ -23,13 +27,12 @@ internal sealed class MovieBuilder
     private string? originalTitle;
     private TenantId tenant;
     
-    public MovieBuilder(ILogger log)
+    public MovieBuilder(IOptions<FilmwebOptions> options, ILogger log)
     {
         this.log = log;
+        this.FallbackMoviePosterUrl = options.Value.FallbackPosterUrl;
+        this.FallbackMovieBigPosterUrl = options.Value.FallbackBigPosterUrl;
     }
-
-    private const string FallbackMoviePosterUrl = "https://fwcdn.pl/fpo/41/72/4172/7050857_1.10.webp";
-    private const string FallbackMovieBigPosterUrl = "https://fwcdn.pl/fpo/41/72/4172/7050857_1.8.webp";
 
     public MovieBuilder WithName(string name)
     {
@@ -130,10 +133,10 @@ internal sealed class MovieBuilder
         var movieId = "movie-" + guidProvider.NewGuid();
         var now = dateTimeProvider.Now;
 
-        return new Movie(movieId, now, this.movieName, originalTitle, description, this.posterUrl, this.bigPosterUrl, this.filmwebUrl, this.actors.ToArray(), this.writers.ToArray(), this.directors.ToArray(), this.genres.ToArray(), this.year, (int)this.duration.TotalMinutes, this.tenant.Id, "");
+        return new Movie(movieId, now, this.movieName, originalTitle, description, string.Empty, this.posterUrl, this.bigPosterUrl, this.filmwebUrl, this.actors.ToArray(), this.writers.ToArray(), this.directors.ToArray(), this.genres.ToArray(), this.year, (int)this.duration.TotalMinutes, this.tenant.Id, "");
     }
 
-    private readonly record struct Movie(string id, DateTime Created, string Name, string OriginalTitle, string Description, string PosterUrl, string BigPosterUrl, string FilmwebUrl, string[] Actors, string[] Writers, string[] Directors, string[] Genres, int CreationYear, int DurationInMinutes, int TenantId, string Type) : IReadOnlyMovieEntity
+    private readonly record struct Movie(string id, DateTime Created, string Name, string OriginalTitle, string Description, string AltDescription, string PosterUrl, string BigPosterUrl, string FilmwebUrl, string[] Actors, string[] Writers, string[] Directors, string[] Genres, int CreationYear, int DurationInMinutes, int TenantId, string Type) : IReadOnlyMovieEntity
     {
         public bool? IsRejected => null;
     }

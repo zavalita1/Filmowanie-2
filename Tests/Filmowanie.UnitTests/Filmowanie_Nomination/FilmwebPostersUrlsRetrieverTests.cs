@@ -4,6 +4,8 @@ using NSubstitute;
 using System.Net;
 using Filmowanie.Nomination.Services;
 using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
+using Filmowanie.Abstractions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Filmowanie.UnitTests.Filmowanie_Nomination;
 
@@ -15,7 +17,9 @@ public sealed class FilmwebPostersUrlsRetrieverTests
     public FilmwebPostersUrlsRetrieverTests()
     {
         _clientFactory = Substitute.For<IHttpClientFactory>();
-        _retriever = new FilmwebPostersUrlsRetriever(_clientFactory);
+        var options = Substitute.For<IOptions<FilmwebOptions>>();
+        options.Value.Returns(new FilmwebOptions { BaseUrl = "https://www.filmweb.pl/", FilmApiUrl = "https://www.filmweb.pl/film/", FallbackBigPosterUrl = "", FallbackPosterUrl = "" });
+        _retriever = new FilmwebPostersUrlsRetriever(_clientFactory, options);
     }
 
     [Fact]
