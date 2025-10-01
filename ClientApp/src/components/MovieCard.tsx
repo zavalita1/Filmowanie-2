@@ -141,7 +141,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
               { isLoading ? <Spinner isLoading></Spinner> : <div className="flex overflow-hidden">
                 { props.isMobile ? <></> : <img className="mr-10 -mt-12 h-max max-w-3/5" src={props.movie.bigPosterUrl} alt="https://fwcdn.pl/fpo/00/33/120033/7606010_1.8.webp" onLoad={() => setIsLoading(false)}></img> }
                 <div className={props.isMobile ? "block text-sm" : "block"}>
-                  <p className="mb-10">{movieDescription}</p>
+                  <p className="mb-10 whitespace-pre-line leading-7 [&:not(:first-child)]:mt-6">{movieDescription}</p>
                   <div >
                     <p><b>Metraż:</b> <i>{props.movie.duration}</i></p>
                     <p><b>Gatunek:</b> {props.movie.genres.join(", ")}</p>

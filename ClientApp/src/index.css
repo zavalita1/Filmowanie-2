@@ -139,3 +139,7 @@ div.large-dialog {
 .table-cell-wrap-long {
   text-wrap: auto;
 }
+
+html {
+  font-family: 'Georgia';
+}
