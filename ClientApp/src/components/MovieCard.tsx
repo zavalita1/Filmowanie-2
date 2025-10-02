@@ -183,7 +183,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
       result.renderVotingSection = () => getVotingSection(props);
 
       if (props.simplifiedView) {
-      const posterElementClassName = props.votesActive.length > 0 ? " max-h-[285px] max-w-[200px] self-center-safe w-fit mask-r-from-blue-200 mask-r-from-70%" : " max-h-[285px] max-w-[200px]self-center-safe w-fit";
+      const posterElementClassName = props.votesActive.length > 0 ? " max-h-[285px] max-w-[200px] self-center-safe w-fit mask-r-from-blue-200 mask-r-from-70%" : " max-h-[285px] max-w-[200px] self-center-safe w-fit";
       result.getCardContents = () => (<CardContent className="h-full self-center-safe xl:w-xl flex flex-nowrap flex-col place-content-center">
           <img className={posterElementClassName} src={props.movie.posterUrl} ></img>
           <div className="mt-2">{movieDescription}</div>
