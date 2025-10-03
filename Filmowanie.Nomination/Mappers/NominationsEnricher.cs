@@ -49,6 +49,7 @@ internal sealed class NominationsEnricher : INominationsEnricher
             return moviesThatCanBeNominatedAgain.Error.Value.ChangeResultType<IReadOnlyMovieEntity[], NominationsFullDataDTO>();
 
         var moviesThatCanBeNominatedAgainDtos = moviesThatCanBeNominatedAgain.Result!
+            .Where(x => x.IsRejected != false)
             .OrderBy(x => x.CreationYear)
             .Select(x => new MovieDTO(x.id, x.Name, x.PosterUrl, x.BigPosterUrl, x.Description, x.FilmwebUrl, x.CreationYear, x.DurationInMinutes.GetDurationString(), x.Genres, x.Actors, x.Directors, x.Writers, x.OriginalTitle))
             .ToArray();
