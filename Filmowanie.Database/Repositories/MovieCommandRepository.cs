@@ -49,7 +49,7 @@ internal sealed class MovieCommandRepository : IMovieCommandRepository
 
     public async Task<IReadOnlyMovieEntity> MarkMovieAsRejectedAsync(string entityId, CancellationToken cancelToken)
     {
-        var movie = await this.ctx.Movies.AsNoTracking().SingleAsync(x => x.id == entityId, cancelToken);
+        var movie = await this.ctx.Movies.SingleAsync(x => x.id == entityId, cancelToken);
         movie.IsRejected = true;
         await this.ctx.SaveChangesAsync(cancelToken);
         return movie;
