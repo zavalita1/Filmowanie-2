@@ -20,7 +20,7 @@ const LoggedView: React.FC<AppComponentProps> = props => {
     <p className='text-3xl'>{`Witaj ${props.userData!.username}!`}</p>
     <div className='basis-full h-0'></div>
     { props.userData?.nominations?.length ?? 0 > 0 
-    ? <Button className='mt-5' onClick={() => navigate('nomination')}>Do nominacji!</Button> 
+    ? <Button className='mt-5' onClick={() => navigate('nominate')}>Do nominacji!</Button> 
     : <Button className='mt-5' onClick={() => navigate('moviesList')}>Do głosowania!</Button>}
     </div>
   </>);
