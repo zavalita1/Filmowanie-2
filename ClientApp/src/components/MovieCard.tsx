@@ -187,6 +187,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
       result.getCardContents = () => (<CardContent className="h-full self-center-safe xl:w-xl flex flex-nowrap flex-col place-content-center">
           <img className={posterElementClassName} src={props.movie.posterUrl} ></img>
           <div className="mt-2">{movieDescription}</div>
+          <div className="mt-2"><p className="mt-4 text-center text-blue-700 dark:text-pink-300 hover:cursor-pointer"><a href={props.movie.filmwebUrl} target="_blank">Link do filmweba.</a></p></div>
           <div className="mt-auto">
             {getVotingSection(props)}
           </div>

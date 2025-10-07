@@ -43,7 +43,7 @@ public sealed class MovieAddedEventEventConsumer : IConsumer<MovieAddedEvent>, I
         this.log.LogInformation($"Consuming {nameof(MovieAddedEvent)}...");
         try
         {
-            var result = await this.openAiClient.GetResponseAsync($"Napisz krótki opis filmu: {context.Message.Movie.Name} ({context.Message.Movie.MovieCreationYear}) opierając się na opisie i opiniach. Bądź radykalny i sarkastyczny, bądź nieznośnie \"smartass\". Użyj co najmniej jednego wulgaryzmu nie wahaj się wyrażać kontrowersyjnych opinii. Bądź brutalny i do przesady krytyczny i cyniczny. Możesz poszukać najbardziej agresywnych opinii na letterboxd. Opis ma mieć co najwyżej 100 słów.", context.CancellationToken);
+            var result = await this.openAiClient.GetResponseAsync($"Napisz krótki opis filmu: {context.Message.Movie.Name} ({context.Message.Movie.MovieCreationYear}) opierając się na opisie i opiniach. Bądź radykalny i sarkastyczny, bądź nieznośnie \"smartass\". Nie wahaj się wyrażać kontrowersyjnych opinii. Bądź brutalny i do przesady krytyczny i cyniczny. Możesz poszukać najbardziej agresywnych (i zabawnych) opinii na letterboxd. Opis ma mieć co najwyżej 100 słów.", context.CancellationToken);
             var movie = await this.movieCommandRepository.UpdateAltDescriptionAsync(context.Message.Movie.id, result, context.CancellationToken);
 
             if (!this.filmwebOptions.Value.FallbackPosterUrl.Equals(movie.PosterUrl))
