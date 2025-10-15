@@ -30,7 +30,7 @@ internal sealed class CurrentVotingSessionServiceDecorator : ICurrentVotingSessi
 
         var result = await this.votingSessionServiceImplementation.GetCurrentVotingSessionIdAsync(maybeCurrentUser, cancelToken);
 
-        if (!result.Error.HasValue && result.Result!.Value.CorrelationId != default)
+        if (!result.Error.HasValue && result.Result?.CorrelationId != default)
             this.cacheService.Cache(tenant, result);
         
         return result;

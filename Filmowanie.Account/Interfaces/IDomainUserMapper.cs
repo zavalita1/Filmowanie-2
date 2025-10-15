@@ -6,5 +6,5 @@ namespace Filmowanie.Account.Interfaces;
 
 internal interface IDomainUserMapper
 {
-    Maybe<DomainUser> Map(Maybe<UserDTO> maybeDto, Maybe<DomainUser> maybeUser);
+    Maybe<DomainUser> Map(Maybe<CreateUserDTO> maybeDto, Maybe<DomainUser> maybeUser);
 }

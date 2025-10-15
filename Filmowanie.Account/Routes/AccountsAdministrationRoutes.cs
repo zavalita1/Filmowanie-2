@@ -41,9 +41,9 @@ internal class AccountsAdministrationRoutes : IAccountsAdministrationRoutes
         return this.routesResultHelper.UnwrapOperationResult(result);
     }
 
-    public async Task<IResult> AddUserAsync(UserDTO dto, CancellationToken cancel)
+    public async Task<IResult> AddUserAsync(CreateUserDTO dto, CancellationToken cancel)
     {
-        var maybeDto = validator.Validate(dto);
+        var maybeDto = dto.AsMaybe();
         var maybeCurrentUser = this.authenticationManager.GetDomainUser(maybeDto);
         var maybeUser = mapper.Map(maybeDto, maybeCurrentUser);
         var result = await this.userService.AddUserAsync(maybeUser, cancel);

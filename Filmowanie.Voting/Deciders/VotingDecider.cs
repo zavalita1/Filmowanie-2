@@ -16,6 +16,7 @@ public sealed class VotingDecider : IVotingDecider
             .Select(x => new { MovieContainer = x, CurrentVotes = x.Votes, CurrentVotesScore = GetVotesCount(x.Votes), PreviousVotes = previousVotingByMovies.GetValueOrDefault(x.Movie.id, 0) })
             .OrderByDescending(x => x.CurrentVotesScore)
             .ThenBy(x => x.PreviousVotes)
+            .ThenBy(x => x.MovieContainer.Movie.MovieCreationYear)
             .ToArray();
 
         var winner = sorted[0];

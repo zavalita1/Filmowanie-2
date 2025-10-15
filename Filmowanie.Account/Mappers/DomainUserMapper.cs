@@ -1,4 +1,5 @@
 using Filmowanie.Abstractions.DomainModels;
+using Filmowanie.Abstractions.Enums;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.DTOs.Incoming;
@@ -23,14 +24,17 @@ internal sealed class DomainUserMapper : IDomainUserMapper
         this.guidProvider = guidProvider;
     }
 
-    public Maybe<DomainUser> Map(Maybe<UserDTO> maybeDto, Maybe<DomainUser> maybeUser) => maybeDto.Merge(maybeUser).Accept(MapToDomainInternal, log);
+    public Maybe<DomainUser> Map(Maybe<CreateUserDTO> maybeDto, Maybe<DomainUser> maybeUser) => maybeDto.Merge(maybeUser).Accept(MapToDomainInternal, log);
 
-    private Maybe<DomainUser> MapToDomainInternal((UserDTO, DomainUser CurrentUser) input)
+    private Maybe<DomainUser> MapToDomainInternal((CreateUserDTO, DomainUser CurrentUser) input)
     {
         var now = dateTimeProvider.Now;
         var guid = guidProvider.NewGuid();
         var userId = $"user-{guid}";
-        var domainUser = new DomainUser(userId, input.Item1.Id, false, false, input.CurrentUser.Tenant, now, input.Item2.Gender);
+        if (!Enum.TryParse<Gender>(input.Item1.Gender, out var gender))
+            gender = Gender.Unspecified;
+
+        var domainUser = new DomainUser(userId, input.Item1.Username, false, false, input.CurrentUser.Tenant, now, gender);
         return new Maybe<DomainUser>(domainUser, null);
     }
 }

@@ -25,7 +25,7 @@ public static class RouteGroupBuilderExtensions
 
         accountAdminBuilder.MapGet("all", ([FromServices] IAccountsAdministrationRoutes routes, CancellationToken ct) => routes.GetUsersAsync(ct));
         accountAdminBuilder.MapGet("{id}", ([FromServices] IAccountsAdministrationRoutes routes, [FromRoute] string id, CancellationToken ct) => routes.GetUserAsync(id, ct));
-        accountAdminBuilder.MapPost("", ([FromServices] IAccountsAdministrationRoutes routes, [FromBody] UserDTO dto, CancellationToken ct) => routes.AddUserAsync(dto, ct));
+        accountAdminBuilder.MapPost("", ([FromServices] IAccountsAdministrationRoutes routes, [FromBody] CreateUserDTO dto, CancellationToken ct) => routes.AddUserAsync(dto, ct));
        
         return builder;
     }
