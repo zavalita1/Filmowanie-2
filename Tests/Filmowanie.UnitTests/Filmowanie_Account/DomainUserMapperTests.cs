@@ -33,7 +33,7 @@ public sealed class DomainUserMapperTests
         var guid = Guid.NewGuid();
         var expectedUserId = $"user-{guid}";
         var tenantId = new TenantId(2137);
-        var userDto = new UserDTO("external-id-42", "whatever");
+        var userDto = new CreateUserDTO("external-id-42", "whatever");
         var currentUser = new DomainUser("current-user-id", "current-external-id", false, true, tenantId, DateTime.UtcNow, Gender.Unspecified);
         
         _dateTimeProvider.Now.Returns(now);
@@ -58,7 +58,7 @@ public sealed class DomainUserMapperTests
     public void Map_WhenInputHasError_ReturnsError()
     {
         // Arrange
-        var error = new Error<UserDTO>("", ErrorType.InvalidState);
+        var error = new Error<CreateUserDTO>("", ErrorType.InvalidState);
 
         // Act
         var result = _sut.Map(error, default(DomainUser).AsMaybe());
