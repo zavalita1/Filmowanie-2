@@ -1,3 +1,3 @@
 ﻿namespace Filmowanie.Account.DTOs.Incoming;
 
-public record class CreateUserDTO(string Username, string Gender);
+public record CreateUserDTO(string Username, string Gender, string DisplayName);

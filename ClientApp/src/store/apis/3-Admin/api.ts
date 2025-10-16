@@ -35,8 +35,8 @@ export const adminApi = votingApi
             },
             providesTags: ['UsersList']
         }),
-        createUser: builder.mutation<void, {username: string, gender: string}, void>({
-          query: ({ username, gender }) => ({url: 'user', method: 'POST', body: { id: '', displayName: username, gender }}),
+        createUser: builder.mutation<void, {username: string, gender: string, displayName: string }, void>({
+          query: ({ username, gender, displayName }) => ({url: 'user', method: 'POST', body: { id: '', displayName, gender, username }}),
            async onQueryStarted(params, { dispatch, queryFulfilled }) {
             await commonOnQueryStarted(isLoading => dispatch(globalConfigSlice.actions.setLoading(isLoading)), queryFulfilled, true, true, true);
           },

@@ -38,24 +38,26 @@ internal sealed class AccountUserService : IAccountUserService
 
     public Task<Maybe<DetailedUserDTO>> GetByIdAsync(Maybe<string> maybeId, CancellationToken cancelToken) => maybeId.AcceptAsync(GetByIdAsync, this.log, cancelToken);
 
-    public Task<Maybe<VoidResult>> AddUserAsync(Maybe<DomainUser> input, CancellationToken cancelToken) => input.AcceptAsync(AddUserAsync, this.log, cancelToken);
+    public Task<Maybe<VoidResult>> AddUserAsync(Maybe<(DomainUser, string DisplayName)> input, CancellationToken cancelToken) => input.AcceptAsync(AddUserAsync, this.log, cancelToken);
 
-    private async Task<Maybe<VoidResult>> AddUserAsync(DomainUser input, CancellationToken cancelToken)
+    private async Task<Maybe<VoidResult>> AddUserAsync((DomainUser, string DisplayName) input, CancellationToken cancelToken)
     {
         if (input == default)
             return new Error<VoidResult>("Domain user is null", ErrorType.IncomingDataIssue);
 
         var code = this.guidProvider.NewGuid().ToString();
+        var user = input.Item1;
         var userEntity = new User
         {
             Code = code,
-            Created = input.Created,
+            Created = user.Created,
             Email = null!,
-            id = input.Id,
-            IsAdmin = input.IsAdmin,
+            id = user.Id,
+            IsAdmin = user.IsAdmin,
             PasswordHash = null!,
-            TenantId = input.Tenant.Id,
-            DisplayName = input.Name // TODO fix this
+            TenantId = user.Tenant.Id,
+            Gender = user.Gender.ToString(),
+            DisplayName = input.DisplayName
         };
 
         await this.usersCommandRepository.Insert(userEntity, cancelToken);

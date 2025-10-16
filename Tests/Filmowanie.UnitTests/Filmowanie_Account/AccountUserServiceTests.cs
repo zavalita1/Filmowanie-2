@@ -1,6 +1,5 @@
 using Filmowanie.Abstractions.DomainModels;
 using Filmowanie.Abstractions.Enums;
-using Filmowanie.Abstractions.Extensions;
 using Filmowanie.Abstractions.Interfaces;
 using Filmowanie.Abstractions.Maybe;
 using Filmowanie.Account.Interfaces;
@@ -16,31 +15,31 @@ namespace Filmowanie.UnitTests.Filmowanie_Account;
 
 public sealed class AccountUserServiceTests
 {
-    private readonly IDomainUsersRepository _usersQueryRepository;
-    private readonly IUsersCommandRepository _usersCommandRepository;
-    private readonly IGuidProvider _guidProvider;
-    private readonly ILoginResultDataExtractor _extractor;
-    private readonly IHashHelper _hashHelper;
-    private readonly AccountUserService _sut;
+    private readonly IDomainUsersRepository usersQueryRepository;
+    private readonly IUsersCommandRepository usersCommandRepository;
+    private readonly IGuidProvider guidProvider;
+    private readonly ILoginResultDataExtractor extractor;
+    private readonly IHashHelper hashHelper;
+    private readonly AccountUserService sut;
 
     public AccountUserServiceTests()
     {
-        _usersQueryRepository = Substitute.For<IDomainUsersRepository>();
-        _usersCommandRepository = Substitute.For<IUsersCommandRepository>();
-        _guidProvider = Substitute.For<IGuidProvider>();
+        this.usersQueryRepository = Substitute.For<IDomainUsersRepository>();
+        this.usersCommandRepository = Substitute.For<IUsersCommandRepository>();
+        this.guidProvider = Substitute.For<IGuidProvider>();
         var logger = Substitute.For<ILogger<AccountUserService>>();
-        _extractor = Substitute.For<ILoginResultDataExtractor>();
-        _hashHelper = Substitute.For<IHashHelper>();
+        this.extractor = Substitute.For<ILoginResultDataExtractor>();
+        this.hashHelper = Substitute.For<IHashHelper>();
 
         var adapterFactory = Substitute.For<ILoginDataExtractorAdapterFactory>();
-        adapterFactory.GetExtractor().Returns(_extractor);
+        adapterFactory.GetExtractor().Returns(this.extractor);
 
-        _sut = new AccountUserService(
-            _usersQueryRepository,
+        this.sut = new AccountUserService(
+            this.usersQueryRepository,
             logger,
             adapterFactory,
-            _usersCommandRepository,
-            _guidProvider);
+            this.usersCommandRepository,
+            this.guidProvider);
     }
 
     [Fact]
@@ -52,18 +51,18 @@ public sealed class AccountUserServiceTests
         var user = Substitute.For<IReadOnlyUserEntity>();
         var expectedLoginResult = new LoginResultData(null!, null!);
 
-        _usersQueryRepository.GetUserByCodeAsync(code, Arg.Any<CancellationToken>())
+        this.usersQueryRepository.GetUserByCodeAsync(code, Arg.Any<CancellationToken>())
             .Returns(user);
-        _extractor.GetIdentity(user)
+        this.extractor.GetIdentity(user)
             .Returns(new Maybe<LoginResultData>(expectedLoginResult, null));
 
         // Act
-        var result = await _sut.GetUserIdentity(input, CancellationToken.None);
+        var result = await sut.GetUserIdentity(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().NotBeNull();
         result.Result.Should().Be(expectedLoginResult);
-        await _usersQueryRepository.Received(1).GetUserByCodeAsync(code, Arg.Any<CancellationToken>());
+        await this.usersQueryRepository.Received(1).GetUserByCodeAsync(code, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -73,11 +72,11 @@ public sealed class AccountUserServiceTests
         var code = "invalid-code";
         var input = new Code(code).AsMaybe();
 
-        _usersQueryRepository.GetUserByCodeAsync(code, Arg.Any<CancellationToken>())
+        this.usersQueryRepository.GetUserByCodeAsync(code, Arg.Any<CancellationToken>())
             .Returns((IReadOnlyUserEntity?)null);
 
         // Act
-        var result = await _sut.GetUserIdentity(input, CancellationToken.None);
+        var result = await sut.GetUserIdentity(input, CancellationToken.None);
 
         // Assert
         result.Result.Identity.Should().BeNull();
@@ -99,20 +98,20 @@ public sealed class AccountUserServiceTests
         var expectedLoginResult = new LoginResultData(null!, null!);
 
         user.PasswordHash.Returns(storedHash);
-        _usersQueryRepository.GetUserByMailAsync(email, Arg.Any<CancellationToken>())
+        this.usersQueryRepository.GetUserByMailAsync(email, Arg.Any<CancellationToken>())
             .Returns(user);
-        _hashHelper.DoesHashEqual(storedHash, password)
+        this.hashHelper.DoesHashEqual(storedHash, password)
             .Returns(true);
-        _extractor.GetIdentity(user)
+        this.extractor.GetIdentity(user)
             .Returns(new Maybe<LoginResultData>(expectedLoginResult, null));
 
         // Act
-        var result = await _sut.GetUserIdentity(input, CancellationToken.None);
+        var result = await sut.GetUserIdentity(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().NotBeNull();
         result.Result.Should().Be(expectedLoginResult);
-        await _usersQueryRepository.Received(1).GetUserByMailAsync(email, Arg.Any<CancellationToken>());
+        await this.usersQueryRepository.Received(1).GetUserByMailAsync(email, Arg.Any<CancellationToken>());
     }
 
     [Fact(Skip = "TODO")]
@@ -126,13 +125,13 @@ public sealed class AccountUserServiceTests
         var user = Substitute.For<IReadOnlyUserEntity>();
 
         user.PasswordHash.Returns(storedHash);
-        _usersQueryRepository.GetUserByMailAsync(email, Arg.Any<CancellationToken>())
+        this.usersQueryRepository.GetUserByMailAsync(email, Arg.Any<CancellationToken>())
             .Returns(user);
-        _hashHelper.DoesHashEqual(storedHash, password)
+        this.hashHelper.DoesHashEqual(storedHash, password)
             .Returns(false);
 
         // Act
-        var result = await _sut.GetUserIdentity(input, CancellationToken.None);
+        var result = await sut.GetUserIdentity(input, CancellationToken.None);
 
         // Assert
         result.Result.Identity.Should().BeNull();
@@ -153,11 +152,11 @@ public sealed class AccountUserServiceTests
             CreateUserEntity("2", "User2", false, "", 2)
         };
 
-        _usersQueryRepository.GetAllAsync(Arg.Any<CancellationToken>())
+        this.usersQueryRepository.GetAllAsync(Arg.Any<CancellationToken>())
             .Returns(users);
 
         // Act
-        var result = await _sut.GetAllUsers(input, CancellationToken.None);
+        var result = await sut.GetAllUsers(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().NotBeNull();
@@ -185,11 +184,11 @@ public sealed class AccountUserServiceTests
         var input = new Maybe<string>(userId, null);
         var user = CreateUserEntity(userId, "Mr Bean", true, "hash", 42, "code-42");
 
-        _usersQueryRepository.GetUserByIdAsync(userId, Arg.Any<CancellationToken>())
+        this.usersQueryRepository.GetUserByIdAsync(userId, Arg.Any<CancellationToken>())
             .Returns(user);
 
         // Act
-        var result = await _sut.GetByIdAsync(input, CancellationToken.None);
+        var result = await sut.GetByIdAsync(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().NotBeNull();
@@ -208,11 +207,11 @@ public sealed class AccountUserServiceTests
         var userId = "invalid-id";
         var input = new Maybe<string>(userId, null);
 
-        _usersQueryRepository.GetUserByIdAsync(userId, Arg.Any<CancellationToken>())
+        this.usersQueryRepository.GetUserByIdAsync(userId, Arg.Any<CancellationToken>())
             .Returns((IReadOnlyUserEntity?)null);
 
         // Act
-        var result = await _sut.GetByIdAsync(input, CancellationToken.None);
+        var result = await sut.GetByIdAsync(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().BeNull();
@@ -228,18 +227,18 @@ public sealed class AccountUserServiceTests
         var guid = Guid.NewGuid();
         var now = DateTime.UtcNow;
         var domainUser = new DomainUser("user-2137", "Mr Bean", false, false, new TenantId(42), now, Gender.Unspecified);
-        var input = new Maybe<DomainUser>(domainUser, null);
+        var input = (domainUser, "display").AsMaybe();
 
-        _guidProvider.NewGuid().Returns(guid);
+        this.guidProvider.NewGuid().Returns(guid);
 
         // Act
-        var result = await _sut.AddUserAsync(input, CancellationToken.None);
+        var result = await sut.AddUserAsync(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().NotBeNull();
         result.Error.Should().BeNull();
 
-        await _usersCommandRepository
+        await this.usersCommandRepository
             .Received(1)
             .Insert(
                 Arg.Is<IReadOnlyUserEntity>(u =>
@@ -256,10 +255,10 @@ public sealed class AccountUserServiceTests
     public async Task AddUserAsync_WithNullUser_ReturnsError()
     {
         // Arrange
-        var input = new Maybe<DomainUser>(default, null);
+        var input = (default(DomainUser), "").AsMaybe();
 
         // Act
-        var result = await _sut.AddUserAsync(input, CancellationToken.None);
+        var result = await sut.AddUserAsync(input, CancellationToken.None);
 
         // Assert
         result.Result.Should().NotBeNull();
@@ -267,7 +266,7 @@ public sealed class AccountUserServiceTests
         result.Error!.Value.Type.Should().Be(ErrorType.IncomingDataIssue);
         result.Error!.ToString().Should().Be("Domain user is null");
 
-        await _usersCommandRepository
+        await this.usersCommandRepository
             .DidNotReceive()
             .Insert(Arg.Any<IReadOnlyUserEntity>(), Arg.Any<CancellationToken>());
     }
@@ -288,7 +287,7 @@ public sealed class AccountUserServiceTests
         entity.TenantId.Returns(tenantId);
         entity.Created.Returns(DateTime.UtcNow);
         entity.Code.Returns(code ?? "code");
-        entity.Gender.Returns(Gender.Unspecified.ToString());
+        entity.Gender.Returns(nameof(Gender.Unspecified));
         return entity;
     }
 }

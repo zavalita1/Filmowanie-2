@@ -198,7 +198,7 @@ const NonPlaceholderMovieCard: React.FC<VoteableMovieCardProps | ReadOnlyMovieCa
     return result;
 
     function getStandardCardContents(props: VoteableMovieCardProps | ReadOnlyMovieCardProps) {
-      const posterElementClassName = "votesActive" in props && props.votesActive.length > 0 ? " max-h-[285px] max-w-[200px] justify-self-center mask-r-from-blue-200 mask-r-from-70%" : " max-h-[285px] max-w-[200px] justify-self-center";
+      const posterElementClassName = "votesActive" in props && props.votesActive.length > 0 && !props.isMobile ? " max-h-[285px] max-w-[200px] justify-self-center mask-r-from-blue-200 mask-r-from-70%" : " max-h-[285px] max-w-[200px] justify-self-center";
 
       return <CardContent className="mt-auto self-center-safe">
           <img className={posterElementClassName} src={props.movie.posterUrl} ></img>

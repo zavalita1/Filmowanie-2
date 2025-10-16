@@ -17,5 +17,5 @@ internal interface IAccountUserService
 
     Task<Maybe<DetailedUserDTO>> GetByIdAsync(Maybe<string> maybeId, CancellationToken cancelToken);
 
-    Task<Maybe<VoidResult>> AddUserAsync(Maybe<DomainUser> input, CancellationToken cancelToken);
+    Task<Maybe<VoidResult>> AddUserAsync(Maybe<(DomainUser, string DisplayName)> input, CancellationToken cancelToken);
 }

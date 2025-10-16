@@ -45,7 +45,7 @@ internal class AccountsAdministrationRoutes : IAccountsAdministrationRoutes
     {
         var maybeDto = dto.AsMaybe();
         var maybeCurrentUser = this.authenticationManager.GetDomainUser(maybeDto);
-        var maybeUser = mapper.Map(maybeDto, maybeCurrentUser);
+        var maybeUser = mapper.Map(maybeDto, maybeCurrentUser).Merge(dto.DisplayName.AsMaybe());
         var result = await this.userService.AddUserAsync(maybeUser, cancel);
 
         return this.routesResultHelper.UnwrapOperationResult(result, TypedResults.Created());

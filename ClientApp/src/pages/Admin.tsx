@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Button, Input, Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../components/ui";
+import { Button, Checkbox, Input, Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../components/ui";
 import { VotingStatus } from "../consts/votingStatus";
 import { AppComponentProps, Layout } from "./Layout";
 import { useResumeVotingMutation, useEndVotingMutation, useStartVotingMutation, useGetAllUsersQuery, useCreateUserMutation } from "../store/apis/3-Admin/api";
@@ -18,6 +18,8 @@ const Admin: React.FC<AppComponentProps> = props => {
             navigate('/');
     }, [props.userData]);
     const [draftUserName, setDraftUserName] = useState("");
+    const [draftDisplayName, setDraftDisplayName] = useState("");
+    const [draftUserGender, setDraftUserGender] = useState("Unspecified");
     const [pushNotification, setPushNotification] = useState("");
     const {data, isLoading, error} = useGetAllUsersQuery();
 
@@ -65,8 +67,18 @@ const Admin: React.FC<AppComponentProps> = props => {
          <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mb-20">
                 New user creation:
         </h1>
-         <Input id="standard-basic" onChange={e => setDraftUserName(e.target.value)}/>
-            <Button onClick={() => createUser(draftUserName)}>Create user!</Button>
+         <Input id="standard-basic" onChange={e => setDraftUserName(e.target.value)} placeholder="username"/>
+         <Input id="standard-basic" onChange={e => setDraftDisplayName(e.target.value)} placeholder="display name"/>
+            <Button onClick={() => createUser({username: draftUserName, gender: draftUserGender, displayName: draftDisplayName})}>Create user!</Button>
+            <br className="mt-5"/>
+            <p> MALE????</p>
+              <Checkbox
+                                id="toggle-2"
+                                defaultChecked={false}
+                                checked={draftUserGender === "Male"}
+                                onCheckedChange={() => setDraftUserGender(draftUserGender === "Male" ? "Female" : "Male" )}
+                                className="mr-2 data-[state=checked]:border-emerald-400 data-[state=checked]:bg-emerald-400 data-[state=checked]:text-white dark:data-[state=checked]:border-pink-900 dark:data-[state=checked]:bg-pink-900"
+                            />
 
             <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance mb-20">
                 Notify with push:
