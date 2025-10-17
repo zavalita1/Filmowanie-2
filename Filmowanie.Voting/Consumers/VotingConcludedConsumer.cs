@@ -73,7 +73,7 @@ public sealed class VotingConcludedConsumer : IConsumer<VotingConcludedEvent>, I
             if (updateResult.Error.HasValue)
                 await PublishErrorAsync(context, error: updateResult.Error);
 
-            this.logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event.");
+            this.logger.LogInformation($"Consumed {nameof(VotingConcludedEvent)} event..");
         }
         catch (Exception ex)
         {
