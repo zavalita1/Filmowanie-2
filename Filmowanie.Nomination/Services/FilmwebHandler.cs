@@ -214,9 +214,9 @@ internal sealed partial class FilmwebHandler : IFilmwebHandler
     {
         var nodes = web.DocumentNode.SelectNodes("//div/span[@itemprop='description']");
          
-        if (nodes.Count() != 1)
+        if (nodes?.Count() != 1)
         {
-            this.log.LogWarning("Unexcpected elements found when trying to fetch description!");
+            this.log.LogWarning("Unexpected elements found when trying to fetch description!");
             return;
         }
 
