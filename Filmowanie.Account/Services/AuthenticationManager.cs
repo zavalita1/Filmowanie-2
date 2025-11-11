@@ -27,7 +27,6 @@ internal sealed class AuthenticationManager : IAuthenticationManager
 
     public Maybe<DomainUser> GetDomainUser(Maybe<VoidResult> maybe) => maybe.Accept(GetDomainUser, this.log);
 
-
     private Maybe<DomainUser> GetDomainUser()
     {
         var user = this.httpContextWrapper.User;

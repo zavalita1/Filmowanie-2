@@ -69,22 +69,7 @@ public sealed class VotingStateMachine : MassTransitStateMachine<VotingStateInst
 
         During([WaitingForNominations, NominationsConcluded],
             When(RemoveMovieEvent)
-                .Then(ctx => this.logger.LogInformation("Removing movie..."))
-                .ThenAsync(async ctx =>
-                {
-                    if (ctx.Saga.Movies.All(x => x.Movie.id != ctx.Message.Movie.id))
-                        return;
-
-                    var nominationData = ctx.Saga.Nominations.Single(x => x.Year == ctx.Message.Movie.MovieCreationYear.ToDecade());
-                    nominationData.Concluded = null;
-                    nominationData.MovieId = null;
-                    await ctx.Publish(new NominationAddedEvent(ctx.Message.VotingSessionId, nominationData), ctx.CancellationToken);
-                    ctx.Saga.Movies = ctx.Saga.Movies.Where(x => x.Movie.id != ctx.Message.Movie.id).ToArray();
-
-                    var currentState = await Accessor.Get(ctx);
-                    if (currentState.Name == nameof(NominationsConcluded))
-                        await ctx.TransitionToState(WaitingForNominations);
-                })
+                 .Activity(x => x.OfType<RemoveMovieActivity>())
         );
 
         During([WaitingForNominations, NominationsConcluded, ExtraVoting],
