@@ -69,6 +69,7 @@ public class RemoveMovieActivity : IStateMachineActivity<VotingStateInstance, Re
 
             var userData = new NominationDataEmbeddedUser { Id = nominatedBy.id, DisplayName = nominatedBy.Name };
             nominationData = new NominationData { Concluded = null, MovieId = null, User = userData, Year = ctx.Message.Movie.MovieCreationYear.ToDecade() };
+            ctx.Saga.Nominations = ctx.Saga.Nominations.Concat([nominationData]);
         }
         else
         {
@@ -76,7 +77,6 @@ public class RemoveMovieActivity : IStateMachineActivity<VotingStateInstance, Re
             nominationData.MovieId = null;
         }
 
-        ctx.Saga.Nominations = ctx.Saga.Nominations.Concat([nominationData]);
         await ctx.Publish(new NominationAddedEvent(ctx.Message.VotingSessionId, nominationData), ctx.CancellationToken);
         ctx.Saga.Movies = ctx.Saga.Movies.Where(x => x.Movie.id != ctx.Message.Movie.id).ToArray();
 
