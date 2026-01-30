@@ -92,6 +92,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
             <MenuLink text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
             <MenuLink text='Nominuj' url='/nominate' isDisabled={!isNominateEnabled}/>
             <MenuLink text='Historia' url='/history' isDisabled={!isHistoryEnabled}/>
+            <MenuLink text='Zasady' url='/rules' isDisabled={!isHistoryEnabled} />
             <ModeToggle />
           </ul>
           <div className='md:hidden'><ModeToggle /></div>
@@ -112,6 +113,7 @@ export const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
        <MenuLink isMobile={true} text='Admin' url='/admin' isDisabled={!userData?.isAdmin}/>
        <MenuLink isMobile={true} text='Nominuj' url='/nominate' isDisabled={!isNominateEnabled}/>
        <MenuLink isMobile={true} text='Historia' url='/history' isDisabled={!isHistoryEnabled}/>
+       <MenuLink isMobile={true} text='Zasady' url='/rules' isDisabled={!isHistoryEnabled}/>
        <LoginLogoutLink isMobile={true} isUserLogged={isUserLogged} onLogout={logout}/>
       </ul>
     </div>

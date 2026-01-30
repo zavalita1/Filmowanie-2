@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import Home from './pages/Home';
-import {Login, Preferences, Admin, Results, MoviesList, Nomination, History } from './pages';
+import {Login, Preferences, Admin, Results, MoviesList, Nomination, History, Rules } from './pages';
 import { store } from './store/store';
 
 const App: React.FC = () => {
@@ -24,6 +24,7 @@ const App: React.FC = () => {
           <Route path="/admin" element={<Admin {...routeProps}/>} />
           <Route path="/nominate" element={<Nomination {...routeProps}/>} />
           <Route path="/history" element={<History {...routeProps}/>} />
+          <Route path="/rules" element={<Rules {...routeProps}/>} />
         </Routes>
       </BrowserRouter>
       <link rel="preconnect" href="https://fonts.googleapis.com" />

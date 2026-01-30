@@ -7,3 +7,4 @@ export { default as Login } from './Login';
 export { default as MoviesList } from './MoviesList';
 export { default as Results } from './Results';
 export { default as Nomination } from './Nomination';
+export { default as Rules } from './Rules';
