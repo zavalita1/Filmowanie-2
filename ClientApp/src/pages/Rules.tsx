@@ -8,8 +8,8 @@ const Rules: React.FC<AppComponentProps> = (props) => {
     
     return (
         <>
-            {props.isMobile ? <div className="mb-30"></div> : <></>}
-        <div className='-mt-30 md:w-2/5 flex flex-wrap justify-center-safe'> 
+            {props.isMobile ? <div className="mb-10"></div> : <></>}
+        <div className='md:w-2/5 flex flex-wrap justify-center-safe'> 
           <div className="w-full mt-10 mb-5">
               <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
                   Reguły zgłaszania nominacji
